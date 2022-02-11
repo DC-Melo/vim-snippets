@@ -1,0 +1,124 @@
+# This file contains snippets that are always defined. I personally
+# have snippets for signatures and often needed texts
+
+# sligthly lower priority than everything else since specialized versions
+# should overwrite. The user needs to adjust her priority in her snippets to
+# ~-55 so that other filetypes will still overwrite.
+priority -60
+
+
+##########
+#  Misc  #
+##########
+snippet codegen "code generator" b
+| Type | 编号 | 用例名称  | 前置条件  | 用例步骤               | 预期结果               | 用例等级  | 测试结果  | 备注  |
+| ---  | ---  | -------   | ----      | ----                   | ----                   | ---       | ----      | ----  |
+| AA   | 编号 | 用例名称1 | 前置条件1 | 1.用例步骤,2.用例步骤, | 1.预期结果,2.预期结果, | 用例等级1 | 测试结果1 | 备注1 |
+| AA   | 编号 | 用例名称2 | 前置条件2 | 1.用例步骤,2.用例步骤, | 1.预期结果,2.预期结果, | 用例等级1 | 测试结果1 | 备注1 |
+| BB   | 编号 | 用例名称3 | 前置条件3 | 1.用例步骤,2.用例步骤, | 1.预期结果,2.预期结果, | 用例等级1 | 测试结果1 | 备注1 |
+| BB   | 编号 | 用例名称4 | 前置条件4 | 1.用例步骤,2.用例步骤, | 1.预期结果,2.预期结果, | 用例等级1 | 测试结果1 | 备注1 |
+
+Type AA{
+Block FuncDeclaration {
+
+     __用例名称
+
+}
+Block FuncDefinition {
+
+    """
+    测试用例:https://www.link.com 序号：__Index
+    用例名称:__用例名称 
+    用例信息:__用例等级 项目适用:
+    前置条件:__前置条件
+    用例步骤:__用例步骤
+    预期结果:__预期结果
+    """
+    def test
+___用例名称
+__序号(self,desc='__用例名称'):
+        self.homepage\
+        .test_case_name('--------用例名称:__用例名称--------')
+        .test_case_information('用例等级:__用例等级 项目适用:')
+        .test_case_precondition('--------前置条件--------')
+        .__前置条件
+        .test_case_action('--------用例步骤--------')
+        .__用例步骤
+        .test_case_expect_result('--------预期结果--------')
+        .__预期结果
+    
+
+}
+}
+
+Type BB{
+Block FuncDeclaration {
+
+     __用例名称
+
+}
+Block FuncDefinition {
+
+    """
+    测试用例:https://www.link.com 序号：__Index
+    用例名称:__用例名称 
+    用例信息:__用例等级 项目适用:
+    前置条件:__前置条件
+    用例步骤:__用例步骤
+    预期结果:__预期结果
+    """
+    def test
+___用例名称
+__序号(self,desc='__用例名称'):
+        self.homepage\
+        .test_case_name('--------用例名称:__用例名称--------')
+        .test_case_information('用例等级:__用例等级 项目适用:')
+        .test_case_precondition('--------前置条件--------')
+        .__前置条件
+        .test_case_action('--------用例步骤--------')
+        .__用例步骤
+        .test_case_expect_result('--------预期结果--------')
+        .__预期结果
+    
+
+}
+}
+}
+GenTemplateCode2File file 1 3 6 8 200
+endsnippet
+
+snippet gitconfig "git config file" b
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "origin"]
+	url = git@gitee.com:dc-melo/${1:name}.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "gitee"]
+	url = git@gitee.com:dc-melo/$1.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "github"]
+	url = git@github.com:DC-Melo/$1.git
+	fetch = +refs/heads/*:refs/remotes/github/*
+[remote "gogs"]
+	url = ssh://git@10.1.21.240:11022/DC-Melo/$1.git
+	fetch = +refs/heads/*:refs/remotes/gogs/*
+[remote "all"]
+	url = git@gitee.com:dc-melo/$1.git
+	url = git@github.com:DC-Melo/$1.git
+	url = ssh://git@10.1.21.240:11022/DC-Melo/$1.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[user]
+	name = DC-Melo
+	email = melo.dachor@gmail.com
+endsnippet
+
+snippet snippettest "snippet test" b
+snippet test code
+endsnippet
+# vim:ft=snippets:

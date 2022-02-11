@@ -1,0 +1,144 @@
+priority -50
+
+extends c
+
+# We want to overwrite everything in parent ft.
+priority -49
+###########################################################################
+#			    Global functions 						  #
+###########################################################################
+
+global !p
+
+def write_docstring_args(arglist, snip):
+	args = str(arglist).split(',')
+
+	if len(args) > 1:
+		c = 0
+		for arg in args:
+			if c == 0:
+				snip.rv += arg
+				c = 1
+			else:
+				snip += '*       : %s' % arg.strip()
+	else:
+		snip.rv = args[0]
+
+
+endglobal
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+snippet inall "include all"
+#include <algorithm>　　　  // STL 通用算法 如sort find等
+#include <bitset>　　　　　 // STL 位集容器
+#include <cctype>
+#include <cerrno>
+#include <clocale>
+#include <cmath>
+#include <complex>　　　　  // 复数类
+#include <cstdio>
+#include <cstdlib>          // 基本库
+#include <cstring>
+#include <ctime>
+#include <deque>　　　　　  // STL 双端队列容器
+#include <exception>　　　  // 异常处理类
+#include <fstream>
+#include <functional>　　　 // STL 定义运算函数（代替运算符）
+#include <limits>
+#include <list>　　　　　　 // STL 线性列表容器
+#include <map>　　　　　　  // STL 映射容器
+#include <iomanip>
+#include <ios>　　　　　　  // 基本输入／输出支持
+#include <iosfwd>　　　　　 // 输入／输出系统使用的前置声明
+#include <iostream>
+#include <istream>　　　　  // 基本输入流
+#include <ostream>　　　　  // 基本输出流
+#include <queue>　　　　　  // STL 队列容器
+#include <set>　　　　　　  // STL 集合容器
+#include <sstream>　　　　  // 基于字符串的流
+#include <stack>　　　　　  // STL 堆栈容器　　　　
+#include <stdexcept>　　　  // 标准异常类
+#include <streambuf>　　　  // 底层输入／输出支持
+#include <string>　　　　　 // 字符串类
+#include <string>           // string类型
+#include <utility>　　　　  // STL 通用模板类
+#include <vector>　　　　　 // STL 动态数组容器
+#include <vector>           // 顺序容器，存储相同类型，同数组，但可以动态添加
+#include <cwchar>
+#include <cwctype>
+using namespace std;
+// C99 增加
+#include <complex.h>　　 //复数处理
+#include <fenv.h>　　　　//浮点环境
+#include <inttypes.h>　　//整数格式转换
+#include <stdbool.h>　　 //布尔环境
+#include <stdint.h>　　　//整型环境
+#include <tgmath.h>　　　//通用类型数学宏
+endsnippet
+
+snippet innomal "include Container"
+#include <string>
+#include <vector>
+#include <list>	
+#include <set>
+#include <map>	
+using namespace std;
+endsnippet
+
+snippet incontainer "include Container"
+#include <vector>
+#include <list>	
+#include <set>
+#include <map>	
+endsnippet
+
+snippet inalgorithm "include Algorithm"
+#include <algorithm>	
+#include <numeric>
+endsnippet
+
+snippet initerator "include Iterator"
+#include <iterator>
+endsnippet
+
+snippet infunction "include Function"
+#include <functional>	
+endsnippet
+
+snippet inadaptor "include Adaptor"
+#include <stack>	
+#include <deque>
+#include <queue>	
+#include <utility>
+endsnippet
+
+snippet inallocator "include allocator"
+#include <memory>
+endsnippet
+
+
+snippet listnode "int listlode"
+struct ListNode{
+    int value;
+    ListNode* next;
+    ListNode(int x):value(x),next(NULL) {}
+};
+endsnippet
+
+snippet solution "int listlode"
+#include <string>
+using namespace std;
+class Solution
+{
+public:
+    Solution() {}
+    ~Solution() {}
+    int lengthOfLongestSubstring(string s);
+private:
+
+};
+
+endsnippet
+

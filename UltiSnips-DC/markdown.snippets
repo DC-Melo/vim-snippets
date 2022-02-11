@@ -1,0 +1,155 @@
+priority -50
+
+
+snippet ganttmmd "Gantt Chart" b
+```mermaid
+gantt
+dateFormat  YYYY-MM-DD.HH
+axisFormat %H hours
+title CDAY DAY TASK
+
+section SUNRISE
+Completed exercise : crit   , active , sr0      , TODAY.06   , TODAY.09
+Jogging exercise   : crit   , active , sr1      , TODAY.06   , 30min
+Oral exercise      : crit   , active , sr2      , after sr1 , 30min
+Badminton exercise : crit   , active , sr3      , after sr2 , 30min
+
+section MORNING
+Completed task     : active , am0    , TODAY.09 , TODAY.12
+Implement parse    : active , am1    , TODAY.09 , 2h
+
+section NOON
+Oral exercise      : active , m0     , TODAY.12 , TODAY.14
+
+section AFTERNOON
+Completed exercise : active , pm0    , TODAY.14 , TODAY.18
+Completed exercise : active , pm1    , TODAY.14 , TODAY.18
+
+section SUNSET
+Completed exercise : active , ss0    , TODAY.18 , TODAY.19
+
+section EVENING
+Completed exercise : active , ss0    , TODAY.19 , TODAY.21
+
+section MIDNIGHT
+Reading            : crit,active , mn0    , TODAY.21 , TODAY.23
+Comment            : crit,active , mn0    , TODAY.21 , TODAY.23
+
+ ```
+endsnippet
+
+
+snippet ganttmmw "Gantt Chart" b
+```mermaid
+gantt
+dateFormat  YYYY-MM-DD
+title CWEEK WEEK TASK
+
+section MON
+MON task    : mon0p  , TOWEEK.1 , 1d
+task1       : active , mon1f    , TOWEEK.1    , 4h
+task2       : active , mon2f    , after mon1f , 4h
+
+section TUE
+TUE task    : tue0p  , TOWEEK.2 , 1d
+tast1       : active , tue1f    , TOWEEK.2    , 4h
+task2       : active , tue2f    , after tue1f , 4h
+
+section WED
+WED task    : wed0p  , TOWEEK.3 , 1d
+task1       : active , wed1f    , TOWEEK.3    , 4h
+task2       : active , wed2f    , after wed1f , 4h
+
+section THU
+THU task    : thu0p  , TOWEEK.4 , 1d
+task1       : active , thu1f    , TOWEEK.4    , 4h
+task2       : active , thu2f    , after thu1f , 4h
+
+section FRI
+FRI task    : fri0p  , TOWEEK.5 , 1d
+task1       : active , fri1f    , TOWEEK.5    , 4h
+task2       : active , fri2f    , after fri1f , 4h
+
+section SAT
+SAT task    : sat0p  , TOWEEK.6 , 1d
+task1       : active , sat1f    , TOWEEK.6    , 4h
+task2       : active , sat2f    , after sat1f , 4h
+
+section SUN
+SUN task    : sun0p  , TOWEEK.7 , 1d
+task1       : active , sun1f    , TOWEEK.7    , 4h
+task2       : active , sun2f    , after sun1f , 4h
+
+ ```
+endsnippet
+
+
+
+snippet graphmm "Gantt Chart" b
+```mermaid
+graphLR
+start[开始]-->input[输入A,B,C]
+input-->conditionA{A是否大于B}
+conditionA-->|YES|conditionC{A是否大于C}
+conditionA--NO-->conditionB{B是否大于C}
+conditionC--YES-->printA[输出A]
+conditionC--NO-->printC[输出C]
+conditionB--YES-->printB[输出B]
+conditionB--NO-->printC[输出C]
+printA-->stop[结束]
+printC-->stop
+printB-->stop
+
+ ```
+endsnippet
+
+
+
+snippet piemm "Gantt Chart" b
+
+```mermaid
+pie
+title Key elements in Product X
+"Calcium" : 42.96
+"Potassium" : 50.05
+"Magnesium" : 10.01
+"Iron" :  5
+
+ ```
+endsnippet
+
+snippet journeymm "Gantt Chart" b
+
+```mermaid
+journey
+title My working day
+section Go to work
+Make tea: 5: Me
+Go upstairs: 3: Me
+Do work: 1: Me, Cat
+section Go home
+Go downstairs: 5: Me
+Sit down: 5: Me
+
+ ```
+endsnippet
+
+snippet diagrammm "Gantt Chart" b
+    CUSTOMER \|\|--o{ ORDER : places
+    CUSTOMER {
+    string name
+    string custNumber
+    string sector
+    }
+    ORDER \|\|--\|{ LINE-ITEM : contains
+    ORDER {
+    int orderNumber
+    string deliveryAddress
+    }
+    LINE-ITEM {
+    string productCode
+    int quantity
+    float pricePerUnit
+    }
+    
+endsnippet
