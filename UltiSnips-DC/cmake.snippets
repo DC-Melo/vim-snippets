@@ -1,0 +1,11 @@
+# snippet proj
+# 	project(${0:Name})
+
+snippet debug "build type debug" b
+set(CMAKE_BUILD_TYPE debug)
+MESSAGE( STATUS "变量:CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+endsnippet
+
+snippet message "cmake mesage" b
+MESSAGE( STATUS "变量:${1:var} = ${$1}")
+endsnippet
