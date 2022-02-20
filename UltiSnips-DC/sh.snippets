@@ -1,0 +1,63 @@
+priority -50
+
+global !p
+import vim
+
+# Tests for the existence of a variable declared by Vim's filetype detection
+# suggesting the type of shell script of the current file
+def testShell(scope, shell):
+	return vim.eval("exists('" + scope + ":is_" + shell + "')")
+
+# Loops over the possible variables, checking for global variables
+# first since they indicate an override by the user.
+def getShell():
+	for scope in ["g", "b"]:
+		for shell in ["bash", "posix", "sh", "kornshell"]:
+			if testShell(scope, shell) == "1":
+				if shell == "kornshell":
+					return "ksh"
+				if shell == "posix":
+					return "sh"
+				return shell
+	return "sh"
+endglobal
+
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+snippet testshell "test shell" b
+clear
+ls -al
+jobs -l
+$0
+endsnippet
+
+snippet ffmpegvideo2gif "test shell" b
+ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif // 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
+convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
+$0
+endsnippet
+
+snippet convdrawheart "test shell" b
+convert +antialias -size 80x80 -gravity center \
+	-font WebDings label:Y   heart.gif
+$0
+endsnippet
+
+snippet convdrawrrect "Rounded Rectangle" b
+convert -size 100x60 xc:skyblue -fill white -stroke black \
+	-draw "roundrectangle 20,10 80,50 20,15"  draw_rrect.gif
+$0
+endsnippet
+
+
+
+snippet convdrawtext "Rounded Rectangle" b
+convert -size 100x60 xc:skyblue -fill white -stroke black \
+	-font Candice -pointsize 40 -gravity center \
+	-draw "text 0,0 'Hello'"   draw_text.gif
+$0
+endsnippet
+
+# vim:ft=snippets:
