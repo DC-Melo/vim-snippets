@@ -89,14 +89,65 @@ find . -iname "*.md" -exec more {} + >> README.md
 find . -iname "*.md" -exec cat  {} + >> README.md
 printf '' | xsel -i -b
 printf '' > /tmp/registeri
+$0
+endsnippet
 
+snippet rsynctemp "Rounded Rectangle" b
+rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
+$0
+endsnippet
 
-
-
+snippet removesecurely "Securely remove" b
+shred -zuv file	# Securely remove your file by overwritting then removing
 $0
 endsnippet
 
 
+snippet pasteColumn "Rounded Rectangle" b
+paste -d";" file1.txt file2.txt
+paste joins files together in a column-wise fashion. Another way to think about this is in contrast to cat, which joins files vertically. For example:
+$0
+endsnippet
 
+snippet aliastemp "Rounded Rectangle" b
+alias cp="cp -R"
+$0
+endsnippet
+
+
+snippet viewColumn "Rounded Rectangle" b
+Suppose you have a file with fields of variable length. Viewing it in the terminal can be messy because, if a field in one row is longer than one in another, it will upset the spacing of the columns. You can remedy this as follows:
+cat myfile.txt | column -t
+$0
+endsnippet
+
+
+snippet splitFile "Rounded Rectangle" b
+If we want to split this file into sub-files with 3 lines each, we can use:
+$ split -l 3 -d test.txt test_split_
+$0
+endsnippet
+
+
+snippet securityfile "Rounded Rectangle" b
+Here are the basics about gpg. The first thing to do is to generate a public/private key pair for yourself:
+$ gpg --full-generate-key
+$0
+endsnippet
+
+
+snippet rsynctemp "Rounded Rectangle" b
+GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
+
+Collapse rows in one column based on a common ID in another column:
+$ cat file.txt
+3       d
+2       w
+3       c
+4       x
+1       a
+$ cat file.txt | datamash -g 1 collapse 2 -s -W
+$0
+endsnippet
 
 # vim:ft=snippets:
