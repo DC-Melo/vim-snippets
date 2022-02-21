@@ -33,6 +33,11 @@ jobs -l
 $0
 endsnippet
 
+snippet iconvgbk2utf "iconv -f gbk -t utf-8 file" b
+iconv -f gbk -t utf-8 1.txt > 2.txt
+$0
+endsnippet
+
 snippet ffmpegvideo2gif "test shell" b
 ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif // 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
 convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
