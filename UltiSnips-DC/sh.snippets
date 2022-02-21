@@ -40,7 +40,10 @@ endsnippet
 
 
 snippet gitRepoCreate "iconv -f gbk -t utf-8 file" b
-name="name"; des="description"; curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' -d '{"access_token":"'"${GITEE_TOKEN}"'","name":"'"${name}"'","description":"'"${des}"'","private":"false","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","license_template":"MIT"}'; curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/user/repos -d '{"name":"'"${name}"'","description":"'"${des}"'","private":"false"}'; git clone git@gitee.com:dc-melo/${name}.git
+name="name"; des="description"; 
+curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' -d '{"access_token":"'"${GITEE_TOKEN}"'","name":"'"${name}"'","description":"'"${des}"'","private":"false","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","license_template":"MIT"}'; 
+curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/user/repos -d '{"name":"'"${name}"'","description":"'"${des}"'","private":"false"}'; 
+git clone git@gitee.com:dc-melo/${name}.git
 $0
 endsnippet
 
@@ -70,5 +73,30 @@ convert -size 100x60 xc:skyblue -fill white -stroke black \
 	-draw "text 0,0 'Hello'"   draw_text.gif
 $0
 endsnippet
+
+
+snippet findcmd "Rounded Rectangle" b
+find . -iname '*.java' -type f -exec sed -i 's/old/REPLACEMENT/g' {} +;
+find . -iname '*.py'   -type f -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
+find . -iname '*.zip'  -type f -exec bash -c 'cd `dirname ${1}`  && unzip -d dir `basename ${1}`' _ {} \;
+find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
+find . -maxdepth 1 -inum 000  -exec mv {} newname \;
+grep -irn --include="*.py" --include="*.java" --include="*.go" --exclude-dir={proc,boot,build} "" .
+grep -irl '' . | xargs sed -i 's/old/new/g'
+grep -irl 'pattern' -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
+find .  -name '*.go' -type f -exec bash -c 'grep -iq "func main" "${1}" && cd `dirname ${1}` && go build' _ {} \;
+find . -iname "*.md" -exec more {} + >> README.md
+find . -iname "*.md" -exec cat  {} + >> README.md
+printf '' | xsel -i -b
+printf '' > /tmp/registeri
+
+
+
+
+$0
+endsnippet
+
+
+
 
 # vim:ft=snippets:
