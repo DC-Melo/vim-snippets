@@ -97,10 +97,10 @@ snippet gitconfig "git config file" b
 	remote = origin
 	merge = refs/heads/master
 [remote "origin"]
-	url = git@gitee.com:dc-melo/${1:name}.git
+	url = git@gitee.com:DC-Melo/${1:name}.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "gitee"]
-	url = git@gitee.com:dc-melo/$1.git
+	url = git@gitee.com:DC-Melo/$1.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "github"]
 	url = git@github.com:DC-Melo/$1.git
@@ -109,7 +109,7 @@ snippet gitconfig "git config file" b
 	url = ssh://git@10.1.21.240:11022/DC-Melo/$1.git
 	fetch = +refs/heads/*:refs/remotes/gogs/*
 [remote "all"]
-	url = git@gitee.com:dc-melo/$1.git
+	url = git@gitee.com:DC-Melo/$1.git
 	url = git@github.com:DC-Melo/$1.git
 	url = ssh://git@10.1.21.240:11022/DC-Melo/$1.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
@@ -118,7 +118,39 @@ snippet gitconfig "git config file" b
 	email = melo.dachor@gmail.com
 endsnippet
 
-snippet snippettest "snippet test" b
-snippet test code
+snippet gitignore "snippet test" b
+bin
+build
+target
+
+.session.vim
+*.log
+.cache
+
+# Created by https://www.toptal.com/developers/gitignore/api/cmake
+# Edit at https://www.toptal.com/developers/gitignore?templates=cmake
+
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+### CMake Patch ###
+# External projects
+*-prefix/
+
+# End of https://www.toptal.com/developers/gitignore/api/cmake
+endsnippet
+
+snippet snipalltest "snippet test" b
+all snippet test
 endsnippet
 # vim:ft=snippets:
