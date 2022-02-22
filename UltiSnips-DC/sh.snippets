@@ -117,6 +117,14 @@ snippet findGrepGrep "find file and grep and grep file" b
 find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
 $0
 endsnippet
+snippet findRenameByIndex "find file and rename by index" b
+find file and rename by index
+$0
+endsnippet
+snippet findRenameBySubs "find file and rename by substitute" b
+find file and rename by substitute
+$0
+endsnippet
 snippet findInumMv "find by inum file and rename file" b
 find . -maxdepth 1 -inum 000  -exec mv {} newname \;
 $0
@@ -184,6 +192,30 @@ snippet collapseRows "Rounded Rectangle" b
 cat file.txt | datamash -g 1 collapse 2 -s -W
 # Collapse rows in one column based on a common ID in another column:
 # GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
+$0
+endsnippet
+snippet listDir "list directorys" b
+ls -dtalh */ 
+$0
+endsnippet
+snippet listDirFirst "list directorys first" b
+\`ls -dtah */ | head -1\`
+$0
+endsnippet
+snippet listDirLast "list directorys last" b
+\`ls -dtah */ | tail -1\`
+$0
+endsnippet
+snippet listFile "list file" b
+ls -ptalh . | grep -v /
+$0
+endsnippet
+snippet listFileFirst "list file first" b
+\`ls -ptah . | grep -v / | head -1\`
+$0
+endsnippet
+snippet listFileLast "list file last" b
+\`ls -ptah . | grep -v / |tail -1\`
 $0
 endsnippet
 snippet snipTestShell "snip test shell" b
