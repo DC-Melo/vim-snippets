@@ -4,8 +4,95 @@
 snippet debug "build type debug" b
 set(CMAKE_BUILD_TYPE debug)
 MESSAGE( STATUS "变量:CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+$0
 endsnippet
 
 snippet message "cmake mesage" b
 MESSAGE( STATUS "变量:${1:var} = ${$1}")
+$0
+endsnippet
+
+
+snippet funcSubDirList "function return sub dir list" b
+# 输入文件夹，返回该文件夹下子文件夹列表
+macro(SUBDIRLIST result curdir)
+    file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+    set(dirlist "")
+    foreach(child ${children})
+        if(IS_DIRECTORY ${curdir}/${child})
+            LIST(APPEND dirlist ${child})
+        endif()
+    endforeach()
+    set(${result} ${dirlist})
+endmacro()
+$0
+endsnippet
+
+snippet funcSubFileList "function return sub file match pattern list" b
+# 输入文件夹，返回该文件夹下满足正则表达式的子文件列表
+function(SUBFILELIST result curdir pattern)
+    file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+    set(filelist "")
+    foreach(child ${children})
+        if(NOT IS_DIRECTORY ${curdir}/${child} AND child MATCHES "${pattern}")
+            STRING(REGEX REPLACE ".cpp$" "" child_h ${child})
+            LIST(APPEND filelist ${child_h})
+        endif()
+    endforeach()
+    set(${result} ${filelist} PARENT_SCOPE)
+endfunction()
+$0
+endsnippet
+
+snippet funcAll "function all" b
+# 输入文件夹，返回该文件夹下子文件夹列表
+macro(SUBDIRLIST result curdir)
+    file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+    set(dirlist "")
+    foreach(child ${children})
+        if(IS_DIRECTORY ${curdir}/${child})
+            LIST(APPEND dirlist ${child})
+        endif()
+    endforeach()
+    set(${result} ${dirlist})
+endmacro()
+
+# 输入文件夹，返回该文件夹下满足正则表达式的子文件列表
+function(SUBFILELIST result curdir pattern)
+    file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+    set(filelist "")
+    foreach(child ${children})
+        if(NOT IS_DIRECTORY ${curdir}/${child} AND child MATCHES "${pattern}")
+            STRING(REGEX REPLACE ".cpp$" "" child_h ${child})
+            LIST(APPEND filelist ${child_h})
+        endif()
+    endforeach()
+    set(${result} ${filelist} PARENT_SCOPE)
+endfunction()
+$0
+endsnippet
+
+snippet buildMultipleProject "build multip project" b
+# 多个项目编译方法
+include_directories(${CMAKE_SOURCE_DIR}/app/src/main/headers)
+SUBDIRLIST(SubFolderMatch ${CMAKE_SOURCE_DIR}/app/src/main/cpp)
+foreach(ITEM_FOLDER ${SubFolderMatch})
+    message("项目：= ${ITEM_FOLDER}")
+    SUBFILELIST(SubFilesMatch ${CMAKE_SOURCE_DIR}/app/src/main/cpp/${ITEM_FOLDER} "solution[_0-9]+.cpp")
+    foreach(SOLUTION ${SubFilesMatch})
+        if(EXISTS ${CMAKE_SOURCE_DIR}/app/src/main/cpp/${ITEM_FOLDER}/app.cpp)
+            set(TARGET "${ITEM_FOLDER}_${SOLUTION}")
+            message("方案：= ${TARGET}")
+            add_executable(${TARGET} ${CMAKE_SOURCE_DIR}/app/src/main/cpp/${ITEM_FOLDER}/app.cpp)
+            add_library(${TARGET}_lib ${CMAKE_SOURCE_DIR}/app/src/main/cpp/${ITEM_FOLDER}/${SOLUTION}.cpp)
+            target_link_libraries(${TARGET} ${TARGET}_lib)
+        endif()
+    endforeach()
+endforeach()
+$0
+endsnippet
+
+snippet snipCmakeTest "snippet cmake test" b
+snippet cmake test
+$0
 endsnippet

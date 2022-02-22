@@ -26,18 +26,45 @@ endglobal
 #                            TextMate Snippets                            #
 ###########################################################################
 
-snippet testshell "test shell" b
-clear
-ls -al
-jobs -l
+snippet gitpush "git add ,commit, push" b
+git add .
+git commit -m "DC"
+git push gitee
+git push github
 $0
 endsnippet
 
-snippet gitpush "git add ,commit, push" b
-git add .
-git commit -m "temp"
-git push gitee
-git push github
+snippet gitRepoClear "repo clear " b
+curl -X PUT --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/owenr/repo/clear' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026"}'
+$0
+endsnippet
+
+snippet gitRepoDelete "repo delete" b
+curl -X PUT --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/owenr/repo/clear' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026"}'
+$0
+endsnippet
+
+snippet gitRepoCreate "repo create" b
+curl -X PUT --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/owenr/repo/clear' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026"}'
+name="name"; des="description"; 
+curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' -d '{"access_token":"'"${GITEE_TOKEN}"'","name":"'"${name}"'","description":"'"${des}"'","private":"false","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","license_template":"MIT"}'; 
+curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/user/repos -d '{"name":"'"${name}"'","description":"'"${des}"'","private":"false"}'; 
+git clone git@gitee.com:dc-melo/${name}.git
+$0
+endsnippet
+
+snippet gitRepoUpdate "repo update" b
+curl -X PATCH --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/ower/repo' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026","name":"name","has_issues":"true","has_wiki":"true","can_comment":"true"}'
+$0
+endsnippet
+
+snippet gitRepoList "repo List" b
+curl -X PATCH --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/ower/repo' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026","name":"name","has_issues":"true","has_wiki":"true","can_comment":"true"}'
+$0
+endsnippet
+
+snippet gitRepoInfo "repo Info" b
+curl -X PATCH --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/ower/repo' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026","name":"name","has_issues":"true","has_wiki":"true","can_comment":"true"}'
 $0
 endsnippet
 
@@ -46,28 +73,19 @@ iconv -f gbk -t utf-8 1.txt > 2.txt
 $0
 endsnippet
 
-
-snippet gitRepoCreate "iconv -f gbk -t utf-8 file" b
-name="name"; des="description"; 
-curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' -d '{"access_token":"'"${GITEE_TOKEN}"'","name":"'"${name}"'","description":"'"${des}"'","private":"false","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","license_template":"MIT"}'; 
-curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/user/repos -d '{"name":"'"${name}"'","description":"'"${des}"'","private":"false"}'; 
-git clone git@gitee.com:dc-melo/${name}.git
-$0
-endsnippet
-
-snippet ffmpegvideo2gif "test shell" b
+snippet ffmpegVideo2Gif "video to gif convert" b
 ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif // 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
 convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
 $0
 endsnippet
 
-snippet convdrawheart "test shell" b
+snippet convdrawheart "convert draw heart" b
 convert +antialias -size 80x80 -gravity center \
 	-font WebDings label:Y   heart.gif
 $0
 endsnippet
 
-snippet convdrawrrect "Rounded Rectangle" b
+snippet convdrawrrect "convert draw rect" b
 convert -size 100x60 xc:skyblue -fill white -stroke black \
 	-draw "roundrectangle 20,10 80,50 20,15"  draw_rrect.gif
 $0
@@ -75,7 +93,7 @@ endsnippet
 
 
 
-snippet convdrawtext "Rounded Rectangle" b
+snippet convdrawtext "convert draw text" b
 convert -size 100x60 xc:skyblue -fill white -stroke black \
 	-font Candice -pointsize 40 -gravity center \
 	-draw "text 0,0 'Hello'"   draw_text.gif
@@ -83,78 +101,95 @@ $0
 endsnippet
 
 
-snippet findcmd "Rounded Rectangle" b
+snippet findSed "find file and sed file" b
 find . -iname '*.java' -type f -exec sed -i 's/old/REPLACEMENT/g' {} +;
+$0
+endsnippet
+snippet findVim "find file and vim file" b
 find . -iname '*.py'   -type f -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
-find . -iname '*.zip'  -type f -exec bash -c 'cd `dirname ${1}`  && unzip -d dir `basename ${1}`' _ {} \;
+$0
+endsnippet
+snippet findUnzip "find zip and unzip file" b
+find . -iname '*.zip'  -type f -exec bash -c 'cd \`dirname ${1}\`  && unzip -d dir \`basename ${1}\`' _ {} \;
+$0
+endsnippet
+snippet findGrepGrep "find file and grep and grep file" b
 find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
+$0
+endsnippet
+snippet findInumMv "find by inum file and rename file" b
 find . -maxdepth 1 -inum 000  -exec mv {} newname \;
+$0
+endsnippet
+snippet grepFormwork "grep formwork" b
 grep -irn --include="*.py" --include="*.java" --include="*.go" --exclude-dir={proc,boot,build} "" .
+$0
+endsnippet
+snippet grepSed "grep sed" b
 grep -irl '' . | xargs sed -i 's/old/new/g'
+$0
+endsnippet
+snippet grepVimSubstitute "grep vim substitute" b
 grep -irl 'pattern' -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
+$0
+endsnippet
+snippet findGrepGOBuild "find go main file and build it" b
 find .  -name '*.go' -type f -exec bash -c 'grep -iq "func main" "${1}" && cd `dirname ${1}` && go build' _ {} \;
-find . -iname "*.md" -exec more {} + >> README.md
+$0
+endsnippet
+snippet findCat "find file and concatenate file" b
 find . -iname "*.md" -exec cat  {} + >> README.md
+find . -iname "*.md" -exec more {} + >> README.md
+$0
+endsnippet
+snippet printf2file "print string to file" b
 printf '' | xsel -i -b
 printf '' > /tmp/registeri
 $0
 endsnippet
-
-snippet rsynctemp "Rounded Rectangle" b
+snippet rsyncFormwork "rsync file formwork" b
 rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
 $0
 endsnippet
-
-snippet removesecurely "Securely remove" b
+snippet removeSecurely "Securely remove" b
 shred -zuv file	# Securely remove your file by overwritting then removing
 $0
 endsnippet
-
-
-snippet pasteColumn "Rounded Rectangle" b
+snippet pasteColumn "paste column joins files column-wise fashion" b
 paste -d";" file1.txt file2.txt
 paste joins files together in a column-wise fashion. Another way to think about this is in contrast to cat, which joins files vertically. For example:
 $0
 endsnippet
-
-snippet aliastemp "Rounded Rectangle" b
+snippet aliasFormwork "alias Formwork" b
 alias cp="cp -R"
 $0
 endsnippet
-
-
-snippet viewColumn "Rounded Rectangle" b
-Suppose you have a file with fields of variable length. Viewing it in the terminal can be messy because, if a field in one row is longer than one in another, it will upset the spacing of the columns. You can remedy this as follows:
+snippet viewColumn "view file space as column" b
 cat myfile.txt | column -t
+# Suppose you have a file with fields of variable length. Viewing it in the terminal can be messy because, if a field in one row is longer than one in another, it will upset the spacing of the columns. You can remedy this as follows:
+$0
+endsnippet
+snippet splitFile "split file by lines" b
+split -l 3 -d test.txt test_split_
+# If we want to split this file into sub-files with 3 lines each, we can use:
+$0
+endsnippet
+snippet securityFile "security File" b
+gpg --full-generate-key
+# Here are the basics about gpg. The first thing to do is to generate a public/private key pair for yourself:
 $0
 endsnippet
 
-
-snippet splitFile "Rounded Rectangle" b
-If we want to split this file into sub-files with 3 lines each, we can use:
-$ split -l 3 -d test.txt test_split_
+snippet collapseRows "Rounded Rectangle" b
+cat file.txt | datamash -g 1 collapse 2 -s -W
+# Collapse rows in one column based on a common ID in another column:
+# GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
 $0
 endsnippet
-
-
-snippet securityfile "Rounded Rectangle" b
-Here are the basics about gpg. The first thing to do is to generate a public/private key pair for yourself:
-$ gpg --full-generate-key
-$0
-endsnippet
-
-
-snippet rsynctemp "Rounded Rectangle" b
-GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
-
-Collapse rows in one column based on a common ID in another column:
-$ cat file.txt
-3       d
-2       w
-3       c
-4       x
-1       a
-$ cat file.txt | datamash -g 1 collapse 2 -s -W
+snippet snipTestShell "snip test shell" b
+clear
+ls -al
+jobs -l
 $0
 endsnippet
 

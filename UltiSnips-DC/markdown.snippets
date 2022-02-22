@@ -1,12 +1,6 @@
 priority -50
 
 
-snippet snipmarkdowntest "snip markdown test"
-markdown snippet test
-$0
-endsnippet
-
-
 snippet readmeFormwork "readme formwork" b
 # ${1:REPO_NAME} #
 <!-- 项目标记☻☺ -->
@@ -87,20 +81,12 @@ If you comment on the name in the donation message, it will be recorded in the l
 $0
 endsnippet
 
-
-
-snippet imgHtml "Gantt Chart" b
+snippet imgHtml "image html" b
 <img src="${1:url}" alt="图片替换文本" width="500" height="300" align="center" />
 $0
 endsnippet
 
-
-
-
-
-
-
-snippet ganttmmd "Gantt Chart" b
+snippet ganttDateFormwork "Gantt Chart date mermaid formwork" b
 \`\`\`mermaid
 gantt
 dateFormat  YYYY-MM-DD.HH
@@ -135,10 +121,11 @@ Reading            : crit,active , mn0    , TODAY.21 , TODAY.23
 Comment            : crit,active , mn0    , TODAY.21 , TODAY.23
 
  \`\`\`
+$0
 endsnippet
 
 
-snippet ganttmmw "Gantt Chart" b
+snippet ganttWeekFormwork "Gantt Chart week mermaid formwork" b
 \`\`\`mermaid
 gantt
 dateFormat  YYYY-MM-DD
@@ -178,13 +165,11 @@ section SUN
 SUN task    : sun0p  , TOWEEK.7 , 1d
 task1       : active , sun1f    , TOWEEK.7    , 4h
 task2       : active , sun2f    , after sun1f , 4h
-
- \`\`\`
+\`\`\`
+$0
 endsnippet
 
-
-
-snippet graphmm "Gantt Chart" b
+snippet graphFormwork "graph Chart mermaid" b
 \`\`\`mermaid
 graphLR
 start[开始]-->input[输入A,B,C]
@@ -198,14 +183,11 @@ conditionB--NO-->printC[输出C]
 printA-->stop[结束]
 printC-->stop
 printB-->stop
-
- \`\`\`
+\`\`\`
+$0
 endsnippet
 
-
-
-snippet piemm "Gantt Chart" b
-
+snippet pieFormwork "pie Chart mermaid" b
 \`\`\`mermaid
 pie
 title Key elements in Product X
@@ -213,12 +195,11 @@ title Key elements in Product X
 "Potassium" : 50.05
 "Magnesium" : 10.01
 "Iron" :  5
-
- \`\`\`
+\`\`\`
+$0
 endsnippet
 
 snippet journeymm "Gantt Chart" b
-
 \`\`\`mermaid
 journey
 title My working day
@@ -229,31 +210,33 @@ Do work: 1: Me, Cat
 section Go home
 Go downstairs: 5: Me
 Sit down: 5: Me
-
- \`\`\`
-endsnippet
-
-snippet diagrammm "Gantt Chart" b
-    CUSTOMER \|\|--o{ ORDER : places
-    CUSTOMER {
-    string name
-    string custNumber
-    string sector
-    }
-    ORDER \|\|--\|{ LINE-ITEM : contains
-    ORDER {
-    int orderNumber
-    string deliveryAddress
-    }
-    LINE-ITEM {
-    string productCode
-    int quantity
-    float pricePerUnit
-    }
-    
-endsnippet
-
-snippet diagrammm "Gantt Chart" b
+\`\`\`
 $0
 endsnippet
 
+snippet diagramFormwork "diagram Chart formwork" b
+\`\`\`mermaid
+CUSTOMER \|\|--o{ ORDER : places
+CUSTOMER {
+string name
+string custNumber
+string sector
+}
+ORDER \|\|--\|{ LINE-ITEM : contains
+ORDER {
+int orderNumber
+string deliveryAddress
+}
+LINE-ITEM {
+string productCode
+int quantity
+float pricePerUnit
+}
+\`\`\`
+$0
+endsnippet
+
+snippet snipmarkdowntest "snip markdown test"
+markdown snippet test
+$0
+endsnippet
