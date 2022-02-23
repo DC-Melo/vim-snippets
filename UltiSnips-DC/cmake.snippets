@@ -4,6 +4,7 @@
 snippet debug "build type debug" b
 set(CMAKE_BUILD_TYPE debug)
 MESSAGE( STATUS "变量:CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+add_compile_options(-std=c++11)
 $0
 endsnippet
 
@@ -89,6 +90,20 @@ foreach(ITEM_FOLDER ${SubFolderMatch})
         endif()
     endforeach()
 endforeach()
+$0
+endsnippet
+
+snippet findOpenCV "find opencv package " b
+find_package( OpenCV REQUIRED )
+MESSAGE( STATUS "变量:OpenCV_LIBS = ${OpenCV_LIBS}")
+MESSAGE( STATUS "变量:OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
+$0
+endsnippet
+
+snippet findOpenGL "find opengl package" b
+find_package( OpenGL )
+MESSAGE( STATUS "变量:OPENGL_FOUND = ${OPENGL_FOUND}")
+MESSAGE( STATUS "变量:OPENGL_INCLUDE_DIRS = ${OPENGL_INCLUDE_DIRS}")
 $0
 endsnippet
 

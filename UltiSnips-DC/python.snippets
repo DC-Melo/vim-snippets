@@ -10,14 +10,30 @@ with open(sys.argv[1],'r',encoding='utf-8-sig') as f:
 $0
 endsnippet
 
-snippet translatePython "translate python script" b
-#!/usr/bin/env python
-# coding=utf-8
+snippet readFileChunks "read file by chunks" b
+def read_in_chunks ( filePath , chunk_size = 1024*1024):
+    """
+    Lazy function (generator) to read a file piece by piece.
+    Default chunk size: 1M
+    You can set your own chunk size
+    """
+    file_object = open (filePath)
+    while True :
+        chunk_data = file_object.read(chunk_size)
+        if not chunk_data :
+        break
+        yield chunk_data
 
+
+for chunk in read_in_chunks('/path/to/file'):
+    process (chunk)
+$0
+endsnippet
+
+snippet translatePyScript "translate python script" b
 from urllib import request, parse
 import json
 import sys
- 
 def fanyi(content):
     req_url = 'http://fanyi.youdao.com/translate'
     head_data = {}
@@ -157,9 +173,39 @@ list(map(lambda x: x * x, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
 $0
 endsnippet
 
+snippet listComprehensions "list Comprehensions" b
+${1:list_result} = [${2:item} for $2 in ${3:array} if $2 == 'a']
+$0
+endsnippet
+
+snippet multipleprocess "multiple process " b
+def run_proc(name):
+    print('Run child process %s (%s)...' % (name, os.getpid()))
+
+print('Parent process %s.' % os.getpid())
+p = Process(target=run_proc, args=('test',))
+print('Child process will start.')
+p.start()
+p.join()
+print('Child process end.')
+$0
+endsnippet
+
+snippet multipleThread "multiple Thread" b
+def run_proc(name):
+	print('Run child process %s (%s)...' % (name, os.getpid()))
+
+print('Parent process %s.' % os.getpid())
+p = Process(target=run_proc, args=('test',))
+print('Child process will start.')
+p.start()
+p.join()
+print('Child process end.')
+endsnippet
+
+
 snippet snipTestPython "snip Test Python" b
 snip Test Python
 $0
 endsnippet
 # vim:ft=snippets:
-

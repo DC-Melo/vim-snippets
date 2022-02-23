@@ -151,3 +151,44 @@ private:
 $0
 endsnippet
 
+snippet vectorRandom "vector random int"
+vector<int> ilist {1,2,3.0,4,5,6,7};
+$0
+endsnippet
+
+snippet vectorInit "vector int string init"
+vector<int> ilist(7,3);
+vector<string> strs={"flower","flow","flight"};
+$0
+endsnippet
+
+
+
+snippet cvwindow "CV window"
+cv::Mat img = cv::imread( argv[1], -1 );
+if( img.empty() ) return -1;
+cv::namedWindow( "Example 2-1", cv::WINDOW_AUTOSIZE );
+cv::imshow( "Example 2-1", img );
+cv::waitKey( 0 );
+cv::destroyWindow( "Example 2-1" );
+$0
+endsnippet
+
+snippet cvopenavi "CV open video"
+cap.open( string(argv[1]) );
+cout <<"Opened file: " <<argv[1] <<endl;
+cv::Mat frame;
+for(;;) {
+	cap >> frame;
+	if( frame.empty() ) break; // Ran out of film
+	cv::imshow( "Example 2-3", frame );
+	if( (char)cv::waitKey(33) >= 0 ) break;
+}
+$0
+endsnippet
+
+snippet cvGaussianblur "CV Gaussian Blur"
+cv::GaussianBlur( image, out, cv::Size(5,5), 3, 3);
+cv::GaussianBlur( out, out, cv::Size(5,5), 3, 3);
+$0
+endsnippet
