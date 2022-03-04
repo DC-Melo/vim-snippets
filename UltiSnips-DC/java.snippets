@@ -10,6 +10,3853 @@ priority -50
 
 snippet sniptestjava "snip test java result" b
 snip test java snip test java result
+$0
 endsnippet
 
 # vim:ft=snippets:
+snippet findTwoSum1 "(int[])pos=find two sum equal target(int[] nums, int target)" b
+    public int[] twoSum(int[] nums, int target) {
+        int[] result = new int[2];
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (!map.containsKey(target - nums[i])) {
+                map.put(nums[i], i);
+            } else {// 找到了解
+                result[1] = i;
+                result[0] = map.get(target - nums[i]);
+            }
+        }
+        return result;
+    }
+
+    public int[] twoSum2(int[] nums, int target) {
+        int len = nums.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            if (map.containsKey(target - nums[i])) {
+                int[] res = new int[2];
+                res[0] = map.get(target - nums[i]);
+                res[1] = i;
+                return res;
+            } else {
+                map.put(nums[i], i);
+            }
+        }
+        throw new IllegalArgumentException("给出的数组和 target 不合法！");
+    }
+$0
+endsnippet
+
+
+
+snippet findLongestPalindrome "(string)str=longest Palindrome(string s)" b
+public boolean isPalindrome(String s, int b, int e){//判断s[b...e]是否为回文字符串
+	int i = b, j = e;
+	while(i <= j){
+		if(s.charAt(i) != s.charAt(j)) return false;
+		++i;
+		--j;
+	}
+	return true;
+}
+public String longestPalindrome(String s) {
+	if(s.length() <=1){
+		return s;
+	}
+	int l = 1, j = 0, ll = 1;
+	for(int i = 1; i < s.length(); ++i){
+		 //下面这个if语句就是用来维持循环不变式，即ll恒表示：以第i个字符为尾的最长回文子串的长度
+		 if(i - 1 - ll >= 0 && s.charAt(i) == s.charAt(i-1-ll)) ll += 2;
+		 else{
+			 while(true){//重新确定以i为边界，最长的回文字串长度。确认范围为从ll+1到1
+				 if(ll == 0||isPalindrome(s,i-ll,i)){
+					 ++ll;
+					 break;
+				 }
+				 --ll;
+			 }
+		 }
+		 if(ll > l){//更新最长回文子串信息
+			l = ll;
+			j = i;
+		}
+	}
+	return s.substring(j-l+1, j+1);//返回从j-l+1到j长度为l的子串
+}
+$0
+endsnippet
+
+
+
+
+# _0001 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0001/Solution.java
+# ::::::::::::::
+snippet easy_0001 "snip comment" b
+
+package com.blankj.easy._001;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/21
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public int[] twoSum(int[] nums, int target) {
+//        for (int i = 0; i < nums.length; ++i) {
+//            for (int j = i + 1; j < nums.length; ++j) {
+//                if (nums[i] + nums[j] == target) {
+//                    return new int[]{i, j};
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+    public int[] twoSum(int[] nums, int target) {
+        int len = nums.length;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; ++i) {
+            final Integer value = map.get(nums[i]);
+            if (value != null) {
+                return new int[] { value, i };
+            }
+            map.put(target - nums[i], i);
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums = new int[]{2, 7, 11, 15};
+        int target = 9;
+        System.out.println(Arrays.toString(solution.twoSum(nums, target)));
+    }
+}
+
+$0
+endsnippet
+
+# _0007 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0007/Solution.java
+# ::::::::::::::
+snippet easy_0007 "snip comment" b
+
+package com.blankj.easy._007;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/19
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int reverse(int x) {
+        long res = 0;
+        for (; x != 0; x /= 10)
+            res = res * 10 + x % 10;
+        return res > Integer.MAX_VALUE || res < Integer.MIN_VALUE ? 0 : (int) res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.reverse(123));
+        System.out.println(solution.reverse(-123));
+        System.out.println(solution.reverse(100));
+        System.out.println(solution.reverse(1000000003));
+    }
+}
+$0
+endsnippet
+
+# _0009 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0009/Solution.java
+# ::::::::::::::
+snippet easy_0009 "snip comment" b
+
+package com.blankj.easy._009;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/24
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public boolean isPalindrome(int x) {
+//        if (x < 0) return false;
+//        int copyX = x, reverse = 0;
+//        while (copyX > 0) {
+//            reverse = reverse * 10 + copyX % 10;
+//            copyX /= 10;
+//        }
+//        return x == reverse;
+//    }
+
+    public boolean isPalindrome(int x) {
+        if (x < 0 || (x != 0 && x % 10 == 0)) return false;
+        int halfReverseX = 0;
+        while (x > halfReverseX) {
+            halfReverseX = halfReverseX * 10 + x % 10;
+            x /= 10;
+        }
+        return halfReverseX == x || halfReverseX / 10 == x;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.isPalindrome(-1));
+        System.out.println(solution.isPalindrome(10010));
+
+        System.out.println(solution.isPalindrome(0));
+        System.out.println(solution.isPalindrome(11));
+        System.out.println(solution.isPalindrome(111));
+        System.out.println(solution.isPalindrome(222222222));
+    }
+}
+
+$0
+endsnippet
+
+# _0013 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0013/Solution.java
+# ::::::::::::::
+snippet easy_0013 "snip comment" b
+
+package com.blankj.easy._013;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/25
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int romanToInt(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+        int len = s.length();
+        int sum = map.get(s.charAt(len - 1));
+        for (int i = len - 2; i >= 0; --i) {
+            if (map.get(s.charAt(i)) < map.get(s.charAt(i + 1))) {
+                sum -= map.get(s.charAt(i));
+            } else {
+                sum += map.get(s.charAt(i));
+            }
+        }
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.romanToInt("DCXXI"));// 621
+        System.out.println(solution.romanToInt("CCCXLVIII"));// 348
+    }
+}
+
+$0
+endsnippet
+
+# _0014 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0014/Solution.java
+# ::::::::::::::
+snippet easy_0014 "snip comment" b
+
+package com.blankj.easy._014;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/26
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        int len = strs.length;
+        if (len == 0) return "";
+        int minLen = 0x7fffffff;
+        for (String str : strs) minLen = Math.min(minLen, str.length());
+        for (int j = 0; j < minLen; ++j)
+            for (int i = 1; i < len; ++i)
+                if (strs[0].charAt(j) != strs[i].charAt(j))
+                    return strs[0].substring(0, j);
+        return strs[0].substring(0, minLen);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.longestCommonPrefix(new String[]{"abc", "abcd", "ab"}));
+    }
+}
+
+$0
+endsnippet
+
+# _0020 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0020/Solution.java
+# ::::::::::::::
+snippet easy_0020 "snip comment" b
+
+package com.blankj.easy._020;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/28
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public boolean isValid(String s) {
+        char[] stack = new char[s.length() + 1];
+        int top = 1;
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == '[' || c == '{') {
+                stack[top++] = c;
+            } else if (c == ')' && stack[--top] != '(') {
+                return false;
+            } else if (c == ']' && stack[--top] != '[') {
+                return false;
+            } else if (c == '}' && stack[--top] != '{') {
+                return false;
+            }
+        }
+        return top == 1;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.isValid("()[]{}({[]})"));
+        System.out.println(solution.isValid("(])]"));
+    }
+}
+
+$0
+endsnippet
+
+# _0021 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0021/Solution.java
+# ::::::::::::::
+snippet easy_0021 "snip comment" b
+
+package com.blankj.easy._021;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/29
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(0);
+        ListNode temp = head;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                temp.next = l1;
+                l1 = l1.next;
+            } else {
+                temp.next = l2;
+                l2 = l2.next;
+            }
+            temp = temp.next;
+        }
+        temp.next = l1 != null ? l1 : l2;
+        return head.next;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode listNode0 = ListNode.createTestData("[1,3,5,7,9]");
+        ListNode listNode1 = ListNode.createTestData("[2,4,6,8,10]");
+        ListNode.print(listNode0);
+        ListNode.print(listNode1);
+        ListNode.print(solution.mergeTwoLists(listNode0, listNode1));
+    }
+}
+$0
+endsnippet
+
+# _0026 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0026/Solution.java
+# ::::::::::::::
+snippet easy_0026 "snip comment" b
+
+package com.blankj.easy._026;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/30
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int removeDuplicates(int[] nums) {
+        int len = nums.length;
+        if (len <= 1) return len;
+        int tail = 1;
+        for (int i = 1; i < len; ++i) {
+            if (nums[i - 1] != nums[i]) {
+                nums[tail++] = nums[i];
+            }
+        }
+        return tail;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] data = new int[]{0, 1, 1, 2, 3, 3, 3};
+        int len = solution.removeDuplicates(data);
+        for (int i = 0; i < len; i++) {
+            System.out.print(data[i] + (i == len - 1 ? "" : ", "));
+        }
+    }
+}
+
+$0
+endsnippet
+
+# _0027 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0027/Solution.java
+# ::::::::::::::
+snippet easy_0027 "snip comment" b
+
+package com.blankj.easy._027;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/31
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int removeElement(int[] nums, int val) {
+        int tail = 0;
+        for (int i = 0, len = nums.length; i < len; ++i) {
+            if (nums[i] != val) {
+                nums[tail++] = nums[i];
+            }
+        }
+        return tail;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] data = new int[]{0, 3, 1, 1, 2, 3, 3, 3};
+        int len = solution.removeElement(data, 3);
+        for (int i = 0; i < len; i++) {
+            System.out.print(data[i] + (i == len - 1 ? "" : ", "));
+        }
+    }
+}
+
+$0
+endsnippet
+
+# _0028 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0028/Solution.java
+# ::::::::::::::
+snippet easy_0028 "snip comment" b
+
+package com.blankj.easy._028;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/01
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int strStr(String haystack, String needle) {
+        int l1 = haystack.length(), l2 = needle.length();
+        if (l1 < l2) return -1;
+        for (int i = 0; ; i++) {
+            if (i + l2 > l1) return -1;
+            for (int j = 0; ; j++) {
+                if (j == l2) return i;
+                if (haystack.charAt(i + j) != needle.charAt(j)) break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.strStr("12345", "23"));
+        System.out.println(solution.strStr("12345", ""));
+    }
+}
+
+$0
+endsnippet
+
+# _0035 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0035/Solution.java
+# ::::::::::::::
+snippet easy_0035 "snip comment" b
+
+package com.blankj.easy._035;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/02
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1, mid = (right + left) >> 1;
+        while (left <= right) {
+            if (target <= nums[mid]) right = mid - 1;
+            else left = mid + 1;
+            mid = (right + left) >> 1;
+        }
+        return left;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums = new int[]{1, 3, 5, 6};
+        System.out.println(solution.searchInsert(nums, 5));
+        System.out.println(solution.searchInsert(nums, 2));
+        System.out.println(solution.searchInsert(nums, 7));
+        System.out.println(solution.searchInsert(nums, 0));
+    }
+}
+
+$0
+endsnippet
+
+# _0038 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0038/Solution.java
+# ::::::::::::::
+snippet easy_0038 "snip comment" b
+
+package com.blankj.easy._038;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/03
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public String countAndSay(int n) {
+        String str = "1";
+        while (--n > 0) {
+            int times = 1;
+            StringBuilder sb = new StringBuilder();
+            char[] chars = str.toCharArray();
+            int len = chars.length;
+            for (int j = 1; j < len; j++) {
+                if (chars[j - 1] == chars[j]) {
+                    times++;
+                } else {
+                    sb.append(times).append(chars[j - 1]);
+                    times = 1;
+                }
+            }
+            str = sb.append(times).append(chars[len - 1]).toString();
+        }
+        return str;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        for (int i = 1; i < 6; i++) {
+            System.out.println(solution.countAndSay(i));
+        }
+    }
+}
+
+$0
+endsnippet
+
+# _0053 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0053/Solution.java
+# ::::::::::::::
+snippet easy_0053 "snip comment" b
+
+package com.blankj.easy._053;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/04
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    //    public int maxSubArray(int[] nums) {
+//        int len = nums.length, dp = nums[0], max = dp;
+//        for (int i = 1; i < len; ++i) {
+//            dp = nums[i] + (dp > 0 ? dp : 0);
+//            if (dp > max) max = dp;
+//        }
+//        return max;
+//    }
+    public int maxSubArray(int[] nums) {
+        return helper(nums, 0, nums.length - 1);
+    }
+
+    private int helper(int[] nums, int left, int right) {
+        if (left >= right) return nums[left];
+        int mid = (left + right) >> 1;
+        int leftAns = helper(nums, left, mid);
+        int rightAns = helper(nums, mid + 1, right);
+        int leftMax = nums[mid], rightMax = nums[mid + 1];
+        int temp = 0;
+        for (int i = mid; i >= left; --i) {
+            temp += nums[i];
+            if (temp > leftMax) leftMax = temp;
+        }
+        temp = 0;
+        for (int i = mid + 1; i <= right; ++i) {
+            temp += nums[i];
+            if (temp > rightMax) rightMax = temp;
+        }
+        return Math.max(Math.max(leftAns, rightAns), leftMax + rightMax);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums0 = new int[]{-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        System.out.println(solution.maxSubArray(nums0));
+    }
+}
+
+$0
+endsnippet
+
+# _0058 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0058/Solution.java
+# ::::::::::::::
+snippet easy_0058 "snip comment" b
+
+package com.blankj.easy._058;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/05
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int lengthOfLastWord(String s) {
+        int p = s.length() - 1;
+        while (p >= 0 && s.charAt(p) == ' ') p--;
+        int end = p;
+        while (p >= 0 && s.charAt(p) != ' ') p--;
+        return end - p;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.lengthOfLastWord("word "));
+        System.out.println(solution.lengthOfLastWord("hello world"));
+    }
+}
+
+$0
+endsnippet
+
+# _0066 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0066/Solution.java
+# ::::::::::::::
+snippet easy_0066 "snip comment" b
+
+package com.blankj.easy._066;
+
+import java.util.Arrays;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/06
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int[] plusOne(int[] digits) {
+        int p = digits.length - 1;
+        if (digits[p] < 9) {
+            digits[p] = ++digits[p];
+        } else {
+            do {
+                digits[p--] = 0;
+            } while (p >= 0 && digits[p] == 9);
+            if (digits[0] != 0) {
+                ++digits[p];
+            } else {
+                digits = new int[digits.length + 1];
+                digits[0] = 1;
+            }
+        }
+        return digits;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] digits = solution.plusOne(new int[]{9, 9, 9});
+        System.out.println(Arrays.toString(digits));
+    }
+}
+
+$0
+endsnippet
+
+# _0067 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0067/Solution.java
+# ::::::::::::::
+snippet easy_0067 "snip comment" b
+
+package com.blankj.easy._067;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/07
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder sb = new StringBuilder();
+        int carry = 0, p1 = a.length() - 1, p2 = b.length() - 1;
+        while (p1 >= 0 && p2 >= 0) {
+            carry += a.charAt(p1--) - '0';
+            carry += b.charAt(p2--) - '0';
+            sb.insert(0, (char) (carry % 2 + '0'));
+            carry >>= 1;
+        }
+        while (p1 >= 0) {
+            carry += a.charAt(p1--) - '0';
+            sb.insert(0, (char) (carry % 2 + '0'));
+            carry >>= 1;
+        }
+        while (p2 >= 0) {
+            carry += b.charAt(p2--) - '0';
+            sb.insert(0, (char) (carry % 2 + '0'));
+            carry >>= 1;
+        }
+        if (carry == 1) {
+            sb.insert(0, '1');
+        }
+        return sb.toString();
+    }
+
+//    public String addBinary(String a, String b) {
+//        StringBuilder sb = new StringBuilder();
+//        int carry = 0, p1 = a.length() - 1, p2 = b.length() - 1;
+//        while (p1 >= 0 || p2 >= 0 || carry == 1) {
+//            carry += p1 >= 0 ? a.charAt(p1--) - '0' : 0;
+//            carry += p2 >= 0 ? b.charAt(p2--) - '0' : 0;
+//            sb.insert(0, (char) (carry % 2 + '0'));
+//            carry >>= 1;
+//        }
+//        return sb.print();
+//    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.addBinary("11", "1"));
+    }
+}
+
+$0
+endsnippet
+
+# _0069 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0069/Solution.java
+# ::::::::::::::
+snippet easy_0069 "snip comment" b
+
+package com.blankj.easy._069;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/08
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int mySqrt(int x) {
+        long n = x;
+        while (n * n > x) {
+            n = (n + x / n) >> 1;
+        }
+        return (int) n;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.mySqrt(10));
+    }
+}
+
+$0
+endsnippet
+
+# _0070 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0070/Solution.java
+# ::::::::::::::
+snippet easy_0070 "snip comment" b
+
+package com.blankj.easy._070;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int climbStairs(int n) {
+        int a = 1, b = 1;
+        while (--n > 0) {
+            b += a;
+            a = b - a;
+        }
+        return b;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.climbStairs(3));
+    }
+}
+
+$0
+endsnippet
+
+# _0083 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0083/Solution.java
+# ::::::::::::::
+snippet easy_0083 "snip comment" b
+
+package com.blankj.easy._083;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/10
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode curr = head;
+        while (curr.next != null) {
+            if (curr.next.val == curr.val) {
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+        return head;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.deleteDuplicates(ListNode.createTestData("[1,1,2]")));
+        ListNode.print(solution.deleteDuplicates(ListNode.createTestData("[1,1,2,3,3]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0088 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0088/Solution.java
+# ::::::::::::::
+snippet easy_0088 "snip comment" b
+
+package com.blankj.easy._088;
+
+import java.util.Arrays;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/06/01
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int p = m-- + n-- - 1;
+        while (m >= 0 && n >= 0)
+            nums1[p--] = nums1[m] > nums2[n] ? nums1[m--] : nums2[n--];
+        while (n >= 0)
+            nums1[p--] = nums2[n--];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums1 = new int[10];
+        for (int i = 0; i < 5; ++i) {
+            nums1[i] = 2 * i;
+        }
+        int[] nums2 = new int[5];
+        for (int i = 0; i < 5; ++i) {
+            nums2[i] = 2 * i + 1;
+        }
+        solution.merge(nums1, 5, nums2, 5);
+        System.out.println(Arrays.toString(nums1));
+    }
+}
+
+$0
+endsnippet
+
+# _0100 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0100/Solution.java
+# ::::::::::::::
+snippet easy_0100 "snip comment" b
+
+package com.blankj.easy._100;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/08
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null || q == null) return p == q;
+        if (p.val != q.val) return false;
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.isSameTree(
+                TreeNode.createTestData("[1,2,2,null,3,null,3]"),
+                TreeNode.createTestData("[1,2,2,null,3,null,3]"))
+        );
+        System.out.println(solution.isSameTree(
+                TreeNode.createTestData("[1,2,2,null,3,null,3]"),
+                TreeNode.createTestData("[1,2,2,null,3,null,null]"))
+        );
+    }
+}
+
+$0
+endsnippet
+
+# _0101 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0101/Solution.java
+# ::::::::::::::
+snippet easy_0101 "snip comment" b
+
+package com.blankj.easy._101;
+
+
+import com.blankj.structure.TreeNode;
+
+import java.util.LinkedList;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public boolean isSymmetric(TreeNode root) {
+//        return root == null || helper(root.left, root.right);
+//    }
+//
+//    private boolean helper(TreeNode left, TreeNode right) {
+//        if (left == null || right == null) return left == right;
+//        if (left.val != right.val) return false;
+//        return helper(left.left, right.right) && helper(left.right, right.left);
+//    }
+
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+        LinkedList<TreeNode> q = new LinkedList<>();
+        q.add(root.left);
+        q.add(root.right);
+        TreeNode left, right;
+        while (q.size() > 1) {
+            left = q.pop();
+            right = q.pop();
+            if (left == null && right == null) continue;
+            if (left == null || right == null) return false;
+            if (left.val != right.val) return false;
+            q.add(left.left);
+            q.add(right.right);
+            q.add(left.right);
+            q.add(right.left);
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.isSymmetric(TreeNode.createTestData("[1,2,2,3,4,4,3]")));
+        System.out.println(solution.isSymmetric(TreeNode.createTestData("[1,2,2,null,3,null,3]")));
+        System.out.println(solution.isSymmetric(TreeNode.createTestData("[9,-42,-42,null,76,76,null,null,13,null,13]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0104 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0104/Solution.java
+# ::::::::::::::
+snippet easy_0104 "snip comment" b
+
+package com.blankj.easy._104;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int maxDepth(TreeNode root) {
+        if (root == null) return 0;
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.maxDepth(TreeNode.createTestData("[]")));
+        System.out.println(solution.maxDepth(TreeNode.createTestData("[1,2,2,3,4,4,3]")));
+        System.out.println(solution.maxDepth(TreeNode.createTestData("[9,-42,-42,null,76,76,null,null,13,null,13]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0107 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0107/Solution.java
+# ::::::::::::::
+snippet easy_0107 "snip comment" b
+
+package com.blankj.easy._107;
+
+
+import com.blankj.structure.TreeNode;
+
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> list = new LinkedList<>();
+        helper(list, root, 0);
+        return list;
+    }
+
+    private void helper(List<List<Integer>> list, TreeNode root, int level) {
+        if (root == null) return;
+        if (level >= list.size()) {
+            list.add(0, new LinkedList<>());
+        }
+        helper(list, root.left, level + 1);
+        helper(list, root.right, level + 1);
+        list.get(list.size() - level - 1).add(root.val);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.levelOrderBottom(TreeNode.createTestData("[]")));
+        System.out.println(solution.levelOrderBottom(TreeNode.createTestData("[1,2,2,3,4,4,3]")));
+        System.out.println(solution.levelOrderBottom(TreeNode.createTestData("[9,-42,-42,null,76,76,null,null,13,null,13]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0108 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0108/Solution.java
+# ::::::::::::::
+snippet easy_0108 "snip comment" b
+
+package com.blankj.easy._108;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length == 0) return null;
+        return helper(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode helper(int[] nums, int left, int right) {
+        if (left > right) return null;
+        int mid = (left + right) >>> 1;
+        TreeNode node = new TreeNode(nums[mid]);
+        node.left = helper(nums, left, mid - 1);
+        node.right = helper(nums, mid + 1, right);
+        return node;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        TreeNode.print(solution.sortedArrayToBST(new int[]{0, 1, 2, 3, 4, 5, 6, 7}));
+    }
+}
+
+$0
+endsnippet
+
+# _0110 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0110/Solution.java
+# ::::::::::::::
+snippet easy_0110 "snip comment" b
+
+package com.blankj.easy._110;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/09
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        return helper(root) != -1;
+    }
+
+    private int helper(TreeNode node) {
+        if (node == null) return 0;
+        int l = helper(node.left);
+        if (l == -1) return -1;
+        int r = helper(node.right);
+        if (r == -1) return -1;
+        if (Math.abs(l - r) > 1) return -1;
+        return 1 + Math.max(l, r);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        TreeNode testData = TreeNode.createTestData("[1,2,2,3,3,3,3,4,4,4,4,4,4,null,null,5,5]");
+        TreeNode.print(testData);
+        System.out.println(solution.isBalanced(testData));
+    }
+}
+
+$0
+endsnippet
+
+# _0111 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0111/Solution.java
+# ::::::::::::::
+snippet easy_0111 "snip comment" b
+
+package com.blankj.easy._111;
+
+
+import com.blankj.structure.TreeNode;
+
+import java.util.LinkedList;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/10
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public int minDepth(TreeNode root) {
+//        if (root == null) return 0;
+//        int l = minDepth(root.left);
+//        int r = minDepth(root.right);
+//        if (l != 0 && r != 0) return 1 + Math.min(l, r);
+//        return l + r + 1;
+//    }
+
+    public int minDepth(TreeNode root) {
+        if (root == null) return 0;
+        LinkedList<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int ans = 1;
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; ++i) {
+                TreeNode node = q.remove();
+                if (node.left == null && node.right == null) {
+                    return ans;
+                }
+                if (node.left != null) q.add(node.left);
+                if (node.right != null) q.add(node.right);
+            }
+            ++ans;
+        }
+        return 520;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        TreeNode testData = TreeNode.createTestData("[1,2,2,3,3,3,3,4,4,4,4,4,4,null,null,5,5]");
+        TreeNode.print(testData);
+        System.out.println(solution.minDepth(testData));
+    }
+}
+
+$0
+endsnippet
+
+# _0112 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0112/Solution.java
+# ::::::::::::::
+snippet easy_0112 "snip comment" b
+
+package com.blankj.easy._112;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) return false;
+        if (root.left == null && root.right == null) return sum == root.val;
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        TreeNode testData = TreeNode.createTestData("[5,4,8,11,null,13,4,7,2,null,null,null,1]");
+        TreeNode.print(testData);
+        System.out.println(solution.hasPathSum(testData, 22));
+    }
+}
+
+$0
+endsnippet
+
+# _0118 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0118/Solution.java
+# ::::::::::::::
+snippet easy_0118 "snip comment" b
+
+package com.blankj.easy._118;
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<List<Integer>> generate(int numRows) {
+        if (numRows == 0) return Collections.emptyList();
+        List<List<Integer>> list = new ArrayList<>();
+        for (int i = 0; i < numRows; ++i) {
+            List<Integer> sub = new ArrayList<>();
+            for (int j = 0; j <= i; ++j) {
+                if (j == 0 || j == i) {
+                    sub.add(1);
+                } else {
+                    List<Integer> upSub = list.get(i - 1);
+                    sub.add(upSub.get(j - 1) + upSub.get(j));
+                }
+            }
+            list.add(sub);
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.generate(5));
+    }
+}
+
+$0
+endsnippet
+
+# _0119 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0119/Solution.java
+# ::::::::::::::
+snippet easy_0119 "snip comment" b
+
+package com.blankj.easy._119;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i <= rowIndex; ++i) {
+            res.add(1);
+            for (int j = i - 1; j > 0; --j) {
+                res.set(j, res.get(j - 1) + res.get(j));
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.getRow(5));
+    }
+}
+
+$0
+endsnippet
+
+# _0121 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0121/Solution.java
+# ::::::::::::::
+snippet easy_0121 "snip comment" b
+
+package com.blankj.easy._121;
+
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int max = 0, minPrice = Integer.MAX_VALUE;
+        for (int i = 0; i < prices.length; ++i) {
+            if (prices[i] < minPrice) minPrice = prices[i];
+            int delta = prices[i] - minPrice;
+            if (delta > max) max = delta;
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.maxProfit(new int[]{7, 1, 5, 3, 6, 4}));
+        System.out.println(solution.maxProfit(new int[]{7, 6, 4, 3, 1}));
+    }
+}
+
+$0
+endsnippet
+
+# _0122 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0122/Solution.java
+# ::::::::::::::
+snippet easy_0122 "snip comment" b
+
+package com.blankj.easy._122;
+
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int max = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            if (prices[i] > prices[i - 1]) max += prices[i] - prices[i - 1];
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.maxProfit(new int[]{7, 1, 5, 3, 6, 4}));
+        System.out.println(solution.maxProfit(new int[]{7, 6, 4, 3, 1}));
+    }
+}
+
+$0
+endsnippet
+
+# _0543 easy
+# ::::::::::::::
+# src/com/blankj/easy/_0543/Solution.java
+# ::::::::::::::
+snippet easy_0543 "snip comment" b
+
+package com.blankj.easy._543;
+
+
+import com.blankj.structure.TreeNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/13
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    int max = 0;
+
+    public int diameterOfBinaryTree(TreeNode root) {
+        helper(root);
+        return max;
+    }
+
+    private int helper(TreeNode root) {
+        if (root == null) return 0;
+        int l = helper(root.left);
+        int r = helper(root.right);
+        if (l + r > max) max = l + r;
+        return Math.max(l, r) + 1;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.diameterOfBinaryTree(TreeNode.createTestData("[1,2,3,4,5]")));
+    }
+}
+
+$0
+endsnippet
+
+# _16_11 easy
+# ::::::::::::::
+# src/com/blankj/easy/_16_11/Solution.java
+# ::::::::::::::
+snippet easy_16_11 "snip comment" b
+
+package com.blankj.easy._16_11;
+
+import java.util.Arrays;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2020/07/08
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int[] divingBoard(int shorter, int longer, int k) {
+        if (k == 0) {
+            return new int[0];
+        }
+        if (shorter == longer) {
+            return new int[]{shorter * k};
+        }
+        int[] ans = new int[k + 1];
+        int st = k * shorter;// 等差数列的首项
+        int delta = longer - shorter;// 公差
+        for (int i = 0; i <= k; i++) {
+            ans[i] = st + i * delta;
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(Arrays.toString(solution.divingBoard(1, 2, 3)));
+    }
+}
+
+$0
+endsnippet
+
+# _0004 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0004/Solution.java
+# ::::::::::::::
+snippet hard_0004 "snip comment" b
+
+package com.blankj.hard._004;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/12
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len = nums1.length + nums2.length;
+        if (len % 2 == 0) {
+            return (helper(nums1, 0, nums2, 0, len / 2) + helper(nums1, 0, nums2, 0, len / 2 + 1)) / 2.0;
+        }
+        return helper(nums1, 0, nums2, 0, (len + 1) / 2);
+    }
+
+    private int helper(int[] nums1, int m, int[] nums2, int n, int k) {
+        if (m >= nums1.length) return nums2[n + k - 1];
+        if (n >= nums2.length) return nums1[m + k - 1];
+        if (k == 1) return Math.min(nums1[m], nums2[n]);
+
+        int p1 = m + k / 2 - 1;
+        int p2 = n + k / 2 - 1;
+        int mid1 = p1 < nums1.length ? nums1[p1] : Integer.MAX_VALUE;
+        int mid2 = p2 < nums2.length ? nums2[p2] : Integer.MAX_VALUE;
+        if (mid1 < mid2) {
+            return helper(nums1, m + k / 2, nums2, n, k - k / 2);
+        }
+        return helper(nums1, m, nums2, n + k / 2, k - k / 2);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.findMedianSortedArrays(
+                new int[]{1, 3},
+                new int[]{2}
+        ));
+        System.out.println(solution.findMedianSortedArrays(
+                new int[]{1, 2},
+                new int[]{3, 4}
+        ));
+    }
+}
+
+$0
+endsnippet
+
+# _0010 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0010/Solution.java
+# ::::::::::::::
+snippet hard_0010 "snip comment" b
+
+package com.blankj.hard._010;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/13
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public boolean isMatch(String s, String p) {
+//        if (p.isEmpty()) return s.isEmpty();
+//        if (p.length() == 1) {
+//            return s.length() == 1 && (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.');
+//        }
+//        if (p.charAt(1) != '*') {
+//            if (s.isEmpty()) return false;
+//            return (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.')
+//                    && isMatch(s.substring(1), p.substring(1));
+//        }
+//        // match 1 or more preceding element
+//        while (!s.isEmpty() && (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.')) {
+//            if (isMatch(s, p.substring(2))) return true;
+//            s = s.substring(1);
+//        }
+//        // match 0 preceding element
+//        return isMatch(s, p.substring(2));
+//    }
+//
+//    public boolean isMatch(String s, String p) {
+//        if (p.isEmpty()) return s.isEmpty();
+//        if (p.length() > 1 && p.charAt(1) == '*') {
+//            return isMatch(s, p.substring(2))
+//                    || (!s.isEmpty() && (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.')
+//                    && isMatch(s.substring(1), p));
+//        }
+//        return !s.isEmpty() && (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.')
+//                && isMatch(s.substring(1), p.substring(1));
+//    }
+
+    public boolean isMatch(String s, String p) {
+        if (p.length() == 0) return s.length() == 0;
+        int sL = s.length(), pL = p.length();
+        boolean[][] dp = new boolean[sL + 1][pL + 1];
+        char[] sc = s.toCharArray(), pc = p.toCharArray();
+        dp[0][0] = true;
+        for (int i = 2; i <= pL; ++i) {
+            if (pc[i - 1] == '*' && dp[0][i - 2]) {
+                dp[0][i] = true;
+            }
+        }
+        for (int i = 1; i <= sL; ++i) {
+            for (int j = 1; j <= pL; ++j) {
+                if (pc[j - 1] == '.' || pc[j - 1] == sc[i - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+                if (pc[j - 1] == '*') {
+                    if (pc[j - 2] == sc[i - 1] || pc[j - 2] == '.') {
+                        dp[i][j] = dp[i - 1][j] || dp[i][j - 2];
+                    } else {
+                        dp[i][j] = dp[i][j - 2];
+                    }
+                }
+            }
+        }
+        return dp[sL][pL];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.isMatch("aa", "a"));     // false
+        System.out.println(solution.isMatch("aa", "aa"));    // true
+        System.out.println(solution.isMatch("aaa", "aa"));   // false
+        System.out.println(solution.isMatch("aa", "a*"));    // true
+        System.out.println(solution.isMatch("aa", ".*"));    // true
+        System.out.println(solution.isMatch("ab", ".*"));    // true
+        System.out.println(solution.isMatch("aab", "c*a*b"));// true
+    }
+}
+
+$0
+endsnippet
+
+# _0023 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0023/Solution.java
+# ::::::::::::::
+snippet hard_0023 "snip comment" b
+
+package com.blankj.hard._023;
+
+import com.blankj.structure.ListNode;
+
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/15
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public ListNode mergeKLists(ListNode[] lists) {
+//        if (lists.length == 0) return null;
+//        return helper(lists, 0, lists.length - 1);
+//    }
+//
+//    private ListNode helper(ListNode[] lists, int left, int right) {
+//        if (left >= right) return lists[left];
+//        int mid = left + right >>> 1;
+//        ListNode l0 = helper(lists, left, mid);
+//        ListNode l1 = helper(lists, mid + 1, right);
+//        return merge2Lists(l0, l1);
+//    }
+//
+//    private ListNode merge2Lists(ListNode l0, ListNode l1) {
+//        ListNode node = new ListNode(0), tmp = node;
+//        while (l0 != null && l1 != null) {
+//            if (l0.val <= l1.val) {
+//                tmp.next = new ListNode(l0.val);
+//                l0 = l0.next;
+//            } else {
+//                tmp.next = new ListNode(l1.val);
+//                l1 = l1.next;
+//            }
+//            tmp = tmp.next;
+//        }
+//        tmp.next = l0 != null ? l0 : l1;
+//        return node.next;
+//    }
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists.length == 0) return null;
+        PriorityQueue<ListNode> queue = new PriorityQueue<>(lists.length, new Comparator<ListNode>() {
+            @Override
+            public int compare(ListNode o1, ListNode o2) {
+                if (o1.val < o2.val) return -1;
+                else if (o1.val == o2.val) return 0;
+                else return 1;
+            }
+        });
+        ListNode node = new ListNode(0), tmp = node;
+        for (ListNode l : lists) {
+            if (l != null) queue.add(l);
+        }
+        while (!queue.isEmpty()) {
+            tmp.next = queue.poll();
+            tmp = tmp.next;
+            if (tmp.next != null) queue.add(tmp.next);
+        }
+        return node.next;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.mergeKLists(new ListNode[]{
+                ListNode.createTestData("[1,3,5,7]"),
+                ListNode.createTestData("[2,4,6]")
+        }));
+    }
+}
+
+$0
+endsnippet
+
+# _0025 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0025/Solution.java
+# ::::::::::::::
+snippet hard_0025 "snip comment" b
+
+package com.blankj.hard._025;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/16
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || k == 1) return head;
+        ListNode node = new ListNode(0), pre = node;
+        node.next = head;
+        for (int i = 1; head != null; ++i) {
+            if (i % k == 0) {
+                pre = reverse(pre, head.next);
+                head = pre.next;
+            } else {
+                head = head.next;
+            }
+        }
+        return node.next;
+    }
+
+    private ListNode reverse(ListNode pre, ListNode next) {
+        ListNode head = pre.next;
+        ListNode move = head.next;
+        while (move != next) {
+            head.next = move.next;
+            move.next = pre.next;
+            pre.next = move;
+            move = head.next;
+        }
+        return head;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.reverseKGroup(ListNode.createTestData("[1,2,3,4,5,6,7,8]"), 3));
+    }
+}
+
+$0
+endsnippet
+
+# _0030 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0030/Solution.java
+# ::::::::::::::
+snippet hard_0030 "snip comment" b
+
+package com.blankj.hard._030;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/02/01
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<Integer> findSubstring(String s, String[] words) {
+        if (s == null) return Collections.emptyList();
+        int len = s.length();
+        if (len == 0) return Collections.emptyList();
+        int wordsSize = words.length;
+        if (wordsSize == 0) return Collections.emptyList();
+        int wordLen = words[0].length(), end = len - wordsSize * wordLen;
+        if (end < 0) return Collections.emptyList();
+        Map<String, Integer> countMap = new HashMap<>();
+        for (String word : words) {
+            countMap.put(word, countMap.getOrDefault(word, 0) + 1);
+        }
+        List<Integer> res = new ArrayList<>();
+        Set<Integer> ignores = new HashSet<>();
+        for (int i = 0; i <= end; ++i) {
+            if (ignores.contains(i)) continue;
+            Map<String, Integer> findMap = new HashMap<>();
+            int st = i, count = 0;
+            List<Integer> ignore = new ArrayList<>();
+            for (int j = 0; ; ++j) {
+                int cur = i + j * wordLen;
+                if (cur + wordLen > len) break;
+                String word = s.substring(cur, cur + wordLen);
+                if (countMap.containsKey(word)) {
+                    findMap.put(word, findMap.getOrDefault(word, 0) + 1);
+                    ++count;
+                    while (findMap.get(word) > countMap.get(word)) {
+                        ignore.add(st);
+                        String tmp = s.substring(st, st += wordLen);
+                        findMap.put(tmp, findMap.get(tmp) - 1);
+                        --count;
+                    }
+                    if (count == wordsSize) {
+                        ignore.add(st);
+                        res.add(st);
+                        String tmp = s.substring(st, st += wordLen);
+                        findMap.put(tmp, findMap.get(tmp) - 1);
+                        --count;
+                    }
+                } else {
+                    for (int k = i; k <= cur; k += wordLen) {
+                        ignore.add(k);
+                    }
+                    break;
+                }
+            }
+            ignores.addAll(ignore);
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.findSubstring("wordgoodgoodgoodbestword", new String[]{"word", "good", "best", "good"}));
+        System.out.println(solution.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"}));
+        System.out.println(solution.findSubstring("barfoofoobarthefoobarman", new String[]{"bar", "foo", "the"}));
+    }
+}
+
+$0
+endsnippet
+
+# _0044 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0044/Solution.java
+# ::::::::::::::
+snippet hard_0044 "snip comment" b
+
+package com.blankj.hard._044;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/16
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public boolean isMatch(String s, String p) {
+//        if (p.length() == 0) return s.length() == 0;
+//        int si = 0, pi = 0, match = 0, star = -1;
+//        int sl = s.length(), pl = p.length();
+//        char[] sc = s.toCharArray(), pc = p.toCharArray();
+//        while (si < sl) {
+//            if (pi < pl && (pc[pi] == sc[si] || pc[pi] == '?')) {
+//                si++;
+//                pi++;
+//            } else if (pi < pl && pc[pi] == '*') {
+//                star = pi++;
+//                match = si;
+//            } else if (star != -1) {
+//                si = ++match;
+//                pi = star + 1;
+//            } else return false;
+//        }
+//        while (pi < pl && pc[pi] == '*') pi++;
+//        return pi == pl;
+//    }
+
+//    public boolean isMatch(String s, String p) {
+//        if (p.length() == 0) return s.length() == 0;
+//        int sl = s.length(), pl = p.length();
+//        boolean[][] dp = new boolean[sl + 1][pl + 1];
+//        char[] sc = s.toCharArray(), pc = p.toCharArray();
+//        dp[0][0] = true;
+//        for (int i = 1; i <= pl; ++i) {
+//            if (pc[i - 1] == '*') dp[0][i] = dp[0][i - 1];
+//        }
+//        for (int i = 1; i <= sl; ++i) {
+//            for (int j = 1; j <= pl; ++j) {
+//                if (pc[j - 1] != '*') {
+//                    dp[i][j] = dp[i - 1][j - 1] && (sc[i - 1] == pc[j - 1] || pc[j - 1] == '?');
+//                } else {
+//                    dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+//                }
+//            }
+//        }
+//        return dp[sl][pl];
+//    }
+
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        int len = words.length;
+        if (len == 0) return Collections.emptyList();
+        List<String> ans = new ArrayList<>();
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < maxWidth; ++i) {
+            spaces.append(" ");
+        }
+        int sLen = -1, left = 0;
+        for (int i = 0; i < len; ++i) {
+            if (sLen + words[i].length() + 1 <= maxWidth) {
+                sLen += words[i].length() + 1;
+            } else {
+                StringBuilder sub = new StringBuilder(words[left]);
+                int rest = maxWidth - sLen;
+                int seg = i - left;
+                if (seg == 0) {
+                    sub.append(spaces.substring(0, rest));
+                } else {
+                    int leastSpace = rest / seg + 1;
+                    int restSpace = rest % seg;
+                    for (int j = left + 1; j < i; ++j) {
+                        if (restSpace-- > 0) {
+                            sub.append(spaces.substring(0, leastSpace + 1)).append(words[j]);
+                        } else {
+                            sub.append(spaces.substring(0, leastSpace)).append(words[j]);
+                        }
+                    }
+                }
+                ans.add(sub.toString());
+                left = i;
+                sLen = words[i].length();
+            }
+        }
+        StringBuilder sub = new StringBuilder(words[left]);
+        for (int i = left + 1; i < len; ++i) {
+            sub.append(" ").append(words[i]);
+        }
+        ans.add(sub + spaces.substring(0, maxWidth - sub.length()));
+        return ans;
+    }
+
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.fullJustify(new String[]{"", ""}, 0));
+        System.out.println(solution.fullJustify(new String[]{"a"}, 1));
+        System.out.println(solution.fullJustify(new String[]{"This", "is", "an", "example", "of", "text", "justification."}, 16));
+    }
+}
+
+$0
+endsnippet
+
+# _0057 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0057/Solution.java
+# ::::::::::::::
+snippet hard_0057 "snip comment" b
+
+package com.blankj.hard._0057;
+
+import com.blankj.structure.Interval;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/24
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        if (intervals.isEmpty()) return Collections.singletonList(newInterval);
+        List<Interval> ans = new ArrayList<>();
+        int i = 0, len = intervals.size();
+        for (; i < len; ++i) {
+            Interval interval = intervals.get(i);
+            if (interval.end < newInterval.start) ans.add(interval);
+            else break;
+        }
+        for (; i < len; ++i) {
+            Interval interval = intervals.get(i);
+            if (interval.start <= newInterval.end) {
+                newInterval.start = Math.min(newInterval.start, interval.start);
+                newInterval.end = Math.max(newInterval.end, interval.end);
+            } else break;
+        }
+        ans.add(newInterval);
+        for (; i < len; ++i) {
+            ans.add(intervals.get(i));
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        Interval.print(solution.insert(Interval.createTestData("[1,3],[6,9]"), new Interval(2, 5)));
+        Interval.print(solution.insert(Interval.createTestData("[1,2],[3,5],[6,7],[8,10],[12,16]"), new Interval(4, 9)));
+    }
+}
+
+$0
+endsnippet
+
+# _0068 hard
+# ::::::::::::::
+# src/com/blankj/hard/_0068/Solution.java
+# ::::::::::::::
+snippet hard_0068 "snip comment" b
+
+package com.blankj.hard._068;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/11/01
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        int len = words.length;
+        List<String> ans = new ArrayList<>();
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < maxWidth; ++i) {
+            spaces.append(" ");
+        }
+        int curLen = -1, start = 0;
+        for (int i = 0; i < len; ++i) {
+            if (curLen + words[i].length() + 1 <= maxWidth) {
+                curLen += words[i].length() + 1;
+            } else {
+                StringBuilder sub = new StringBuilder(words[start]);
+                int rest = maxWidth - curLen;
+                int l = i - start - 1;
+                if (l <= 0) {
+                    sub.append(spaces.substring(0, rest));
+                } else {
+                    int m = rest / l + 1;
+                    int mod = rest % l;
+                    for (int j = start + 1; j < i; ++j) {
+                        if (mod-- > 0) {
+                            sub.append(spaces.substring(0, m + 1)).append(words[j]);
+                        } else {
+                            sub.append(spaces.substring(0, m)).append(words[j]);
+                        }
+                    }
+                }
+                ans.add(sub.toString());
+                start = i;
+                curLen = words[i].length();
+            }
+        }
+        StringBuilder sub = new StringBuilder(words[start]);
+        for (int i = start + 1; i < len; ++i) {
+            sub.append(" ").append(words[i]);
+        }
+        ans.add(sub + spaces.substring(0, maxWidth - sub.length()));
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.fullJustify(new String[]{"This", "is", "an", "example", "of", "text", "justification."}, 16));
+    }
+}
+
+$0
+endsnippet
+
+# _1028 hard
+# ::::::::::::::
+# src/com/blankj/hard/_1028/Solution.java
+# ::::::::::::::
+snippet hard_1028 "snip comment" b
+
+package com.blankj.hard._1028;
+
+import com.blankj.structure.TreeNode;
+
+import java.util.LinkedList;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2020/06/19
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public TreeNode recoverFromPreorder(String S) {
+//        char[] chars = S.toCharArray();
+//        int len = chars.length;
+//        List<TreeNode> levels = new LinkedList<>();
+//        for (int i = 0; i < len; ) {
+//            int level = 0, val = 0;
+//            while (chars[i] == '-') { // 获取所在层级，Character.isDigit() 会比较慢
+//                ++i;
+//                ++level;
+//            }
+//            while (i < len && chars[i] != '-') { // 获取节点的值
+//                val = val * 10 + chars[i++] - '0';
+//            }
+//            TreeNode curNode = new TreeNode(val);
+//            if (level > 0) {
+//                TreeNode parent = levels.get(level - 1);
+//                if (parent.left == null) { // 如果节点只有一个子节点，那么保证该子节点为左子节点。
+//                    parent.left = curNode;
+//                } else {
+//                    parent.right = curNode;
+//                }
+//            }
+//            levels.add(level, curNode); // 因为是前序遍历（根-左-右），也就是右覆盖左时，此时左树已遍历完成，故无需考虑覆盖问题
+//        }
+//        return levels.get(0);
+//    }
+
+    public TreeNode recoverFromPreorder(String S) {
+        char[] chars = S.toCharArray();
+        int len = chars.length;
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        for (int i = 0; i < len; ) {
+            int level = 0, val = 0;
+            while (chars[i] == '-') { // 获取所在层级，Character.isDigit() 会比较慢
+                ++i;
+                ++level;
+            }
+            while (i < len && chars[i] != '-') { // 获取节点的值
+                val = val * 10 + chars[i++] - '0';
+            }
+            TreeNode curNode = new TreeNode(val);
+            while (stack.size() > level) { // 栈顶不是父亲，栈顶出栈
+                stack.removeLast();
+            }
+            if (level > 0) {
+                TreeNode parent = stack.getLast();
+                if (parent.left == null) { // 如果节点只有一个子节点，那么保证该子节点为左子节点。
+                    parent.left = curNode;
+                } else {
+                    parent.right = curNode;
+                }
+            }
+            stack.addLast(curNode);
+        }
+        return stack.get(0);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        TreeNode.print(solution.recoverFromPreorder("1-2--3--4-5--6--7"));
+        System.out.println("==============================================");
+        TreeNode.print(solution.recoverFromPreorder("1-2--3---4-5--6---7"));
+    }
+}
+
+$0
+endsnippet
+
+# _0002 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0002/Solution.java
+# ::::::::::::::
+snippet medium_0002 "snip comment" b
+
+package com.blankj.medium._002;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode node = new ListNode(0);
+        ListNode n1 = l1, n2 = l2, t = node;
+        int sum = 0;
+        while (n1 != null || n2 != null) {
+            sum /= 10;
+            if (n1 != null) {
+                sum += n1.val;
+                n1 = n1.next;
+            }
+            if (n2 != null) {
+                sum += n2.val;
+                n2 = n2.next;
+            }
+            t.next = new ListNode(sum % 10);
+            t = t.next;
+        }
+        if (sum / 10 != 0) t.next = new ListNode(1);
+        return node.next;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.addTwoNumbers(
+                ListNode.createTestData("[2,4,3]"),
+                ListNode.createTestData("[5,6,4]")
+        ));
+    }
+}
+
+$0
+endsnippet
+
+# _0003 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0003/Solution.java
+# ::::::::::::::
+snippet medium_0003 "snip comment" b
+
+package com.blankj.medium._003;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/11
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int len;
+        if (s == null || (len = s.length()) == 0) return 0;
+        int preP = 0, max = 0;
+        int[] hash = new int[128];
+        for (int i = 0; i < len; ++i) {
+            char c = s.charAt(i);
+            if (hash[c] > preP) {
+                preP = hash[c];
+            }
+            int l = i - preP + 1;
+            hash[c] = i + 1;
+            if (l > max) max = l;
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.lengthOfLongestSubstring("abcabcbb"));
+        System.out.println(solution.lengthOfLongestSubstring("bbbbb"));
+        System.out.println(solution.lengthOfLongestSubstring("pwwkew"));
+        System.out.println(solution.lengthOfLongestSubstring("Abcabcbb"));
+    }
+}
+
+$0
+endsnippet
+
+# _0005 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0005/Solution.java
+# ::::::::::::::
+snippet medium_0005 "snip comment" b
+
+package com.blankj.medium._005;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/11/04
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    int st, end;
+//
+//    public String longestPalindrome(String s) {
+////        st = 0;
+////        end = 0;
+//        int len = s.length();
+//        if (len <= 1) return s;
+//        char[] chars = s.toCharArray();
+//        for (int i = 0; i < len; i++) {
+//            helper(chars, i, i);
+//            helper(chars, i, i + 1);
+//        }
+//        return s.substring(st, end + 1);
+//    }
+//
+//    private void helper(char[] chars, int l, int r) {
+//        while (l >= 0 && r < chars.length && chars[l] == chars[r]) {
+//            --l;
+//            ++r;
+//        }
+//        if (end - st < r - l - 2) {
+//            st = l + 1;
+//            end = r - 1;
+//        }
+//    }
+
+//    public String longestPalindrome(String s) {
+//        int len = s.length();
+//        if (len <= 1) return s;
+//        int st = 0, end = 0;
+//        char[] chars = s.toCharArray();
+//        boolean[][] dp = new boolean[len][len];
+//        for (int i = 0; i < len; i++) {
+//            dp[i][i] = true;
+//            for (int j = 0; j < i; j++) {
+//                if (j + 1 == i) {
+//                    dp[j][i] = chars[j] == chars[i];
+//                } else {
+//                    dp[j][i] = dp[j + 1][i - 1] && chars[j] == chars[i];
+//                }
+//                if (dp[j][i] && i - j > end - st) {
+//                    st = j;
+//                    end = i;
+//                }
+//            }
+//        }
+//        return s.substring(st, end + 1);
+//    }
+
+    public String longestPalindrome(String s) {
+
+        return s;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.longestPalindrome("babad"));
+        System.out.println(solution.longestPalindrome("cbbd"));
+
+    }
+}
+
+$0
+endsnippet
+
+# _0006 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0006/Solution.java
+# ::::::::::::::
+snippet medium_0006 "snip comment" b
+
+package com.blankj.medium._006;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/12/11
+ *     desc  :
+ * </pre>
+ */
+class Solution {
+
+//    public String convert(String s, int numRows) {
+//        if (numRows <= 1) return s;
+//        int len = s.length();
+//        char[] chars = s.toCharArray();
+//        int cycle = 2 * (numRows - 1);
+//        StringBuilder sb = new StringBuilder();
+//        for (int j = 0; j < len; j += cycle) {
+//            sb.append(chars[j]);
+//        }
+//        for (int i = 1; i < numRows - 1; i++) {
+//            int step = 2 * i;
+//            for (int j = i; j < len; j += step) {
+//                sb.append(chars[j]);
+//                step = cycle - step;
+//            }
+//        }
+//        for (int j = numRows - 1; j < len; j += cycle) {
+//            sb.append(chars[j]);
+//        }
+//        return sb.toString();
+//    }
+
+    public String convert(String s, int numRows) {
+        if (numRows <= 1) return s;
+        int len = s.length();
+        char[] chars = s.toCharArray();
+        StringBuilder[] sbs = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            sbs[i] = new StringBuilder();
+        }
+        int i = 0;
+        while (i < len) {
+            for (int j = 0; j < numRows && i < len; ++j) {
+                sbs[j].append(chars[i++]);
+            }
+            for (int j = numRows - 2; j >= 1 && i < len; --j) {
+                sbs[j].append(chars[i++]);
+            }
+        }
+        for (i = 1; i < numRows; i++) {
+            sbs[0].append(sbs[i]);
+        }
+        return sbs[0].toString();
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.convert("PAYPALISHIRING", 3));// PAHNAPLSIIGYIR
+        System.out.println(solution.convert("ABCD", 4));
+    }
+}
+
+$0
+endsnippet
+
+# _0008 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0008/Solution.java
+# ::::::::::::::
+snippet medium_0008 "snip comment" b
+
+package com.blankj.medium._008;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/23
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int myAtoi(String str) {
+        int i = 0, ans = 0, sign = 1, len = str.length();
+        while (i < len && str.charAt(i) == ' ') ++i;
+        if (i < len && (str.charAt(i) == '-' || str.charAt(i) == '+')) {
+            sign = str.charAt(i++) == '+' ? 1 : -1;
+        }
+        for (; i < len; ++i) {
+            int tmp = str.charAt(i) - '0';
+            if (tmp < 0 || tmp > 9) break;
+            if (ans > Integer.MAX_VALUE / 10
+                    || (ans == Integer.MAX_VALUE / 10 && (sign == 1 && tmp > 7 || sign == -1 && tmp > 8))) {
+                return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            } else {
+                ans = ans * 10 + tmp;
+            }
+        }
+        return sign * ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.myAtoi("   +1"));
+        System.out.println(solution.myAtoi("   -1"));
+        System.out.println(solution.myAtoi(""));
+        System.out.println(solution.myAtoi("a1"));
+        System.out.println(solution.myAtoi("100000000000000000000"));
+        System.out.println(solution.myAtoi("-100000000000000000000"));
+        System.out.println(solution.myAtoi("-3924x8fc"));
+        System.out.println(solution.myAtoi(String.valueOf(Integer.MIN_VALUE)));
+        System.out.println(solution.myAtoi(String.valueOf(Integer.MAX_VALUE)));
+    }
+}
+$0
+endsnippet
+
+# _0011 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0011/Solution.java
+# ::::::::::::::
+snippet medium_0011 "snip comment" b
+
+package com.blankj.medium._011;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/23
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int maxArea(int[] height) {
+        int l = 0, r = height.length - 1;
+        int max = 0, h = 0;
+        while (l < r) {
+            h = Math.min(height[l], height[r]);
+            max = Math.max(max, (r - l) * h);
+            while (height[l] <= h && l < r) ++l;
+            while (height[r] <= h && l < r) --r;
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.maxArea(new int[]{1, 2, 4, 3})); // 4
+        System.out.println(solution.maxArea(new int[]{1, 8, 6, 2, 5, 4, 8, 3, 7}));// 49
+    }
+}
+$0
+endsnippet
+
+# _0012 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0012/Solution.java
+# ::::::::::::::
+snippet medium_0012 "snip comment" b
+
+package com.blankj.medium._012;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/25
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public String intToRoman(int num) {
+        String M[] = {"", "M", "MM", "MMM"};
+        String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        return M[num / 1000] + C[(num % 1000) / 100] + X[(num % 100) / 10] + I[num % 10];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.intToRoman(621));// DCXXI
+        System.out.println(solution.intToRoman(348));// CCCXLVIII
+    }
+}
+
+$0
+endsnippet
+
+# _0015 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0015/Solution.java
+# ::::::::::::::
+snippet medium_0015 "snip comment" b
+
+package com.blankj.medium._015;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/14
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> list = new ArrayList<>();
+        int len = nums.length;
+        if (len < 3) return list;
+        Arrays.sort(nums);
+        int max = nums[len - 1];
+        if (max < 0) return list;
+        for (int i = 0; i < len - 2; ) {
+            if (nums[i] > 0) break;
+            if (nums[i] + 2 * max < 0) {
+                while (nums[i] == nums[++i] && i < len - 2) ;
+                continue;
+            }
+            int left = i + 1, right = len - 1;
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                if (sum == 0) {
+                    list.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    while (nums[left] == nums[++left] && left < right) ;
+                    while (nums[right] == nums[--right] && left < right) ;
+                } else if (sum < 0) ++left;
+                else --right;
+            }
+            while (nums[i] == nums[++i] && i < len - 2) ;
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+    }
+}
+$0
+endsnippet
+
+# _0016 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0016/Solution.java
+# ::::::::::::::
+snippet medium_0016 "snip comment" b
+
+package com.blankj.medium._016;
+
+import java.util.Arrays;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/25
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int delta = 0x7fffffff, res = 0;
+        Arrays.sort(nums);
+        int len = nums.length - 2;
+        for (int i = 0; i < len; i++) {
+            int left = i + 1, right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                int curDelta = Math.abs(sum - target);
+                if (curDelta == 0) return sum;
+                if (curDelta < delta) {
+                    delta = curDelta;
+                    res = sum;
+                }
+                if (sum > target) --right;
+                else ++left;
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.threeSumClosest(new int[]{-1, 2, 1, -4}, 1));
+    }
+}
+
+$0
+endsnippet
+
+# _0017 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0017/Solution.java
+# ::::::::::::::
+snippet medium_0017 "snip comment" b
+
+package com.blankj.medium._017;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/15
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    private static String[] map = new String[]{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+//
+//    public List<String> letterCombinations(String digits) {
+//        if (digits.length() == 0) return Collections.emptyList();
+//        List<String> list = new ArrayList<>();
+//        helper(list, digits, "");
+//        return list;
+//    }
+//
+//    private void helper(List<String> list, String digits, String ans) {
+//        if (ans.length() == digits.length()) {
+//            list.add(ans);
+//            return;
+//        }
+//        for (char c : map[digits.charAt(ans.length()) - '2'].toCharArray()) {
+//            helper(list, digits, ans + c);
+//        }
+//    }
+
+    private static String[] map = new String[]{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.length() == 0) return Collections.emptyList();
+        LinkedList<String> list = new LinkedList<>();
+        list.add("");
+        char[] charArray = digits.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+
+            while (list.getFirst().length() == i) {
+                String pop = list.removeFirst();
+                for (char v : map[c - '2'].toCharArray()) {
+                    list.addLast(pop + v);
+                }
+            }
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.letterCombinations("23"));
+    }
+}
+$0
+endsnippet
+
+# _0018 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0018/Solution.java
+# ::::::::::::::
+snippet medium_0018 "snip comment" b
+
+package com.blankj.medium._018;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/30
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public List<List<Integer>> fourSum(int[] nums, int target) {
+//        List<List<Integer>> res = new ArrayList<>();
+//        int len = nums.length;
+//        if (len < 4) return res;
+//        Arrays.sort(nums);
+//        int max = nums[len - 1];
+//        if (4 * max < target) return res;
+//        for (int i = 0; i < len - 3;) {
+//            if (nums[i] * 4 > target) break;
+//            if (nums[i] + 3 * max < target) {
+//                while (nums[i] == nums[++i] && i < len - 3) ;
+//                continue;
+//            }
+//
+//            for (int j = i + 1; j < len - 2;) {
+//                int subSum = nums[i] + nums[j];
+//                if (nums[i] + nums[j] * 3 > target) break;
+//                if (subSum + 2 * max < target) {
+//                    while (nums[j] == nums[++j] && j < len - 2) ;
+//                    continue;
+//                }
+//
+//                int left = j + 1, right = len - 1;
+//                while (left < right) {
+//                    int sum = subSum + nums[left] + nums[right];
+//                    if (sum == target) {
+//                        res.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+//                        while (nums[left] == nums[++left] && left < right);
+//                        while (nums[right] == nums[--right] && left < right);
+//                    } else if (sum < target) ++left;
+//                    else --right;
+//                }
+//                while (nums[j] == nums[++j] && j < len - 2) ;
+//            }
+//            while (nums[i] == nums[++i] && i < len - 3) ;
+//        }
+//        return res;
+//    }
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        int len = nums.length;
+        if (len < 4) return Collections.emptyList();
+        int max = nums[len - 1];
+        if (4 * max < target) return Collections.emptyList();
+        return kSum(nums, 0, 4, target);
+    }
+
+    private List<List<Integer>> kSum(int[] nums, int start, int k, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (k == 2) {
+            int left = start, right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[left] + nums[right];
+                if (sum == target) {
+                    List<Integer> twoSum = new LinkedList<>();
+                    twoSum.add(nums[left]);
+                    twoSum.add(nums[right]);
+                    res.add(twoSum);
+                    while (nums[left] == nums[++left] && left < right) ;
+                    while (nums[right] == nums[--right] && left < right) ;
+                } else if (sum < target) ++left;
+                else --right;
+            }
+        } else {
+            int i = start, end = nums.length - (k - 1), max = nums[nums.length - 1];
+            while (i < end) {
+                if (nums[i] * k > target) return res;
+                if (nums[i] + (k - 1) * max < target) {
+                    while (nums[i] == nums[++i] && i < end) ;
+                    continue;
+                }
+                List<List<Integer>> temp = kSum(nums, i + 1, k - 1, target - nums[i]);
+                for (List<Integer> t : temp) {
+                    t.add(0, nums[i]);
+                }
+                res.addAll(temp);
+                while (nums[i] == nums[++i] && i < end) ;
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.fourSum(new int[]{1, 0, -1, 0, -2, 2}, 0));
+    }
+}
+
+$0
+endsnippet
+
+# _0019 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0019/Solution.java
+# ::::::::::::::
+snippet medium_0019 "snip comment" b
+
+package com.blankj.medium._019;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/04/27
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode pre = head;
+        ListNode afterPreN = head;
+        while (n-- != 0) {
+            afterPreN = afterPreN.next;
+        }
+        if (afterPreN != null) {
+            while (afterPreN.next != null) {
+                pre = pre.next;
+                afterPreN = afterPreN.next;
+            }
+            pre.next = pre.next.next;
+        } else {
+            head = head.next;
+        }
+        return head;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.removeNthFromEnd(ListNode.createTestData("[1,2,3,4,5]"), 2));
+        ListNode.print(solution.removeNthFromEnd(ListNode.createTestData("[1]"), 1));
+    }
+}
+$0
+endsnippet
+
+# _0022 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0022/Solution.java
+# ::::::::::::::
+snippet medium_0022 "snip comment" b
+
+package com.blankj.medium._022;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/30
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public List<String> generateParenthesis(int n) {
+//        List<String> list = new ArrayList<>();
+//        helper(list, "", 0, n);
+//        return list;
+//    }
+//
+//    private void helper(List<String> list, String str, int rightNeed, int leftRest) {
+//        if (rightNeed == 0 && leftRest == 0) {
+//            list.add(str);
+//            return;
+//        }
+//        if (rightNeed > 0) helper(list, str + ")", rightNeed - 1, leftRest);
+//        if (leftRest > 0) helper(list, str + "(", rightNeed + 1, leftRest - 1);
+//    }
+
+    public List<String> generateParenthesis(int n) {
+        HashMap<Integer, List<String>> hashMap = new HashMap<>();
+        hashMap.put(0, Collections.singletonList(""));
+        for (int i = 1; i <= n; i++) {
+            List<String> list = new ArrayList<>();
+            for (int j = 0; j < i; j++) {
+                for (String fj : hashMap.get(j)) {
+                    for (String fi_j_1 : hashMap.get(i - j - 1)) {
+                        list.add("(" + fj + ")" + fi_j_1);// calculate f(i)
+                    }
+                }
+            }
+            hashMap.put(i, list);
+        }
+        return hashMap.get(n);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.generateParenthesis(3));
+    }
+}
+
+$0
+endsnippet
+
+# _0024 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0024/Solution.java
+# ::::::::::::::
+snippet medium_0024 "snip comment" b
+
+package com.blankj.medium._024;
+
+import com.blankj.structure.ListNode;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/31
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public ListNode swapPairs(ListNode head) {
+//        if (head == null || head.next == null) return head;
+//        ListNode node = head.next;
+//        head.next = swapPairs(node.next);
+//        node.next = head;
+//        return node;
+//    }
+
+    public ListNode swapPairs(ListNode head) {
+        ListNode preHead = new ListNode(0), cur = preHead;
+        preHead.next = head;
+        while (cur.next != null && cur.next.next != null) {
+            ListNode temp = cur.next.next;
+            cur.next.next = temp.next;
+            temp.next = cur.next;
+            cur.next = temp;
+            cur = cur.next.next;
+        }
+        return preHead.next;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        ListNode.print(solution.swapPairs(ListNode.createTestData("[1,2,3,4]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0029 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0029/Solution.java
+# ::::::::::::::
+snippet medium_0029 "snip comment" b
+
+package com.blankj.medium._029;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2018/01/31
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+        long dvd = Math.abs((long) dividend);
+        long dvr = Math.abs((long) divisor);
+        int res = 0;
+        while (dvd >= dvr) {
+            long temp = dvr, multiple = 1;
+            while (dvd >= temp << 1) {
+                temp <<= 1;
+                multiple <<= 1;
+            }
+            dvd -= temp;
+            res += multiple;
+        }
+        return (dividend < 0) ^ (divisor < 0) ? -res : res;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.divide(-2147483648, 1));
+    }
+}
+
+$0
+endsnippet
+
+# _0033 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0033/Solution.java
+# ::::::::::::::
+snippet medium_0033 "snip comment" b
+
+package com.blankj.medium._033;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/16
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int search(int[] nums, int target) {
+        int l = 0, r = nums.length - 1, mid;
+        while (l <= r) {
+            mid = l + r >>> 1;
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] >= nums[l]) {
+                if (nums[l] <= target && target < nums[mid]) r = mid - 1;
+                else l = mid + 1;
+            } else {
+                if (nums[mid] < target && target <= nums[r]) l = mid + 1;
+                else r = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.search(new int[]{2, 1}, 1));
+    }
+}
+
+$0
+endsnippet
+
+# _0043 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0043/Solution.java
+# ::::::::::::::
+snippet medium_0043 "snip comment" b
+
+package com.blankj.medium._043;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/17
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public String multiply(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0")) return "0";
+        int l1 = num1.length(), l2 = num2.length(), l = l1 + l2;
+        char[] ans = new char[l];
+        char[] c1 = num1.toCharArray();
+        char[] c2 = num2.toCharArray();
+        for (int i = l1 - 1; i >= 0; --i) {
+            int c = c1[i] - '0';
+            for (int j = l2 - 1; j >= 0; --j) {
+                ans[i + j + 1] +=  c * (c2[j] - '0');
+            }
+        }
+        for (int i = l - 1; i > 0; --i) {
+            if (ans[i] > 9) {
+                ans[i - 1] += ans[i] / 10;
+                ans[i] %= 10;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (; ; ++i) if (ans[i] != 0) break;
+        for (; i < ans.length; ++i) sb.append((char) (ans[i] + '0'));
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.multiply("132", "19"));
+    }
+}
+
+$0
+endsnippet
+
+# _0049 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0049/Solution.java
+# ::::::::::::::
+snippet medium_0049 "snip comment" b
+
+package com.blankj.medium._049;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/18
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (strs == null || strs.length == 0) return Collections.emptyList();
+        List<List<String>> list = new ArrayList<>();
+        Map<String, Integer> hash = new HashMap<>();
+        int i = 0;
+        for (String str : strs) {
+            char[] c = str.toCharArray();
+            Arrays.sort(c);
+            String sortStr = String.valueOf(c);
+            if (!hash.containsKey(sortStr)) {
+                hash.put(sortStr, i++);
+                List<String> sub = new ArrayList<>();
+                sub.add(str);
+                list.add(sub);
+            } else {
+                list.get(hash.get(sortStr)).add(str);
+            }
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.groupAnagrams(new String[]{"eat", "tea", "tan", "ate", "nat", "bat"}));
+    }
+}
+
+$0
+endsnippet
+
+# _0050 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0050/Solution.java
+# ::::::::::::::
+snippet medium_0050 "snip comment" b
+
+package com.blankj.medium._050;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/18
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public double myPow(double x, int n) {
+        if (n < 0) return helper(1 / x, -n);
+        return helper(x, n);
+    }
+
+    private double helper(double x, int n) {
+        if (n == 0) return 1;
+        if (n == 1) return x;
+        double d = helper(x, n >>> 1);
+        if (n % 2 == 0) return d * d;
+        return d * d * x;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.myPow(8.88023, 3));
+    }
+}
+
+$0
+endsnippet
+
+# _0056 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0056/Solution.java
+# ::::::::::::::
+snippet medium_0056 "snip comment" b
+
+package com.blankj.medium._056;
+
+import com.blankj.structure.Interval;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/19
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        if (intervals == null || intervals.size() <= 1) return intervals;
+        intervals.sort(new Comparator<Interval>() {
+            @Override
+            public int compare(Interval o1, Interval o2) {
+                if (o1.start < o2.start) return -1;
+                if (o1.start > o2.start) return 1;
+                return 0;
+            }
+        });
+        List<Interval> ans = new ArrayList<>();
+        int start = intervals.get(0).start;
+        int end = intervals.get(0).end;
+        for (Interval interval : intervals) {
+            if (interval.start <= end) {
+                end = Math.max(end, interval.end);
+            } else {
+                ans.add(new Interval(start, end));
+                start = interval.start;
+                end = interval.end;
+            }
+        }
+        ans.add(new Interval(start, end));
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        Interval.print(solution.merge(Interval.createTestData("[1,3],[2,6],[8,10],[15,18]")));
+    }
+}
+
+$0
+endsnippet
+
+# _0067 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0067/Solution.java
+# ::::::::::::::
+snippet medium_0067 "snip comment" b
+
+package com.blankj.medium._0067;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2020/07/07
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length, n = obstacleGrid[0].length;
+        int[][] dp = new int[m][n];
+        // 其初始态第 1 列（行）的格子只有从其上（左）边格子走过去这一种走法，
+        // 因此初始化 dp[i][0]（dp[0][j]）值为 1，且遇到障碍物时后面值都为 0；
+        for (int i = 0; i < m && obstacleGrid[i][0] == 0; i++) {
+            dp[i][0] = 1;
+        }
+        for (int j = 0; j < n && obstacleGrid[0][j] == 0; j++) {
+            dp[0][j] = 1;
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (obstacleGrid[i][j] == 0) {
+                    // 当 (i, j) 有障碍物时，dp[i][j] = dp[i - 1][j] + dp[i][j - 1]；
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                }
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[][] obstacleGrid = {{0, 0, 0}, {0, 1, 0}, {0, 0, 0}};
+        System.out.println(solution.uniquePathsWithObstacles(obstacleGrid));
+    }
+}
+
+$0
+endsnippet
+
+# _0209 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0209/Solution.java
+# ::::::::::::::
+snippet medium_0209 "snip comment" b
+
+package com.blankj.medium._0209;
+
+import java.util.Arrays;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2020/06/30
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+//    public int minSubArrayLen(int s, int[] nums) {
+//        int ans = Integer.MAX_VALUE;
+//        for (int i = 0; i < nums.length; i++) {
+//            int sum = nums[i];
+//            if (sum >= s) {
+//                return 1;
+//            }
+//            for (int j = i + 1; j < nums.length; j++) {
+//                sum += nums[j];
+//                if (sum >= s) {
+//                    ans = Math.min(ans, j - i + 1);
+//                    break;
+//                }
+//            }
+//        }
+//        return ans == Integer.MAX_VALUE ? 0 : ans;
+//    }
+
+//    public int minSubArrayLen(int s, int[] nums) {
+//        int left = 0, right = 0, sum = 0, ans = Integer.MAX_VALUE;
+//        while (right < nums.length) {
+//            sum += nums[right++]; // 向右扩大窗口
+//            while (sum >= s) { // 如果不小于 s，则收缩窗口左边界
+//                ans = Math.min(ans, right - left);// 更新结果
+//                sum -= nums[left++]; // 向左缩小窗口
+//            }
+//        }
+//        return ans == Integer.MAX_VALUE ? 0 : ans;
+//    }
+
+    public int minSubArrayLen(int s, int[] nums) {
+        int ans = Integer.MAX_VALUE;
+        int[] sums = new int[nums.length + 1];
+        for (int i = 0; i < nums.length; i++) {
+            sums[i + 1] = sums[i] + nums[i];
+        }
+        for (int i = 0; i < nums.length; i++) {
+            int target = s + sums[i]; // 确定要搜索的目标值
+            // Java 二分查找 Arrays.binarySearch 如果找到就会返回该元素的索引；
+            // 如果没找到就会返回一个负数，这个负数取反之后再减一就是查找的值应该在数组中的位置；
+            // 例如 [-1, 0, 1, 5] 中二分查找 2，其返回值就是 -4，其 -(-4) - 1 = 3，所以 2 这个元素插入到数组的索引就是 3
+            int bound = Arrays.binarySearch(sums, target);
+            if (bound < 0) {
+                bound = -bound - 1;
+            }
+            if (bound < sums.length) { // 当 bound 确定插入点不在 sums 数组的最后面时，说明不小于 target 的值了
+                ans = Math.min(ans, bound - i);
+            }
+        }
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.minSubArrayLen(7, new int[]{2, 3, 1, 2, 4, 3}));
+    }
+}
+$0
+endsnippet
+
+# _0554 medium
+# ::::::::::::::
+# src/com/blankj/medium/_0554/Solution.java
+# ::::::::::::::
+snippet medium_0554 "snip comment" b
+
+package com.blankj.medium._554;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/13
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+    public int leastBricks(List<List<Integer>> wall) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int width = 0, max = 0;
+        for (List<Integer> sub : wall) {
+            int p = 0;
+            for (int i = 0, len = sub.size() - 1; i < len; ++i) {
+                p += sub.get(i);
+                Integer v = map.get(p);
+                map.put(p, (v == null ? 0 : v) + 1);
+            }
+        }
+        for (Integer integer : map.values()) {
+            if (integer > max) max = integer;
+        }
+        return wall.size() - max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        List<List<Integer>> list = new ArrayList<>();
+        list.add(Arrays.asList(1, 2, 2, 1));
+        list.add(Arrays.asList(3, 1, 2));
+        list.add(Arrays.asList(1, 3, 2));
+        list.add(Arrays.asList(2, 4));
+        list.add(Arrays.asList(3, 1, 2));
+        list.add(Arrays.asList(1, 3, 1, 1));
+        System.out.println(solution.leastBricks(list));
+    }
+}
+$0
+endsnippet
+
+# _1014 medium
+# ::::::::::::::
+# src/com/blankj/medium/_1014/Solution.java
+# ::::::::::::::
+snippet medium_1014 "snip comment" b
+
+package com.blankj.medium._1014;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2020/06/18
+ *     desc  :
+ * </pre>
+ */
+public class Solution {
+
+    public int maxScoreSightseeingPair(int[] A) {
+        int ans = 0, cur = A[0] + 0;
+        for (int j = 1; j < A.length; j++) {
+            ans = Math.max(ans, cur + A[j] - j); // 计算当前最大得分
+            cur = Math.max(cur, A[j] + j);       // 更新最大的 A[i] + i
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] A = new int[]{8, 1, 5, 2, 6};
+        System.out.println(solution.maxScoreSightseeingPair(A));
+    }
+# }
+# ::::::::::::::
+# src/com/blankj/structure/Interval.java
+# ::::::::::::::
+package com.blankj.structure;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/10/19
+ *     desc  :
+ * </pre>
+ */
+public class Interval {
+    public int start;
+    public int end;
+
+    public Interval() {
+        start = 0;
+        end = 0;
+    }
+
+    public Interval(int s, int e) {
+        start = s;
+        end = e;
+    }
+
+    /**
+     * 创建测试数据
+     *
+     * @param data [[X,X],[X,X],[X,X]]
+     * @return {@link List<Interval>}
+     */
+    public static List<Interval> createTestData(String data) {
+        List<Interval> list = new ArrayList<>();
+        String[] d = data.substring(1, data.length() - 1).split("],\\[");
+        for (String s : d) {
+            String[] sub = s.split(",");
+            list.add(new Interval(Integer.valueOf(sub[0]), Integer.valueOf(sub[1])));
+        }
+        return list;
+    }
+
+    public static void print(List<Interval> list) {
+        if (list == null) {
+            System.out.println("null");
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Interval interval : list) {
+            sb.append("[")
+                    .append(interval.start)
+                    .append(",")
+                    .append(interval.end)
+                    .append("],");
+        }
+        System.out.println(sb.substring(0, sb.length() - 1));
+    }
+# }
+# ::::::::::::::
+# src/com/blankj/structure/ListNode.java
+# ::::::::::::::
+package com.blankj.structure;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/05/18
+ *     desc  :
+ * </pre>
+ */
+public class ListNode {
+
+    public int      val;
+    public ListNode next;
+
+    public ListNode(int x) {
+        val = x;
+    }
+
+    /**
+     * 创建测试数据
+     *
+     * @param data [XX,XX,XX]
+     * @return {@link ListNode}
+     */
+    public static ListNode createTestData(String data) {
+        if (data.equals("[]")) return null;
+        data = data.substring(1, data.length() - 1);
+        String[] split = data.split(",");
+        int len = split.length;
+        ListNode[] listNode = new ListNode[len + 1];
+        listNode[0] = new ListNode(Integer.valueOf(split[0]));
+        for (int i = 1; i < len; i++) {
+            listNode[i] = new ListNode(Integer.valueOf(split[i]));
+            listNode[i - 1].next = listNode[i];
+        }
+        return listNode[0];
+    }
+
+    public static void print(ListNode listNode) {
+        if (listNode == null) {
+            System.out.println("null");
+            return;
+        }
+        StringBuilder str = new StringBuilder("[" + String.valueOf(listNode.val));
+        ListNode p = listNode.next;
+        while (p != null) {
+            str.append(",").append(String.valueOf(p.val));
+            p = p.next;
+        }
+        System.out.println(str.append("]"));
+    }
+# }
+# ::::::::::::::
+# src/com/blankj/structure/TreeNode.java
+# ::::::::::::::
+package com.blankj.structure;
+
+/**
+ * <pre>
+ *     author: Blankj
+ *     blog  : http://blankj.com
+ *     time  : 2017/06/05
+ *     desc  :
+ * </pre>
+ */
+public class TreeNode {
+
+    public int      val;
+    public TreeNode left;
+    public TreeNode right;
+
+    public TreeNode(int x) {
+        val = x;
+    }
+
+    /**
+     * 创建测试数据
+     *
+     * @param data [XX,XX,null,xx]
+     * @return {@link TreeNode}
+     */
+    public static TreeNode createTestData(String data) {
+        if (data.equals("[]")) return null;
+        data = data.substring(1, data.length() - 1);
+        String[] split = data.split(",");
+        int len = len = split.length;
+        TreeNode[] treeNodes = new TreeNode[len];
+        data = data.substring(1, data.length() - 1);
+        for (int i = 0; i < len; i++) {
+            if (!split[i].equals("null")) {
+                treeNodes[i] = new TreeNode(Integer.valueOf(split[i]));
+            }
+        }
+        for (int i = 0; i < len; i++) {
+            if (treeNodes[i] != null) {
+                int leftIndex = i * 2 + 1;
+                if (leftIndex < len) {
+                    treeNodes[i].left = treeNodes[leftIndex];
+                }
+                int rightIndex = leftIndex + 1;
+                if (rightIndex < len) {
+                    treeNodes[i].right = treeNodes[rightIndex];
+                }
+            }
+        }
+        return treeNodes[0];
+    }
+
+    private static final String space = "      ";
+
+    /**
+     * 竖向打印二叉树
+     *
+     * @param root 二叉树根节点
+     */
+    public static void print(TreeNode root) {
+        print(root, 0);
+    }
+
+    private static void print(TreeNode node, int deep) {
+        if (node == null) {
+            printSpace(deep);
+            System.out.println("#");
+            return;
+        }
+        print(node.right, deep + 1);
+        printSpace(deep);
+        printNode(node.val);
+        print(node.left, deep + 1);
+    }
+
+    private static void printSpace(int count) {
+        for (int i = 0; i < count; i++) {
+            System.out.printf(space);
+        }
+    }
+
+    private static void printNode(int val) {
+        StringBuilder res = new StringBuilder(val + "<");
+        int spaceNum = space.length() - res.length();
+        for (int i = 0; i < spaceNum; i++) {
+            res.append(" ");
+        }
+        System.out.println(res);
+    }
+}
+$0
+endsnippet
