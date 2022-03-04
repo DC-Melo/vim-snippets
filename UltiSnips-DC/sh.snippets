@@ -124,6 +124,12 @@ git push github
 $0
 endsnippet
 
+
+snippet gitClone "git clone " b
+git clone https://gitee.com/dc-melo/README "new folder"
+$0
+endsnippet
+
 snippet gitRepoClear "repo clear " b
 curl -X PUT --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/owenr/repo/clear' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026"}'
 $0
@@ -293,6 +299,26 @@ snippet findUnzip "find zip and unzip file" b
 find . -iname '*.zip'  -type f -exec bash -c 'cd \`dirname ${1}\`  && unzip -d dir \`basename ${1}\`' _ {} \;
 $0
 endsnippet
+
+snippet unzip "find zip and unzip file" b
+1、把文件解压到当前目录下
+unzip file.zip
+2、如果要把文件解压到指定的目录下，需要用到-d参数。
+unzip -d ./tmp/ file.zip
+3、解压的时候，有时候不想覆盖已经存在的文件，那么可以加上-n参数
+unzip -n file.zip
+unzip -n -d ./tmp/ file.zip
+4、只看一下zip压缩包中包含哪些文件，不进行解压缩
+unzip -l file.zip
+5、查看显示的文件列表还包含压缩比率
+unzip -v file.zip
+6、检查zip文件是否损坏
+unzip -t file.zip
+7、将压缩文件file.zip在指定目录tmp下解压缩，如果已有相同的文件存在，要求unzip命令覆盖原先的文件
+unzip -o file.zip -d ./tmp
+$0
+endsnippet
+
 snippet findGrepGrep "find file and grep and grep file" b
 find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
 $0
@@ -415,6 +441,17 @@ snippet wgetUrl "wget url file" b
 wget -c "www.baidu.com" -O baidu.index.html -o wget.log
 $0
 endsnippet
+
+snippet xlsx2csv "excel convert to csv" b
+for file in *.xlsx; do
+    nombre=${file:0:${#file}-5};
+    name="$nombre-%n-%s.csv";
+    ssconvert --export-type=Gnumeric_stf:stf_csv --export-file-per-sheet ${file} ${name};
+done
+echo "Finish!"
+$0
+endsnippet
+
 snippet snipTestShell "snip test shell" b
 clear
 ls -al
