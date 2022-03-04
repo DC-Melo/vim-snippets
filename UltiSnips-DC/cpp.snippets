@@ -31,6 +31,7 @@ endglobal
 ###########################################################################
 
 snippet forij "for int loop (forij)"
+/* code by 王江 DC-Melo */
 for (${4:int} ${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
 	for (${8:int} ${6:j} = 0; $2 < ${5:count}; ${7:++$6}) {
 		${VISUAL}$0
@@ -39,55 +40,57 @@ for (${4:int} ${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
 endsnippet
 
 snippet includeAll "include all" b
-#include <algorithm>　　　  // STL 通用算法 如sort find等
-#include <bitset>　　　　　 // STL 位集容器
+/* code by 王江 DC-Melo */
+#include <algorithm>     // STL 通用算法 如sort find等
+#include <bitset>      // STL 位集容器
 #include <cctype>
 #include <cerrno>
 #include <clocale>
 #include <cmath>
-#include <complex>　　　　  // 复数类
+#include <complex>      // 复数类
 #include <cstdio>
 #include <cstdlib>          // 基本库
 #include <cstring>
 #include <ctime>
-#include <deque>　　　　　  // STL 双端队列容器
-#include <exception>　　　  // 异常处理类
+#include <deque>       // STL 双端队列容器
+#include <exception>     // 异常处理类
 #include <fstream>
-#include <functional>　　　 // STL 定义运算函数（代替运算符）
+#include <functional>    // STL 定义运算函数（代替运算符）
 #include <limits>
-#include <list>　　　　　　 // STL 线性列表容器
-#include <map>　　　　　　  // STL 映射容器
+#include <list>       // STL 线性列表容器
+#include <map>        // STL 映射容器
 #include <iomanip>
-#include <ios>　　　　　　  // 基本输入／输出支持
-#include <iosfwd>　　　　　 // 输入／输出系统使用的前置声明
+#include <ios>        // 基本输入／输出支持
+#include <iosfwd>      // 输入／输出系统使用的前置声明
 #include <iostream>
-#include <istream>　　　　  // 基本输入流
-#include <ostream>　　　　  // 基本输出流
-#include <queue>　　　　　  // STL 队列容器
-#include <set>　　　　　　  // STL 集合容器
-#include <sstream>　　　　  // 基于字符串的流
-#include <stack>　　　　　  // STL 堆栈容器　　　　
-#include <stdexcept>　　　  // 标准异常类
-#include <streambuf>　　　  // 底层输入／输出支持
-#include <string>　　　　　 // 字符串类
+#include <istream>      // 基本输入流
+#include <ostream>      // 基本输出流
+#include <queue>       // STL 队列容器
+#include <set>        // STL 集合容器
+#include <sstream>      // 基于字符串的流
+#include <stack>       // STL 堆栈容器    
+#include <stdexcept>     // 标准异常类
+#include <streambuf>     // 底层输入／输出支持
+#include <string>      // 字符串类
 #include <string>           // string类型
-#include <utility>　　　　  // STL 通用模板类
-#include <vector>　　　　　 // STL 动态数组容器
+#include <utility>      // STL 通用模板类
+#include <vector>      // STL 动态数组容器
 #include <vector>           // 顺序容器，存储相同类型，同数组，但可以动态添加
 #include <cwchar>
 #include <cwctype>
 using namespace std;
 // C99 增加
-#include <complex.h>　　 //复数处理
-#include <fenv.h>　　　　//浮点环境
-#include <inttypes.h>　　//整数格式转换
-#include <stdbool.h>　　 //布尔环境
-#include <stdint.h>　　　//整型环境
-#include <tgmath.h>　　　//通用类型数学宏
+#include <complex.h>   //复数处理
+#include <fenv.h>    //浮点环境
+#include <inttypes.h>  //整数格式转换
+#include <stdbool.h>   //布尔环境
+#include <stdint.h>   //整型环境
+#include <tgmath.h>   //通用类型数学宏
 $0
 endsnippet
 
 snippet includeNomal "include nomal Container"
+/* code by 王江 DC-Melo */
 #include <string>
 #include <vector>
 #include <list>	
@@ -98,6 +101,7 @@ $0
 endsnippet
 
 snippet includeContainer "include Container"
+/* code by 王江 DC-Melo */
 #include <vector>
 #include <list>	
 #include <set>
@@ -106,22 +110,26 @@ $0
 endsnippet
 
 snippet includeAlgorithm "include Algorithm"
+/* code by 王江 DC-Melo */
 #include <algorithm>	
 #include <numeric>
 $0
 endsnippet
 
 snippet includeIterator "include Iterator"
+/* code by 王江 DC-Melo */
 #include <iterator>
 $0
 endsnippet
 
 snippet includeFunction "include Function"
+/* code by 王江 DC-Melo */
 #include <functional>	
 $0
 endsnippet
 
 snippet includeAdaptor "include Adaptor"
+/* code by 王江 DC-Melo */
 #include <stack>	
 #include <deque>
 #include <queue>	
@@ -130,11 +138,13 @@ $0
 endsnippet
 
 snippet includeAllocator "include allocator"
+/* code by 王江 DC-Melo */
 #include <memory>
 $0
 endsnippet
 
 snippet listnodeInt "int listlode formwork"
+/* code by 王江 DC-Melo */
 struct ListNode{
     int value;
     ListNode* next;
@@ -144,6 +154,7 @@ $0
 endsnippet
 
 snippet listnodeFormwork "int listlode formwork"
+/* code by 王江 DC-Melo */
 // Node.h
 // Author: Ali Selcuk AKYUZ
 // Mail: selcuk@retinarobotics.com || e174043@metu.edu.tr
@@ -294,6 +305,7 @@ $0
 endsnippet
 
 snippet solutionFormwork "solution Formwork"
+/* code by 王江 DC-Melo */
 #include <string>
 using namespace std;
 class Solution
@@ -308,6 +320,7 @@ $0
 endsnippet
 
 snippet functionDeclaration "function Declaration"
+/* code by 王江 DC-Melo */
 int			        function1(string s);
 ListNode*	        function2(ListNode* l1,ListNode* l2);
 vector<int>         function3(vector<int> &numbers, int val);
@@ -319,6 +332,7 @@ $0
 endsnippet
 
 snippet printString "print string"
+/* code by 王江 DC-Melo */
 void printSubStr(string str, int low, int high) {
     for (int i = low; i <= high; ++i) cout << str[i];
 }
@@ -326,6 +340,7 @@ $0
 endsnippet
 
 snippet printVector "vector cout"
+/* code by 王江 DC-Melo */
 vector<int> ${1:vectorVar};
 cout << "print vector<int> $1:";
 for (int i = 0; i < $1.size(); i++) cout << $1[i] << " ";
@@ -334,6 +349,7 @@ $0
 endsnippet
 
 snippet printArray "array print "
+/* code by 王江 DC-Melo */
 /* Function to print an array */
 void printArray(int arr[], int n) {
     for (int i = 0; i < n; i++) cout << arr[i] << " ";
@@ -342,7 +358,19 @@ void printArray(int arr[], int n) {
 $0
 endsnippet
 
+
+snippet printMatrix2D "array matrix 2D"
+for(int i = 0; i <= n ; i++){
+    for(int w = 0; w <= W ; w++){
+        std:cout<<some_array[i][w]<<"   ";
+    }
+    std::cout << std::endl;
+}
+$0
+endsnippet
+
 snippet printListNodes "print nodes "
+/* code by 王江 DC-Melo */
 pcur=head;
 while (pcur) {
 	printf("-> %d ", pcur->val);
@@ -353,6 +381,7 @@ $0
 endsnippet
 
 snippet inputListNode "add node head"
+/* code by 王江 DC-Melo */
 ListNode *head,*last,*pcur;
 head = new ListNode(0); 
 last = head;  
@@ -369,6 +398,7 @@ endsnippet
 
 
 snippet inputString "input string"
+/* code by 王江 DC-Melo */
 string ${1:inputString};
 cout << "Type your input string: ";
 cin >> $1; // get user input from the keyboard
@@ -377,6 +407,7 @@ $0
 endsnippet
 
 snippet inputArray "input Array"
+/* code by 王江 DC-Melo */
 int j;
 vector<int> list1;
 cout << "input the vector<int>:";
@@ -386,6 +417,7 @@ $0
 endsnippet
 
 snippet inputVector "input vector"
+/* code by 王江 DC-Melo */
 int j;
 vector<int> ${1:inputInt};
 cout << "input the vector<int> $1:";
@@ -395,6 +427,7 @@ endsnippet
 
 
 snippet inputVectorString "input vector of string"
+/* code by 王江 DC-Melo */
 vector<string> listStr;
 cout << "input the vector<string>:";
 while((scanf("%d", &j)) != EOF){
@@ -405,6 +438,7 @@ endsnippet
 
 
 snippet cvWindow "CV window"
+/* code by 王江 DC-Melo */
 cv::Mat img = cv::imread( argv[1], -1 );
 if( img.empty() ) return -1;
 cv::namedWindow( "Example 2-1", cv::WINDOW_AUTOSIZE );
@@ -415,6 +449,7 @@ $0
 endsnippet
 
 snippet cvOpenAvi "CV open video"
+/* code by 王江 DC-Melo */
 cap.open( string(argv[1]) );
 cout <<"Opened file: " <<argv[1] <<endl;
 cv::Mat frame;
@@ -428,6 +463,7 @@ $0
 endsnippet
 
 snippet cvGaussianBlur "CV Gaussian Blur"
+/* code by 王江 DC-Melo */
 cv::GaussianBlur( image, out, cv::Size(5,5), 3, 3);
 cv::GaussianBlur( out, out, cv::Size(5,5), 3, 3);
 $0
@@ -436,6 +472,7 @@ endsnippet
 
 
 snippet mainSolutionFW "main and solution"
+/* code by 王江 DC-Melo */
 #include <iostream>
 #include "vector"
 #include "math.h"
@@ -493,7 +530,10 @@ int main() {
 	string str ="adsfadfass";
     string out3 = sln.$3(str);
 
-    string out3 = sln.$4(str);
+	ListNode *l1 = new ListNode(1);
+	ListNode *l2 = new ListNode(1);
+
+    ListNode *out4 = sln.$4(l1,l2);
 
 	/* timestamp end */
     std::cout << "================================================================================\n";
@@ -508,6 +548,7 @@ endsnippet
 
 
 snippet sortBubbleON2 "(arr[])arr=sort bubble(int arr[],int n)"
+/* code by 王江 DC-Melo */
 void bubbleSort(int arr[], int n) {
     for (int i = 0; i < n-1; i++) for (int j = 0; j < n-i-1; j++) if (arr[j] > arr[j+1]) swap(&arr[j], &arr[j+1]);
 }
@@ -515,6 +556,7 @@ $0
 endsnippet
 
 snippet sortBubbleONO1 "(arr[])arr=sort bubble(int arr[], int n)"
+/* code by 王江 DC-Melo */
 #include <bits/stdc++.h>
 void bubbleSort(int arr[], int n) {
 	bool swapped;
@@ -533,6 +575,7 @@ $0
 endsnippet
 
 snippet sortInsertionON2O1  "(arr[])arr=find two sum target(int arr[], int n)"
+/* code by 王江 DC-Melo */
 #include <bits/stdc++.h>
 void insertionSort(int arr[], int n) {
     int i, key, j;
@@ -550,6 +593,7 @@ $0
 endsnippet
 
 snippet swapTwoElements "(void)mem=swap two elements(int* a, int* b)"
+/* code by 王江 DC-Melo */
 /* A utility function to swap two elements */
 void swap(int* a, int* b) {
     int t = *a;
@@ -561,6 +605,7 @@ endsnippet
 
 
 snippet sortQuick "(void)mem=Quick Sort(int arr[], int low, int high)"
+/* code by 王江 DC-Melo */
 /* This function takes last element as pivot, places the pivot element at its correct position in sorted array, and places all smaller (smaller than pivot) to left of pivot and all greater elements to right of pivot */
 int partition (int arr[], int low, int high) {
     int pivot = arr[high]; // pivot
@@ -592,6 +637,7 @@ endsnippet
 
 
 snippet sortMerge  "(void)mem=Merge Sort(int array[], int const begin, int const end)"
+/* code by 王江 DC-Melo */
 // Merges two subarrays of array[].  // First subarray is arr[begin..mid] // Second subarray is arr[mid+1..end]
 void merge(int array[], int const left, int const mid, int const right) {
     auto const subArrayOne = mid - left + 1;
@@ -640,6 +686,7 @@ $0
 endsnippet
 
 snippet sortHeap "(void)mem=Heap Sort(int arr[], int n)"
+/* code by 王江 DC-Melo */
 // To heapify a subtree rooted with node i which is
 // an index in arr[]. n is size of heap
 void heapify(int arr[], int n, int i) {
@@ -673,6 +720,7 @@ $0
 endsnippet
 
 snippet maximumMinimum "(int)max=Function to find max/min(int a, int b)"
+/* code by 王江 DC-Melo */
 // Function to find max
 int maximum(int a, int b) {
     return a > b ? a : b;
@@ -687,6 +735,7 @@ endsnippet
 
 # 001
 snippet findTwoSum "(vector<int>)index=find two sum target(vector<int> &numbers, int target) "
+/* code by 王江 DC-Melo */
 vector<int> ${1:function}(vector<int> &numbers, int target) {
     unordered_map<int, int> hash;
     vector<int> result;
@@ -707,6 +756,7 @@ $0
 endsnippet
 
 snippet addTwoListNode1 "(ListNode *)sum=add two list node(ListNode *l1,ListNode *l2) "
+/* code by 王江 DC-Melo */
 ListNode *${1:function}(ListNode *l1,ListNode *l2){
     int carry=0;
     ListNode *result = new ListNode(0);
@@ -734,6 +784,7 @@ endsnippet
 
 # 003
 snippet findLongestSubstringWithoutRepeatingCharacters "(int)maxlen=Longest Substring Without Repeating Characters(string s)"
+/* code by 王江 DC-Melo */
 int ${1:function}(string s){
         int left=0, right=0;
         int maxLength=0, length=0;
@@ -760,6 +811,7 @@ endsnippet
 
 # 004
 snippet findMedianSortedVector "(double)mid=find median sorted vector(vector<int>& nums1, vector<int>& nums2)"
+/* code by 王江 DC-Melo */
     double ${1:function}(vector<int>& nums1, vector<int>& nums2) {
         vector<int> res;
         int medianPos = 0;
@@ -785,6 +837,7 @@ endsnippet
 
 # 004
 snippet findMedianSortedArrays "(double)mid=find median sorted arrays(int *a, int n, int *b, int m)"
+/* code by 王江 DC-Melo */
 // Function to find median of two sorted arrays
 double findMedianSortedArrays(int *a, int n, int *b, int m) {
     int min_index = 0, max_index = n, i, j, median;
@@ -854,6 +907,7 @@ endsnippet
 
 # 005
 snippet findLongestPalindromeON3O1 "(int)maxlen=find longest palindrome (string s)" b
+/* code by 王江 DC-Melo */
 // This function prints the
 // longest palindrome substring
 // It also returns the length
@@ -883,6 +937,7 @@ endsnippet
 
 # 005
 snippet findLongestPalindromeON2ON2 "(int)maxlen=find longest palindrome(string s)" b
+/* code by 王江 DC-Melo */
 // This function prints the
 // longest palindrome substring
 // It also returns the length of
@@ -935,9 +990,93 @@ int longestPalSubstr(string str) {
 $0
 endsnippet
 
+snippet findLongestPalindromeSubstringON3 "(string)subStr=find longest palindrome(string s)" b
+string longestPalindrome(string s)
+ {
+     if(s.empty()) return "";
+     if(s.size()==1) return s;
+     int start=0,maxlength=1;//记录最大回文子串的起始位置以及长度
+     for(int i=0;i<s.size();i++)
+         for(int j=i+1;j<s.size();j++)//从当前位置的下一个开始算
+         {
+             int temp1,temp2;
+             for(temp1=i,temp2=j;temp1<temp2;temp1++,temp2--)
+             {
+                 if(s[temp1]!=s[temp2])
+                     break;
+             }
+             if(temp1>=temp2 && j-i+1>maxlength)//这里要注意条件为temp1>=temp2，因为如果是偶数个字符，相邻的两个经上一步会出现大于的情况
+             {
+                 maxlength = j-i+1;
+                 start=i;
+             }
+         }
+    return s.substr(start,maxlength);//利用string中的substr函数来返回相应的子串,第一个参数是起始位置，第二个参数是字符个数
+ }
+$0
+endsnippet
 
+snippet findLongestPalindromeSubstringON2 "(string)subStr=DP find longest palindrome(string s)" b
+string longestPalindrome(string s) {
+    if (s.empty()) return "";
+    int len = s.size();
+    if (len == 1)return s;
+    int longest = 1;
+    int start=0;
+    vector<vector<int> > dp(len,vector<int>(len));
+    for (int i = 0; i < len; i++) {
+        dp[i][i] = 1;
+        if(i<len-1) {
+            if (s[i] == s[i + 1]) {
+                dp[i][i + 1] = 1;
+                start=i;
+                longest=2;
+            }
+        }
+    }
+    for (int l = 3; l <= len; l++) {
+        for (int i = 0; i+l-1 < len; i++) {
+            int j=l+i-1;
+            if (s[i] == s[j] && dp[i+1][j-1]==1) {
+                dp[i][j] = 1;
+                start=i;
+                longest = l;
+            }
+        }
+    }
+    return s.substr(start,longest);
+}
+$0
+endsnippet
+
+snippet findLongestPalindromeSubstring "(string)subStr=find longest palindrome(string s)" b
+string longestPalindrome(string s) {
+    string manaStr = "$#";
+    for (int i=0;i<s.size();i++){
+      manaStr += s[i];
+      manaStr += '#';
+    }
+    vector<int> rd(manaStr.size(), 0);
+    int pos = 0, mx = 0;
+    int start = 0, maxLen = 0;
+    for (int i = 1; i < manaStr.size(); i++) {
+      rd[i] = i < mx ? min(rd[2 * pos - i], mx - i) : 1;
+      while (i+rd[i]<manaStr.size() && i-rd[i]>0 && manaStr[i + rd[i]] == manaStr[i - rd[i]]) rd[i]++;
+      if (i + rd[i] > mx){
+        pos = i;
+        mx = i + rd[i];
+      } if (rd[i] - 1 > maxLen)     {
+        start = (i - rd[i]) / 2;
+        maxLen = rd[i] - 1;
+      }
+    }
+    return s.substr(start, maxLen);
+}
+$0
+endsnippet
 # 005
 snippet findLongestPalindromeSubstring "(string)subStr=find longest palindrome(string s)" b
+/* code by 王江 DC-Melo */
 string longestPalindrome(string s) {
 	int position, maxLength=0, length=0;
 	for(int i=0;i<s.size();i++) {
@@ -973,6 +1112,7 @@ endsnippet
 
 # 006
 snippet printZwords  "(string)zStr=convert z words accound lines(string s,int nRows) " b
+/* code by 王江 DC-Melo */
     string ${1:funciton}(string s, int nRows) 
     {
         int strLength = s.length();
@@ -1008,6 +1148,7 @@ endsnippet
 
 # 007
 snippet reverseInteger "(int)val=reverse integer(int x)" b
+/* code by 王江 DC-Melo */
 int ${1:function}(int x) {
 	int flag = x > 0? 1:-1;
 	x = abs(x);
@@ -1027,6 +1168,7 @@ endsnippet
 
 # 008
 snippet convertString2Int "(int)val=convert String to Int(string str)" b
+/* code by 王江 DC-Melo */
 int ${1:fuction}(string str) {
 	int tempResult,result=0;
 	int sign = 1;
@@ -1051,6 +1193,7 @@ endsnippet
 
 # 009
 snippet isPalindrome "(bool)is=is palindrome(int x)" b
+/* code by 王江 DC-Melo */
 bool ${1:function}(int x) {
         if( x<0 || (x!=0 &&x%10==0)) return false;
         int rev=0;
@@ -1065,6 +1208,7 @@ endsnippet
 
 # 010
 snippet isMatchString "(bool)is=is match regex string(string s, string p)" b
+/* code by 王江 DC-Melo */
     bool ${1:function}(string s, string p) {
         return ${2:recursionFunction}(s,p,0,0);
     }
@@ -1083,6 +1227,7 @@ endsnippet
 
 # 011
 snippet findMaxWaterAreaON2 "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
+/* code by 王江 DC-Melo */
 // Return the maximum water that can be stored
 int maxWater(int height[], int n) {
     int maximum = 0;
@@ -1101,6 +1246,7 @@ endsnippet
 
 # 011
 snippet findMaxWaterAreaONLN "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
+/* code by 王江 DC-Melo */
 bool compareTo(pair<int, int> p1, pair<int, int> p2) {
     return p1.second < p2.second;
 }
@@ -1145,6 +1291,7 @@ endsnippet
 
 # 011
 snippet findMaxWaterArea "(int)store=find Maximum water that can be stored between two buildings(vector<int> &height)" b
+/* code by 王江 DC-Melo */
     int ${1:function}(vector<int> &height) 
     {
         int left = 0;
@@ -1163,6 +1310,7 @@ endsnippet
 
 # 012
 snippet convertInt2Roman "(string)roman=convert Int to Roman(int num)" b
+/* code by 王江 DC-Melo */
     string ${1:function1}(int num) {
         char symbol[9] = {'I','V','X','L','C','D','M'};
         string roman="";
@@ -1199,6 +1347,7 @@ endsnippet
 
 # 013
 snippet convertRoman2Int "(int)ival=convert Roman to Int(string s)" b
+/* code by 王江 DC-Melo */
 int ${1:function}(string s) {
 	int map[26];
 	map['I'-'A'] = 1;
@@ -1221,6 +1370,7 @@ endsnippet
 
 # 014
 snippet findCommonPrefix "(string)prefix=find common prefix(vector<string> &strs)" b
+/* code by 王江 DC-Melo */
 string ${1:function}(vector<string> &strs) {
     if( strs.size() == 0) return "";
     string prefix = strs[0];
@@ -1237,6 +1387,7 @@ endsnippet
 
 # 015
 snippet findThreeSumON2O1 "(int)val=find three sum(vector<int>& arr, int x)" b
+/* code by 王江 DC-Melo */
 // Function to return the sum of a
 // triplet which is closest to x
 int solution(vector<int>& arr, int x) {
@@ -1279,6 +1430,7 @@ endsnippet
 
 # 015
 snippet findThreeSum "(vector<vector<int>>)index=find three sum(vector<int> &num)" b
+/* code by 王江 DC-Melo */
 vector<vector<int> > ${1:function}(vector<int> &num) {
 	vector<vector<int> > result;
 	if(num.size() == 0) return result;
@@ -1309,6 +1461,7 @@ endsnippet
 
 # 016
 snippet findThreeSumClosest "(int)val=find three sum(vector<int> &num, int target)" b
+/* code by 王江 DC-Melo */
     int findThreeSumClosest(vector<int> &num, int target) {
         int closestSum = num[0]+num[1]+num[2];
         sort(num.begin(),num.end());
@@ -1330,6 +1483,7 @@ endsnippet
 
 # 003
 snippet findLongestSubstringWithoutRepeatingCharacters "(int)maxlen=Longest Substring Without Repeating Characters(string s)" b
+/* code by 王江 DC-Melo */
 int lengthOfLongestSubstring(string s) {
 	int left=0, right=0;
 	int maxLength=0, length=0;
@@ -1354,6 +1508,7 @@ endsnippet
 
 # 004
 snippet findMedianOfTwoSortedArrays "(double)val=Median of Two Sorted Arrays(vector<int>& nums1, vector<int>& nums2)" b
+/* code by 王江 DC-Melo */
 double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 	vector<int> res;
 	int medianPos = 0;
@@ -1378,6 +1533,7 @@ endsnippet
 
 # 005
 snippet findLongestPalindromicSubstring "(string)subStr=Longest Palindromic Substring(string s)" b
+/* code by 王江 DC-Melo */
 string longestPalindrome(string s) {
 	int position, maxLength=0, length=0;
 	for(int i=0;i<s.size();i++) {
@@ -1408,6 +1564,7 @@ endsnippet
 
 # 006
 snippet printZigZagConversion "(string)str=ZigZag-Conversion(string s, int nRows)" b
+/* code by 王江 DC-Melo */
 string convert(string s, int nRows) {
 	int strLength = s.length();
 	int flag = 0;
@@ -1443,6 +1600,7 @@ endsnippet
 
 # 007
 snippet reverseInteger2 "(int)val=reverse Integer(int x)" b
+/* code by 王江 DC-Melo */
 int reverse(int x) {
 	int flag = x > 0? 1:-1;
 	x = abs(x);
@@ -1462,6 +1620,7 @@ endsnippet
 
 # 008
 snippet convertStringtoIntegerAtoi "(int)String to Integer atoi(string str)" b
+/* code by 王江 DC-Melo */
 #include <limits.h>
 int myAtoi(string str) {
 	int tempResult,result=0;
@@ -1483,6 +1642,7 @@ endsnippet
 
 # 009
 snippet isPalindromeNumber "(bool)is=Palindrome Number(int x)" b
+/* code by 王江 DC-Melo */
 bool isPalindrome(int x) {
 	if(x<0|| (x!=0 &&x%10==0)) return false;
 	int rev=0;
@@ -1497,6 +1657,7 @@ endsnippet
 
 # 010
 snippet isMatchRegularExpressionMatching "(bool)is=Regular-Expression-Matching(string &s,string &p,int i,int j)" b
+/* code by 王江 DC-Melo */
 bool match(string &s,string &p,int i,int j) {
 	if(j == p.size()) return i == s.size();
 	if(p[j+1] == '*') {
@@ -1515,6 +1676,7 @@ endsnippet
 
 # 011
 snippet findContainerWithMostWater "(int)area=Container With Most Water (vector<int> &height)" b
+/* code by 王江 DC-Melo */
 int maxArea(vector<int> &height) {
 	int left = 0;
 	int right = height.size() -1;
@@ -1532,6 +1694,7 @@ endsnippet
 
 # 012
 snippet convertIntegertoRoman "(string)str=Integer to Roman(int num)" b
+/* code by 王江 DC-Melo */
 void romanstr(string& roman, int num, char* symbol) {
 	if(num == 0)return;
 	else if(num <= 3) roman.append(num, *symbol);
@@ -1565,6 +1728,7 @@ endsnippet
 
 # 013
 snippet convertRomanToInteger "(int)ival=Roman-to-Integer(string s)" b
+/* code by 王江 DC-Melo */
 int romanToInt(string s) {
 	int map[26];
 	map['I'-'A'] = 1;
@@ -1587,6 +1751,7 @@ endsnippet
 
 # 014
 snippet findLongestCommonPrefix "(string)str=Longest Common Prefix(vector<string> &strs)" b
+/* code by 王江 DC-Melo */
 string longestCommonPrefix(vector<string> &strs) {
 	if( strs.size() == 0) return "";
 	string prefix = strs[0];
@@ -1603,6 +1768,7 @@ endsnippet
 
 # 015
 snippet findThreeSum2 "(vector<vector<int>>)res=find three sum(vector<int> &num)" b
+/* code by 王江 DC-Melo */
 vector<vector<int>> threeSum(vector<int> &num) {
 	vector<vector<int> > result;
 	if(num.size() == 0) return result;
@@ -1633,6 +1799,7 @@ endsnippet
 
 # 016
 snippet find3SumClosest "(int)closest=find3SumClosest(vector<int> &num, int target)" b
+/* code by 王江 DC-Melo */
 int threeSumClosest(vector<int> &num, int target) {
 	int closestSum = num[0]+num[1]+num[2];
 	sort(num.begin(),num.end());
@@ -1652,6 +1819,7 @@ endsnippet
 
 # 017
 snippet findLetterCombinationsOfAPhoneNumber "(vector<string>)combination=Letter Combinations of a Phone Number(string digits)" b
+/* code by 王江 DC-Melo */
 vector<string> letterCombinations(string digits) {
 	vector<string> result;
 	if(digits == "") return result;
@@ -1680,6 +1848,7 @@ endsnippet
 
 # 018
 snippet findFourSum "(vector<vector<int>>)sum=find Four Sum (vector<int>& nums, int target)" b
+/* code by 王江 DC-Melo */
 vector<vector<int>> fourSum(vector<int>& nums, int target) {
 	vector<vector<int> > result;
 	if(nums.size() == 0) return result;
@@ -1714,6 +1883,7 @@ endsnippet
 
 # 019
 snippet removeNthNodeFromEndOfList "(ListNode*)head=Remove Nth Node From End of List(ListNode *head, int n)" b
+/* code by 王江 DC-Melo */
 ListNode *${1:function}(ListNode *head, int n) {
 	ListNode *tempHead = new ListNode(0);
 	tempHead->next = head;
@@ -1731,6 +1901,7 @@ endsnippet
 
 # 020
 snippet isValidParentheses "(bool)is=Find the number of valid parentheses expressions of given length(string s)" b
+/* code by 王江 DC-Melo */
 #include <stack>
 bool isValid(string s) {
 	stack<char> stk;
@@ -1758,6 +1929,7 @@ endsnippet
 
 # 021
 snippet mergeTwoSortedLists "(ListNode*)head=Merge Two Sorted Lists(ListNode* l1, ListNode* l2)" b
+/* code by 王江 DC-Melo */
 ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
 	ListNode *head = new ListNode(0);
 	ListNode *point = head;
@@ -1780,6 +1952,7 @@ endsnippet
 
 # 022
 snippet generateNParentheses "(vector<string>)parStr=generate all combinations of well-formed parentheses(int n)" b
+/* code by 王江 DC-Melo */
     void generate(vector<string> &strList, string str, int k, int length) {
         if(str.size() == length) {
             if(k==0) strList.push_back(str);
@@ -1801,6 +1974,7 @@ endsnippet
 
 # 023
 snippet mergeNSortedLists "(ListNode*)head=Merge k sorted linked lists(vector<ListNode*>& lists)" b
+/* code by 王江 DC-Melo */
 #include <queue>
 struct Compare {
     bool operator()(const ListNode*p, const ListNode* q)const{
@@ -1828,6 +2002,7 @@ endsnippet
 
 # 024
 snippet swap2NodesInPairs "(ListNode *)mem=swap every two adjacent nodes(ListNode* head)" b
+/* code by 王江 DC-Melo */
 ListNode *swapPairs(ListNode* head) {
 	/* ListNode **pp = &head, *a, *b; */
 	ListNode **pp = &head;
@@ -1846,6 +2021,7 @@ endsnippet
 
 # 025
 snippet reverseNodesInKGroup "(ListNode *r)head=reverse first K Nodes other folow (ListNode *head, int k)" b
+/* code by 王江 DC-Melo */
 ListNode *reverseKGroup(ListNode *head, int k) {
 	if( head==NULL || k==1 ) return head;
 	int sum=0;
@@ -1872,6 +2048,7 @@ endsnippet
 
 # 026
 snippet removeDuplicatesFromSortedArray "(int)mem=remove Duplicates from Sorted Array (vector<int>& nums)" b
+/* code by 王江 DC-Melo */
 int removeDuplicates(vector<int>& nums) {
 	int length = nums.size();
 	for(int i=0,j=1;j<nums.size();j++) {
@@ -1887,6 +2064,7 @@ endsnippet
 
 # 027
 snippet removeVectorElement "(int)vec=remove vector element(vector<int>& nums, int val)" b
+/* code by 王江 DC-Melo */
 int removeElement(vector<int>& nums, int val) {
 	int length = 0;
 	for(int i=0,j=0;j<nums.size();j++) {
@@ -1903,6 +2081,7 @@ endsnippet
 
 # 028
 snippet findTheFirstPositionSubstr1 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
+/* code by 王江 DC-Melo */
 int strStr(string haystack, string needle) {
     if(needle.size() == 0) return 0;
     for(int i=0;i<haystack.size();i++) {
@@ -1919,6 +2098,7 @@ endsnippet
 
 # 028
 snippet findTheFirstPositionSubstr2 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
+/* code by 王江 DC-Melo */
 int strStr(string haystack, string needle) {
 	int m = haystack.length(), n = needle.length();
 	if (!n) return 0;
@@ -1934,6 +2114,7 @@ endsnippet
 
 # 029
 snippet divideTwoIntegers "(int)div=divide Two Integers without / function(int dividend, int divisor)" b
+/* code by 王江 DC-Melo */
 #include <limits.h>
 int divide(int dividend, int divisor) {
 	if(!divisor || (dividend == INT_MIN && divisor == -1)) return INT_MAX;
@@ -1960,6 +2141,7 @@ endsnippet
 
 # 030
 snippet findSubstringsfirstOcurence "(vector<int>)Substring with Concatenation of All Words(string s, vector<string>& words)" b
+/* code by 王江 DC-Melo */
 #include <map>
 vector<int> findSubstring(string s, vector<string>& words) {
 	vector<int> res;
@@ -2051,6 +2233,7 @@ endsnippet
 
 # 031
 snippet generateNextPermutation "(void)gen=generate Next Permutation (vector<int> &num)" b
+/* code by 王江 DC-Melo */
 void nextPermutation(vector<int> &num) {
 	if(num.size() < 2) return;
 	int curMax = num[num.size() - 1];
@@ -2081,6 +2264,7 @@ endsnippet
 
 # 032
 snippet findLongestValidParentheses "(int)maxlen=find Longest Valid Parentheses(string s)" b
+/* code by 王江 DC-Melo */
 int longestValidParentheses(string s) {
 	stack<int>S;
 	S.push(-1);
@@ -2107,6 +2291,7 @@ endsnippet
 
 # 033
 snippet searchInRotatedSortedArray "(int)pos=Search in Rotated Sorted Array(int A[], int n, int target)" b
+/* code by 王江 DC-Melo */
 int findPos(int a[], int left, int right) {
 	if (left > right) return -1;
 	int mid = left + (right - left) / 2;
@@ -2138,6 +2323,7 @@ endsnippet
 
 # 034
 snippet findFirstAndLastPositionOfElementInSortedArray "(vector<int>)index=find First Last Position Of Element In Sorted Array(int A[], int n, int target)" b
+/* code by 王江 DC-Melo */
 public:
     vector<int> searchRange(int A[], int n, int target) {
         begin = end = -1;
@@ -2169,6 +2355,7 @@ endsnippet
 
 # 035
 snippet searchBigThanPosition "(int)pos=Search Insert Position (vector<int>& nums, int target)" b
+/* code by 王江 DC-Melo */
 int searchInsert(vector<int>& nums, int target) {
 	int mid,left = 0, right = nums.size();
 	while(left < right) {
@@ -2184,6 +2371,7 @@ endsnippet
 
 # 036
 snippet isSudokuValid "(bool)is=Determine if a 9 x 9 Sudoku board is valid (vector<vector<char> > &board)" b
+/* code by 王江 DC-Melo */
 bool isValidSudoku(vector<vector<char> > &board) {
 	vector<vector<bool> > rows(9, vector<bool>(9,false));
 	vector<vector<bool> > cols(9, vector<bool>(9,false));
@@ -2202,6 +2390,7 @@ endsnippet
 
 # 037
 snippet findSudokuSolver "comment " b
+/* code by 王江 DC-Melo */
 bool isValid(vector<vector<char> > &board, int a, int b) {
 	for (int i = 0; i < 9; ++i) { if (i != a && board[i][b] == board[a][b]) return false; }
 	for (int j = 0; j < 9; ++j) { if (j != b && board[a][j] == board[a][b]) return false; }
@@ -2238,6 +2427,7 @@ endsnippet
 
 # 038
 snippet countAndSay "(string)countsay=count-and-Say (string s)" b
+/* code by 王江 DC-Melo */
 string revolution(string s) {
 	string ret;
 	/* char pre =s[0]; */ 
@@ -2271,6 +2461,7 @@ endsnippet
 
 # 039
 snippet sumCombination "(vector<vector<int> >)set=Combination Sum with use element many times() " b
+/* code by 王江 DC-Melo */
 #include <algorithm>
 public:
     vector<vector<int> > combinationSum(vector<int> &candidates, int target) {
@@ -2299,6 +2490,7 @@ endsnippet
 
 # 040
 snippet sumCombinationII "(vector<vector<int> >)set=Combination Sum with use element many times() " b
+/* code by 王江 DC-Melo */
 public:
     vector<vector<int> > combinationSum2(vector<int> &num, int target) {
         vector<int> vecTmp;
@@ -2328,6 +2520,7 @@ $0
 endsnippet
 # 041
 snippet findFirstMissingPositiveNumber "find the first missing positive integer" b
+/* code by 王江 DC-Melo */
 void swap(int &a,int &b) {
 	int temp = a;
 	a = b;
@@ -2348,6 +2541,7 @@ endsnippet
 
 # 042
 snippet findMaxWaterArea1 "(int)area=Trapping Rain Water(int A[], int n)" b
+/* code by 王江 DC-Melo */
 int trap(int A[], int n) {
 	int leftMax = 0;
 	int left[n]; 
@@ -2374,6 +2568,7 @@ endsnippet
 
 # 042
 snippet findMaxWaterArea2 "(int)area=Trapping Rain Water(vector<int>& height)" b
+/* code by 王江 DC-Melo */
     int trap(vector<int>& height) {
         int res = 0, mx = 0, n = height.size();
         vector<int> dp(n, 0);
@@ -2394,6 +2589,7 @@ endsnippet
 
 # 042
 snippet findMaxWaterArea3 "(int)area=Trapping Rain Water(vector<int>& height)" b
+/* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	int res = 0, l = 0, r = height.size() - 1;
 	while (l < r) {
@@ -2417,6 +2613,7 @@ endsnippet
 
 # 042
 snippet findMaxWaterArea4 "(int)area=Trapping Rain Water(vector<int>& height)" b
+/* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	int l = 0, r = height.size() - 1, level = 0, res = 0;
 	while (l < r) {
@@ -2431,6 +2628,7 @@ endsnippet
 
 # 042
 snippet findMaxWaterArea5 "(int)area=Trapping Rain Water(vector<int>& height)" b
+/* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	stack<int> st;
 	int i = 0, res = 0, n = height.size();
@@ -2450,6 +2648,7 @@ endsnippet
 
 # 043
 snippet multiplyTwoStringsNumber "(string)str=multiply Two Strings Number (string num1, string num2)" b
+/* code by 王江 DC-Melo */
 string multiply(string num1, string num2) {
 	int len1 = num1.size(), len2 = num2.size(), len = len1 + len2;
 	string str(len, '0');
@@ -2475,6 +2674,7 @@ endsnippet
 
 # 044
 snippet isWildcardMatching "is Wildcard regex Matching " b
+/* code by 王江 DC-Melo */
 #include <iostream>
 #include <string>
 #include <vector>
@@ -2682,44 +2882,30 @@ int main(){
 $0
 endsnippet
 
-## 045
-#snippet Jump-Game-II "comment " b
-
-##include <iostream>
-#using namespace std;
-#class Solution 
-#{
-#public:
-#    int jump(int A[], int n) 
-#    {
-#        int ret = 0;
-#        int curMax = 0;
-#        int curRch = 0;
-#        for(int i = 0; i < n; i ++)
-#        {
-#            if(curRch < i)
-#            {
-#                ret ++;
-#                curRch = curMax;
-#            }
-#            curMax = max(curMax, A[i]+i);
-#        }
-#        return ret;
-#    }
-#};
-#int main(int argc, char *argv[])
-#{
-#    Solution sln;
-#    int input[]={2,3,1,1,4 };
-#    int output=sln.jump(input,5);
-#    std::cout << "output:" << output << std::endl;
-#    return 0;
-#}
-#$0
-#endsnippet
+# 045
+snippet findMinStepToEndJumpGame-II "(int)step=The minimum number of jumps to reach the last index(int A[], int n)" b
+/* code by 王江 DC-Melo */
+int jump(int A[], int n) {
+	int ret = 0;
+	int curMax = 0;
+	int curRch = 0;
+	for(int i = 0; i < n; i ++)
+	{
+		if(curRch < i)
+		{
+			ret ++;
+			curRch = curMax;
+		}
+		curMax = max(curMax, A[i]+i);
+	}
+	return ret;
+}
+$0
+endsnippet
 
 ## 046
 #snippet Permutations "comment " b
+#/* code by 王江 DC-Melo */
 
 ##include<vector>
 ##include<algorithm>
@@ -2888,6 +3074,7 @@ endsnippet
 
 ## 047
 #snippet Permutations-II "comment " b
+#/* code by 王江 DC-Melo */
 
 ##include <iostream>
 ##include <vector>
@@ -2939,720 +3126,476 @@ endsnippet
 #$0
 #endsnippet
 
-## 048
-#snippet Rotate-Image "comment " b
+# 47
+snippet rotateImage "rotateImage " b
+/* code by 王江 DC-Melo */
+void rotate(vector<vector<int> > &matrix) {
+	int n=matrix.size();
+	int temp = 0;
+	for(int i=0;i<n;i++) {
+		for(int j=i;j<n;j++) swap(matrix[i][j],matrix[j][i]);
+		reverse(matrix[i].begin(),matrix[i].end());
+	}
+}
+$0
+endsnippet
 
-#class Solution 
-#{
-#public:
-#    void rotate(vector<vector<int> > &matrix) 
-#    {
-#        int n=matrix.size();
-#        int temp = 0;
-#        for(int i=0;i<n;i++)
-#        {
-#            for(int j=i;j<n;j++)
-#                swap(matrix[i][j],matrix[j][i]);
-#            reverse(matrix[i].begin(),matrix[i].end());
-#        }
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 049
-#snippet Group-Anagrams "comment " b
+# 049
+snippet Group-Anagrams "(vector<string>)group=group words with same character(vector<string> &strs)" b
+/* code by 王江 DC-Melo */
+#include <map>
+#include <algorithm>
+vector<string> anagrams(vector<string> &strs) {
+	string s;
+	map<string, int> anagram;
+	vector<string> result;
+	for (int i = 0; i < strs.size(); ++i) {
+		s = strs[i];
+		sort(s.begin(), s.end());
+		if (anagram.find(s) == anagram.end()) {
+			anagram[s] = i;
+		} else {
+			if (anagram[s] >= 0) {
+				result.push_back(strs[anagram[s]]);
+				anagram[s] = -1;
+			}
+			result.push_back(strs[i]);
+		}
+	}
+	return result;        
+}
+$0
+endsnippet
 
-##include <string>
-##include <vector>
-##include <map>
-##include <algorithm>
-#using namespace std;
+# 050
+snippet calculatePowxn "(double)cal=comment (double x, int n)" b
+/* code by 王江 DC-Melo */
+double pow(double x, int n) {
+	long long index = n;
+	double result = 0;
+	int flag = 1;
+	if (x<0 && n%2!=0) x = -x, flag = -1;
+	if (index < 0) result = powI(x, -index);
+	else result = powI(x, index);
+	if (index < 0) return 1/result*flag;
+	else return result*flag;
+}
+double powI(double x, long long n) // x>0, n>=0 {
+	if (n == 0) return 1;
+	else if (n == 1) return x;
+	else if (n == 2) return x*x;
+	else {
+		if (n%2==0) {
+			double mid = powI(x, n/2);
+			return mid*mid;
+		} else {
+			double mid = powI(x, (n-1)/2);
+			return mid*mid*x;
+		}
+	}
+}
+$0
+endsnippet
 
-#class Solution 
-#{
-#public:
-#    vector<string> anagrams(vector<string> &strs) 
-#    {
-#        string s;
-#        map<string, int> anagram;
-#        vector<string> result;
-#        for (int i = 0; i < strs.size(); ++i) 
-#        {
-#            s = strs[i];
-#            sort(s.begin(), s.end());
-#            /* 用find函数来定位数据出现位置，它返回的一个迭代器，当数据出现时，它返回数据所在位置的迭代器，如果map中没有要查找的数据，它返回的迭代器等于end函数返回的迭代器 */
-#            if (anagram.find(s) == anagram.end()) 
-#            {
-#                anagram[s] = i;
-#            } 
-#            else 
-#            {
-#                if (anagram[s] >= 0) 
-#                {
-#                    result.push_back(strs[anagram[s]]);
-#                    anagram[s] = -1;
-#                }
-#                result.push_back(strs[i]);
-#            }
-#        }
-#        return result;        
-#    }
-#};
-#int main()
-#{        
-#    Solution sol;
-#    vector<string> strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
-#    vector<string> res = sol.anagrams(strs);
-#    return 0;
-#}
-#$0
-#endsnippet
+# 051
+snippet putQueensN "(vector<vector<string> >)place=placing n queens that no two queens attack each other(int n)" b
+/* code by 王江 DC-Melo */
+vector<vector<string> > result;
+bool isAvailable(int row, int line) {
+	for(int i=0;i<row;i++) {
+		if( line == chessBoard[i] || abs(row-i) == abs(line - chessBoard[i]) ) return false;
+	}
+	return true;
+}
 
-## 050
-#snippet Pow(x,-n) "comment " b
+void solve(int curLine) {
+	if(curLine == target) {
+		result.push_back(tempResult);
+		for(int i=0;i<target;i++) result.back()[i][chessBoard[i]] = 'Q';
+	} else {
+		for(int i=0;i<target;i++) {
+			if(isAvailable(curLine,i)) {
+				chessBoard[curLine] = i;
+				solve(curLine+1);
+			}
+		}
+	}
+}
+vector<vector<string> > solveNQueens(int n) {
+	chessBoard.resize(n);
+	target = n;
+	string tempRow;
+	for(int i=0;i<n;i++) tempRow.push_back('.');
+	for(int i=0;i<n;i++) tempResult.push_back(tempRow);
+	solve(0);
+	return result;
+}
+$0
+endsnippet
 
-#class Solution 
-#{
-#public:
-#    double pow(double x, int n) 
-#    {
-#        long long index = n;
-#        double result = 0;
-#        int flag = 1;
-#        if (x<0 && n%2!=0)
-#            x = -x, flag = -1;
-#        if (index < 0)
-#            result = powI(x, -index);
-#        else
-#            result = powI(x, index);
+# 052
+snippet putQueensN-II "(vector<vector<string> >)place=placing n queens that no two queens attack each other(int n)" b
+/* code by 王江 DC-Melo */
+vector<vector<string> > result;
+bool isAvailable(int row, int line) {
+	for(int i=0;i<row;i++) {
+		if( line == chessBoard[i] || abs(row-i) == abs(line - chessBoard[i]) ) return false;
+	}
+	return true;
+}
+void solve(int curLine) {
+	if(curLine == target) {
+		result.push_back(tempResult);
+		for(int i=0;i<target;i++) result.back()[i][chessBoard[i]] = 'Q';
+	} else {
+		for(int i=0;i<target;i++) {
+			if(isAvailable(curLine,i)) {
+				chessBoard[curLine] = i;
+				solve(curLine+1);
+			}
+		}
+	}
+}
+int totalNQueens(int n) {
+	chessBoard.resize(n);
+	target = n;
+	string tempRow;
+	for(int i=0;i<n;i++) tempRow.push_back('.');
+	for(int i=0;i<n;i++) tempResult.push_back(tempRow);
+	solve(0);
+	return result.size();
+}
+$0
+endsnippet
 
-#        if (index < 0) return 1/result*flag;
-#        else return result*flag;
-#    }
+# 053
+snippet findContinuousMaxSubarray "(int)max=find the contiguous subarray in integer array nums(int A[], int n)" b
+/* code by 王江 DC-Melo */
+int maxSubArray(int A[], int n) {
+	int ThisSum,MaxSum;
+	MaxSum = A[0];
+	ThisSum = 0;
+	for(int j=0;j<n;j++) {
+		ThisSum += A[j];
+		if( ThisSum > MaxSum) MaxSum = ThisSum;
+		if(ThisSum < 0) ThisSum = 0;
+	}
+	return MaxSum;
+}
+$0
+endsnippet
 
-#    double powI(double x, long long n) // x>0, n>=0
-#    {
-#        if (n == 0) 
-#            return 1;
-#        else if (n == 1) 
-#            return x;
-#        else if (n == 2) 
-#            return x*x;
-#        else
-#        {
-#            if (n%2==0)
-#            {
-#                double mid = powI(x, n/2);
-#                return mid*mid;
-#            }
-#            else {
-#                double mid = powI(x, (n-1)/2);
-#                return mid*mid*x;
-#            }
-#        }
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 051
-#snippet N-Queens "comment " b
+# 054
+snippet rotateMatrixSpiralMatrix "(vector<int>)rotate=all elements of the matrix in spiral order(vector<vector<int> > &matrix)" b
+/* code by 王江 DC-Melo */
+struct Node {
+    int x,y;
+    Node(int _x,int _y):x(_x),y(_y){}
+};
+vector<int> spiralOrder(vector<vector<int> > &matrix) {
+	// Start typing your C/C++ solution below
+	// DO NOT write int main() function
+	vector<int> result;
+	int m=matrix.size();
+	if(m==0) return result;
+	int n=matrix[0].size();
+	if(n==0) return result;
 
-#class Solution 
-#{
-#public:
-#    vector<vector<string> > result;
-#    vector<string> tempResult;
-#    vector<int> chessBoard;
-#    int target;
+	Node a(0,0);
+	Node b(m-1,n-1);
+	int e = m < n ? m : n;
+	e = e/2;
+	while(e--) {
+		for(int i=a.y;i<=b.y;i++) result.push_back(matrix[a.x][i]);
+		for(int i=a.x+1;i<=b.x;i++) result.push_back(matrix[i][b.y]);
+		for(int i=b.y-1;i>=a.y;i--) result.push_back(matrix[b.x][i]);
+		for(int i=b.x-1;i>a.x;--i) result.push_back(matrix[i][a.y]);
+		a.x++;
+		a.y++;
+		b.x--;
+		b.y--;
+	}
+	if(a.x==b.x) {
+		for(int i=a.y;i<=b.y;i++) result.push_back(matrix[a.x][i]);
+	} else if(a.y==b.y) {
+		for(int i=a.x;i<=b.x;i++) result.push_back(matrix[i][a.y]);
+	}
+	return result;
+}
+$0
+endsnippet
 
-#    bool isAvailable(int row, int line)
-#    {
-#        for(int i=0;i<row;i++)
-#        {
-#            if( line == chessBoard[i]
-#                || abs(row-i) == abs(line - chessBoard[i]) )
-#                return false;
-#        }
-#        return true;
-#    }
+# 055
+snippet canJumpEndJumpGame "(bool)can=reach the last index(int A[], int n)" b
+/* code by 王江 DC-Melo */
+bool canJump(int A[], int n) {
+	int max = 0;
+	for(int i=0;i<n;i++) {
+		if(A[i]>max) max = A[i];
+		if(max == 0 && i != n-1) return false;
+		max--;
+	}
+	return true;
+}
+$0
+endsnippet
 
-#    void solve(int curLine)
-#    {
-#        if(curLine == target)
-#        {
-#            result.push_back(tempResult);
-#            for(int i=0;i<target;i++)
-#                result.back()[i][chessBoard[i]] = 'Q';
-#        }
-#        else
-#        {
-#            for(int i=0;i<target;i++)
-#            {
-#                if(isAvailable(curLine,i))
-#                {
-#                    chessBoard[curLine] = i;
-#                    solve(curLine+1);
-#                }
-#            }
-#        }
-#    }
+# 056
+snippet mergeAreaIntervals "(vector<Interval>)merge=all overlapping intervals(vector<Interval> &intervals)" b
+/* code by 王江 DC-Melo */
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+bool cmp(struct Interval in1,struct Interval in2) { return in1.start < in2.start; }
+vector<Interval> merge(vector<Interval> &intervals) {
+	sort(intervals.begin(),intervals.end(),cmp);
+	vector<Interval> result;
+	if(intervals.size()==0)
+		return result; 
+	int pend=intervals[0].end;
+	Interval s(intervals[0].start,pend);
+	for(int i=1;i<intervals.size();i++) {
+		if(intervals[i].start>pend) {   
+			s.end=pend;
+			result.push_back(s);
+			s.start=intervals[i].start;
+			pend=intervals[i].end;
+		}
+		else pend=max(intervals[i].end,pend);       
+	}
+	 s.end=pend;
+	 result.push_back(s);
+	 return result;
+}
+$0
+endsnippet
 
-#    vector<vector<string> > solveNQueens(int n)
-#    {
-#        chessBoard.resize(n);
-#        target = n;
+# 057
+snippet insertAreaInterval "(vector<Interval>)area=insert merge interval into the intervals(vector<Interval> &intervals, Interval newInterval)" b
+/* code by 王江 DC-Melo */
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
+	int i = 0;
+	int len = intervals.size();
+	if(0 == len) { intervals.push_back(newInterval); return intervals; }
+	vector<Interval> re;
+	//find the insert position of start.
+	while(i < len && intervals[i].end < newInterval.start) {
+		re.push_back(intervals[i]);
+		++i;
+	}
+	//at the right, 
+	if(i == len) { re.push_back(newInterval); return re; }
+	int j = i;
+	//find the insert position of end.
+	while(j < len && intervals[j].end < newInterval.end) { ++j; }
+	Interval jion;
+	jion.start = min(intervals[i].start, newInterval.start);
+	if(j == len) {
+		jion.end = newInterval.end;
+		re.push_back(jion);
+		return re;
+	}
+	if(newInterval.end < intervals[j].start) {
+	   --j;
+	   jion.end = newInterval.end;
+	   re.push_back(jion);
+	} else {
+		jion.end = intervals[j].end;
+		re.push_back(jion);
+	}
+	++j;
+	while(j < len) {
+		re.push_back(intervals[j]);
+		++j;
+	}
+	return re;
+}
+$0
+endsnippet
 
-#        string tempRow;
-#        for(int i=0;i<n;i++)
-#            tempRow.push_back('.');
-#        for(int i=0;i<n;i++)
-#            tempResult.push_back(tempRow);
+# 058
+snippet countLengthOfLastWord "(int)len=length of last word in the string(const char *s)" b
+/* code by 王江 DC-Melo */
+int lengthOfLastWord(const char *s) {
+	int result = 0;
+	bool flag = false;
+	while(*s != '\0') {
+		if(*s == ' ') flag = true;
+		else if(flag == true) {
+			flag = false;
+			result = 1;
+		} else result++;
+		s++;
+	}
+	return result;
+}
+$0
+endsnippet
 
-#        solve(0);
-#        return result;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 052
-#snippet N-Queens-II "comment " b
+# 059
+snippet genrotateMatrixSpiralMatrixII "(vector<vector<int> >)matrix=generate a square matrix filled with elements in spiral order " b
+/* code by 王江 DC-Melo */
+void solve(int startPos, int startNum, int n) {
+	if(n <= 0) return ;
+	else  {
+		for(int i=startPos;i<startPos+n;i++) {
+			matrix[startPos][i] = startNum;
+			startNum++;
+		}
+		for(int i=startPos+1;i<startPos+n;i++) {
+			matrix[i][startPos+n-1] = startNum;
+			startNum++;
+		}
+		for(int i=startPos+n -2;i> startPos-1;i--) {
+			matrix[startPos+n-1][i] = startNum;
+			startNum++;
+		}
+		for(int i=startPos+n -2;i>startPos;i--) {
+			matrix[i][startPos] = startNum;
+			startNum++;
+		}
+		solve(startPos+1,startNum,n-2);
+	}
+}
+vector<vector<int> > generateMatrix(int n) 
+{
+	matrix.resize(n,vector<int>(n));
+	solve(0,1,n);
+	return matrix;
+}
+$0
+endsnippet
 
-#class Solution 
-#{
-#public:
-#    vector<vector<string> > result;
-#    vector<string> tempResult;
-#    vector<int> chessBoard;
-#    int target;
+# 060
+snippet getKthPermutation "(sting)kth=Given n and k, return the kth permutation sequence.(int n, int k)" b
+/* code by 王江 DC-Melo */
+string getPermutation(int n, int k) {
+	vector<int> nums(n);
+	int pCount = 1;
+	for(int i = 0 ; i < n; ++i) {
+		nums[i] = i + 1;
+		pCount *= (i + 1);
+	}
+	k--;
+	string res = "";
+	for(int i = 0 ; i < n; i++) {
+		pCount = pCount/(n-i);
+		int selected = k / pCount;
+		res += ('0' + nums[selected]);
+		for(int j = selected; j < n-i-1; j++) nums[j] = nums[j+1];
+		k = k % pCount;
+	}
+	return res;
+}
+$0
+endsnippet
 
-#    bool isAvailable(int row, int line)
-#    {
-#        for(int i=0;i<row;i++)
-#        {
-#            if( line == chessBoard[i]
-#                || abs(row-i) == abs(line - chessBoard[i]) )
-#                return false;
-#        }
-#        return true;
-#    }
+# 061
+snippet reverseNodeBykthrotateList "(ListNode *)rotate=the list to the right by k places(ListNode *head, int k)" b
+/* code by 王江 DC-Melo */
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+ListNode *rotateRight(ListNode *head, int k) {
+	if(k == 0 || head == NULL) return head;
+	int length = 0;
+	for(ListNode *temp = head;temp != NULL;temp = temp->next) length++;
+	ListNode* left = head, *right = head;
+	k %= length;
+	while(k--) right = right->next;
+	while(right->next != NULL) {
+		right = right->next;
+		left = left->next;
+	}
+	right->next = head;
+	ListNode *result = left->next;
+	left->next = NULL;
+	return result;
+}
+$0
+endsnippet
 
-#    void solve(int curLine)
-#    {
-#        if(curLine == target)
-#        {
-#            result.push_back(tempResult);
-#            for(int i=0;i<target;i++)
-#                result.back()[i][chessBoard[i]] = 'Q';
-#        }
-#        else
-#        {
-#            for(int i=0;i<target;i++)
-#            {
-#                if(isAvailable(curLine,i))
-#                {
-#                    chessBoard[curLine] = i;
-#                    solve(curLine+1);
-#                }
-#            }
-#        }
-#    }
+# 062
+snippet howManyUniquePaths "(int)num=How many possible unique paths are there(int m, int n)" b
+/* code by 王江 DC-Melo Dynamic Programming */
+int uniquePaths(int m, int n) {
+	vector<vector<int> > f(m, vector<int>(n));
+	for(int i = 0; i < n; i++) f[0][i] = 1;
+	for(int i = 0; i < m; i++) f[i][0] = 1;
+	for(int i = 1; i < m; i++) for(int j = 1; j < n; j++) f[i][j] = f[i-1][j] + f[i][j-1];
+	return f[m-1][n-1];
+}
+$0
+endsnippet
 
-#    int totalNQueens(int n)
-#    {
-#        chessBoard.resize(n);
-#        target = n;
+# 063
+snippet howManyUniquePathsSkipobstacles "(int)num=How many unique paths would there besome obstacles(vector<vector<int> > &obstacleGrid)" b
+/* code by 王江 DC-Melo */
+int uniquePathsWithObstacles(vector<vector<int> > &obstacleGrid) {
+	int m = obstacleGrid.size();
+	int n = obstacleGrid[0].size();
+	vector<vector<int> > f(m, vector<int>(n));
+	if(obstacleGrid[0][0] == 1) return 0;
+	f[0][0] = 1;
+	for(int i = 1; i < n; i++) {
+		if(obstacleGrid[0][i] == 1) f[0][i] = 0;
+		else    f[0][i] = f[0][i-1];
+	}
+	for(int i = 1; i < m; i++) {
+		if(obstacleGrid[i][0] == 1) f[i][0] = 0;
+		else    f[i][0] = f[i-1][0];
+	}
+	for(int i = 1; i < m; i++)
+		for(int j = 1; j < n; j++) {
+			if(obstacleGrid[i][j] == 1) f[i][j] = 0;
+			else f[i][j] = f[i-1][j] + f[i][j-1];
+		}
+	return f[m-1][n-1];
+}
+$0
+endsnippet
 
-#        string tempRow;
-#        for(int i=0;i<n;i++)
-#            tempRow.push_back('.');
-#        for(int i=0;i<n;i++)
-#            tempResult.push_back(tempRow);
+# 064
+snippet minStepSumNumPathSum "(int)sum=find a path from top left to bottom right which minimizes the sum(vector<vector<int> > &grid)" b
+/* code by 王江 DC-Melo */
+int minPathSum(vector<vector<int> > &grid) {
+	int m = grid.size();
+	int n = grid[0].size();
+	vector<vector<int> > DP(m, vector<int>(n));
+	DP[0][0] = grid[0][0];
+	for(int i = 1; i < n; i++) DP[0][i] = DP[0][i-1] + grid[0][i];
+	for(int i = 1; i < m; i++) DP[i][0] = DP[i-1][0] + grid[i][0];
+	for(int i = 1; i < m; i++)
+		for(int j = 1; j < n; j++)
+			DP[i-1][j] < DP[i][j-1] ? DP[i][j] = DP[i-1][j] + grid[i][j] : DP[i][j] = DP[i][j-1] + grid[i][j];
+	return DP[m-1][n-1];
+}
+$0
+endsnippet
 
-#        solve(0);
-#        return result.size();
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 053
-#snippet Maximum-Subarray "comment " b
-
-#class Solution 
-#{
-#public:
-#    int maxSubArray(int A[], int n) 
-#    {
-#        int ThisSum,MaxSum;
-       
-#        MaxSum = A[0];
-#        ThisSum = 0;
-#        for(int j=0;j<n;j++)
-#        {
-#            ThisSum += A[j];
-           
-#            if( ThisSum > MaxSum)
-#                MaxSum = ThisSum;
-#            if(ThisSum < 0)
-#                ThisSum = 0;
-#        }
-#        return MaxSum;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 054
-#snippet Spiral-Matrix "comment " b
-
-#struct Node
-#{
-#    int x,y;
-#    Node(int _x,int _y):x(_x),y(_y){}
-#};
-
-#class Solution 
-#{
-#public:
-#    vector<int> spiralOrder(vector<vector<int> > &matrix) 
-#    {
-#        // Start typing your C/C++ solution below
-#        // DO NOT write int main() function
-#        vector<int> result;
-#        int m=matrix.size();
-#        if(m==0)
-#            return result;
-#        int n=matrix[0].size();
-#        if(n==0)
-#            return result;
-
-#        Node a(0,0);
-#        Node b(m-1,n-1);
-#        int e = m < n ? m : n;
-#        e = e/2;
-#        while(e--)
-#        {
-#            for(int i=a.y;i<=b.y;i++)
-#                result.push_back(matrix[a.x][i]);
-#            for(int i=a.x+1;i<=b.x;i++)
-#                result.push_back(matrix[i][b.y]);
-#            for(int i=b.y-1;i>=a.y;i--)
-#                result.push_back(matrix[b.x][i]);
-#            for(int i=b.x-1;i>a.x;--i)
-#                result.push_back(matrix[i][a.y]);
-#            a.x++;
-#            a.y++;
-#            b.x--;
-#            b.y--;
-#        }
-           
-#        if(a.x==b.x)
-#        {
-#            for(int i=a.y;i<=b.y;i++)
-#                result.push_back(matrix[a.x][i]);
-#        }
-#        else if(a.y==b.y)
-#        {
-#            for(int i=a.x;i<=b.x;i++)
-#                result.push_back(matrix[i][a.y]);
-#        }
-#        return result;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 055
-#snippet Jump-Game "comment " b
-
-#class Solution 
-#{
-#public:
-#    bool canJump(int A[], int n) 
-#    {
-#        int max = 0;
-#        for(int i=0;i<n;i++)
-#        {
-#            if(A[i]>max)
-#                max = A[i];
-#            if(max == 0 && i != n-1)
-#                return false;
-#            max--;
-#        }
-#        return true;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 056
-#snippet Merge-Intervals "comment " b
-
-#/**
-# * Definition for an interval.
-# * struct Interval {
-# *     int start;
-# *     int end;
-# *     Interval() : start(0), end(0) {}
-# *     Interval(int s, int e) : start(s), end(e) {}
-# * };
-# */
-
-#bool cmp(struct Interval in1,struct Interval in2)
-#{
-#    return in1.start < in2.start;
-#}
-
-#class Solution 
-#{
-#public:
-#    vector<Interval> merge(vector<Interval> &intervals) 
-#    {
-#        sort(intervals.begin(),intervals.end(),cmp);
-#        vector<Interval> result;
-#        if(intervals.size()==0)
-#            return result; 
-#        int pend=intervals[0].end;
-#        Interval s(intervals[0].start,pend);
-#        for(int i=1;i<intervals.size();i++)
-#        {
-#            if(intervals[i].start>pend)
-#            {   
-#                s.end=pend;
-#                result.push_back(s);
-#                s.start=intervals[i].start;
-#                pend=intervals[i].end;
-#            }
-#            else pend=max(intervals[i].end,pend);       
-#        }
-#         s.end=pend;
-#         result.push_back(s);
-#         return result;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 057
-#snippet Insert-Interval "comment " b
-
-#/**
-# * Definition for an interval.
-# * struct Interval {
-# *     int start;
-# *     int end;
-# *     Interval() : start(0), end(0) {}
-# *     Interval(int s, int e) : start(s), end(e) {}
-# * };
-# */
-#class Solution 
-#{
-#public:
-#    vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) 
-#    {
-#        int i = 0;
-#        int len = intervals.size();
-#        if(0 == len) 
-#        { 
-#                intervals.push_back(newInterval); return intervals;
-#        }
-#        vector<Interval> re;
-#        //find the insert position of start.
-#        while(i < len && intervals[i].end < newInterval.start)
-#        {
-#            re.push_back(intervals[i]);
-#            ++i;
-#        }
-#        //at the right, 
-#        if(i == len)
-#        {
-#            re.push_back(newInterval); return re; 
-#        }
-#        int j = i;
-#        //find the insert position of end.
-#        while(j < len && intervals[j].end < newInterval.end)
-#        {
-#            ++j;
-#        }
-#        Interval jion;
-#        jion.start = min(intervals[i].start, newInterval.start);
-#        if(j == len)
-#        {
-#            jion.end = newInterval.end;
-#            re.push_back(jion);
-#            return re;
-#        }
-   
-#        if(newInterval.end < intervals[j].start)
-#        {
-#           --j;
-#           jion.end = newInterval.end;
-#           re.push_back(jion);
-#        } 
-#        else
-#        {
-#            jion.end = intervals[j].end;
-#            re.push_back(jion);
-#        }
-#        ++j;
-#        while(j < len)
-#        {
-#            re.push_back(intervals[j]);
-#            ++j;
-#        }
-#        return re;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 058
-#snippet Length-of-Last-Word "comment " b
-
-#class Solution 
-#{
-#public:
-#    int lengthOfLastWord(const char *s) 
-#    {
-#        int result = 0;
-#        bool flag = false;
-#        while(*s != '\0')
-#        {
-#            if(*s == ' ')
-#                flag = true;
-#            else if(flag == true)
-#            {
-#                flag = false;
-#                result = 1;
-#            }
-#            else
-#                result++;
-#            s++;
-#        }
-#        return result;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 059
-#snippet Spiral-Matrix-II "comment " b
-
-#class Solution 
-#{
-#public:
-#    vector<vector<int> > matrix;
-
-#    void solve(int startPos, int startNum, int n)
-#    {
-#        if(n <= 0)
-#            return ;
-#        else  
-#        {
-#            for(int i=startPos;i<startPos+n;i++)
-#            {
-#                matrix[startPos][i] = startNum;
-#                startNum++;
-#            }
-#            for(int i=startPos+1;i<startPos+n;i++)
-#            {
-#                matrix[i][startPos+n-1] = startNum;
-#                startNum++;
-#            }
-#            for(int i=startPos+n -2;i> startPos-1;i--)
-#            {
-#                matrix[startPos+n-1][i] = startNum;
-#                startNum++;
-#            }
-#            for(int i=startPos+n -2;i>startPos;i--)
-#            {
-#                matrix[i][startPos] = startNum;
-#                startNum++;
-#            }
-#            solve(startPos+1,startNum,n-2);
-#        }
-#    }
-
-#    vector<vector<int> > generateMatrix(int n) 
-#    {
-#        matrix.resize(n,vector<int>(n));
-#        solve(0,1,n);
-#        return matrix;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 060
-#snippet Permutation-Sequence "comment " b
-
-#class Solution 
-#{
-#public:
-#    string getPermutation(int n, int k) 
-#    {
-#        vector<int> nums(n);
-#        int pCount = 1;
-#        for(int i = 0 ; i < n; ++i) 
-#        {
-#            nums[i] = i + 1;
-#            pCount *= (i + 1);
-#        }
-
-#        k--;
-#        string res = "";
-#        for(int i = 0 ; i < n; i++) 
-#        {
-#            pCount = pCount/(n-i);
-#            int selected = k / pCount;
-#            res += ('0' + nums[selected]);
-           
-#            for(int j = selected; j < n-i-1; j++)
-#                nums[j] = nums[j+1];
-#            k = k % pCount;
-#        }
-#        return res;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 061
-#snippet Rotate-List "comment " b
-
-#/**
-# * Definition for singly-linked list.
-# * struct ListNode {
-# *     int val;
-# *     ListNode *next;
-# *     ListNode(int x) : val(x), next(NULL) {}
-# * };
-# */
-#class Solution 
-#{
-#public:
-#    ListNode *rotateRight(ListNode *head, int k) 
-#    {
-#        if(k == 0 || head == NULL)
-#            return head;
-
-#        int length = 0;
-#        for(ListNode *temp = head;temp != NULL;temp = temp->next)
-#            length++;
-
-#        ListNode* left = head, *right = head;
-#        k %= length;
-#        while(k--)
-#            right = right->next;
-       
-
-#        while(right->next != NULL)
-#        {
-#            right = right->next;
-#            left = left->next;
-#        }
-
-#        right->next = head;
-#        ListNode *result = left->next;
-#        left->next = NULL;
-
-#        return result;
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 062
-#snippet Unique-Paths "comment " b
-
-#class Solution 
-#{
-#public:
-#    int uniquePaths(int m, int n) 
-#    {
-#        vector<vector<int> > f(m, vector<int>(n));
-       
-#        for(int i = 0; i < n; i++)
-#            f[0][i] = 1;
-           
-#        for(int i = 0; i < m; i++)
-#            f[i][0] = 1;
-           
-#        for(int i = 1; i < m; i++)
-#            for(int j = 1; j < n; j++)
-#                f[i][j] = f[i-1][j] + f[i][j-1];
-               
-#        return f[m-1][n-1];
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 063
-#snippet Unique-Paths-II "comment " b
-
-#class Solution 
-#{
-#public:
-#    int uniquePathsWithObstacles(vector<vector<int> > &obstacleGrid) 
-#    {
-#        int m = obstacleGrid.size();
-#        int n = obstacleGrid[0].size();
-#        vector<vector<int> > f(m, vector<int>(n));
-       
-#        if(obstacleGrid[0][0] == 1)
-#            return 0;
-       
-#        f[0][0] = 1;
-#        for(int i = 1; i < n; i++)
-#        {
-#            if(obstacleGrid[0][i] == 1)
-#                f[0][i] = 0;
-#            else    
-#                f[0][i] = f[0][i-1];
-#        }
-           
-#        for(int i = 1; i < m; i++)
-#        {
-#            if(obstacleGrid[i][0] == 1)
-#                f[i][0] = 0;
-#            else    
-#                f[i][0] = f[i-1][0];
-#        }
-           
-#        for(int i = 1; i < m; i++)
-#            for(int j = 1; j < n; j++)
-#            {
-#                if(obstacleGrid[i][j] == 1)
-#                    f[i][j] = 0;
-#                else
-#                    f[i][j] = f[i-1][j] + f[i][j-1];
-#            }
-               
-#        return f[m-1][n-1];
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
-## 064
-#snippet Minimum-Path-Sum "comment " b
-
-#class Solution 
-#{
-#public:
-#    int minPathSum(vector<vector<int> > &grid) 
-#    {
-#        int m = grid.size();
-#        int n = grid[0].size();
-#        vector<vector<int> > DP(m, vector<int>(n));
-
-#        DP[0][0] = grid[0][0];
-#        for(int i = 1; i < n; i++)
-#            DP[0][i] = DP[0][i-1] + grid[0][i];
-           
-#        for(int i = 1; i < m; i++)
-#            DP[i][0] = DP[i-1][0] + grid[i][0];
-           
-#        for(int i = 1; i < m; i++)
-#            for(int j = 1; j < n; j++)
-#                DP[i-1][j] < DP[i][j-1] ? DP[i][j] = DP[i-1][j] + grid[i][j] : DP[i][j] = DP[i][j-1] + grid[i][j];
-               
-#        return DP[m-1][n-1];
-#    }
-#$0
-#endsnippet
-## };::::::::::::::
 ## 065
 #snippet Valid-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3720,6 +3663,7 @@ endsnippet
 ## };::::::::::::::
 ## 066
 #snippet Plus-One "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3746,6 +3690,7 @@ endsnippet
 ## };::::::::::::::
 ## 067
 #snippet Add-Binary "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3786,6 +3731,7 @@ endsnippet
 ## };::::::::::::::
 ## 068
 #snippet Text-Justification "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3860,6 +3806,7 @@ endsnippet
 ## };::::::::::::::
 ## 069
 #snippet Sqrt(x) "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3876,6 +3823,7 @@ endsnippet
 ## };::::::::::::::
 ## 070
 #snippet Climbing-Stairs "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3903,6 +3851,7 @@ endsnippet
 ## };::::::::::::::
 ## 072
 #snippet Edit-Distance "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3937,6 +3886,7 @@ endsnippet
 ## };::::::::::::::
 ## 073
 #snippet Set-Matrix-Zeroes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -3993,6 +3943,7 @@ endsnippet
 ## };::::::::::::::
 ## 074
 #snippet Search-a-2D-Matrix "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4031,6 +3982,7 @@ endsnippet
 ## };::::::::::::::
 ## 075
 #snippet Sort-Colors "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4067,6 +4019,7 @@ endsnippet
 ## };::::::::::::::
 ## 076
 #snippet Minimum-Window-Substring "comment " b
+#/* code by 王江 DC-Melo */
 
 ##define INT_MAX 0x7fffffff
 
@@ -4138,6 +4091,7 @@ endsnippet
 ## };::::::::::::::
 ## 077
 #snippet Combinations "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4178,6 +4132,7 @@ endsnippet
 ## };::::::::::::::
 ## 078
 #snippet Subsets "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4222,6 +4177,7 @@ endsnippet
 ## };::::::::::::::
 ## 079
 #snippet Word-Search "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4271,6 +4227,7 @@ endsnippet
 ## };::::::::::::::
 ## 080
 #snippet Remove-Duplicates-from-Sorted-Array-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4307,6 +4264,7 @@ endsnippet
 ## };::::::::::::::
 ## 081
 #snippet Search-in-Rotated-Sorted-Array-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4352,6 +4310,7 @@ endsnippet
 ## };::::::::::::::
 ## 082
 #snippet Remove-Duplicates-from-Sorted-List-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -4387,6 +4346,7 @@ endsnippet
 ## };::::::::::::::
 ## 083
 #snippet Remove-Duplicates-from-Sorted-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -4425,6 +4385,7 @@ endsnippet
 ## };::::::::::::::
 ## 084
 #snippet Largest-Rectangle-in-Histogram "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4456,6 +4417,7 @@ endsnippet
 ## };::::::::::::::
 ## 085
 #snippet Maximal-Rectangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4537,6 +4499,7 @@ endsnippet
 ## };::::::::::::::
 ## 086
 #snippet Partition-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -4579,6 +4542,7 @@ endsnippet
 ## };::::::::::::::
 ## 087
 #snippet Scramble-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution
 #{
@@ -4626,6 +4590,7 @@ endsnippet
 ## };::::::::::::::
 ## 088
 #snippet Merge-Sorted-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4649,6 +4614,7 @@ endsnippet
 ## };::::::::::::::
 ## 089
 #snippet Gray-Code "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4671,6 +4637,7 @@ endsnippet
 ## };::::::::::::::
 ## 090
 #snippet Subsets-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4709,12 +4676,14 @@ endsnippet
 ## };::::::::::::::
 ## 091
 #snippet Decode-Ways "comment " b
+#/* code by 王江 DC-Melo */
 
 #$0
 #endsnippet
 
 ## 092
 #snippet Reverse-Linked-List-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -4766,6 +4735,7 @@ endsnippet
 ## };::::::::::::::
 ## 093
 #snippet Restore-IP-Addresses "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4824,6 +4794,7 @@ endsnippet
 ## };::::::::::::::
 ## 094
 #snippet Binary-Tree-Inorder-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -4861,6 +4832,7 @@ endsnippet
 ## };::::::::::::::
 ## 095
 #snippet Unique-Binary-Search-Trees-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -4923,6 +4895,7 @@ endsnippet
 ## };::::::::::::::
 ## 096
 #snippet Unique-Binary-Search-Trees "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4948,6 +4921,7 @@ endsnippet
 ## };::::::::::::::
 ## 097
 #snippet Interleaving-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -4983,6 +4957,7 @@ endsnippet
 ## };::::::::::::::
 ## 098
 #snippet Validate-Binary-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5034,6 +5009,7 @@ endsnippet
 ## };::::::::::::::
 ## 099
 #snippet Recover-Binary-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5084,6 +5060,7 @@ endsnippet
 ## };::::::::::::::
 ## 100
 #snippet Same-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5120,6 +5097,7 @@ endsnippet
 ## };::::::::::::::
 ## 101
 #snippet Symmetric-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5153,6 +5131,7 @@ endsnippet
 ## };::::::::::::::
 ## 102
 #snippet Binary-Tree-Level-Order-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5212,6 +5191,7 @@ endsnippet
 ## };::::::::::::::
 ## 103
 #snippet Binary-Tree-Zigzag-Level-Order-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5268,6 +5248,7 @@ endsnippet
 ## };::::::::::::::
 ## 104
 #snippet Maximum-Depth-of-Binary-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5293,6 +5274,7 @@ endsnippet
 ## };::::::::::::::
 ## 105
 #snippet Construct-Binary-Tree-from-Preorder-and-Inorder-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5339,6 +5321,7 @@ endsnippet
 ## };::::::::::::::
 ## 106
 #snippet Construct-Binary-Tree-from-Inorder-and-Postorder-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5385,6 +5368,7 @@ endsnippet
 ## };::::::::::::::
 ## 107
 #snippet Binary-Tree-Level-Order-Traversal-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5446,6 +5430,7 @@ endsnippet
 ## };::::::::::::::
 ## 108
 #snippet Convert-Sorted-Array-to-Binary-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5485,6 +5470,7 @@ endsnippet
 ## };::::::::::::::
 ## 109
 #snippet Convert-Sorted-List-to-Binary-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -5539,6 +5525,7 @@ endsnippet
 ## };::::::::::::::
 ## 110
 #snippet Balanced-Binary-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5572,6 +5559,7 @@ endsnippet
 ## };::::::::::::::
 ## 111
 #snippet Minimum-Depth-of-Binary-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5602,6 +5590,7 @@ endsnippet
 ## };::::::::::::::
 ## 112
 #snippet Path-Sum "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5635,6 +5624,7 @@ endsnippet
 ## };::::::::::::::
 ## 113
 #snippet Path-Sum-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5678,6 +5668,7 @@ endsnippet
 ## };::::::::::::::
 ## 114
 #snippet Flatten-Binary-Tree-to-Linked-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -5716,6 +5707,7 @@ endsnippet
 ## };::::::::::::::
 ## 115
 #snippet Distinct-Subsequences "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -5754,6 +5746,7 @@ endsnippet
 ## };::::::::::::::
 ## 116
 #snippet Populating-Next-Right-Pointers-in-Each-Node "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree with next pointer.
@@ -5785,6 +5778,7 @@ endsnippet
 ## };::::::::::::::
 ## 117
 #snippet Populating-Next-Right-Pointers-in-Each-Node-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree with next pointer.
@@ -5843,6 +5837,7 @@ endsnippet
 ## };::::::::::::::
 ## 118
 #snippet Pascal's-Triangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -5883,6 +5878,7 @@ endsnippet
 ## };::::::::::::::
 ## 119
 #snippet Pascal's-Triangle-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -5920,6 +5916,7 @@ endsnippet
 ## };::::::::::::::
 ## 120
 #snippet Triangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -5963,6 +5960,7 @@ endsnippet
 
 ## 121
 #snippet Best-Time-to-Buy-and-Sell-Stock "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -5987,6 +5985,7 @@ endsnippet
 ## };::::::::::::::
 ## 122
 #snippet Best-Time-to-Buy-and-Sell-Stock-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6017,6 +6016,7 @@ endsnippet
 ## };::::::::::::::
 ## 123
 #snippet Best-Time-to-Buy-and-Sell-Stock-III "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6056,6 +6056,7 @@ endsnippet
 ## };::::::::::::::
 ## 124
 #snippet Binary-Tree-Maximum-Path-Sum "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -6103,6 +6104,7 @@ endsnippet
 ## };::::::::::::::
 ## 125
 #snippet Valid-Palindrome "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6138,6 +6140,7 @@ endsnippet
 ## };::::::::::::::
 ## 126
 #snippet Word-Ladder-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6220,6 +6223,7 @@ endsnippet
 ## };::::::::::::::
 ## 127
 #snippet Word-Ladder "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6263,6 +6267,7 @@ endsnippet
 ## };::::::::::::::
 ## 128
 #snippet Longest-Consecutive-Sequence "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6316,6 +6321,7 @@ endsnippet
 ## };::::::::::::::
 ## 129
 #snippet Sum-Root-to-Leaf-Numbers "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6349,6 +6355,7 @@ endsnippet
 ## };::::::::::::::
 ## 130
 #snippet Surrounded-Regions "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6427,6 +6434,7 @@ endsnippet
 ## };::::::::::::::
 ## 131
 #snippet Palindrome-Partitioning "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6484,6 +6492,7 @@ endsnippet
 ## };::::::::::::::
 ## 132
 #snippet Palindrome-Partitioning-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6515,6 +6524,7 @@ endsnippet
 ## };::::::::::::::
 ## 133
 #snippet Clone-Graph "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for undirected graph.
@@ -6563,6 +6573,7 @@ endsnippet
 ## };::::::::::::::
 ## 134
 #snippet Gas-Station "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6610,6 +6621,7 @@ endsnippet
 ## };::::::::::::::
 ## 135
 #snippet Candy "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -6680,6 +6692,7 @@ endsnippet
 ## };::::::::::::::
 ## 136
 #snippet Single-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6701,6 +6714,7 @@ endsnippet
 ## };::::::::::::::
 ## 137
 #snippet Single-Number-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6722,6 +6736,7 @@ endsnippet
 ## };::::::::::::::
 ## 138
 #snippet Copy-List-with-Random-Pointer "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list with a random pointer.
@@ -6764,6 +6779,7 @@ endsnippet
 ## };::::::::::::::
 ## 139
 #snippet Word-Break "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -6791,6 +6807,7 @@ endsnippet
 ## };::::::::::::::
 ## 140
 #snippet Word-Break-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution
 #{
@@ -6862,6 +6879,7 @@ endsnippet
 ## };::::::::::::::
 ## 141
 #snippet Linked-List-Cycle "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -6895,6 +6913,7 @@ endsnippet
 ## };::::::::::::::
 ## 142
 #snippet Linked-List-Cycle-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -6937,6 +6956,7 @@ endsnippet
 ## };::::::::::::::
 ## 143
 #snippet Reorder-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -7003,6 +7023,7 @@ endsnippet
 ## };::::::::::::::
 ## 144
 #snippet Binary-Tree-Preorder-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -7040,6 +7061,7 @@ endsnippet
 ## };::::::::::::::
 ## 145
 #snippet Binary-Tree-Postorder-Traversal "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -7077,6 +7099,7 @@ endsnippet
 ## };::::::::::::::
 ## 146
 #snippet LRU-Cache "comment " b
+#/* code by 王江 DC-Melo */
 
 #struct CacheNode
 #{
@@ -7137,6 +7160,7 @@ endsnippet
 ## };::::::::::::::
 ## 147
 #snippet Insertion-Sort-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -7196,6 +7220,7 @@ endsnippet
 ## };::::::::::::::
 ## 148
 #snippet Sort-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -7266,6 +7291,7 @@ endsnippet
 ## };::::::::::::::
 ## 149
 #snippet Max-Points-on-a-Line "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a point.
@@ -7311,6 +7337,7 @@ endsnippet
 ## };::::::::::::::
 ## 150
 #snippet Evaluate-Reverse-Polish-Notation "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7350,6 +7377,7 @@ endsnippet
 ## };::::::::::::::
 ## 151
 #snippet Reverse-Words-in-a-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7380,6 +7408,7 @@ endsnippet
 ## };::::::::::::::
 ## 152
 #snippet Maximum-Product-Subarray "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7407,6 +7436,7 @@ endsnippet
 ## };::::::::::::::
 ## 153
 #snippet Find-Minimum-in-Rotated-Sorted-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7452,6 +7482,7 @@ endsnippet
 ## };::::::::::::::
 ## 154
 #snippet Find-Minimum-in-Rotated-Sorted-Array-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7477,6 +7508,7 @@ endsnippet
 ## };::::::::::::::
 ## 155
 #snippet Min-Stack "comment " b
+#/* code by 王江 DC-Melo */
 
 #class MinStack 
 #{
@@ -7519,6 +7551,7 @@ endsnippet
 ## };::::::::::::::
 ## 160
 #snippet Intersection-of-Two-Linked-Lists "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -7581,6 +7614,7 @@ endsnippet
 ## };::::::::::::::
 ## 162
 #snippet Find-Peak-Element "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7604,6 +7638,7 @@ endsnippet
 ## };::::::::::::::
 ## 164
 #snippet Maximum-Gap "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7658,6 +7693,7 @@ endsnippet
 ## };::::::::::::::
 ## 165
 #snippet Compare-Version-Numbers "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7700,6 +7736,7 @@ endsnippet
 ## };::::::::::::::
 ## 166
 #snippet Fraction-to-Recurring-Decimal "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -7766,6 +7803,7 @@ endsnippet
 ## };::::::::::::::
 ## 167
 #snippet Two-Sum-II---Input-array-is-sorted "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7794,6 +7832,7 @@ endsnippet
 
 ## 168
 #snippet Excel-Sheet-Column-Title "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7821,6 +7860,7 @@ endsnippet
 ## };::::::::::::::
 ## 169
 #snippet Majority-Element "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7836,6 +7876,7 @@ endsnippet
 ## };::::::::::::::
 ## 171
 #snippet Excel-Sheet-Column-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7858,6 +7899,7 @@ endsnippet
 ## };::::::::::::::
 ## 172
 #snippet Factorial-Trailing-Zeroes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7877,6 +7919,7 @@ endsnippet
 ## };::::::::::::::
 ## 173
 #snippet Binary-Search-Tree-Iterator "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -7933,6 +7976,7 @@ endsnippet
 # # */::::::::::::::
 ## 174
 #snippet Dungeon-Game "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -7964,6 +8008,7 @@ endsnippet
 ## };::::::::::::::
 ## 179
 #snippet Largest-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(const string s1, const string s2) 
 #{
@@ -8012,6 +8057,7 @@ endsnippet
 ## };::::::::::::::
 ## 187
 #snippet Repeated-DNA-Sequences "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8062,6 +8108,7 @@ endsnippet
 ## };::::::::::::::
 ## 188
 #snippet Best-Time-to-Buy-and-Sell-Stock-IV "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8106,6 +8153,7 @@ endsnippet
 ## };::::::::::::::
 ## 189
 #snippet Rotate-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8125,6 +8173,7 @@ endsnippet
 ## };::::::::::::::
 ## 190
 #snippet Reverse-Bits "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8145,6 +8194,7 @@ endsnippet
 ## };::::::::::::::
 ## 191
 #snippet Number-of-1-Bits "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -8163,6 +8213,7 @@ endsnippet
 ## };::::::::::::::
 ## 198
 #snippet House-Robber "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8189,6 +8240,7 @@ endsnippet
 ## };::::::::::::::
 ## 199
 #snippet Binary-Tree-Right-Side-View "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for binary tree
@@ -8234,6 +8286,7 @@ endsnippet
 ## };::::::::::::::
 ## 200
 #snippet Number-of-Islands "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8277,6 +8330,7 @@ endsnippet
 ## };::::::::::::::
 ## 201
 #snippet Bitwise-AND-of-Numbers-Range "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8301,6 +8355,7 @@ endsnippet
 ## };::::::::::::::
 ## 202
 #snippet Happy-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8324,6 +8379,7 @@ endsnippet
 ## };::::::::::::::
 ## 203
 #snippet Remove-Linked-List-Elements "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -8372,6 +8428,7 @@ endsnippet
 ## };::::::::::::::
 ## 204
 #snippet Count-Primes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8400,6 +8457,7 @@ endsnippet
 ## };::::::::::::::
 ## 205
 #snippet Isomorphic-Strings "comment " b
+#/* code by 王江 DC-Melo */
 
 
 #class Solution 
@@ -8438,6 +8496,7 @@ endsnippet
 ## };::::::::::::::
 ## 206
 #snippet Reverse-Linked-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -8470,6 +8529,7 @@ endsnippet
 ## };::::::::::::::
 ## 207
 #snippet Course-Schedule "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Graph
 #{
@@ -8550,6 +8610,7 @@ endsnippet
 
 ## 208
 #snippet Implement-Trie-(Prefix-Tree) "comment " b
+#/* code by 王江 DC-Melo */
 
 #class TrieNode 
 #{
@@ -8649,6 +8710,7 @@ endsnippet
 ## // trie.search("key");::::::::::::::
 ## 209
 #snippet Minimum-Size-Subarray-Sum "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8680,6 +8742,7 @@ endsnippet
 ## };::::::::::::::
 ## 210
 #snippet Course-Schedule-II "comment " b
+#/* code by 王江 DC-Melo */
 
 ##include <iostream>
 ##include <list>
@@ -8766,6 +8829,7 @@ endsnippet
 ## };::::::::::::::
 ## 211
 #snippet Add-and-Search-Word---Data-structure-design "comment " b
+#/* code by 王江 DC-Melo */
 
 #class TrieNode 
 #{
@@ -8875,6 +8939,7 @@ endsnippet
 ## // wordDictionary.search("pattern");::::::::::::::
 ## 213
 #snippet House-Robber-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -8913,6 +8978,7 @@ endsnippet
 ## }; ::::::::::::::
 ## 214
 #snippet Shortest-Palindrome "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -8935,6 +9001,7 @@ endsnippet
 ## };::::::::::::::
 ## 215
 #snippet Kth-Largest-Element-in-an-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8970,6 +9037,7 @@ endsnippet
 ## };::::::::::::::
 ## 217
 #snippet Contains-Duplicate "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -8983,6 +9051,7 @@ endsnippet
 ## };::::::::::::::
 ## 219
 #snippet Contains-Duplicate-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9017,6 +9086,7 @@ endsnippet
 ## };::::::::::::::
 ## 220
 #snippet Contains-Duplicate-III "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9056,6 +9126,7 @@ endsnippet
 
 ## 223
 #snippet Rectangle-Area "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9146,6 +9217,7 @@ endsnippet
 ## };::::::::::::::
 ## 224
 #snippet Basic-Calculator "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9219,6 +9291,7 @@ endsnippet
 ## };::::::::::::::
 ## 225
 #snippet Implement-Stack-using-Queues "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Stack 
 #{
@@ -9281,6 +9354,7 @@ endsnippet
 ## };::::::::::::::
 ## 226
 #snippet Invert-Binary-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -9312,6 +9386,7 @@ endsnippet
 ## };::::::::::::::
 ## 230
 #snippet Kth-Smallest-Element-in-a-BST "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -9347,6 +9422,7 @@ endsnippet
 ## };::::::::::::::
 ## 231
 #snippet Power-of-Two "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9360,6 +9436,7 @@ endsnippet
 ## };::::::::::::::
 ## 232
 #snippet Implement-Queue-using-Stacks "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Queue 
 #{
@@ -9410,6 +9487,7 @@ endsnippet
 ## };::::::::::::::
 ## 234
 #snippet Palindrome-Linked-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -9465,6 +9543,7 @@ endsnippet
 ## };::::::::::::::
 ## 235
 #snippet Lowest-Common-Ancestor-of-a-Binary-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -9497,6 +9576,7 @@ endsnippet
 ## };::::::::::::::
 ## 237
 #snippet Delete-Node-in-a-Linked-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -9521,6 +9601,7 @@ endsnippet
 ## };::::::::::::::
 ## 238
 #snippet Product-of-Array-Except-Self "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9544,6 +9625,7 @@ endsnippet
 ## };::::::::::::::
 ## 241
 #snippet Different-Ways-to-Add-Parentheses "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution
 #{
@@ -9647,6 +9729,7 @@ endsnippet
 ## };::::::::::::::
 ## 242
 #snippet Valid-Anagram "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9666,6 +9749,7 @@ endsnippet
 ## };::::::::::::::
 ## 257
 #snippet Binary-Tree-Paths "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -9707,6 +9791,7 @@ endsnippet
 ## };::::::::::::::
 ## 258
 #snippet Add-Digits "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9721,6 +9806,7 @@ endsnippet
 ## };::::::::::::::
 ## 260
 #snippet Single-Number-III "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9750,6 +9836,7 @@ endsnippet
 ## };::::::::::::::
 ## 263
 #snippet Ugly-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9774,6 +9861,7 @@ endsnippet
 ## };::::::::::::::
 ## 264
 #snippet Ugly-Number-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9797,6 +9885,7 @@ endsnippet
 ## };::::::::::::::
 ## 273
 #snippet Integer-to-English-Words "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9860,6 +9949,7 @@ endsnippet
 ## };::::::::::::::
 ## 274
 #snippet H-Index "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(int i, int j){
 #    return i>j;
@@ -9882,6 +9972,7 @@ endsnippet
 
 ## 278
 #snippet First-Bad-Version "comment " b
+#/* code by 王江 DC-Melo */
 
 #// Forward declaration of isBadVersion API.
 #bool isBadVersion(int version);
@@ -9910,6 +10001,7 @@ endsnippet
 ## };::::::::::::::
 ## 283
 #snippet Move-Zeroes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -9933,6 +10025,7 @@ endsnippet
 ## };::::::::::::::
 ## 287
 #snippet Find-the-Duplicate-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -9971,6 +10064,7 @@ endsnippet
 ## };::::::::::::::
 ## 290
 #snippet Word-Pattern "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10024,6 +10118,7 @@ endsnippet
 ## };::::::::::::::
 ## 292
 #snippet Nim-Game "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10037,6 +10132,7 @@ endsnippet
 ## };::::::::::::::
 ## 299
 #snippet Bulls-and-Cows "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10074,6 +10170,7 @@ endsnippet
 ## };::::::::::::::
 ## 300
 #snippet Longest-Increasing-Subsequence "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10098,6 +10195,7 @@ endsnippet
 
 ## 303
 #snippet Range-Sum-Query---Immutable "comment " b
+#/* code by 王江 DC-Melo */
 
 #class NumArray 
 #{
@@ -10130,6 +10228,7 @@ endsnippet
 ## // numArray.sumRange(1, 2);::::::::::::::
 ## 304
 #snippet Range-Sum-Query-2D---Immutable "comment " b
+#/* code by 王江 DC-Melo */
 
 #class NumMatrix {
 #public:
@@ -10161,6 +10260,7 @@ endsnippet
 # # */::::::::::::::
 ## 309
 #snippet Best-Time-to-Buy-and-Sell-Stock-with-Cooldown "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10184,6 +10284,7 @@ endsnippet
 ## };::::::::::::::
 ## 318
 #snippet Maximum-Product-of-Word-Lengths "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10218,6 +10319,7 @@ endsnippet
 ## };::::::::::::::
 ## 319
 #snippet Bulb-Switcher "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10231,6 +10333,7 @@ endsnippet
 ## };::::::::::::::
 ## 324
 #snippet Wiggle-Sort-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10262,6 +10365,7 @@ endsnippet
 
 ## 326
 #snippet Power-of-Three "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10276,6 +10380,7 @@ endsnippet
 ## };::::::::::::::
 ## 328
 #snippet Odd-Even-Linked-List "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -10324,6 +10429,7 @@ endsnippet
 ## };::::::::::::::
 ## 338
 #snippet Counting-Bits "comment " b
+#/* code by 王江 DC-Melo */
 
 #/* 每个数向右移1位（除以2）后，
 #二进制表示里的'1'的个数要么与原来相等（偶数，末位是'0')，
@@ -10349,6 +10455,7 @@ endsnippet
 ## };::::::::::::::
 ## 342
 #snippet Power-of-Four "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10362,6 +10469,7 @@ endsnippet
 ## };::::::::::::::
 ## 343
 #snippet Integer-Break "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10382,6 +10490,7 @@ endsnippet
 ## };::::::::::::::
 ## 344
 #snippet Reverse-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10400,6 +10509,7 @@ endsnippet
 ## };::::::::::::::
 ## 345
 #snippet Reverse-Vowels-of-a-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10432,6 +10542,7 @@ endsnippet
 ## };::::::::::::::
 ## 347
 #snippet Top-K-Frequent-Elements "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int ,int> p1 , pair<int, int> p2)
 #{
@@ -10461,6 +10572,7 @@ endsnippet
 ## };::::::::::::::
 ## 349
 #snippet Intersection-of-Two-Arrays "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10493,6 +10605,7 @@ endsnippet
 ## };::::::::::::::
 ## 350
 #snippet Intersection-of-Two-Arrays-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10523,6 +10636,7 @@ endsnippet
 ## };::::::::::::::
 ## 357
 #snippet Count-Numbers-with-Unique-Digits "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10547,6 +10661,7 @@ endsnippet
 ## };::::::::::::::
 ## 367
 #snippet Valid-Perfect-Square "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10569,6 +10684,7 @@ endsnippet
 ## };::::::::::::::
 ## 371
 #snippet Sum-of-Two-Integers "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10580,6 +10696,7 @@ endsnippet
 ## };::::::::::::::
 ## 374
 #snippet Guess-Number-Higher-or-Lower "comment " b
+#/* code by 王江 DC-Melo */
 
 #// Forward declaration of guess API.
 #// @param num, your guess
@@ -10605,6 +10722,7 @@ endsnippet
 ## };::::::::::::::
 ## 378
 #snippet Kth-Smallest-Element-in-a-Sorted-Matrix "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10623,6 +10741,7 @@ endsnippet
 ## };::::::::::::::
 ## 382
 #snippet Linked-List-Random-Node "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for singly-linked list.
@@ -10671,6 +10790,7 @@ endsnippet
 # # */::::::::::::::
 ## 383
 #snippet Ransom-Note "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10693,6 +10813,7 @@ endsnippet
 ## };::::::::::::::
 ## 384
 #snippet Shuffle-an-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10733,6 +10854,7 @@ endsnippet
 # # */::::::::::::::
 ## 387
 #snippet First-Unique-Character-in-a-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10759,6 +10881,7 @@ endsnippet
 ## };::::::::::::::
 ## 389
 #snippet Find-the-Difference "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10790,6 +10913,7 @@ endsnippet
 ## };::::::::::::::
 ## 391
 #snippet Perfect-Rectangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int, int> p1, pair<int, int> p2)
 #{
@@ -10855,6 +10979,7 @@ endsnippet
 ## };::::::::::::::
 ## 392
 #snippet Is-Subsequence "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10878,6 +11003,7 @@ endsnippet
 ## };::::::::::::::
 ## 394
 #snippet Decode-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -10913,6 +11039,7 @@ endsnippet
 ## };::::::::::::::
 ## 396
 #snippet Rotate-Function "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10943,6 +11070,7 @@ endsnippet
 ## };::::::::::::::
 ## 399
 #snippet Evaluate-Division "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -10999,6 +11127,7 @@ endsnippet
 ## };::::::::::::::
 ## 400
 #snippet Nth-Digit "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -11017,6 +11146,7 @@ endsnippet
 ## };::::::::::::::
 ## 401
 #snippet Binary-Watch "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11068,6 +11198,7 @@ endsnippet
 ## };::::::::::::::
 ## 404
 #snippet Sum-of-Left-Leaves "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -11104,6 +11235,7 @@ endsnippet
 ## };::::::::::::::
 ## 405
 #snippet Convert-a-Number-to-Hexadecimal "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11119,6 +11251,7 @@ endsnippet
 ## };::::::::::::::
 ## 406
 #snippet Queue-Reconstruction-by-Height "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int,int> p1,pair<int,int> p2)
 #{
@@ -11150,6 +11283,7 @@ endsnippet
 ## };::::::::::::::
 ## 409
 #snippet Longest-Palindrome "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11180,6 +11314,7 @@ endsnippet
 ## };::::::::::::::
 ## 412
 #snippet Fizz-Buzz "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11214,6 +11349,7 @@ endsnippet
 ## };::::::::::::::
 ## 413
 #snippet Arithmetic-Slices "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11245,6 +11381,7 @@ endsnippet
 ## };::::::::::::::
 ## 414
 #snippet Third-Maximum-Number "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11269,6 +11406,7 @@ endsnippet
 ## };::::::::::::::
 ## 415
 #snippet Add-Strings "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11319,6 +11457,7 @@ endsnippet
 ## };::::::::::::::
 ## 419
 #snippet Battleships-in-a-Board "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11345,6 +11484,7 @@ endsnippet
 ## };::::::::::::::
 ## 423
 #snippet Reconstruct-Original-Digits-from-English "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11377,6 +11517,7 @@ endsnippet
 ## };::::::::::::::
 ## 424
 #snippet Longest-Repeating-Character-Replacement "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11412,6 +11553,7 @@ endsnippet
 ## };::::::::::::::
 ## 434
 #snippet Number-of-Segments-in-a-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11439,6 +11581,7 @@ endsnippet
 ## };::::::::::::::
 ## 435
 #snippet Non-overlapping-Intervals "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for an interval.
@@ -11459,6 +11602,7 @@ endsnippet
 ## };::::::::::::::
 ## 436
 #snippet Find-Right-Interval "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for an interval.
@@ -11505,6 +11649,7 @@ endsnippet
 ## };::::::::::::::
 ## 437
 #snippet Path-Sum-III "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -11540,6 +11685,7 @@ endsnippet
 ## };::::::::::::::
 ## 438
 #snippet Find-All-Anagrams-in-a-String "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11566,6 +11712,7 @@ endsnippet
 ## };::::::::::::::
 ## 441
 #snippet Arranging-Coins "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11584,6 +11731,7 @@ endsnippet
 ## };::::::::::::::
 ## 447
 #snippet Number-of-Boomerangs "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11633,6 +11781,7 @@ endsnippet
 ## };::::::::::::::
 ## 448
 #snippet Find-All-Numbers-Disappeared-in-an-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11659,6 +11808,7 @@ endsnippet
 ## };::::::::::::::
 ## 452
 #snippet Minimum-Number-of-Arrows-to-Burst-Balloons "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int, int> p1, pair<int, int> p2)
 #{
@@ -11694,6 +11844,7 @@ endsnippet
 ## };::::::::::::::
 ## 453
 #snippet Minimum-Moves-to-Equal-Array-Elements "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11718,6 +11869,7 @@ endsnippet
 ## };::::::::::::::
 ## 455
 #snippet Assign-Cookies "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11742,6 +11894,7 @@ endsnippet
 ## };::::::::::::::
 ## 459
 #snippet Repeated-Substring-Pattern "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11772,6 +11925,7 @@ endsnippet
 ## };::::::::::::::
 ## 461
 #snippet Hamming-Distance "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11793,6 +11947,7 @@ endsnippet
 ## };::::::::::::::
 ## 462
 #snippet Minimum-Moves-to-Equal-Array-Elements-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11811,6 +11966,7 @@ endsnippet
 ## };::::::::::::::
 ## 463
 #snippet Island-Perimeter "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11844,6 +12000,7 @@ endsnippet
 ## };::::::::::::::
 ## 471
 #snippet Simplify-Path "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11899,6 +12056,7 @@ endsnippet
 ## };::::::::::::::
 ## 476
 #snippet Number-Complement "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11919,6 +12077,7 @@ endsnippet
 ## };::::::::::::::
 ## 485
 #snippet Max-Consecutive-Ones "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution 
 #{
@@ -11946,6 +12105,7 @@ endsnippet
 ## };::::::::::::::
 ## 496
 #snippet Next-Greater-Element-I "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -11975,6 +12135,7 @@ endsnippet
 
 ## 498
 #snippet Diagonal-Traverse "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12011,6 +12172,7 @@ endsnippet
 
 ## 503
 #snippet Next-Greater-Element-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12036,6 +12198,7 @@ endsnippet
 
 ## 506
 #snippet Relative-Ranks "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int,int> i, pair<int,int> j){
 #    return j.first < i.first;
@@ -12068,6 +12231,7 @@ endsnippet
 
 ## 523
 #snippet Continuous-Subarray-Sum "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12098,6 +12262,7 @@ endsnippet
 
 ## 645
 #snippet Set-Mismatch "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12124,6 +12289,7 @@ endsnippet
 ## };::::::::::::::
 ## 674
 #snippet Longest-Continuous-Increasing-Subsequence "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12155,6 +12321,7 @@ endsnippet
 
 ## 680
 #snippet Valid-Palindrome-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12198,6 +12365,7 @@ endsnippet
 
 ## 746
 #snippet Min-Cost-Climbing-Stairs "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12220,6 +12388,7 @@ endsnippet
 
 ## 762
 #snippet Prime-Number-of-Set-Bits-in-Binary-Representation "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12246,6 +12415,7 @@ endsnippet
 
 ## 824
 #snippet Goat-Latin "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12295,6 +12465,7 @@ endsnippet
 
 ## 825
 #snippet Friends-Of-Appropriate-Ages "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12326,6 +12497,7 @@ endsnippet
 
 ## 826
 #snippet Most-Profit-Assigning-Work "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(pair<int,int> i, pair<int,int> j){
 #    return i.first < j.first;
@@ -12368,6 +12540,7 @@ endsnippet
 
 ## 897
 #snippet Increasing-Order-Search-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -12404,6 +12577,7 @@ endsnippet
 
 ## 906
 #snippet Super-Palindromes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12475,6 +12649,7 @@ endsnippet
 
 ## 914
 #snippet X-of-a-Kind-in-a-Deck-of-Cards "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12518,6 +12693,7 @@ endsnippet
 
 ## 915
 #snippet Partition-Array-into-Disjoint-Intervals "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12546,6 +12722,7 @@ endsnippet
 
 ## 917
 #snippet Reverse-Only-Letters "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12570,6 +12747,7 @@ endsnippet
 
 ## 918
 #snippet Maximum-Sum-Circular-Subarray "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12609,6 +12787,7 @@ endsnippet
 
 ## 919
 #snippet Complete-Binary-Tree-Inserter "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -12669,6 +12848,7 @@ endsnippet
 
 ## 925
 #snippet Long-Pressed-Name "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12706,6 +12886,7 @@ endsnippet
 
 ## 926
 #snippet Flip-String-to-Monotone-Increasing "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12749,6 +12930,7 @@ endsnippet
 
 ## 929
 #snippet Unique-Email-Addresses "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12780,6 +12962,7 @@ endsnippet
 
 ## 930
 #snippet Binary-Subarrays-With-Sum "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12819,6 +13002,7 @@ endsnippet
 
 ## 933
 #snippet Number-of-Recent-Calls "comment " b
+#/* code by 王江 DC-Melo */
 
 #class RecentCounter {
 #public:
@@ -12849,6 +13033,7 @@ endsnippet
 
 ## 934
 #snippet Shortest-Bridge "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -12937,6 +13122,7 @@ endsnippet
 
 ## 937
 #snippet Reorder-Log-Files "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(string s1, string s2){
 #    if(s1.back() >= '0' && s1.back() <= '9' && s2.back() >= '0' && s2.back() <= '9')
@@ -12987,6 +13173,7 @@ endsnippet
 
 ## 938
 #snippet Range-Sum-of-BST "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -13023,6 +13210,7 @@ endsnippet
 
 ## 939
 #snippet Minimum-Area-Rectangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #int area(int x1,int x2,int p1,int p2){
 #    return (x2-x1)*(p2-p1);
@@ -13071,6 +13259,7 @@ endsnippet
 
 ## 940
 #snippet Distinct-Subsequences-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13087,6 +13276,7 @@ endsnippet
 
 ## 941
 #snippet Valid-Mountain-Array "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13117,6 +13307,7 @@ endsnippet
 
 ## 942
 #snippet DI-String-Match "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13154,6 +13345,7 @@ endsnippet
 
 ## 943
 #snippet Find-the-Shortest-Superstring "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13235,6 +13427,7 @@ endsnippet
 
 ## 944
 #snippet Delete-Columns-to-Make-Sorted "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13262,6 +13455,7 @@ endsnippet
 
 ## 945
 #snippet Minimum-Increment-to-Make-Array-Unique "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13298,6 +13492,7 @@ endsnippet
 
 ## 946
 #snippet Validate-Stack-Sequences "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13322,6 +13517,7 @@ endsnippet
 
 ## 947
 #snippet Most-Stones-Removed-with-Same-Row-or-Column "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13381,6 +13577,7 @@ endsnippet
 
 ## 948
 #snippet Bag-of-Tokens "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13407,6 +13604,7 @@ endsnippet
 
 ## 949
 #snippet Largest-Time-for-Given-Digits "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13457,6 +13655,7 @@ endsnippet
 
 ## 950
 #snippet Reveal-Cards-In-Increasing-Order "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13486,6 +13685,7 @@ endsnippet
 
 ## 951
 #snippet Flip-Equivalent-Binary-Trees "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -13526,6 +13726,7 @@ endsnippet
 
 ## 952
 #snippet Largest-Component-Size-by-Common-Factor "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13574,6 +13775,7 @@ endsnippet
 
 ## 953
 #snippet Verifying-an-Alien-Dictionary "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13609,6 +13811,7 @@ endsnippet
 
 ## 954
 #snippet Array-of-Doubled-Pairs "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13643,6 +13846,7 @@ endsnippet
 
 ## 955
 #snippet Delete-Columns-to-Make-Sorted-II "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13680,6 +13884,7 @@ endsnippet
 
 ## 957
 #snippet Prison-Cells-After-N-Days "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13746,6 +13951,7 @@ endsnippet
 
 ## 958
 #snippet Check-Completeness-of-a-Binary-Tree "comment " b
+#/* code by 王江 DC-Melo */
 
 #/**
 # * Definition for a binary tree node.
@@ -13783,6 +13989,7 @@ endsnippet
 
 ## 959
 #snippet Regions-Cut-By-Slashes "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13828,6 +14035,7 @@ endsnippet
 
 ## 973
 #snippet K-Closest-Points-to-Origin "comment " b
+#/* code by 王江 DC-Melo */
 
 
 #bool cmp(const vector<int> &p1, const vector<int> &p2){
@@ -13846,6 +14054,7 @@ endsnippet
 
 ## 974
 #snippet Subarray-Sums-Divisible-by-K "comment " b
+#/* code by 王江 DC-Melo */
 
 #class Solution {
 #public:
@@ -13873,6 +14082,7 @@ endsnippet
 
 ## 976
 #snippet LargestPerimeter-Triangle "comment " b
+#/* code by 王江 DC-Melo */
 
 #bool cmp(int a, int b){
 #    return a > b;
