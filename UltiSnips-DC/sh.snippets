@@ -243,8 +243,9 @@ $0
 endsnippet
 
 snippet convImg2Gif "image to gif" b
-convert -delay 100 *.jpg -loop 0  test.gif
+convert -delay 100 *.png -loop 0  test.gif
 # -delay n 迟延n*10毫秒 -loop n 播放n轮, 0表示不断地重复播放
+convert -delay 400 -dispose background *.jpg -resize 668x476  -gravity Center -background white -extent 668x476 -loop 0  ani.gif
 $0
 endsnippet
 
