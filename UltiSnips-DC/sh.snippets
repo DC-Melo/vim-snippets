@@ -130,6 +130,16 @@ git clone https://gitee.com/dc-melo/README "new folder"
 $0
 endsnippet
 
+snippet gitViewBigFile "git clone " b
+git rev-list --objects --all | git cat-file --batch-check="%(objecttype) %(objectname) %(objectsize) %(rest)" | sed -n "s/^blob //p" | sort --numeric-sort --key=2 | cut -c 1-12,41- | $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+$0
+endsnippet
+
+snippet gitRemoveBigFile "git clone " b
+git filter-branch --index-filter "git rm -rf --cached --ignore-unmatch docs/media/CAN_simulation.gif" 42a24c8ec64f
+$0
+endsnippet
+
 snippet gitRepoClear "repo clear " b
 curl -X PUT --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/owenr/repo/clear' -d '{"access_token":"84ace52bd1bd6f087f72c9666bda3026"}'
 $0
@@ -214,7 +224,7 @@ $0
 endsnippet
 
 snippet ffmpegVideo2Gif "video to gif convert" b
-ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif -y // 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
+ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif -y # 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
 convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
 $0
 endsnippet
@@ -246,6 +256,19 @@ snippet convImg2Gif "image to gif" b
 convert -delay 100 *.png -loop 0  test.gif
 # -delay n 迟延n*10毫秒 -loop n 播放n轮, 0表示不断地重复播放
 convert -delay 400 -dispose background *.jpg -resize 668x476  -gravity Center -background white -extent 668x476 -loop 0  ani.gif
+$0
+endsnippet
+
+snippet convAppendImage "convert append image" b
+convert +append u0.png u1.png u.png
+
+convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
+
+convert -size 512x512 -strip -colors 8 -depth 8 xc:none dest1.png
+composite -geometry +0+0 u0.png dest1.png dest1.png
+composite -geometry +256+0 u1.png dest1.png dest1.png
+composite -geometry +0+256 d0.png dest1.png dest1.png
+composite -geometry +256+256 d1.png dest1.png dest1.png
 $0
 endsnippet
 
