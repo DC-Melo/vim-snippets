@@ -63,17 +63,33 @@ endsnippet
 
 
 snippet decoratorFormwork "decorator Formwork" b
-def decorator(f):
+def decorator(para):
     """TODO: Docstring for decorator.
     :arg1: TODO
     :returns: TODO
     """
-    def wraper( *args, **kwargs,):
-        """TODO: Docstring for wraper.
-        :returns: TODO
-        """
-        f( *args, **kwargs,)
-    return wraper
+	def function(func):
+		"""TODO: Docstring for decorator.
+		:arg1: TODO
+		:returns: TODO
+		"""
+		def wraper( *args, **kwargs,):
+			"""TODO: Docstring for wraper.
+			:returns: TODO
+			"""
+			print("start...")
+			func( *args, **kwargs,)
+			print("end...")
+		return wraper
+	return function
+
+
+def function():
+    print('function runing')
+
+function= decorator("para1")(decorator("para2")(function))
+function()
+
 $0
 endsnippet
 

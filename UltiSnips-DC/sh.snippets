@@ -116,6 +116,50 @@ done
 $0
 endsnippet
 
+snippet tarTapeArchive "tape archive" b
+# 查看归档内容
+tar -tvf  test.tar
+# 添加新内容
+tar --append --file=test.tar file
+# 从压缩包中删除
+tar -f file.tar --delete file1 file2 dir1/*
+# 从压缩包中解压部分文件
+tar --extract --file=test.tar dir 
+$0
+endsnippet
+
+snippet zipCompressArchive  "compress (archive) files" b
+# 查看压缩内容
+unzip -l file.zip
+zipinfo -1 filename.zip
+lesspipe file.zip
+zcat <archived-file>
+# 添加文件或文件夹
+zip -ur existing.zip myFolder
+# 删除压缩包中的文件
+zip -d your-archive.zip file1 file2
+$0
+endsnippet
+
+snippet zip7CompressArchive  "implements LZMA compression algorithm featuring" b
+# 查看压缩内容
+7z l existing.zip
+# 追加压缩内容
+7z a -up1q1r2x1y1z1w1 zipfile filesToAdd
+# 解压特定内容
+7z e archive.zip -oc:\soft *.xls
+# 删除压缩包中的文件
+7z d existing.zip file-to-exclude
+$0
+endsnippet
+
+snippet rarCompressArchive  "implements LZMA compression algorithm featuring" b
+rar a -r yourfiles.rar *.txt
+unrar x c:\yourfile.rar *.gif c:\extractfolder\
+unrar e file.rar
+$0
+endsnippet
+
 snippet gitpush "git add ,commit, push" b
 git add .
 git commit -m "DC"
