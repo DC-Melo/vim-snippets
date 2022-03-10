@@ -116,6 +116,19 @@ done
 $0
 endsnippet
 
+snippet rsyncFormwork "rsync file formwork" b
+rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
+$0
+endsnippet
+
+snippet sshscp "ssh scp " b
+ssh -X dc@server.natappfree.cc -o ServerAliveInterval=30 -p 35584
+ssh-copy-id -i ./.ssh/id_rsa.pub dc@server.natappfree.cc -p 33386
+scp -P 35584 dc@server.natappfree.cc:/home/dc/test.py .
+rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
+$0
+endsnippet
+
 snippet tarTapeArchive "tape archive" b
 # 查看归档内容
 tar -tvf  test.tar
@@ -441,10 +454,7 @@ printf '' | xsel -i -b
 printf '' > /tmp/registeri
 $0
 endsnippet
-snippet rsyncFormwork "rsync file formwork" b
-rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
-$0
-endsnippet
+
 snippet removeSecurely "Securely remove" b
 shred -zuv file	# Securely remove your file by overwritting then removing
 $0
