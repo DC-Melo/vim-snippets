@@ -121,6 +121,17 @@ rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
 $0
 endsnippet
 
+snippet printEnviroment "displays the environment variables" b
+printenv HOME
+$0
+endsnippet
+
+snippet httpProxy "displays the environment variables" b
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+unset https_proxy http_proxy all_proxy
+$0
+endsnippet
+
 snippet sshscp "ssh scp " b
 ssh -X dc@server.natappfree.cc -o ServerAliveInterval=30 -p 35584
 ssh-copy-id -i ./.ssh/id_rsa.pub dc@server.natappfree.cc -p 33386
