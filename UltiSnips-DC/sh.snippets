@@ -126,6 +126,31 @@ find . -type f -not \(-name '*gz' -or -name '*odt' -or -name '*.jpg' \) -delete
 $0
 endsnippet
 
+snippet lsFiles "ls files " b
+# 10条历史记录                                 
+clear; ls -ailh  --color=auto|nl;dirs -p -v; tmux list-session; jobs -l;cowsay.sh
+# 仅仅显示文件夹                               
+ls -dtalh */
+# 仅仅显示文件夹                               
+`ls -dtah */ | head -1`
+# 仅仅显示文件夹                               
+`ls -dtah */ | tail -1`
+# 仅仅显示文件                                 
+ls -ptalh . | grep -v /
+# 仅仅显示文件                                 
+`ls -ptah . | grep -v / | head -1`
+# 仅仅显示文件                                  
+`ls -ptah . | grep -v / |tail -1`
+# 仅仅显示最新几个文件                         
+ls -talh  . | head -20 |tail -20
+# 十条历史记录                                  
+history 10                                                                                 
+# 十条历史记录  
+echo '# '`date +%s` >> ~/.bash_history_save
+echo 'code' >> ~/.bash_history_save
+$0
+endsnippet
+
 snippet rsyncFormwork "rsync file formwork" b
 rsync -avzP --delete dc@test0:/home/dc/5W/LeetCode_1000/ ~/5W/LeetCode_1000
 $0
@@ -203,9 +228,35 @@ git push github
 $0
 endsnippet
 
+snippet goBuild "go build" b
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build demo.go
+$0
+endsnippet
+
+snippet gitDiff "git diff" b
+git difftool -- . ':!*.mp3' ':!*.mp4' ':!*.awv' ':!*.png' ':!*.jpg' --extcmd vimdiff HEAD~1 stash@{0} location/filename
+$0
+endsnippet
+
+snippet gitLog "git log" b
+git log --all --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative
+$0
+endsnippet
 
 snippet gitClone "git clone " b
 git clone https://gitee.com/dc-melo/README "new folder"
+git init
+git remote add origin <remote_url>
+git fetch --all --prune
+git checkout master
+git add -A .
+git commit -m "Adding my files..."
+$0
+endsnippet
+
+snippet gitRepoListGithub "git clone " b
+curl -X GET -u ${GITHUB_USER}:${GITHUB_TOKEN} "https://api.github.com/users/$GITHUB_USER/repos?perpage=100"
+curl -X GET -u ${GITHUB_USER}:${GITHUB_TOKEN} "https://api.github.com/users/$GITHUB_USER/repos?perpage=100" | python3 -c 'import json, sys; sys.stdout.buffer.write(json.dumps(json.loads(sys.stdin.read()), indent=4,ensure_ascii=False).encode("utf8"))' | grep -w "\(cloneurl\)\|\(description\)" |awk '{x = $0; getline; printf "%s ",$0; print x}'|nl
 $0
 endsnippet
 
