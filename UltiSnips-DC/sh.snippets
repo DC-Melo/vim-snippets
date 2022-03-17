@@ -600,27 +600,20 @@ cat file.txt | datamash -g 1 collapse 2 -s -W
 $0
 endsnippet
 snippet listDir "list directorys" b
+# list directorys
 ls -dtalh */ 
-$0
-endsnippet
-snippet listDirFirst "list directorys first" b
-\`ls -dtah */ | head -1\`
-$0
-endsnippet
-snippet listDirLast "list directorys last" b
-\`ls -dtah */ | tail -1\`
-$0
-endsnippet
-snippet listFile "list file" b
+# list directorys first
+ls -dtah */ | head -1
+# list directorys last
+ls -dtah */ | tail -1
+# list file
 ls -ptalh . | grep -v /
-$0
-endsnippet
-snippet listFileFirst "list file first" b
-\`ls -ptah . | grep -v / | head -1\`
-$0
-endsnippet
-snippet listFileLast "list file last" b
-\`ls -ptah . | grep -v / |tail -1\`
+# list file first
+ls -ptah . | grep -v / | head -1
+# list file last
+ls -ptah . | grep -v / |tail -1
+# list .
+ls -d .*
 $0
 endsnippet
 
