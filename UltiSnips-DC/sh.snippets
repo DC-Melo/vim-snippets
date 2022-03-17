@@ -243,6 +243,42 @@ git log --all --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %C
 $0
 endsnippet
 
+snippet sourceAll "source all file" b
+source /etc/environment; source /etc/profile; source ~/.bashrc
+$0
+endsnippet
+
+snippet googleOpenLink "google open link" b
+google-chrome $(cat link_list.md)
+$0
+endsnippet
+
+snippet imShapeMorph "geometry_shapemorph" b
+im_geometry_shapemorph.sh "73,56 57,68" morphA.gif morphB.gif out_mor.gif
+# shapemorph2 -c1 cpts1 -c2 cpts2 [-f frames] [-d delay] [-p pause] [-r] [-b bcolor] infile1 infile2 outfile # shapemorph2 [-h or -help]
+im_geometry_shapemorph2.sh -c1 "73,56 53,38 65,80 63,4 94,38" -c2 "57,68 39,50 52,99 53,13 66,52" -r morphA.gif morphB.gif out_morph.gif
+$0
+endsnippet
+
+snippet imCrystallize "google open link" b
+# crystallize [-n number] [-s seed] infile outfile
+$0
+endsnippet
+
+snippet imHalo "google open link" b
+# crystallize [-n number] [-s seed] infile outfile
+# wget http://www.fmwconcepts.com/imagemagick/halo/images/zelda1.jpg
+im_image_effects_halo.sh -r 60 -w 60 -m 25 -c 127,100 zelda1.jpg zelda1.gif
+$0
+endsnippet
+
+snippet imScaleScroll "google open link" b
+# USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
+# wget http://www.fmwconcepts.com/imagemagick/scalescroll/images/bluecar_sm.jpg
+im_image_effects_scalescroll.sh -D left bluecar_sm.jpg bluecar_sm.gif
+$0
+endsnippet
+
 snippet gitClone "git clone " b
 git clone https://gitee.com/dc-melo/README "new folder"
 git init

@@ -15,38 +15,58 @@ $0
 endsnippet
 
 # vim:ft=snippets:
+snippet printArray "print array list" b
+/* code by 王江 DC-Melo */
+System.out.print(Arrays.toString(${1:arr}));
+System.out.print(Arrays.toString($1.toArray()));
+for(int i = 0; i < $1.size(); i++) System.out.print($1.get(i));
+for(int i = 0; i < $1.length; i++) System.out.print($1[i]+" ");
+$0
+endsnippet
+
+snippet importAll "print array list" b
+/* code by 王江 DC-Melo */
+import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+$0
+endsnippet
+
 snippet findTwoSum1 "(int[])pos=find two sum equal target(int[] nums, int target)" b
 /* code by 王江 DC-Melo */
-/* code by 王江 DC-Melo */
-    public int[] twoSum(int[] nums, int target) {
-        int[] result = new int[2];
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            if (!map.containsKey(target - nums[i])) {
-                map.put(nums[i], i);
-            } else {// 找到了解
-                result[1] = i;
-                result[0] = map.get(target - nums[i]);
-            }
-        }
-        return result;
-    }
+public int[] twoSum(int[] nums, int target) {
+	int[] result = new int[2];
+	Map<Integer, Integer> map = new HashMap<>();
+	for (int i = 0; i < nums.length; i++) {
+		if (!map.containsKey(target - nums[i])) {
+			map.put(nums[i], i);
+		} else {// 找到了解
+			result[1] = i;
+			result[0] = map.get(target - nums[i]);
+		}
+	}
+	return result;
+}
 
-    public int[] twoSum2(int[] nums, int target) {
-        int len = nums.length;
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < len; i++) {
-            if (map.containsKey(target - nums[i])) {
-                int[] res = new int[2];
-                res[0] = map.get(target - nums[i]);
-                res[1] = i;
-                return res;
-            } else {
-                map.put(nums[i], i);
-            }
-        }
-        throw new IllegalArgumentException("给出的数组和 target 不合法！");
-    }
+public int[] twoSum2(int[] nums, int target) {
+	int len = nums.length;
+	Map<Integer, Integer> map = new HashMap<>();
+	for (int i = 0; i < len; i++) {
+		if (map.containsKey(target - nums[i])) {
+			int[] res = new int[2];
+			res[0] = map.get(target - nums[i]);
+			res[1] = i;
+			return res;
+		} else {
+			map.put(nums[i], i);
+		}
+	}
+	throw new IllegalArgumentException("给出的数组和 target 不合法！");
+}
 $0
 endsnippet
 
