@@ -253,17 +253,168 @@ google-chrome $(cat link_list.md)
 $0
 endsnippet
 
-snippet imShapeMorph "geometry_shapemorph" b
+snippet im3Dbox "Generates a perspective view of a 3D box at any orientation with pictures pasted on each of its sides" b
+# USAGE: 3Dbox option=value infile1 infile2 infile3 [infile4 infile5 infile6] outfile
+# Pan Animation Arguments:
+tilt=-45 pef=0 filter=point format=center
+$0
+endsnippet
+
+snippet imCylinderWarp " Applies a cylinder distortion to an image using an external displacement map" b
+# USAGE: cylinderwarp angle displacementfile infile [backgroundfile] outfile
+-E -m vertical -r 73 -l 120 -w 100 -p 5 -n 94 -e 2 -a 0 -v background -b none -f none -o +24+10
+# Animation Code:
+(
+for ((i=0; i<360; i=i+20)); do
+echo >&2 "$i"
+cylinderwarp $i displace.png wallpaper.png coffee_mug1.jpg miff:-
+done
+) | convert -delay 20 - -loop 0 coffee_mug1_wallpaper_anim.gif
+$0
+endsnippet
+
+
+snippet imPano2FishEye "Transforms a spherical panorama to a fisheye view." b
+# USAGE: pano2fisheye [-p projection] [-v viewtype] [-d dimension] [-b bgcolor] [-f fade] [-s smooth] [-n newseed] infile outfile
+Arguments:
+-p orthographic
+$0
+endsnippet
+
+snippet imShapeMorph "Creates a shape morphing animation sequence between two images." b
+# USAGE: shapemorph [-f frames] [-d delay] [-p pause] [-r] [-m] "x1,y1 x2,y2" infile1 infile2 outfile
+Arguments:
+-r "73,56 57,68" (control points at the noses on the faces)
 im_geometry_shapemorph.sh "73,56 57,68" morphA.gif morphB.gif out_mor.gif
+
+# USAGE: shapemorph2 -c1 cpts1 -c2 cpts2 [-f frames] [-d delay] [-p pause] [-r] [-b bcolor] infile1 infile2 outfile # shapemorph2 [-h or -help]
 # shapemorph2 -c1 cpts1 -c2 cpts2 [-f frames] [-d delay] [-p pause] [-r] [-b bcolor] infile1 infile2 outfile # shapemorph2 [-h or -help]
+Arguments:
+-c1 "73,56" -c2 "57,68" -r (control point at the noses on the faces)
 im_geometry_shapemorph2.sh -c1 "73,56 53,38 65,80 63,4 94,38" -c2 "57,68 39,50 52,99 53,13 66,52" -r morphA.gif morphB.gif out_morph.gif
 $0
 endsnippet
 
-snippet imCrystallize "google open link" b
-# crystallize [-n number] [-s seed] infile outfile
+snippet imTinyPlanet "Transforms a spherical panorama to a linear fisheye view.  " b
+USAGE: tinyplanet [-d dimension] [-b bgcolor] [-r rotate] [-f fade] [-s smooth] [-t threshold] [-n newseed] [-I increment] [-D delay] [-L loop] infile outfile
+Arguments:
+-b white -d 400 -I 5 -D 20 -L 0
 $0
 endsnippet
+
+snippet imWarplog "Resizes an image according to a logarithmic transformation.  " b
+USAGE: warplog [-w width] [-h height] [-b bgcolor] infile outfile
+Arguments: -w 512 (2x horizontal stretch)
+$0
+endsnippet
+
+snippet imCrystallize "Creates random crystal-like regions in an image " b
+# USAGE: crystallize [-n number] [-s seed] infile outfile
+# USAGE: crystallize [-h|help]
+Arguments: -n 500 -s 1 (defaults)
+$0
+endsnippet
+
+snippet imDisperse "Applies a dispersion effect to an image.  " b
+USAGE: disperse [-s scale] [-d amount] [-c granularity] infile outfile
+USAGE: disperse [-h or -help]
+Arguments: -s 5 -d 5 -c 5
+$0
+endsnippet
+
+snippet imFxtransitions "Creates an animated transition between two images using a special effect distortion.  " b
+USAGE: fxtransitions [-e effect] [-f frames] [-d delay] [-p pause] [-b bgcolor] [-r] infile1 infile2 [outfile]
+USAGE: fxtransitions [-h or -help]
+Arguments: -e swirl -f 18 -d 20 -p 50 -r
+$0
+endsnippet
+
+snippet imScaleScroll "Creates a scaled scrolling animation.  " b
+convert -size 600 -font ~/.local/share/fonts/印品抹茶体.ttf label:"啊哈哈，是我的"  -bordercolor white -border 50x0 text.jpg
+USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
+# USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
+# wget http://www.fmwconcepts.com/imagemagick/scalescroll/images/bluecar_sm.jpg
+im_image_effects_scalescroll.sh -D left bluecar_sm.jpg bluecar_sm.gif
+$0
+endsnippet
+
+snippet imShimmer "Creates a reflected heat shimmering effect animation.  " b
+USAGE: shimmer [-f frames] [-d delay] [-r rate] [-a amount] [-F fcolor] infile outfile
+USAGE: shimmer [-h or -help]
+Arguments: -r 2
+$0
+endsnippet
+
+snippet imSineScrollImage "Creates a sinusoidal curved scrolling image animation.  " b
+USAGE: sinescrollimage [-w width ] [-b bgcolor ] [-a amplitude ] [-r repeats] [-p phase] [-f frames] [-d delay] [-D direction] [-m mode ] [-R range] infile [bgfile] outfile
+USAGE: sinescrollimage [-h or -help]
+Arguments: -w 400 -b skyblue -a 1 -r 0.5 -m constant
+$0
+endsnippet
+
+snippet imSineScrollImage "Creates a sinusoidal curved scrolling image animation.  " b
+USAGE: sinescrollimage [-w width ] [-b bgcolor ] [-a amplitude ] [-r repeats] [-p phase] [-f frames] [-d delay] [-D direction] [-m mode ] [-R range] infile [bgfile] outfile
+USAGE: sinescrollimage [-h or -help]
+Arguments: -w 400 -b skyblue -a 1 -r 0.5 -m constant
+$0
+endsnippet
+
+snippet imSineScrollText "Creates a sinusoidal curved scrolling text animation.  " b
+USAGE: sinescrolltext -t "text" [-w width ] [-f font] [-c color] [-b bgcolor ] [-a amplitude ] [-r repeats] [-p phase] [-F frames] [-d delay] [-D direction] [-m mode ] [-R range] [infile] outfile
+USAGE: sinescrolltext [-h or -help]
+Arguments: -t "THIS IS A TEST OF SINESCROLL" -w 400 -f ubuntu -b skyblue -a 1 -r 0.5 -m constant
+Arguments: -t "THIS IS A TEST OF SINESCROLL" -w 400 -f ubuntu -b skyblue -a 2 -r 2 -m constant
+$0
+endsnippet
+
+snippet imStainedGlass "Applies a stained glass cell effect to an image.  " b
+USAGE: stainedglass [-k kind] [-s size] [-o offset] [-n ncolors] [-b bright] [-e ecolor] [-t thick] [-r rseed] [-a] infile outfile
+USAGE: stainedglass [-h or -help]
+Arguments: -k random -b 150 -t 1 -r 56
+$0
+endsnippet
+
+snippet imTransitions "Applies an animated transition between two images.  " b
+USAGE: transitions [-m mode] [-f frames] [-d delay] [-p pause] [-r] [-e] infile1 infile2 maskfile [outfile]
+USAGE: transitions [-h or -help]
+Arguments: -m wipe -f 21 -d 10 -p 10
+$0
+endsnippet
+
+snippet imTypeWriter "Creates a typewriter style scrolling text animation.  " b
+USAGE: typewriter [-f font] [-p pointsize] [-t txtcolor] [-b bgcolor] textfile outfile USAGE: typewriter [-h or -help]
+Arguments: -f CourierNewB -p 24 -t black -b white (defaults)
+$0
+endsnippet
+
+snippet imWiggle "Creates a sinusoidal wiggling animation.  " b
+USAGE: wiggle [-f frames] [-d delay] [-w wavelengths] [-D direction] [-a amount] infile outfile
+USAGE: wiggle [-h or -help]
+Arguments: -w 0.5
+$0
+endsnippet
+
+snippet imZoomRotateText "Creates a zoomed rotating text animation.  " b
+USAGE: zoomrotatetext -t "text" [-w width ] [-f font] [-c color] [-b bgcolor ] [-r revolutions] [-D direction] [-m mode ] [-p pause] [-F frames] [-d delay] [infile] outfile
+USAGE: zoomrotatetext [-h or -help]
+Arguments: -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f ubuntu -b pink -D cw -m 3 -F 30 -d 10 -p 10
+$0
+endsnippet
+
+snippet imFlickerChannel "Displays and optionally save an animation of the channels in an image.  " b
+USAGE: flickerchannel [-c channellist] [-d delay] [ -r resize] [-m colormodel] [-i] [-l] [-f] infile
+USAGE: flickerchannel [-h or -help]
+Arguments: -f -i
+$0
+endsnippet
+
+snippet imsplitimage "Generates a side-by-side append of two partial images with an option to animate the amount of each image used in the append.  " b
+USAGE: splitimage [-m mode] [-b begin] [-f final] [-i increment] [-d delay] [ -r resize] [-v] infile1 infile2 [outfile]
+USAGE: splitimage [-h or -help]
+Arguments: -m LR -i 10
+$0
+endsnippet
+
 
 snippet imHalo "google open link" b
 # crystallize [-n number] [-s seed] infile outfile
@@ -272,12 +423,6 @@ im_image_effects_halo.sh -r 60 -w 60 -m 25 -c 127,100 zelda1.jpg zelda1.gif
 $0
 endsnippet
 
-snippet imScaleScroll "google open link" b
-# USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
-# wget http://www.fmwconcepts.com/imagemagick/scalescroll/images/bluecar_sm.jpg
-im_image_effects_scalescroll.sh -D left bluecar_sm.jpg bluecar_sm.gif
-$0
-endsnippet
 
 snippet gitClone "git clone " b
 git clone https://gitee.com/dc-melo/README "new folder"
