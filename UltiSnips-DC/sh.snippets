@@ -253,6 +253,72 @@ google-chrome $(cat link_list.md)
 $0
 endsnippet
 
+snippet addTitle2Video "add title to video" b
+srt format
+00:00:29,876 --> 00:00:31,709
+她 她说什么
+
+2
+00:00:31,709 --> 00:00:32,959
+你再放一次
+
+3
+00:00:33,292 --> 00:00:35,751
+第一个字应该是丩啦
+
+ffmpeg -i input.mp4 -strict -2 -vf subtitles=sub.srt output.mp4
+$0
+endsnippet
+
+snippet convGif4Mp4 "convert mp4 to gif" b
+ffmpeg -ss 00:00:00 -t 20 -i input.mp4 -s 300x400 -r 15 output_video.gif
+convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
+$0
+endsnippet
+
+snippet listFonds "lists  fonts  and  styles available on the system for applications using fontconfig" b
+# 查看字体
+fc-list
+$0
+endsnippet
+
+snippet imGif4Image "Generates gif from " b
+convert \
+	-flip \
+	-background  transparent \
+	-bordercolor white \
+	-fill black \
+	-gravity center \
+	-font ~/.local/share/fonts/印品抹茶体.ttf \
+	-pointsize 200 label:"This is 200 point text." \
+	-pointsize 100 label:"This is 100 point text." \
+	-append \
+	-border 20x20 \
+	-resize 830x \
+		output1.png
+
+# 滚动文字
+im_image_effects_scalescroll.sh -D left output1.jpg output1.gif
+# 两副画旋转转换
+im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png output1.gif
+# 对称水动
+im_image_effects_shimmer.sh -r 3 infile.png outfile.gif
+# 正弦波动文字
+im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b skyblue -a 1 -r 1 -m constant outfile.gif
+# 两幅画渐变
+im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
+# 打字机
+# USAGE: typewriter [-f font] [-p pointsize] [-t txtcolor] [-b bgcolor] textfile outfile USAGE: typewriter [-h or -help]
+im_image_effects_typewriter.sh -f CourierNewB -p 24 -t black -b white textfile outfile.gif
+# 水波纹
+im_image_effects_wiggle.sh -w 0.5 infile outfile.gif
+# 旋转文字
+im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f STXingkai -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
+# 通道选择
+im_miscellaneous_utilities_flickerchannel.sh -f -i infile
+$0
+endsnippet
+
 snippet im3Dbox "Generates a perspective view of a 3D box at any orientation with pictures pasted on each of its sides" b
 # USAGE: 3Dbox option=value infile1 infile2 infile3 [infile4 infile5 infile6] outfile
 # Pan Animation Arguments:
