@@ -423,6 +423,24 @@ im_image_effects_halo.sh -r 60 -w 60 -m 25 -c 127,100 zelda1.jpg zelda1.gif
 $0
 endsnippet
 
+snippet gitInit "git init repo " b
+git config --global user.name "DC-Melo"
+git config --global user.email "melo.dachor@gmail.com"
+# 创建 git 仓库:
+mkdir tname
+cd tname
+git init
+touch README.md
+git add README.md
+git commit -m "first commit"
+git remote add origin https://gitee.com/dc-melo/tname.git
+git push -u origin "master"
+# 已有仓库?
+cd existing_git_repo
+git remote add origin https://gitee.com/dc-melo/tname.git
+git push -u origin "master"
+$0
+endsnippet
 
 snippet gitClone "git clone " b
 git clone https://gitee.com/dc-melo/README "new folder"
