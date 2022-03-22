@@ -295,16 +295,16 @@ convert \
 	-append \
 	-border 20x20 \
 	-resize 830x \
-		output1.png
+		outfile1.png
 
 # 滚动文字
-im_image_effects_scalescroll.sh -D left output1.jpg output1.gif
+im_image_effects_scalescroll.sh -D left output1.png output1.gif
 # 两副画旋转转换
 im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png output1.gif
 # 对称水动
 im_image_effects_shimmer.sh -r 3 infile.png outfile.gif
 # 正弦波动文字
-im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b skyblue -a 1 -r 1 -m constant outfile.gif
+im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b skyblue -a 0.5 -r 0.5 -m constant outfile.gif
 # 两幅画渐变
 im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
 # 打字机

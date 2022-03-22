@@ -4,6 +4,28 @@ priority -50
 #                            TEXTMATE SNIPPETS                            #
 ###########################################################################
 
+snippet classInit "init class with parameter" b
+# class definition
+class ${1:Myclass}:
+    # define property
+    ${2:name}= ''
+    ${3:age}= 0
+	# define private property, could not access outside
+    __${4:weight}= 0
+    # define construction
+    def __init__(self,n,a,w):
+        self.$2= n
+        self.$3= a
+        self.__$4 = w
+    def speak(self):
+        print("%s say: i am %d old" %(self.$2,self.$3))
+
+# new instantiate 
+p = $1('runoob',10,30)
+p.speak()
+$0
+endsnippet
+
 snippet withopen "with open system argv[1]" b
 with open(sys.argv[1],'r',encoding='utf-8-sig') as f:
 	all_line_list = f.readlines()
@@ -125,7 +147,7 @@ endsnippet
 snippet iteratorFormwork "iterator Formwork" b
 #!/usr/bin/env python
 # coding=utf-8
-class Fib(object):
+class Fib:
 
     """Docstring for Fib. """
 
@@ -144,23 +166,40 @@ class Fib(object):
            return self.cur
         else:
             raise StopIteration()
+
+myclass = Fib(10)
+myiter = iter(myclass)
+for x in myiter:
+	print(x)
+
 $0
 endsnippet
 
 snippet generatorFormwork "Generator Formwork" b
 #!/usr/bin/env python
 # coding=utf-8
-def fibonacci(arg1):
+import sys
+def fibonacci(n): 
     """TODO: Docstring for fibonacci.
 
     :arg1: TODO
     :returns: TODO
 
     """
-    a,b = 0,1
-    for i in range(arg1):
-        yield b
-        a,b = b,a+b
+    a, b, counter = 0, 1, 0
+    while True:
+        if (counter > n):
+            return
+        yield a
+        a, b = b, a + b
+        counter += 1
+
+f = fibonacci(10) # f is a iterater
+while True:
+    try:
+        print(next(f), end=" ")
+    except StopIteration:
+        sys.exit()
 $0
 endsnippet
 
