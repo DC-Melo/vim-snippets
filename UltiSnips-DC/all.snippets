@@ -175,7 +175,24 @@ target
 .cache
 endsnippet
 
+snippet snipTestGradle "snippet test gradle" b
+snip  test gradle content
+endsnippet
+
+snippet gradleBuildJar "gradle build jar" b
+jar {
+    manifest {
+        attributes(
+                   'Main-Class': 'code.App'
+                  )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+endsnippet
+
 snippet snipAllFormwork "snippet All formwork test" b
-snippet All formwork test
+snip All formwork test
 endsnippet
 # vim:ft=snippets:

@@ -282,7 +282,129 @@ fc-list
 $0
 endsnippet
 
+snippet imGif4Text "Generates gif from " b
+trash outfile*.png
+text1="高梧百尺夜苍苍，"
+text2="乱扫秋星落晓霜。"
+text3="工作了工作作了，"
+text4="测试本文文文文。"
+text5="--作者"
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile0.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile1.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile2.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile3.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile4.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text3}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text4}" \
+    -fill black -stroke black -strokewidth 2 -gravity East   -pointsize 100 label:"${text5}" \
+    -append \
+    outfile5.png
+convert -delay 200 outfile*.png -loop 0  outfile.gif
+
+$0
+endsnippet
+snippet imGif4TextDelete "Generates gif from " b
+trash outfile*.png
+text1="师弟师妹出来说话啦"
+text2="再不出来说话我就去"
+text3="工作了"
+text4="测试文本4"
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -append \
+    outfile0.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -append \
+    outfile1.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -append \
+    outfile2.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -append \
+    outfile3.png
+convert \
+    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -append \
+    outfile4.png
+convert -delay 200 outfile*.png -loop 0  outfile.gif
+$0
+endsnippet
 snippet imGif4Image "Generates gif from " b
+convert \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"This is 200 point text." \
+    -fill black -stroke red   -strokewidth 4 -draw "line 10,125 500,80" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200  label:"This is 100 point text." \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 400 label:"This is 100 point text." \
+    -append \
+    -border 20x20 \
+    -resize 830x \
+    outfile1.png
+
 convert \
 	-flip \
 	-background  transparent \
@@ -311,7 +433,7 @@ im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png inf
 # USAGE: typewriter [-f font] [-p pointsize] [-t txtcolor] [-b bgcolor] textfile outfile USAGE: typewriter [-h or -help]
 im_image_effects_typewriter.sh -f CourierNewB -p 24 -t black -b white textfile outfile.gif
 # 水波纹
-im_image_effects_wiggle.sh -w 0.5 infile outfile.gif
+im_image_effects_wiggle.sh -w 0.5 outfile1.png outfile.gif
 # 旋转文字
 im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f STXingkai -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
 # 通道选择
@@ -858,6 +980,12 @@ for file in *.xlsx; do
     ssconvert --export-type=Gnumeric_stf:stf_csv --export-file-per-sheet ${file} ${name};
 done
 echo "Finish!"
+$0
+endsnippet
+
+snippet javaRunClass "java run class" b
+java -classpath app/build/classes/java/main/ code.App
+jdb  -sourcepath app/src/main/java/ -classpath app/build/classes/java/main/ code.App
 $0
 endsnippet
 
