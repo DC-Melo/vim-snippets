@@ -29,7 +29,7 @@ endglobal
 ###########################################################################
 #                            TextMate Snippets                            #
 ###########################################################################
-snippet nodeStruct "int listlode struct formwork"
+snippet listnodeStruct "int listlode struct formwork"
 /* code by 王江 DC-Melo */
 struct ListNode{
     int data;
@@ -79,11 +79,6 @@ endsnippet
 
 snippet initArray "array init"
 // Initializing a array
-int ${1:arr}[] = { 10, 20, 30 };
-$0
-endsnippet
-
-snippet printArray "print array"
 int ${1:input}[] = { 1, 2, 3, 4, 5 };
 // loop through the array elements
 for (size_t i = 0; i < sizeof($1)/sizeof($1[0]); i++) std::cout << $1[i] << ' '; std::cout << endl; 
@@ -103,11 +98,6 @@ vector<vector<int>> matrix = {  {1, 2, 3, 4, 5  },
 								{5, 6, 8, 1, 12 },
 								{1, 7, 2, 4, 18 },
 							 };
-int array[3][4] = {1,1,2,3,4,5,6,7,8,9,0,10}
-$0
-endsnippet
-
-snippet printMatrix "matrix "
 // Print 2D vector / matrix
 for_each(matrix.begin(), matrix.end(),
 	[](const auto & row ) {
@@ -118,11 +108,24 @@ for_each(matrix.begin(), matrix.end(),
 		cout<<endl;
 	});
 cout<<endl;
+int array[3][4] = {1,1,2,3,4,5,6,7,8,9,0,10}
 $0
 endsnippet
 
+
 snippet initListNode "init list node"
 head = new ListNode(0);
-head->next = new ListNode(1);   
+node1 = new ListNode(1);
+node2 = new ListNode(2);
+node3 = new ListNode(3);
+head->next = node1;   
+node1->next =node2;
+node2->next =node3;
+
+ListNode *ptr =head;
+while(ptr!=NULL){
+	cout<<ptr->data<<endl;
+	ptr = ptr->next;
+}
 $0
 endsnippet
