@@ -351,55 +351,60 @@ $0
 endsnippet
 snippet imGif4TextDelete "Generates gif from " b
 trash outfile*.png
-text1="师弟师妹出来说话啦"
-text2="再不出来说话我就去"
-text3="工作了"
-text4="测试文本4"
+text1="佳哥"
+text2="成了我的培训专场了"
+text3="大家集思广益"
+text4="共同提高"
+font=~/.local/share/fonts/印品抹茶体.ttf
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -font "${font}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile0.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -font "${font}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile1.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -font "${font}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile2.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -font "${font}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+ \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile3.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text1}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120  label:"${text2}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"${text3}" \
+    -font "${font}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+ \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile4.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
-    -fill black -stroke black -strokewidth 1 -gravity center -pointsize 25 label:"${text1}" \
- \( -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
-    -fill red   -stroke red   -strokewidth 4 -draw "line 2,20 200,2" \)                     \
-    -fill black -stroke black -strokewidth 1 -gravity center -pointsize 25 label:"${text3}" \
-    -fill black -stroke black -strokewidth 1 -gravity center -pointsize 30 label:"${text4}" \
+    -font "${font}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
+ \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
     -append \
     outfile5.png
 # convert outfile0.png -fuzz 20% -transparent white outfile0.png
@@ -415,7 +420,9 @@ convert outfile3.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)"
 convert outfile4.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile4.png
 convert outfile5.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile5.png
 
-convert -delay 200 outfile*.png -loop 0  outfile.gif
+convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+
+
 $0
 endsnippet
 
