@@ -289,10 +289,10 @@ text2="乱扫秋星落晓霜。"
 text3="工作了工作作了，"
 text4="测试本文文文文。"
 text5="--作者"
-fontPath=/Users/dc/Library/Fonts/印品抹茶体.ttf
-fontPath=~/.local/share/fonts/印品抹茶体.ttf
+font=~/.local/share/fonts/印品抹茶体.ttf
+font=~/Library/Fonts/印品抹茶体.ttf
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -301,7 +301,7 @@ convert \
     -append \
     outfile0.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -310,7 +310,7 @@ convert \
     -append \
     outfile1.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -319,7 +319,7 @@ convert \
     -append \
     outfile2.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -328,7 +328,7 @@ convert \
     -append \
     outfile3.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -337,7 +337,7 @@ convert \
     -append \
     outfile4.png
 convert \
-    -font ~/.local/share/fonts/印品抹茶体.ttf \
+    -font "${font}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text2}" \
     -fill black -stroke black -strokewidth 1 -gravity center -pointsize 20 label:"${text3}" \
@@ -355,56 +355,64 @@ text1="佳哥"
 text2="成了我的培训专场了"
 text3="大家集思广益"
 text4="共同提高"
+size1=120
+size2=100
+size3=120
+size4=200
 font=~/.local/share/fonts/印品抹茶体.ttf
+font=~/Library/Fonts/印品抹茶体.ttf
 convert \
     -font "${font}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile0.png
 convert \
     -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile1.png
 convert \
     -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile2.png
 convert \
     -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
- \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    \(  \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
     -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile3.png
 convert \
     -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
- \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    \(  \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
     -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile4.png
 convert \
     -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text1}" \
- \( -fill black -stroke black -strokewidth 2 -gravity center -pointsize 100 label:"${text2}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    \(  \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
     -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 120 label:"${text3}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"${text4}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
     outfile5.png
 # convert outfile0.png -fuzz 20% -transparent white outfile0.png
@@ -420,13 +428,29 @@ convert outfile3.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)"
 convert outfile4.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile4.png
 convert outfile5.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile5.png
 
-convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+strSize=`file outfile0.png`
+echo $strSize
+pat='([0-9]+) x ([0-9]+)'
+[[ $strSize =~ $pat ]] # $pat must be unquoted
+echo "${BASH_REMATCH[0]}"
+echo "${BASH_REMATCH[1]}"
+echo "${BASH_REMATCH[2]}"
+if [[ ${BASH_REMATCH[1]} -gt 1000 ]]; then
+    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+elif  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
+    convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
+else
+    convert -delay 200 outfile*.png -loop 0 outfile.gif
+fi
+
 
 
 $0
 endsnippet
 
 snippet imGif4Image "Generates gif from " b
+font=~/.local/share/fonts/印品抹茶体.ttf
+font=~/Library/Fonts/印品抹茶体.ttf
 convert \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"This is 200 point text." \
     -fill black -stroke red   -strokewidth 4 -draw "line 10,125 500,80" \
@@ -442,7 +466,7 @@ convert \
 	-bordercolor white \
 	-fill black \
 	-gravity center \
-	-font ~/.local/share/fonts/印品抹茶体.ttf \
+	-font "${font}" \
 	-pointsize 200 label:"This is 200 point text." \
 	-pointsize 100 label:"This is 100 point text." \
 	-append \
@@ -549,7 +573,7 @@ $0
 endsnippet
 
 snippet imScaleScroll "Creates a scaled scrolling animation.  " b
-convert -size 600 -font ~/.local/share/fonts/印品抹茶体.ttf label:"啊哈哈，是我的"  -bordercolor white -border 50x0 text.jpg
+convert -size 600 -font "${font}" label:"啊哈哈，是我的"  -bordercolor white -border 50x0 text.jpg
 USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
 # USAGE: scalescroll [-f frames] [-d delay] [-D direction] infile outfile
 # wget http://www.fmwconcepts.com/imagemagick/scalescroll/images/bluecar_sm.jpg
