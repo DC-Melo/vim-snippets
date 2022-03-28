@@ -283,7 +283,6 @@ $0
 endsnippet
 
 snippet imGif4Text "Generates gif from " b
-trash outfile*.png
 text1="高梧百尺夜苍苍，"
 text2="乱扫秋星落晓霜。"
 text3="工作了工作作了，"
@@ -294,6 +293,7 @@ if [  -n "$(uname -a | grep -i darwin)" ]; then
 else
 	font=~/.local/share/fonts/印品抹茶体.ttf
 fi
+trash outfile*.png
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
@@ -353,7 +353,6 @@ convert -delay 200 outfile*.png -loop 0  outfile.gif
 $0
 endsnippet
 snippet imGif4TextDelete "Generates gif from " b
-trash outfile*.png
 text1="佳哥"
 text2="成了我的培训专场了"
 text3="大家集思广益"
@@ -361,11 +360,13 @@ text4="共同提高"
 size1=120
 size2=100
 size3=120
+size4=200
 if [  -n "$(uname -a | grep -i darwin)" ]; then
 	font=~/Library/Fonts/印品抹茶体.ttf
 else
 	font=~/.local/share/fonts/印品抹茶体.ttf
 fi
+trash outfile*.png
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -433,19 +434,18 @@ convert outfile3.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)"
 convert outfile4.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile4.png
 convert outfile5.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile5.png
 
-strSize=`file outfile0.png`
+strSize="`file outfile0.png`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
 echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
-if [[ ${BASH_REMATCH[1]} -gt 1000 ]]; then
-    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
-elif  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
+if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
     convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
-    convert -delay 200 outfile*.png -loop 0 outfile.gif
+    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 outfile.gif
 fi
 
 
@@ -485,11 +485,11 @@ convert \
 # 滚动文字
 im_image_effects_scalescroll.sh -D left outfile1.png outfile.gif
 # 两副画旋转转换
-im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png outfile1.gif
+im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png outfile.gif
 # 对称水动
 im_image_effects_shimmer.sh -r 3 outfile1.png outfile.gif
 # 正弦波动文字
-im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b skyblue -a 0.5 -r 0.5 -m constant outfile.gif
+im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b white -a 0.5 -r 0.5 -m constant outfile.gif
 # 两幅画渐变
 im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
 # 打字机

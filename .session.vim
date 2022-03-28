@@ -50,10 +50,18 @@ noremap <silent>  :call smooth_scroll#up(&scroll, 0, 2)
 omap <silent> % <Plug>(MatchitOperationForward)
 xmap <silent> % <Plug>(MatchitVisualForward)
 nmap <silent> % <Plug>(MatchitNormalForward)
-map ,rwp <Plug>RestoreWinPosn
-map ,swp <Plug>SaveWinPosn
-map ,ds <Plug>DrawItStop
-map ,di <Plug>DrawItStart
+nmap ,rwp <Plug>RestoreWinPosn
+xmap ,rwp <Plug>RestoreWinPosn
+omap ,rwp <Plug>RestoreWinPosn
+nmap ,swp <Plug>SaveWinPosn
+xmap ,swp <Plug>SaveWinPosn
+omap ,swp <Plug>SaveWinPosn
+nmap ,ds <Plug>DrawItStop
+xmap ,ds <Plug>DrawItStop
+omap ,ds <Plug>DrawItStop
+nmap ,di <Plug>DrawItStart
+xmap ,di <Plug>DrawItStart
+omap ,di <Plug>DrawItStart
 nnoremap ,sm :GSessionListLocal
 nnoremap ,sE :GSessionEliminateAll
 nnoremap ,se :GSessionEliminateCurrent
@@ -63,12 +71,14 @@ nnoremap ,sN :NamedSessionMake
 nnoremap ,sn :NamedSessionMakeCwd
 nnoremap ,sS :GSessionMake
 nnoremap ,ss :GSessionMakeLocal
-map ,, <Plug>(easymotion-prefix)
+nmap ,, <Plug>(easymotion-prefix)
+xmap ,, <Plug>(easymotion-prefix)
+omap ,, <Plug>(easymotion-prefix)
 nnoremap <silent> ,b :LeaderfBuffer
-vnoremap ,d "_d
+xnoremap ,d "_d
 nnoremap ,P ikpkJ
-vnoremap ,P "_dikpkJ
-vnoremap ,p "_dikpkJJ
+xnoremap ,P "_dikpkJ
+xnoremap ,p "_dikpkJJ
 nnoremap ,O O
 nnoremap ,gg :GV?
 nnoremap ,G :GV!
@@ -78,7 +88,7 @@ nnoremap ,l :Tab /|
 nnoremap ,F :Ack! 
 nnoremap ,f :LeaderfFile .
 nmap ,w <Plug>(easymotion-overwin-w)
-vmap ,w <Plug>(easymotion-bd-w)
+xmap ,w <Plug>(easymotion-bd-w)
 omap ,w <Plug>(easymotion-bd-w)
 nnoremap <silent> ,t :TagbarToggle
 nnoremap ,ff :YcmCompleter FixIt
@@ -97,7 +107,7 @@ nnoremap ,U :GoToFunImpl
 nnoremap ,p ikpkJJ
 nnoremap ,y :CopyCode
 nnoremap ,,p "+p
-vmap ,,y "+y
+xmap ,,y "+y
 nnoremap ,,c :PlugClean
 nnoremap ,,u :PlugUpdate
 nnoremap ,,i :PlugInstall
@@ -107,8 +117,12 @@ nnoremap ,h :view +let\ &l:modifiable=0 ~/.vimplus/help.md
 nnoremap ,vp :edit ~/.vimrc.custom.plugins
 nnoremap ,vc :edit ~/.vimrc.custom.config
 nnoremap ,e :edit $MYVIMRC
-map / <Plug>(incsearch-forward)
-map ? <Plug>(incsearch-backward)
+nmap / <Plug>(incsearch-forward)
+xmap / <Plug>(incsearch-forward)
+omap / <Plug>(incsearch-forward)
+nmap ? <Plug>(incsearch-backward)
+xmap ? <Plug>(incsearch-backward)
+omap ? <Plug>(incsearch-backward)
 nnoremap C :ChangeText
 nnoremap D :DeleteText
 omap F <Plug>(clever-f-F)
@@ -144,7 +158,7 @@ nmap ds <Plug>Dsurround
 omap f <Plug>(clever-f-f)
 xmap f <Plug>(clever-f-f)
 nmap f <Plug>(clever-f-f)
-vmap gx <Plug>NetrwBrowseXVis
+xmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
 xnoremap <silent> g<M-n> :call multiple_cursors#select_all("v", 0)
 xnoremap <silent> gî :call multiple_cursors#select_all("v", 0)
@@ -160,7 +174,9 @@ omap gc <Plug>Commentary
 nmap gc <Plug>Commentary
 xmap gc <Plug>Commentary
 xmap gS <Plug>VgSurround
-map g/ <Plug>(incsearch-stay)
+nmap g/ <Plug>(incsearch-stay)
+xmap g/ <Plug>(incsearch-stay)
+omap g/ <Plug>(incsearch-stay)
 omap <silent> g% <Plug>(MatchitOperationBackward)
 xmap <silent> g% <Plug>(MatchitVisualBackward)
 nmap <silent> g% <Plug>(MatchitNormalBackward)
@@ -190,11 +206,6 @@ nmap ySs <Plug>YSsurround
 nmap yss <Plug>Yssurround
 nmap yS <Plug>YSurround
 nmap ys <Plug>Ysurround
-nnoremap <silent> <Plug>(multiple-cursors-new-word) :call multiple_cursors#new('v', 1)
-nnoremap <silent> <Plug>(multiple-cursors-new) :call multiple_cursors#new('v', 0)
-nnoremap <silent> <Plug>(multiple-cursors-skip) :call multiple_cursors#skip()
-nnoremap <silent> <Plug>(multiple-cursors-prev) :call multiple_cursors#prev()
-nnoremap <SNR>153_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(netrw#GX(),netrw#CheckIfRemote(netrw#GX()))
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
@@ -898,6 +909,7 @@ set cmdheight=2
 set completefunc=youcompleteme#CompleteFunc
 set completeopt=menuone
 set confirm
+set cpoptions=aAceFsB
 set dictionary=/usr/share/dict/words
 set expandtab
 set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
@@ -945,8 +957,8 @@ endif
 set shortmess=aoO
 argglobal
 %argdel
-$argadd .
-edit UltiSnipsDC/sh.snippets
+$argadd /tmp/bash-fc.1rIzDG
+edit /tmp/bash-fc.1rIzDG
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
@@ -956,7 +968,6 @@ set winheight=1
 set winminwidth=0
 set winwidth=1
 argglobal
-balt NERD_tree_1
 let s:cpo_save=&cpo
 set cpo&vim
 inoremap <buffer> <silent> <M-n> :call AutoPairsJump()a
@@ -1013,7 +1024,7 @@ setlocal breakindentopt=
 setlocal bufhidden=
 setlocal buflisted
 setlocal buftype=
-setlocal nocindent
+setlocal cindent
 setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
 setlocal cinoptions=g0,:0,N-s,(0
 setlocal cinwords=if,else,while,do,for,switch
@@ -1036,9 +1047,9 @@ setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
-setlocal noexpandtab
-if &filetype != 'snippets'
-setlocal filetype=snippets
+setlocal expandtab
+if &filetype != 'sh'
+setlocal filetype=sh
 endif
 setlocal fixendofline
 setlocal foldcolumn=0
@@ -1046,9 +1057,9 @@ set nofoldenable
 setlocal nofoldenable
 setlocal foldexpr=0
 setlocal foldignore=#
-setlocal foldlevel=99
+setlocal foldlevel=0
 setlocal foldmarker={{{,}}}
-setlocal foldmethod=syntax
+setlocal foldmethod=manual
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
@@ -1061,8 +1072,8 @@ setlocal iminsert=0
 setlocal imsearch=-1
 setlocal include=
 setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal indentexpr=GetShIndent()
+setlocal indentkeys=0{,0},0),0],!^F,o,O,e,0=then,0=do,0=else,0=elif,0=fi,0=esac,0=done,0=end,),0=;;,0=;&,0=fin,0=fil,0=fip,0=fir,0=fix
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
@@ -1108,8 +1119,8 @@ setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=
 setlocal noswapfile
 setlocal synmaxcol=3000
-if &syntax != 'snippets'
-setlocal syntax=snippets
+if &syntax != 'sh'
+setlocal syntax=sh
 endif
 setlocal tabstop=4
 setlocal tagcase=
@@ -1130,14 +1141,16 @@ setlocal nowinfixwidth
 set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
-let s:l = 490 - ((10 * winheight(0) + 14) / 29)
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 1 - ((0 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 490
-normal! 038|
+keepjumps 1
+normal! 0
 tabnext 1
-badd +0 UltiSnipsDC/sh.snippets
+badd +0 /tmp/bash-fc.1rIzDG
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif
