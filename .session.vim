@@ -14,7 +14,7 @@ cnoremap <Plug>(slash-cr) 
 imap <C-G>S <Plug>ISurround
 imap <C-G>s <Plug>Isurround
 imap <C-S> <Plug>Isurround
-inoremap <silent> <SNR>33_AutoPairsReturn =AutoPairsReturn()
+inoremap <silent> <SNR>34_AutoPairsReturn =AutoPairsReturn()
 cnoremap <C-N> <Down>
 cnoremap <C-P> <Up>
 cnoremap <C-B> <Left>
@@ -29,7 +29,6 @@ inoremap <silent> <F12>  :ShowColorScheme
 inoremap <silent> <F11>  :RandomColorScheme
 inoremap <silent> <F10>  :NextColorScheme
 inoremap <silent> <F9>  :PreviousColorScheme
-map! <D-v> *
 noremap <silent>  :call smooth_scroll#up(&scroll*2, 0, 4)
 noremap <silent>  :call smooth_scroll#down(&scroll, 0, 2)
 noremap <silent>  :call smooth_scroll#down(&scroll*2, 0, 4)
@@ -51,18 +50,10 @@ noremap <silent>  :call smooth_scroll#up(&scroll, 0, 2)
 omap <silent> % <Plug>(MatchitOperationForward)
 xmap <silent> % <Plug>(MatchitVisualForward)
 nmap <silent> % <Plug>(MatchitNormalForward)
-nmap ,ds <Plug>DrawItStop
-xmap ,ds <Plug>DrawItStop
-omap ,ds <Plug>DrawItStop
-nmap ,di <Plug>DrawItStart
-xmap ,di <Plug>DrawItStart
-omap ,di <Plug>DrawItStart
-nmap ,rwp <Plug>RestoreWinPosn
-xmap ,rwp <Plug>RestoreWinPosn
-omap ,rwp <Plug>RestoreWinPosn
-nmap ,swp <Plug>SaveWinPosn
-xmap ,swp <Plug>SaveWinPosn
-omap ,swp <Plug>SaveWinPosn
+map ,rwp <Plug>RestoreWinPosn
+map ,swp <Plug>SaveWinPosn
+map ,ds <Plug>DrawItStop
+map ,di <Plug>DrawItStart
 nnoremap ,sm :GSessionListLocal
 nnoremap ,sE :GSessionEliminateAll
 nnoremap ,se :GSessionEliminateCurrent
@@ -72,14 +63,12 @@ nnoremap ,sN :NamedSessionMake
 nnoremap ,sn :NamedSessionMakeCwd
 nnoremap ,sS :GSessionMake
 nnoremap ,ss :GSessionMakeLocal
-nmap ,, <Plug>(easymotion-prefix)
-xmap ,, <Plug>(easymotion-prefix)
-omap ,, <Plug>(easymotion-prefix)
+map ,, <Plug>(easymotion-prefix)
 nnoremap <silent> ,b :LeaderfBuffer
-xnoremap ,d "_d
+vnoremap ,d "_d
 nnoremap ,P ikpkJ
-xnoremap ,P "_dikpkJ
-xnoremap ,p "_dikpkJJ
+vnoremap ,P "_dikpkJ
+vnoremap ,p "_dikpkJJ
 nnoremap ,O O
 nnoremap ,gg :GV?
 nnoremap ,G :GV!
@@ -89,7 +78,7 @@ nnoremap ,l :Tab /|
 nnoremap ,F :Ack! 
 nnoremap ,f :LeaderfFile .
 nmap ,w <Plug>(easymotion-overwin-w)
-xmap ,w <Plug>(easymotion-bd-w)
+vmap ,w <Plug>(easymotion-bd-w)
 omap ,w <Plug>(easymotion-bd-w)
 nnoremap <silent> ,t :TagbarToggle
 nnoremap ,ff :YcmCompleter FixIt
@@ -108,7 +97,7 @@ nnoremap ,U :GoToFunImpl
 nnoremap ,p ikpkJJ
 nnoremap ,y :CopyCode
 nnoremap ,,p "+p
-xmap ,,y "+y
+vmap ,,y "+y
 nnoremap ,,c :PlugClean
 nnoremap ,,u :PlugUpdate
 nnoremap ,,i :PlugInstall
@@ -118,12 +107,8 @@ nnoremap ,h :view +let\ &l:modifiable=0 ~/.vimplus/help.md
 nnoremap ,vp :edit ~/.vimrc.custom.plugins
 nnoremap ,vc :edit ~/.vimrc.custom.config
 nnoremap ,e :edit $MYVIMRC
-nmap / <Plug>(incsearch-forward)
-xmap / <Plug>(incsearch-forward)
-omap / <Plug>(incsearch-forward)
-nmap ? <Plug>(incsearch-backward)
-xmap ? <Plug>(incsearch-backward)
-omap ? <Plug>(incsearch-backward)
+map / <Plug>(incsearch-forward)
+map ? <Plug>(incsearch-backward)
 nnoremap C :ChangeText
 nnoremap D :DeleteText
 omap F <Plug>(clever-f-F)
@@ -159,7 +144,7 @@ nmap ds <Plug>Dsurround
 omap f <Plug>(clever-f-f)
 xmap f <Plug>(clever-f-f)
 nmap f <Plug>(clever-f-f)
-xmap gx <Plug>NetrwBrowseXVis
+vmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
 xnoremap <silent> g<M-n> :call multiple_cursors#select_all("v", 0)
 xnoremap <silent> gî :call multiple_cursors#select_all("v", 0)
@@ -175,9 +160,7 @@ omap gc <Plug>Commentary
 nmap gc <Plug>Commentary
 xmap gc <Plug>Commentary
 xmap gS <Plug>VgSurround
-nmap g/ <Plug>(incsearch-stay)
-xmap g/ <Plug>(incsearch-stay)
-omap g/ <Plug>(incsearch-stay)
+map g/ <Plug>(incsearch-stay)
 omap <silent> g% <Plug>(MatchitOperationBackward)
 xmap <silent> g% <Plug>(MatchitVisualBackward)
 nmap <silent> g% <Plug>(MatchitNormalBackward)
@@ -207,13 +190,13 @@ nmap ySs <Plug>YSsurround
 nmap yss <Plug>Yssurround
 nmap yS <Plug>YSurround
 nmap ys <Plug>Ysurround
-nnoremap <SNR>141_: :=v:count ? v:count : ''
-xnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
+nnoremap <SNR>149_: :=v:count ? v:count : ''
+vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(netrw#GX(),netrw#CheckIfRemote(netrw#GX()))
-noremap <silent> <Plug>DrawItStop :set lz:call DrawIt#DrawItStop():set nolz
-noremap <silent> <Plug>DrawItStart :set lz:call DrawIt#DrawItStart():set nolz
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
 nmap <silent> <Plug>SaveWinPosn :call SaveWinPosn()
+noremap <silent> <Plug>DrawItStop :set lz:call DrawIt#DrawItStop():set nolz
+noremap <silent> <Plug>DrawItStart :set lz:call DrawIt#DrawItStart():set nolz
 xnoremap <silent> <M-n> :call multiple_cursors#select_all("v", 0)
 nnoremap <silent> <M-n> :call multiple_cursors#select_all("n", 1)
 xnoremap <silent> <C-M> :call multiple_cursors#new("v", 0)
@@ -704,14 +687,9 @@ nnoremap <silent> <Plug>(MatchitNormalMultiBackward) :call matchit#MultiMatch(
 onoremap <silent> <Plug>(MatchitOperationBackward) :call matchit#Match_wrapper('',0,'o')
 onoremap <silent> <Plug>(MatchitOperationForward) :call matchit#Match_wrapper('',1,'o')
 xnoremap <silent> <Plug>(MatchitVisualBackward) :call matchit#Match_wrapper('',0,'v')m'gv``
-xnoremap <silent> <Plug>(MatchitVisualForward) :call matchit#Match_wrapper('',1,'v'):if col("''") != col("$") | exe ":normal! m'" | endifgv``
+xnoremap <silent> <Plug>(MatchitVisualForward) :call matchit#Match_wrapper('',1,'v')m'gv``
 nnoremap <silent> <Plug>(MatchitNormalBackward) :call matchit#Match_wrapper('',0,'n')
 nnoremap <silent> <Plug>(MatchitNormalForward) :call matchit#Match_wrapper('',1,'n')
-xmap <BS> "-d
-vmap <D-x> "*d
-vmap <D-c> "*y
-vmap <D-v> "-d"*P
-nmap <D-v> "*P
 cnoremap  <Home>
 cnoremap  <Left>
 cnoremap  <Right>
@@ -916,6 +894,7 @@ set cmdheight=2
 set completefunc=youcompleteme#CompleteFunc
 set completeopt=menuone
 set confirm
+set cpoptions=aAceFsB
 set dictionary=/usr/share/dict/words
 set expandtab
 set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
@@ -927,63 +906,9 @@ set incsearch
 set langmenu=zh_CN.UTF-8
 set laststatus=2
 set maxmempattern=5000
+set printoptions=paper:a4
 set ruler
-set runtimepath=
-set runtimepath+=~/.vim
-set runtimepath+=~/.vim/plugged/cpp-mode
-set runtimepath+=~/.vim/plugged/vim-edit
-set runtimepath+=~/.vim/plugged/change-colorscheme
-set runtimepath+=~/.vim/plugged/prepare-code
-set runtimepath+=~/.vim/plugged/vim-buffer
-set runtimepath+=~/.vim/plugged/vimplus-startify
-set runtimepath+=~/.vim/plugged/tagbar
-set runtimepath+=~/.vim/plugged/YouCompleteMe
-set runtimepath+=~/.vim/plugged/LeaderF
-set runtimepath+=~/.vim/plugged/ack.vim
-set runtimepath+=~/.vim/plugged/vim-easymotion
-set runtimepath+=~/.vim/plugged/incsearch.vim
-set runtimepath+=~/.vim/plugged/auto-pairs
-set runtimepath+=~/.vim/plugged/nerdtree
-set runtimepath+=~/.vim/plugged/vim-nerdtree-syntax-highlight
-set runtimepath+=~/.vim/plugged/nerdtree-git-plugin
-set runtimepath+=~/.vim/plugged/tabular
-set runtimepath+=~/.vim/plugged/vim-fugitive
-set runtimepath+=~/.vim/plugged/vim-surround
-set runtimepath+=~/.vim/plugged/vim-commentary
-set runtimepath+=~/.vim/plugged/vim-repeat
-set runtimepath+=~/.vim/plugged/vim-endwise
-set runtimepath+=~/.vim/plugged/vim-cpp-enhanced-highlight
-set runtimepath+=~/.vim/plugged/vim-airline
-set runtimepath+=~/.vim/plugged/vim-airline-themes
-set runtimepath+=~/.vim/plugged/vim-devicons
-set runtimepath+=~/.vim/plugged/vim-slash
-set runtimepath+=~/.vim/plugged/gv.vim
-set runtimepath+=~/.vim/plugged/vim-textobj-user
-set runtimepath+=~/.vim/plugged/vim-textobj-indent
-set runtimepath+=~/.vim/plugged/vim-textobj-syntax
-set runtimepath+=~/.vim/plugged/vim-textobj-function
-set runtimepath+=~/.vim/plugged/vim-textobj-parameter
-set runtimepath+=~/.vim/plugged/echodoc.vim
-set runtimepath+=~/.vim/plugged/vim-smooth-scroll
-set runtimepath+=~/.vim/plugged/clever-f.vim
-set runtimepath+=~/.vim/plugged/indentpython.vim
-set runtimepath+=~/.vim/plugged/vim-snippets
-set runtimepath+=~/.vim/plugged/ultisnips
-set runtimepath+=~/.vim/plugged/VisIncr
-set runtimepath+=~/.vim/plugged/vim-multiple-cursors
-set runtimepath+=~/.vim/plugged/gsession.vim
-set runtimepath+=~/.vim/plugged/DrawIt
-set runtimepath+=/usr/local/share/vim/vimfiles
-set runtimepath+=/usr/local/share/vim/vim82
-set runtimepath+=/usr/local/share/vim/vim82/pack/dist/opt/matchit
-set runtimepath+=/usr/local/share/vim/vimfiles/after
-set runtimepath+=~/.vim/plugged/vim-nerdtree-syntax-highlight/after
-set runtimepath+=~/.vim/plugged/nerdtree-git-plugin/after
-set runtimepath+=~/.vim/plugged/tabular/after
-set runtimepath+=~/.vim/plugged/vim-cpp-enhanced-highlight/after
-set runtimepath+=~/.vim/plugged/vim-textobj-function/after
-set runtimepath+=~/.vim/plugged/ultisnips/after
-set runtimepath+=~/.vim/after
+set runtimepath=~/.vim,~/.vim/plugged/cpp-mode,~/.vim/plugged/vim-edit,~/.vim/plugged/change-colorscheme,~/.vim/plugged/prepare-code,~/.vim/plugged/vim-buffer,~/.vim/plugged/vimplus-startify,~/.vim/plugged/tagbar,~/.vim/plugged/YouCompleteMe,~/.vim/plugged/LeaderF,~/.vim/plugged/ack.vim,~/.vim/plugged/vim-easymotion,~/.vim/plugged/incsearch.vim,~/.vim/plugged/auto-pairs,~/.vim/plugged/nerdtree,~/.vim/plugged/vim-nerdtree-syntax-highlight,~/.vim/plugged/nerdtree-git-plugin,~/.vim/plugged/tabular,~/.vim/plugged/vim-fugitive,~/.vim/plugged/vim-surround,~/.vim/plugged/vim-commentary,~/.vim/plugged/vim-repeat,~/.vim/plugged/vim-endwise,~/.vim/plugged/vim-cpp-enhanced-highlight,~/.vim/plugged/vim-airline,~/.vim/plugged/vim-airline-themes,~/.vim/plugged/vim-devicons,~/.vim/plugged/vim-slash,~/.vim/plugged/gv.vim,~/.vim/plugged/vim-textobj-user,~/.vim/plugged/vim-textobj-indent,~/.vim/plugged/vim-textobj-syntax,~/.vim/plugged/vim-textobj-function,~/.vim/plugged/vim-textobj-parameter,~/.vim/plugged/echodoc.vim,~/.vim/plugged/vim-smooth-scroll,~/.vim/plugged/clever-f.vim,~/.vim/plugged/indentpython.vim,~/.vim/plugged/vim-snippets,~/.vim/plugged/ultisnips,~/.vim/plugged/VisIncr,~/.vim/plugged/vim-multiple-cursors,~/.vim/plugged/gsession.vim,~/.vim/plugged/DrawIt,/var/lib/vim/addons,/etc/vim,/usr/share/vim/vimfiles,/usr/share/vim/vim82,/usr/share/vim/vim82/pack/dist/opt/matchit,/usr/share/vim/vimfiles/after,/etc/vim/after,/var/lib/vim/addons/after,~/.vim/plugged/vim-nerdtree-syntax-highlight/after,~/.vim/plugged/nerdtree-git-plugin/after,~/.vim/plugged/tabular/after,~/.vim/plugged/vim-cpp-enhanced-highlight/after,~/.vim/plugged/vim-textobj-function/after,~/.vim/plugged/ultisnips/after,~/.vim/after
 set shiftwidth=4
 set shortmess=filnxtToOSc
 set showcmd
@@ -993,10 +918,11 @@ set smartcase
 set smartindent
 set smarttab
 set softtabstop=4
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set noswapfile
 set tabline=%!airline#extensions#tabline#get()
 set tabstop=4
-set tags=./tags,tags,.tags,.python.tags,.java.tags,.source.tags
+set tags=./tags,./TAGS,tags,TAGS,.tags,.python.tags,.java.tags,.source.tags
 set termencoding=utf-8
 set thesaurus=/usr/coderoot/usr/share/dict/thesaurus.txt
 set ttimeoutlen=0
@@ -1009,21 +935,30 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
-cd ~/.vim/plugged/vim-snippets/UltiSnipsDC
+cd ~/.vim/plugged/vim-snippets
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1 CMakeLists.txt
-badd +17 main.cpp
 argglobal
 %argdel
-$argadd CMakeLists.txt
-$argadd main.cpp
-edit main.cpp
+$argadd tests.cpp
+edit tests.cpp
+set splitbelow splitright
+wincmd _ | wincmd |
+split
+1wincmd k
+wincmd w
+set nosplitbelow
+set nosplitright
+wincmd t
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe '1resize ' . ((&lines * 16 + 19) / 38)
+exe '2resize ' . ((&lines * 17 + 19) / 38)
 argglobal
-if bufexists("main.cpp") | buffer main.cpp | else | edit main.cpp | endif
-balt CMakeLists.txt
 let s:cpo_save=&cpo
 set cpo&vim
 inoremap <buffer> <silent> <M-n> :call AutoPairsJump()a
@@ -1187,12 +1122,10 @@ setlocal termwinscroll=10000
 setlocal termwinsize=
 setlocal textwidth=0
 setlocal thesaurus=
-setlocal thesaurusfunc=
 setlocal undofile
 setlocal undolevels=-123456
 setlocal varsofttabstop=
 setlocal vartabstop=
-setlocal virtualedit=
 setlocal wincolor=
 setlocal nowinfixheight
 setlocal nowinfixwidth
@@ -1201,18 +1134,201 @@ setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 12) / 25)
+let s:l = 18 - ((8 * winheight(0) + 8) / 16)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
+keepjumps 18
 normal! 0
+wincmd w
+argglobal
+enew
+balt tests.cpp
+let s:cpo_save=&cpo
+set cpo&vim
+inoremap <buffer> <silent> <M-n> :call AutoPairsJump()a
+inoremap <buffer> <silent> <expr> <M-p> AutoPairsToggle()
+inoremap <buffer> <silent> <M-b> =AutoPairsBackInsert()
+inoremap <buffer> <silent> <M-e> =AutoPairsFastWrap()
+inoremap <buffer> <silent> <C-H> =AutoPairsDelete()
+inoremap <buffer> <silent> <BS> =AutoPairsDelete()
+inoremap <buffer> <silent> <M-'> =AutoPairsMoveCharacter('''')
+inoremap <buffer> <silent> <M-"> =AutoPairsMoveCharacter('"')
+inoremap <buffer> <silent> <M-}> =AutoPairsMoveCharacter('}')
+inoremap <buffer> <silent> <M-{> =AutoPairsMoveCharacter('{')
+inoremap <buffer> <silent> <M-]> =AutoPairsMoveCharacter(']')
+inoremap <buffer> <silent> <M-[> =AutoPairsMoveCharacter('[')
+inoremap <buffer> <silent> <M-)> =AutoPairsMoveCharacter(')')
+inoremap <buffer> <silent> <M-(> =AutoPairsMoveCharacter('(')
+inoremap <buffer> <silent> § =AutoPairsMoveCharacter('''')
+inoremap <buffer> <silent> ¢ =AutoPairsMoveCharacter('"')
+inoremap <buffer> <silent> © =AutoPairsMoveCharacter(')')
+inoremap <buffer> <silent> ¨ =AutoPairsMoveCharacter('(')
+inoremap <buffer> <silent> î :call AutoPairsJump()a
+inoremap <buffer> <silent> <expr> ð AutoPairsToggle()
+inoremap <buffer> <silent> â =AutoPairsBackInsert()
+inoremap <buffer> <silent> å =AutoPairsFastWrap()
+inoremap <buffer> <silent> ý =AutoPairsMoveCharacter('}')
+inoremap <buffer> <silent> û =AutoPairsMoveCharacter('{')
+inoremap <buffer> <silent> Ý =AutoPairsMoveCharacter(']')
+inoremap <buffer> <silent> Û =AutoPairsMoveCharacter('[')
+noremap <buffer> <silent> <M-n> :call AutoPairsJump()
+noremap <buffer> <silent> <M-p> :call AutoPairsToggle()
+inoremap <buffer> <silent>  =AutoPairsDelete()
+inoremap <buffer> <silent>   =AutoPairsSpace()
+inoremap <buffer> <silent> " =AutoPairsInsert('"')
+inoremap <buffer> <silent> ' =AutoPairsInsert('''')
+inoremap <buffer> <silent> ( =AutoPairsInsert('(')
+inoremap <buffer> <silent> ) =AutoPairsInsert(')')
+noremap <buffer> <silent> î :call AutoPairsJump()
+noremap <buffer> <silent> ð :call AutoPairsToggle()
+inoremap <buffer> <silent> [ =AutoPairsInsert('[')
+inoremap <buffer> <silent> ] =AutoPairsInsert(']')
+inoremap <buffer> <silent> ` =AutoPairsInsert('`')
+inoremap <buffer> <silent> { =AutoPairsInsert('{')
+inoremap <buffer> <silent> } =AutoPairsInsert('}')
+let &cpo=s:cpo_save
+unlet s:cpo_save
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=nofile
+setlocal cindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=g0,:0,N-s,(0
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*%s*/
+setlocal complete=.,w,b,u,t,i
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=youcompleteme#CompleteFunc
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+set cursorline
+setlocal cursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=
+setlocal expandtab
+if &filetype != ''
+setlocal filetype=
+endif
+setlocal fixendofline
+setlocal foldcolumn=0
+set nofoldenable
+setlocal nofoldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=tcq
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal formatprg=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=bin,octal,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal shiftwidth=4
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal smartindent
+setlocal softtabstop=4
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=%!airline#statusline(2)
+setlocal suffixesadd=
+setlocal noswapfile
+setlocal synmaxcol=3000
+if &syntax != ''
+setlocal syntax=
+endif
+setlocal tabstop=4
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal undofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal wincolor=
+setlocal nowinfixheight
+setlocal nowinfixwidth
+set nowrap
+setlocal nowrap
+setlocal wrapmargin=0
+wincmd w
+2wincmd w
+exe '1resize ' . ((&lines * 16 + 19) / 38)
+exe '2resize ' . ((&lines * 17 + 19) / 38)
 tabnext 1
+badd +0 tests.cpp
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20 shortmess=filnxtToOSc
+set winminheight=1 winminwidth=1
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)

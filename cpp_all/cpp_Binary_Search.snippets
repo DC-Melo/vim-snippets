@@ -1,0 +1,3958 @@
+::::::::::::::
+Binary_Search/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays.cpp
+::::::::::::::
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int m=nums1.size();
+        int n=nums2.size();
+        
+        if ((m+n)%2==1)
+            return FindKthSmallest(nums1,0,m,nums2,0,n,(m+n+1)/2);
+        else
+            return (FindKthSmallest(nums1,0,m,nums2,0,n,(m+n)/2)+FindKthSmallest(nums1,0,m,nums2,0,n,(m+n)/2+1))/2;
+        
+    }
+    
+    double FindKthSmallest(vector<int>& nums1, int a, int m, vector<int>& nums2, int b, int n, int k)
+    {
+        //cout<<a<<" "<<m<<" "<<b<<" "<<n<<endl;
+        
+        if (m>n) return FindKthSmallest(nums2,b,n,nums1,a,m,k);
+        
+        if (m==0) return nums2[b+k-1];
+        
+        if (k==1) return min(nums1[a],nums2[b]);
+        
+        int k1=min(m,k/2);
+        int k2=k-k1;
+        
+        if (nums1[a+k1-1]<nums2[b+k2-1])
+            return FindKthSmallest(nums1,a+k1,m-k1,nums2,b,n,k-k1);
+        else
+            return FindKthSmallest(nums1,a,n,nums2,b+k2,n-k2,k-k2);
+    }
+};
+::::::::::::::
+Binary_Search/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays_PQ.cpp
+::::::::::::::
+class Solution {
+    struct cmp
+    {
+        bool operator()(pair<int,int>a,pair<int,int>b)
+        {
+            return a.first>b.first;
+        }
+    };
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
+    {        
+        int m=nums1.size();
+        int n=nums2.size();
+        if ((m+n)%2==0) 
+            return 0.5f*(findKth(nums1,nums2,(m+n)/2)+findKth(nums1,nums2,(m+n)/2+1));
+        else
+            return findKth(nums1,nums2,(m+n)/2+1);
+    }
+    
+    double findKth(vector<int>nums1, vector<int>nums2, int k)
+    {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,cmp>q;
+        int count=0;
+        int i=0;
+        int j=0;
+        if (nums1.size()!=0) 
+        {
+            q.push({nums1[0],1});
+            i++;
+        }
+        if (nums2.size()!=0) 
+        {
+            q.push({nums2[0],2});
+            j++;
+        }
+                    
+        int result;
+        while (count<k)
+        {
+            int label=q.top().second;
+            result = q.top().first;
+            q.pop();
+            count++;
+            if (label==1 && i<nums1.size())
+            {
+                q.push({nums1[i],1});
+                i++;
+            }
+            else if (label==2 && j<nums2.size())
+            {
+                q.push({nums2[j],2});
+                j++;
+            }
+        }
+        return result;
+
+    }
+};
+::::::::::::::
+Binary_Search/0004.Median-of-Two-Sorted-Arrays/Readme.md
+::::::::::::::
+### 4. Median of Two Sorted Arrays  
+### 1 二分法
+##### 基本思想：
+此题可以拓展为求两个排序数组的总第K个最小数问题 FindKthSmallest。此题还可以扩展到M个数组。 
+函数定义为:
+```
+FindKthSmallest(nums1,a,m,nums2,b,n,K) 
+```
+a定义了数组A的首元素位置，m定义了数组A的长度。类似数组B有定义b,n。K是求总体的第K个最小数。
+##### 关键算法：  
+考察每个数组分别第K/2个数。如果数组A的第K/2个数小于数组B的第K/2个数，则说明总体的第K个数不可能在数组A的前K/2个数中，因为假设这样的数存在于A的前K/2个中，它也不可能打过B的前K/2个，故总体上不可能大过K个数。同理，如果数组A的第K/2个数大于数组B的第K/2个数，则说明总体的第K个数不可能在数组B的前K/2个数中。
+##### 细节
+1. 每次都优先处理长度小的数组，希望它尽快到零。所以长度小的数组不在第一个的话，就将两个数组交换再调用。
+2. 两个边界条件：K=1 时取两个数组首元素的最小值. m=0时，直接在B数组里找第K个元素。
+
+### 2 Heap
+利用堆排序，维持一个只含有两个元素的priority_queue，每出列一个，就在相对应的数组里面再取一个放进去。  
+程序写起来更容易。
+
+Update: 因为priority_queue默认是大顶堆，优先出列大数，所以可以从两个顺序数组从后往前遍历，从高往低取第K个元素。
+
+
+[Leetcode Link](https://leetcode.com/problems/median-of-two-sorted-arrays)::::::::::::::
+Binary_Search/0029.Divide-Two-Integers/029.Divide Two Integers.cpp
+::::::::::::::
+class Solution {
+public:
+    int divide(int dividend, int divisor) 
+    {
+        if (divisor==0) return INT_MAX;
+        if (dividend==0) return 0;
+        
+        long long a = abs((long long) dividend);
+        long long b = abs((long long) divisor);
+        long long c;
+        long long sum=0;
+        
+        int sign=1;
+        if (divisor<0) sign*=-1;
+        if (dividend<0) sign*=-1;
+        
+        while (a>=b)
+        {
+            c = b;
+            long long count=1;
+            while ((c<<1)<=a)
+            {
+                c=c<<1;
+                count=count<<1;
+            }
+            sum+=count;
+            a = a-c;
+        }
+        
+        sum=sum*sign;
+        
+        if (sum>INT_MAX)
+            return INT_MAX;
+        else
+            return sum;
+    }
+};
+::::::::::::::
+Binary_Search/0029.Divide-Two-Integers/Readme.md
+::::::::::::::
+### 029.Divide-Two-Integers
+
+本题的基本思想就是将divisor不断用左移的方法乘以2来逼近dividend，然后将dividend减去倍乘之后的divisor，再重复这个过程直至被除数小于除数。记录这个过程中divisor“倍乘”的总次数，即为答案。
+
+核心代码就那么几行 (a为被除数，b为除数）：
+```cpp
+        int res=0;
+        while (a>=b)
+        {
+            c = b;
+            count=1;
+            while ((c<<1)<=a)
+            {
+                c=c<<1;
+                count=count<<1;
+            }
+            res+=count;
+            a = a-c;
+        }
+```        
+
+其他需要注意的细节：
+1. 注意可能的负号。提前将被除数和除数取绝对值，符号最后留给商。
+2. 对于整形取绝对值，常设的陷阱就是对于INT_MIN，取反之后就会溢出。为了处理起来简单，把变量统统转换为long long类型。
+3. Overflow的意思就是结果>INT_MAX
+
+
+[Leetcode Link](https://leetcode.com/problems/divide-two-integers)::::::::::::::
+Binary_Search/0033.Search-in-Rotated-Sorted-Array/033.Search-in-Rotated-Sorted-Array_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    int search(vector<int>& nums, int target) 
+    {
+        int left = 0;
+        int right = nums.size()-1;
+        
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            
+            if (nums[mid] == target) return mid;
+            
+            if (nums[mid]>=nums[0] == target>=nums[0])
+            {
+                if (nums[mid]<target)
+                    left = mid+1;
+                else
+                    right = mid-1;
+            }
+            else if (target>=nums[0])
+                right = mid-1;
+            else
+                left = mid+1;
+        }
+        
+        if (left==right && nums[left]==target)
+            return left;
+        else
+            return -1;
+    }
+};
+::::::::::::::
+Binary_Search/0033.Search-in-Rotated-Sorted-Array/33.Search in Rotated Sorted Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int search(vector<int>& nums, int target) 
+    {
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        
+        if (nums.size()==0) return -1;
+        
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            
+            if (nums[mid]==target) return mid;
+            
+            if (nums[left]<=nums[mid] && nums[left]<=target)
+            {
+                if (target<nums[mid])
+                    right = mid;
+                else
+                    left = mid+1;
+            }
+            else if (nums[left]>nums[mid] && nums[left]>target)
+            {
+                if (target<nums[mid])
+                    right = mid;
+                else
+                    left = mid+1;
+            }
+            else if (nums[left]<=nums[mid] && nums[left]>target)
+                left = mid+1;
+            else if (nums[left]>nums[mid] && nums[left]<=target)    
+                right = mid;
+                
+        }
+        
+        if (nums[left]==target) 
+            return left;
+        else 
+            return -1;
+        
+    }
+};
+::::::::::::::
+Binary_Search/0033.Search-in-Rotated-Sorted-Array/33.Search in Rotated Sorted Array_s2.cpp
+::::::::::::::
+class Solution {
+public:
+    int search(vector<int>& nums, int target) 
+    {
+        if (nums.size()==0) return -1;
+        
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            if (nums[left]==target) return left;
+            if (nums[right]==target) return right;
+            if (nums[mid]==target) return mid;
+            
+            if (target>=nums[0] && nums[mid]>=nums[0] || target<nums[0] && nums[mid]<nums[0])
+            {
+                if (nums[mid]>target)
+                    right=mid;
+                else
+                    left=mid+1;
+            }
+            else if (target>=nums[0] && nums[mid]<nums[0])
+                right=mid;
+            else if (target<nums[0] && nums[mid]>=nums[0])
+                left=mid+1;
+        }
+        
+        if (nums[left]==target)
+            return left;
+        else
+            return -1;
+    }
+};
+::::::::::::::
+Binary_Search/0033.Search-in-Rotated-Sorted-Array/Readme.md
+::::::::::::::
+### 33. Search-in-Rotated-Sorted-Array
+#### 解法1
+此类型题目的突破口是利用nums[left]，通过比较nums[left]和nums[mid],nums[left]和target，来确定三者之间的位置关系。
+```cpp
+        while (left<right)
+        {
+            mid = left+(right-left)/2;            
+            if (nums[mid]==target) return mid;            
+            if (nums[left]<=nums[mid] && nums[left]<=target || nums[left]>nums[mid] && nums[left]>target) //在同一个区段
+            {
+                if (target<nums[mid])
+                    right = mid;
+                else
+                    left = mid+1;
+            }
+            else if (nums[left]<=nums[mid] && nums[left]>target) //在不同区段
+                left = mid+1;
+            else if (nums[left]>nums[mid] && nums[left]<=target) //在不同区段   
+                right = mid;                
+        }
+```
+在每回确定 mid = left+(right-left)/2 的时候，就可以顺便查看 nums[mid]==target 提前判断。
+
+#### 解法2
+其实也可以将nums[mid]、target分别与nums[0]进行比较，来判断mid和target是否处在同一个区间。
+```cpp
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            if (nums[mid]==target) return mid;            
+            if (target>=nums[0] && nums[mid]>=nums[0] || target<nums[0] && nums[mid]<nums[0])
+            {
+                if (nums[mid]>target)
+                    right=mid;
+                else
+                    left=mid+1;
+            }
+            else if (target>=nums[0] && nums[mid]<nums[0])
+                right=mid;
+            else if (target<nums[0] && nums[mid]>=nums[0])
+                left=mid+1;
+        }
+```        
+
+#### 解法3
+有一个更巧妙的解法。普通的二分搜索，需要比较nums[mid]和target的值。本题中，因为nums[mid]和target可能不会再同一个单调区间，所以他们的比较对于指导[left,right]的update没有帮助。那么如果遇到这种情况，该怎么办呢？
+
+我们发现，如果我们能判断出target在左边的单调区间，而nums[mid]在右边的单调区间，那么我们就直接将搜索范围移向左区间就行，方法就是```right=mid-1```。如果我们能判断出target在右边的单调区间，而nums[mid]在左边的单调区间，那么我们就直接将搜索范围移向右区间就行，方法就是```left=mid+1```。这样，常规的二分搜索就能迅速定位target了。
+
+于是本题的关键就是判断nums[mid]和target它们各自在哪个区间？方法非常amazing，就是将它们各自与nums[0]比较大小的结果就行了！
+
+
+[Leetcode Link](https://leetcode.com/problems/search-in-rotated-sorted-array)::::::::::::::
+Binary_Search/0034.Search-for-a-Range/034.Search-for-a-Range_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) 
+    {
+        vector<int>results;
+        
+        if (nums.size()==0)
+        {
+            results.push_back(-1);
+            results.push_back(-1);
+            return results;
+        }
+        
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            if (nums[mid]<target)
+                left = mid+1;
+            else
+                right = mid;
+        }
+        if (nums[left]==target)
+            results.push_back(left);
+        else
+            results.push_back(-1);
+            
+        left=0;
+        right=nums.size()-1;
+        mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2+1;
+            if (nums[mid]>target)
+                right = mid-1;
+            else
+                left = mid;
+        }
+        if (nums[left]==target)
+            results.push_back(left);
+        else
+            results.push_back(-1);      
+            
+        return results;
+        
+        
+    }
+};
+::::::::::::::
+Binary_Search/0034.Search-for-a-Range/34.Search for a Range.cpp
+::::::::::::::
+class Solution {
+    
+private:
+    static bool cmp1(int a, int b)
+    {
+        return a<b;
+    }
+    static bool cmp2(int a, int b)
+    {
+        return a<b;
+    }    
+public:
+    vector<int> searchRange(vector<int>& nums, int target) 
+    {
+        vector<int>results;
+        
+        auto pos1 = lower_bound(nums.begin(),nums.end(),target,cmp1);
+        if (pos1!=nums.end() && *pos1==target) 
+            results.push_back(pos1-nums.begin());
+        else
+            results.push_back(-1);
+            
+        auto pos2 = upper_bound(nums.begin(),nums.end(),target,cmp2);
+        
+        if (pos2-nums.begin()-1>=0 && *(pos2-1)==target) 
+            results.push_back(pos2-nums.begin()-1);
+        else
+            results.push_back(-1);            
+        
+        return results;
+    }
+};
+::::::::::::::
+Binary_Search/0034.Search-for-a-Range/Readme.md
+::::::::::::::
+### 034.Search-for-a-Range
+
+#### 寻找下界函数lower_bound()	
+```cpp
+auto pos=lower_bound(MyVector.begin(), MyVector.end(), val) ;	
+```
+函数lower_bound()在first和last中的前闭后开区间进行二分查找，返回大于或等于val的第一个元素位置。如果所有元素都小于val，则返回last的位置. 
+自定义比较函数：
+```cpp
+static bool cmp(long long a, long long b)  
+{         
+  return (a<=b);         
+}    
+pos=lower_bound(q.begin(),q.end(),val,cmp);
+```
+分析：将val看做自定义比较函数中的b，满足条件的a都会摆在b的前面，然后返回值就是b的位置。  
+例如：如果a<=b，则所有小于等于val的数都会放在插入位置之前，即插入的位置是第一个大于val的地方；  
+同理，如果a<b，则所有小于val的数都会放在插入位置之前，即插入的位置是第一个大于等于val的地方。
+
+#### 寻找上界函数upper_bound()	
+```cpp
+auto pos=upper_bound(MyVector.begin(), MyVector.end(), val) ;	
+```
+函数upper_bound()在first和last中的前闭后开区间进行二分查找，返回指向第一个比参数大的元素，故有可能是MyVector.end()。
+自定义比较函数：
+```cpp
+static bool cmp(long long a, long long b)  
+{         
+  return (a<=b);
+}    
+pos=lower_bound(q.begin(),q.end(),val,cmp);
+```
+分析：将val看做自定义比较函数中的a，满足条件的b都会摆在a的前面，然后返回值依然是b的位置。  
+例如：如果a<b，则插入的位置必定大于val（即第一个大于val的元素地址）；  
+同理，如果a<=b，则插入的位置必定大于等于val（即第一个大于等于val的元素地址）  
+
+#### 二分搜索法    
+常规的二分搜索，但是要注意选择好合适的框架。如果等号的情况不容易判断，那就从大于或小于的情况下手。
+
+对于下确界，可以分析出应该这么判断： 
+```cpp
+if (nums[mid]<target)
+  left = mid+1; // 不等于target的mid元素都可以排除
+else
+  right = mid;
+```
+于是，对于这种框架，显然二分方法用 mid = left+(right-left)/2;
+
+同理：对于上确界    
+```cpp
+mid = left + (right-left)/2 +1;
+if (nums[mid]>target)
+  right = mid-1; // 不等于target的mid元素都可以排除
+else
+  left = mid;
+```
+
+
+
+
+[Leetcode Link](https://leetcode.com/problems/search-for-a-range)::::::::::::::
+Binary_Search/0081.Search-in-Rotated-Sorted-Array-II/081.Search-in-Rotated-Sorted-Array-II_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) 
+    {
+        while (nums.size()>1 && nums.back()==nums[0])
+            nums.pop_back();
+        
+        int left = 0;
+        int right = nums.size()-1;
+        
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            
+            if (nums[mid] == target) return true;
+            
+            if (nums[mid]>=nums[0] == target>=nums[0])
+            {
+                if (nums[mid]<target)
+                    left = mid+1;
+                else
+                    right = mid-1;
+            }
+            else if (target>=nums[0])
+                right = mid-1;
+            else
+                left = mid+1;
+        }
+        
+        if (left==right && nums[left]==target)
+            return true;
+        else
+            return false;
+    }
+};
+::::::::::::::
+Binary_Search/0081.Search-in-Rotated-Sorted-Array-II/81.Search-in-Rotated-Sorted-Array-II.cpp
+::::::::::::::
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) 
+    {
+        if (nums.size()==0) return false;
+        
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        
+        while (left<right)
+        {            
+            while (left+1<right && nums[left]==nums[left+1])
+                left++;
+            mid=left+(right-left)/2;      
+            
+            if (nums[left]==target || nums[right]==target || nums[mid]==target) return true;
+            
+            if (nums[mid]>nums[left] && target>nums[left])
+            {
+                if (nums[mid]>target)
+                    right=mid-1;
+                else
+                    left=mid+1;
+            }
+            else if (nums[mid]>nums[left] && target<=nums[left])
+                left=mid+1;
+            else if (nums[mid]<=nums[left] && target>nums[left])
+                right=mid-1;
+            else if (nums[mid]<=nums[left] && target<=nums[left])
+            {
+                if (nums[mid]>target)
+                    right=mid-1;
+                else
+                    left=mid+1;
+            }
+        }
+        
+        if (nums[left]==target) 
+            return true;
+        else
+            return false;
+    }
+};
+::::::::::::::
+Binary_Search/0081.Search-in-Rotated-Sorted-Array-II/Readme.md
+::::::::::::::
+### 81.Search-in-Rotated-Sorted-Array-II
+
+#### 解法1:
+
+此题是154和33的结合体。
+
+解题思路大致是：   
+1. 比较nums[left]和nums[mid]、target的大小，确定三者所处的区间关系。
+2. 因为允许重复元素的存在，当x==nums[left]时是无法确定x所处的区间。提前如下处理，这样x<=nums[left]可以归并一类，定位在右区间。    
+```cpp
+  while (left+1<right && nums[left]==nums[left+1]) left++;
+```
+3. 每个循环都提前处理 nums[left],nums[mid],nums[right]等于target的情况。   
+
+#### 解法2:
+和33题的解法2一样。总体思想就是查看nums[mid]和target是否在同一个单调区间。如果是的话，就套用传统的二分搜索，这个对于非严格递增的递增序列也是适用的。如果不是的话，则直接将搜索范围移向target所在单调区间。
+
+和33题唯一的区别就是，当出现类似于```1 1 1 2 3 4 0 1 1```这种情况时，```if (nums[mid]>=nums[0] == target>=nums[0])```这个语句会失效，无法正确判断nums[mid]和target是否在同一个区间里。解决方法非常简单，就是将数组末尾的这些与nums[0]相同的数都去掉就行了。
+
+
+[Leetcode Link](https://leetcode.com/problems/search-in-rotated-sorted-array-ii)::::::::::::::
+Binary_Search/0153.Find-Minimum-in-Rotated-Sorted-Array/153.Find-Minimum-in-Rotated-Sorted-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMin(vector<int>& nums) 
+    {
+        int i = 0,  j = nums.size()-1;
+        if (nums[j]>=nums[i])
+            return nums[i];
+
+        while (i<j)
+        {
+            int k = i+(j-i)/2;
+            if (nums[k] >= nums[0])
+                i = k+1;
+            else
+                j = k;
+        }
+        return nums[i];
+    }
+};
+::::::::::::::
+Binary_Search/0153.Find-Minimum-in-Rotated-Sorted-Array/Readme.md
+::::::::::::::
+### 153.Find-Minimum-in-Rotated-Sorted-Array
+
+常规的二分搜索，目标是右区间的第一个元素。如果中位数nums[k]>=nums[0]，那么说明k在左区间，我们将搜索范围调整为[k+1,j]。如果中位数nums[k]<nums[0]，那么说明k在右区间，我们将搜索范围调整为[i,k]。
+
+因为此题必然有解，所以当收敛到i==j时，就是答案。
+::::::::::::::
+Binary_Search/0154.Find-Minimum-in-Rotated-Sorted-Array-II/154.Find-Minimum-in-Rotated-Sorted-Array-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMin(vector<int>& nums) 
+    {
+
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        
+        while (left<right)
+        {
+            while (left+1<right && nums[left]==nums[left+1])
+                left++;
+                
+            mid=left+(right-left)/2;
+            if (left==right-1) return min(nums[left],nums[right]);
+            
+            if (nums[left]<nums[mid] && nums[left]<nums[right])
+                right=mid;  // return nums[left];
+            else if (nums[left]<nums[mid] && nums[left]>=nums[right])
+                left=mid+1;
+            else if (nums[left]>=nums[mid] && nums[left]<nums[right])
+                continue;
+            else if (nums[left]>=nums[mid] && nums[left]>=nums[right])
+                right=mid;    
+        }
+        
+        return nums[left];
+    }
+};
+::::::::::::::
+Binary_Search/0154.Find-Minimum-in-Rotated-Sorted-Array-II/154.Find-Minimum-in-Rotated-Sorted-Array-II_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMin(vector<int>& nums) 
+    {
+        int left = 0;
+        int right = nums.size()-1;
+        
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;  
+            if (nums[mid] > nums[right])
+                left = mid+1;
+            else if (nums[mid] < nums[right])
+                right = mid;
+            else
+                right -= 1;
+        }
+        return nums[left];
+    }
+};
+
+
+::::::::::::::
+Binary_Search/0154.Find-Minimum-in-Rotated-Sorted-Array-II/Readme.md
+::::::::::::::
+### 154.Find-Minimum-in-Rotated-Sorted-Array-II
+
+#### 解法1:
+解题思路：和153. Find Minimum in Rotated Sorted Array 一样，需要以nums[left]为基准， 分别比较nums[mid]和nums[right]，以判断三者所在的区间（左区间还是右区间，也就是交换前的小区间或者大区间）。
+
+此题的特别之处是，当出现x==nums[left]时，无法定位x所在的区间是左还是右。解决技巧是：
+```cpp
+while (left+1<right && nums[left]==nums[left+1]) left++;
+```
+这样，当出现x==nums[left]时,x必定是在右区间，可以和x<nums[left]归并；x>nums[left]则说明x在左区间。
+
+所以分段讨论的方法如下：
+```cpp
+            if (nums[left]<nums[mid] && nums[left]<nums[right])  // left,mid,right同在一个区间
+                right=mid;  // 可以直接 return nums[left]
+            else if (nums[left]<nums[mid] && nums[left]>=nums[right]) // left,mid在左区间，right在右区间
+                left=mid+1;
+            else if (nums[left]>=nums[mid] && nums[left]<nums[right]) // mid在右区间,right在左区间，不可能
+                continue;
+            else if (nums[left]>=nums[mid] && nums[left]>=nums[right]) // left在左区间，mid,right在右区间
+                right=mid;   
+```
+
+#### 解法2:
+此题有一种更简洁的分类讨论方式，那就是查看nums[mid]和nums[right]的大小关系。
+```cpp
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;  
+            if (nums[mid] > nums[right])
+                left = mid+1;
+            else if (nums[mid] < nums[right])
+                right = mid;
+            else
+                right -= 1;
+        }
+```
+第一种情况，可以轻易判断出mid在左区间。
+
+第二种情况，可以轻易判断出mid和right在同一个区间。考虑到我们始终往右区间收敛，所以可以判定此时mid在右区间。
+
+第三种情况，有一个非常tricky的技巧。既然无法判定mid是否在左区间还是右区间，但是因为nums[mid]和nums[right]一样，那么去掉nums[right]并不影响结果。去掉nums[right]（将右边界左移一位）反而可以进一步帮助分析mid所属的位置：如果下一步出现nums[mid]和nums[right]不一样，那就依照之前的逻辑很好处理；否则就继续移动right，同样没有影响。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii)
+::::::::::::::
+Binary_Search/0162.Find-Peak-Element/162.Find Peak Element.cpp
+::::::::::::::
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) 
+    {
+
+        
+        int left=0;
+        int right=nums.size()-1;
+        int mid;
+        
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            
+            if (nums[mid]>nums[mid+1])
+                right = mid;
+            else 
+                left = mid+1;
+        }
+        
+        return left;
+        
+    }
+};
+::::::::::::::
+Binary_Search/0162.Find-Peak-Element/Readme.md
+::::::::::::::
+### 162.Find-Peak-Element
+
+解题思路：注意题目条件，1：相邻的元素不会相等。2： 首尾的斜率。
+
+我们可以根据mid本地的斜率来判断指针移动的方向，搜索方向朝向元素增大的一侧。
+
+因为 mid = left+(right-left)/2，所以在 while (left<right) 成立的情况下，mid永远都不会与right重合，因此 nums[mid+1]永远是合法的。
+所以我们考察 nums[mid]和nums[mid+1]
+``` cpp
+            if (nums[mid]>nums[mid+1])
+                right = mid;
+            else  // 要么右侧方向增大，要么mid本身就是极大点
+                left = mid+1;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/find-peak-element)::::::::::::::
+Binary_Search/0215.Kth-Largest-Element-in-an-Array/215.Kth-Largest-Element-in-an-Array_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) 
+    {
+        long left = INT_MIN, right = INT_MAX;
+        while (left<right)
+        {
+            int mid = right-(right-left)/2;
+            if (count(nums,mid) >=k)            
+                left = mid;
+            else
+                right = mid-1;
+        }  
+        return left;
+    }
+
+    int count(vector<int>&nums, int t)
+    {
+        int ret = 0;
+        for (auto x: nums)
+            ret += (x>=t);
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/0215.Kth-Largest-Element-in-an-Array/215.Kth-Largest-Element-in-an-Array_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) 
+    {
+        return quickselect(nums, 0, nums.size()-1, k);
+    }
+
+    int quickselect(vector<int>&nums, int a, int b, int k)
+    {
+        int pivot = nums[(a+b)/2];
+
+        int i = a, j = b;       
+        int t = a; 
+        while (t <= j)
+        {
+            if (nums[t] < pivot)
+            {
+                swap(nums[i], nums[t]);
+                i++;
+                t++;
+            }
+            else if (nums[t] > pivot)
+            {
+                swap(nums[j], nums[t]);
+                j--;
+            }
+            else
+                t++;
+        }
+
+        if (b-j >= k)
+            return quickselect(nums, j+1, b, k);
+        else if ( b-i+1 >= k)
+            return pivot;
+        else
+            return quickselect(nums, a, i-1, k-(b-i+1));        
+    }
+};
+::::::::::::::
+Binary_Search/0215.Kth-Largest-Element-in-an-Array/Readme.md
+::::::::::::::
+### 215.Kth-Largest-Element-in-an-Array
+
+#### 解法0： PQ
+此题比较简单的方法就是用priority_queue,遍历整个数组,每次只保留最大的K个值. 时间复杂度是NlogK.
+
+#### 解法1：二分搜值
+另外还有一个理论上o(N)的算法，就是二分搜值，猜测这个数是t。如果发现nums里大于等于t的个数大于等于k，那么我们可以猜测更大的t（注意t可能是答案），将下界上调为t；反之我们可以猜测更小的t（注意t不可能是答案），将上界下调至t-1。
+
+有人会问，为什么最后上下界收敛得到的结果一定是数组里的元素？首先，二分搜索收敛到的是符合条件（即至少有k个数组元素大于等于它）的最大值。其次，数组里的第k大元素，就是符合条件的最大值。所以二分搜索收敛的结果就是数组里的第k大元素。
+
+二分搜值的时间复杂度是```o(N*logC)```
+
+#### 解法2：quick select
+有一种类似于快速排序的quick select，可以在平均o(N)的时间内找到乱序数组里的第k大的数。步骤是：
+1. 任选数组里的某个元素作为pivot
+2. 利用三指针算法，将数组调整为三段：小于pivot的部分，等于pivot的部分，大于pivot的部分。
+3. 我们令三部分的个数分别是a,b,c。那么如果c>=k，那么接下需要在大于pivot的部分里选第k个的元素。如果b+c>=k，那么说明pivot就是第k个大元素；否则，接下来需要再小于pivot的部分里选第b+c-k大的元素。
+4. 重复步骤1.
+
+
+
+
+
+[Leetcode Link](https://leetcode.com/problems/kth-largest-element-in-an-array)
+::::::::::::::
+Binary_Search/0275.H-Index-II/275.H-Index II.cpp
+::::::::::::::
+class Solution {
+public:
+    int hIndex(vector<int>& citations) 
+    {
+        int left=0;
+        int N=citations.size();
+        int right=N-1;
+        int mid;
+        
+        if (N==0) return 0;
+        
+        while (left<right)
+        {
+            int mid= left+(right-left)/2;
+            
+            if (N-mid==citations[mid])
+                return citations[mid];
+            else if (N-mid<citations[mid])
+                right = mid;
+            else
+                left= mid+1;
+        }
+        
+        return min(N-left,citations[left]);
+        
+        
+    }
+};
+::::::::::::::
+Binary_Search/0275.H-Index-II/275.H-Index-II_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int hIndex(vector<int>& citations) 
+    {            
+        int N = citations.size();
+        int i = N-1;
+        while (i>=0 && N-i<=citations[i])
+            i--;
+        return N-(i+1);
+    }
+};
+::::::::::::::
+Binary_Search/0275.H-Index-II/Readme.md
+::::::::::::::
+### 275.H-Index-II
+
+#### 解法1：
+
+此题有很多做法，参见 274 H-Index. 但用时最快的应该是二分搜索的方法。
+
+设文章总数N=citations.size()
+
+将citations数组排序后，按位置进行常规的二分搜索。如果发现 citations[mid]==N-mid(从右往左累加的文章总数)，则可以证明 H-index 就是 citations[mid]，因为继续左移的话citation必定会减少，右移的话则文章总数（从右往左计算引用数大于citations[mid]的）会减少，故不可能有其他的解。  
+
+如果最后收敛到left==right都没有退出，请仔细考虑会是什么情况？结合二分的判断条件，答案是：此时的元素i是使得(N-i)与citations[i]最接近的。故此时查看citations[i]（引用数） 和 Citations.size()-i（文章数）哪个更小，即为H-index.
+
+#### 解法2：
+
+最简洁的方法是：
+
+从后面往前找，每找到一篇，说明有N-i篇论文，其最小的引用数是citations[i]。如果N-i<=citations[i]，说明我们仍然可以有机会增多文章数目（代表了H index），代价是再往前走减小文章引用数。找到满足条件的最小的i，得到最大的N-i，这样答案就是 H = N-i;
+
+
+[Leetcode Link](https://leetcode.com/problems/h-index-ii)::::::::::::::
+Binary_Search/0287.Find-the-Duplicate-Number/287.Find-the-Duplicate-Number_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) 
+    {
+        int n = nums.size();
+        int left=1;
+        int right=n-1;        
+        
+        while (left<right)
+        {
+            int k = left+(right-left)/2;
+            int count=0;
+            for (auto x: nums)
+                if (x <= k) count++;
+            
+            if (count > k)
+                right = k;
+            else
+                left = k+1;
+        }        
+        return left;        
+    }
+};
+::::::::::::::
+Binary_Search/0287.Find-the-Duplicate-Number/287.Find-the-Duplicate-Number_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) 
+    {
+        int n = nums.size()-1;
+        nums.insert(nums.begin(), 0);
+        for (int i=1; i<=n+1; i++)
+        {
+            while (nums[i]!=i && nums[i]<=n+1 && nums[i]!=nums[nums[i]])
+                swap(nums[i], nums[nums[i]]);
+        }
+        for (int i=1; i<=n+1; i++)
+        {
+            if (nums[i]!=i)
+                return nums[i];
+        }
+        return -1;
+    }
+};
+::::::::::::::
+Binary_Search/0287.Find-the-Duplicate-Number/287.Find-the-Duplicate-Number_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) 
+    {
+        int slow = nums[0];
+        int fast = nums[nums[0]];
+        while (slow!=fast)
+        {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }
+        fast = 0;
+        while (slow!=fast)
+        {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
+    }
+};
+::::::::::::::
+Binary_Search/0287.Find-the-Duplicate-Number/Readme.md
+::::::::::::::
+### 287. Find the Duplicate Number
+
+#### 解法1：二分法
+
+
+本题数的范围是1~n，但是数的个数有n+1个，说明duplicated number至少出现了两次。但是duplicated number也有可能出现的次数更多，它或许会替代了某些missing numbers.但不管怎样，duplicated number的出现次数一定比missing numbers更多。这样，如果k是那个duplicated number的话，我们遍历数组统计小于等于k出现的次数一定是大于k的。
+
+我们就可以用这个判据去二分搜值。我们猜测一个数k，如果小于等于k出现的次数大于k，那么k有可能是答案，但也有可能比它更小，故```right=k```. 反之，那么k一定不是答案，我们必须提升答案区间的下限，即```left=k+1```.
+
+#### 解法2：indexing sort
+利用indexing sort的方法，我们尝试将n+1个数组元素尽可能地按照“index==value”的方法重新放置在1~n+1这些位置上。放置完之后，必然是有若干个位置的index==val，而有某些index对应的nums[index]!=index，并且这些位置上的数值都是duplicated number。
+
+#### 解法3：快慢指针
+此题还有一个非常绝妙的算法。将1~N个数放在N+1个位置上，那么val->index将会出现一个一对多的映射，反之，index->val将会有一个多对一的映射。而其余的则是一一映射。于是这些index和val势必会有一部分构成一个环。
+
+举个例子：2,4,1,3,1 从index到val的映射关系是：1->2, 2->4, {3,5}->1, 4->3，其中1->2->4->3->1就构成了一个环。对于这个环，我们看到多出了一条5->1的切入口。可见，这个环的额外入口就是重复的数字。
+
+于是此题可以联想到 142. Linked List Cycle II，用快慢指针来确定一个linked list中环的入口。算法是，先用快慢指针做追及（快指针的速度比慢指针快一倍），直到他们相遇的位置；再用一个慢指针从起点开始，和在追及位置的慢指针共同前进。他们再次相遇的地方就是环的入口。
+
+[Leetcode Link](https://leetcode.com/problems/find-the-duplicate-number)
+::::::::::::::
+Binary_Search/0302.Smallest-Rectangle-Enclosing-Black-Pixels/302.Smallest Rectangle Enclosing Black Pixels.cpp
+::::::::::::::
+class Solution {
+public:
+    int minArea(vector<vector<char>>& image, int x, int y) 
+    {
+        int M=image.size();
+        int N=image[0].size();
+        
+        int upper = UPPER(image,0,x,0,N-1);
+        int down = DOWN(image,x,M-1,0,N-1);
+        int left = LEFT(image,0,M-1,0,y);
+        int right = RIGHT(image,0,M-1,y,N-1);
+        
+        return (right-left+1)*(down-upper+1);
+
+    }
+    
+    int UPPER(vector<vector<char>>& image,int RowMin, int RowMax, int ColMin, int ColMax)
+    {
+        int left = RowMin;
+        int right = RowMax;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            int flag = 0;
+            for (int i=ColMin; i<=ColMax; i++)
+            {
+                if (image[mid][i]=='1')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag==0)
+                left = mid+1;
+            else
+                right = mid;
+        }
+        return left;
+    }
+    
+    int DOWN(vector<vector<char>>& image,int RowMin, int RowMax, int ColMin, int ColMax)
+    {
+        int left = RowMin;
+        int right = RowMax;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2+1;
+            int flag = 0;
+            for (int i=ColMin; i<=ColMax; i++)
+            {
+                if (image[mid][i]=='1')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag==0)
+                right = mid-1;
+            else
+                left = mid;
+        }
+        return left;
+    }
+    
+    int LEFT(vector<vector<char>>& image,int RowMin, int RowMax, int ColMin, int ColMax)
+    {
+        int left = ColMin;
+        int right = ColMax;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            int flag = 0;
+            for (int i=RowMin; i<=RowMax; i++)
+            {
+                if (image[i][mid]=='1')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag==1)
+                right = mid;
+            else
+                left = mid+1;
+        }
+        return left;
+    }    
+    
+    int RIGHT(vector<vector<char>>& image,int RowMin, int RowMax, int ColMin, int ColMax)
+    {
+        int left = ColMin;
+        int right = ColMax;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2+1;
+            int flag = 0;
+            for (int i=RowMin; i<=RowMax; i++)
+            {
+                if (image[i][mid]=='1')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag==1)
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;
+    }     
+    
+};
+::::::::::::::
+Binary_Search/0302.Smallest-Rectangle-Enclosing-Black-Pixels/Readme.md
+::::::::::::::
+### 302.Smallest-Rectangle-Enclosing-Black-Pixels
+
+立足所给的点(x,y)，划分整个区域为上半部分、下半部分、左半部分、右半部分。
+
+对于上半部分，从第0行到第x行进行二分搜索，找到第一个出现1的行 (该行的所有列中至少有一个1)。注意，因为right的初始值x已知是含有1的，所以需要选择搜索机制保证收敛时必为含有1的行。
+```cpp
+    int UPPER(vector<vector<char>>& image,int RowMin, int RowMax, int ColMin, int ColMax)
+    {
+        int left = RowMin;
+        int right = RowMax;
+        int mid;
+        while (left<right)
+        {
+            mid = left+(right-left)/2;
+            int flag = 0;
+            for (int i=ColMin; i<=ColMax; i++)
+            {
+                if (image[mid][i]=='1')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag==0)
+                left = mid+1; //将不合格的行排除的搜索范围之外（没有1）
+            else
+                right = mid; // 保持右界始终是合格的行（含有1）
+        }
+        return left;  // 这样最终收敛的结果必定是合格的行，不必复查
+   }
+```
+同理，对于下半部分，从第x行到第M-1行进行二分搜索，找到最后一个出现1的行。
+
+对于左半部分，从第0列到第y列进行二分搜索，找到第一个出现1的列。
+
+对于右半部分，从第y列到第N-1列进行二分搜索，找到最后一个出现1的列。
+
+整个时间复杂度 o(4*N*logN)
+
+对比：宽度遍历完整的1矩阵，o(N*N)
+
+
+[Leetcode Link](https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels)::::::::::::::
+Binary_Search/0373.Find-K-Pairs-with-Smallest-Sums/373.Find-K-Pairs-with-Smallest-Sums.cpp
+::::::::::::::
+class Solution {
+    struct cmp
+    {
+        bool operator()(pair<int,int>a,pair<int,int>b)
+        {
+            return a.first>b.first;
+        }
+    };
+public:
+    vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) 
+    {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,cmp>q;
+        int M=nums1.size();
+        int N=nums2.size();
+        vector<pair<int, int>>results;
+        if (M==0 || N==0) return results;
+        
+        auto used=vector<vector<int>>(M,vector<int>(N,0));
+        q.push({nums1[0]+nums2[0],0});                
+        used[0][0]=1;
+        
+        int count=0;
+        while (count<k && q.size()>0)
+        {
+            int m=q.top().second/N;
+            int n=q.top().second%N;
+            results.push_back({nums1[m],nums2[n]});
+            count++;
+            q.pop();
+            
+            if (m+1<M && used[m+1][n]==0)
+            {
+                q.push({nums1[m+1]+nums2[n],(m+1)*N+n});
+                used[m+1][n]=1;
+            }
+            if (n+1<N && used[m][n+1]==0)
+            {
+                q.push({nums1[m]+nums2[n+1],(m)*N+n+1});
+                used[m][n+1]=1;
+            }             
+        }
+        
+        return results;                
+    }
+};
+::::::::::::::
+Binary_Search/0373.Find-K-Pairs-with-Smallest-Sums/373.Find-K-Pairs-with-Smallest-Sums_v2.cpp
+::::::::::::::
+class Solution {    
+public:
+    vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) 
+    {
+        long left = INT_MIN, right = INT_MAX;
+        while (left < right)
+        {
+            long mid = left+(right-left)/2;
+            long count = countSmallerOrEqual(mid, nums1, nums2);
+            if (count < k)
+                left = mid+1;
+            else
+                right = mid;
+        }
+        int m = left;
+
+        // TODO-TLE: nums1 = [1] * 100000, nums2 = [1] * 100000, k = 2
+        vector<vector<int>>rets;
+        for (int i=0; i<nums1.size(); i++)
+        {
+            for (int j = 0; j<nums2.size() && nums1[i]+nums2[j]<m; j ++)
+            {
+                rets.push_back({nums1[i], nums2[j]});
+            }                
+        }
+        
+        // 316ms/11.89% -> 148ms/43.01%
+        for (int i=0; i<nums1.size(); i++)
+        {
+            for (int j = 0; j<nums2.size() && nums1[i]+nums2[j]<=m && rets.size() < k; j ++)
+            {
+                if (nums1[i]+nums2[j]==m) {
+                    rets.push_back({nums1[i], nums2[j]});
+                }
+            }                
+        }        
+        
+        return rets;
+    }
+
+    long countSmallerOrEqual(int m, vector<int>& nums1, vector<int>& nums2)
+    {
+        int j = nums2.size()-1;
+        long ret = 0;
+        for (int i=0; i<nums1.size(); i++)
+        {
+            while (j>=0 && nums1[i]+nums2[j]>m)
+                j--;
+            ret += j+1;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/0373.Find-K-Pairs-with-Smallest-Sums/Readme.md
+::::::::::::::
+### 373.Find-K-Pairs-with-Smallest-Sums
+
+本题本质上非常巧妙地转换成了二维矩阵问题，同378。
+
+设想一个MxN的矩阵，其矩阵元素(m,n)就是num1[m]+nums2[n]，很显然这个矩阵的行、列都是递增的。于是立刻就转化成了找该矩阵第k个元素的问题。
+
+#### 解法1：BFS+PQ
+用BFS的方法进行搜索。每次弹出一个PQ里最小的元素，然后新加入该元素相邻（右边和下边）的两个元素。最先弹出的k个元素就是答案。
+
+#### 解法2：binary search + sorted matrix property
+此题和378, 668, 719, 1918都是一样的套路。
+
+用binary search的方法先确定k-th smalletst elsment是多少，令它为x。然后遍历所有的nums1[i]，单调寻找满足```nums1[i]+nums2[j]<=x```的配对。
+
+注意，这样的元素可能会超过k个，也可能会小于k个。最终只要输出k个。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-k-pairs-with-smallest-sums)
+::::::::::::::
+Binary_Search/0378.Kth-Smallest-Element-in-a-Sorted-Matrix/378.Kth Smallest Element in a Sorted Matrix.cpp
+::::::::::::::
+class Solution {
+private:
+    int M;
+    int N;
+    struct cmp
+    {
+        bool operator()(pair<int,int>a,pair<int,int>b)
+        {
+            return a.first>=b.first;
+        }
+    };
+    
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) 
+    {
+        M=matrix.size();
+        N=matrix[0].size();
+        
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+        visited[0][0]=1;
+        
+        priority_queue<pair<int,int>,vector<pair<int,int>>,cmp>q;
+        q.push({matrix[0][0],0});
+        int count=0;
+        int result;
+        
+        while (count<k)
+        {
+            //cout<<count<<endl;
+            
+            int i=q.top().second/N;
+            int j=q.top().second%N;
+            int t=q.top().first;
+            q.pop();
+            count++;
+            if (count==k)
+                result=t;
+            
+            if (i+1<M && j<N && visited[i+1][j]==0)
+            {
+                q.push({matrix[i+1][j],(i+1)*N+j});
+                visited[i+1][j]=1;
+            }
+            if (i<M && j+1<N && visited[i][j+1]==0)
+            {
+                q.push({matrix[i][j+1],(i)*N+j+1});
+                visited[i][j+1]=1;
+            }
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Binary_Search/0378.Kth-Smallest-Element-in-a-Sorted-Matrix/378.Kth-Smallest-Element-in-a-Sorted-Matrix_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) 
+    {
+        int N = matrix.size();
+        int left = matrix[0][0];
+        int right = matrix[N-1][N-1];
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            //cout<<left<<" "<<right<<" "<<mid<<" "<<equalOrSmaller(matrix,mid)<<endl;
+            
+            if (equalOrSmaller(matrix,mid)<k)
+                left = mid+1;
+            else
+                right = mid;
+        }
+        return left;
+    }
+    
+    int equalOrSmaller(vector<vector<int>>& matrix, int x)
+    {
+        int N = matrix.size();
+        int i=N-1, j=0, count = 0;
+        while (i>=0 && j<N)
+        {
+            if (matrix[i][j]<=x)
+            {
+                count+=(i+1);
+                j++;
+            }
+            else
+                i--;                
+        }
+        return count;
+    }
+};
+::::::::::::::
+Binary_Search/0378.Kth-Smallest-Element-in-a-Sorted-Matrix/Readme.md
+::::::::::::::
+### 378. Kth Smallest Element in a Sorted Matrix  
+
+#### 解法１
+矩阵的规律是：如果matrix[i][j]不是最小的，则matrix[i+1][j]和matrix[i][j+1]就都不用考虑。或者matrix[i][j]是最小的，则matrix[i+1][j]和matrix[i][j+1]就能进如考虑范围。  
+
+所以类似BFS的算法，设计一个小顶堆的Priority_queue，每次出列最小值之后，将最小值邻接的matrix[i+1][j]和matrix[i][j+1]加入这个队列会自动排序。当出列k个数之后就是答案。
+
+类似的题目：373
+
+#### 解法2
+以上的解法在新的测试集下会非常慢．更优的方法是binary search.
+
+显然，答案的上限是```matrix[0][0]```,下限是```matrix[N-1][N-1]```．对于这个区间的任意一个ｘ，我们可以计算出这个矩阵里小于等于ｘ的元素有多少，定义为```smallerOrEqual(x)```．如果```smallerOrEqual(x)<k```，说明这个ｋ太小了不是想要的答案，应该往上调整，所以```left=x+1```.反之```smallerOrEqual(x)>=k```，说明ｋ可能是答案，但可以再缩小一点试一试，因此```right=x```．　（当然，更直接一点，其实如果直接得到```smallerOrEqual(x)==k```的话就已经说明ｋ就是答案了）
+
+那么如果写这个```smallerOrEqual(x)```呢？这个思路其实和 240. Search a 2D Matrix II 非常相似．对于这种行列都排序的矩阵，我们可以从左下角（其实右上角也可以）出发，遇到```matrix[i][j]<=x```，说明从(i,j)之上的整列都```smallerOrEqual(x)```，于是就可以往右移动一列．　否则的话，我们就往上移动一行．　这样直至我们走出这个矩阵，走过的路径就自动将矩阵划分为了左上和右下两个部分，就是以smallerOrEqual(x)为分界的．
+
+这个性质非常好用，请大家多多练习．（从左下角出发或者从右上角出发）．
+
+
+[Leetcode Link](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix)::::::::::::::
+Binary_Search/0475.Heaters/475.Heaters.cpp
+::::::::::::::
+class Solution {
+public:
+    int findRadius(vector<int>& houses, vector<int>& heaters) 
+    {
+        sort(heaters.begin(),heaters.end());
+        int result=0;
+        
+        for (int i=0; i<houses.size(); i++)
+        {
+            int radius;
+            
+            auto pos= lower_bound(heaters.begin(),heaters.end(),houses[i]);
+            
+            if (pos==heaters.begin())
+                radius = heaters[0]-houses[i];
+            else if (pos==heaters.end())
+                radius = houses[i]-heaters.back();
+            else
+                radius = min(*pos-houses[i], houses[i]-*(pos-1));
+                
+            result = max(result,radius);
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Binary_Search/0475.Heaters/Readme.md
+::::::::::::::
+### 475.Heaters
+
+最佳的binary search方案是：遍历所有houses[i]，记录其位置pos，在有序的heaters序列里找到第一个大于（等于）pos的迭代器元素it，判断\*it和\*(it-1)与pos的距离，较小值就是该house[i]的最小供暖半径。  
+
+寻找it的方法用lower_bound函数。
+```cpp
+auto it = lower_bound(heaters.begin(),heaters.end(),pos);
+```
+特别注意当```it==heaters.begin()```或```it==heaters.end()```时的特例。说明houses[i]在所有heaters的一边，所以只需要计算单边的半径距离。
+
+
+[Leetcode Link](https://leetcode.com/problems/heaters)::::::::::::::
+Binary_Search/0483.Smallest-Good-Base/483.Smallest Good Base.cpp
+::::::::::::::
+class Solution {
+public:
+    string smallestGoodBase(string n) 
+    {
+        long long N = stoll(n);
+        for (int m = log(N+1)/log(2); m>=2; m--)
+        {
+            long long left = 2;
+            long long right = pow(N, 1.0/(m-1));
+            while (left<=right)
+            {
+                long long mid = left+(right-left)/2;
+                long long k = mid;
+                
+                long long sum = 1;
+                for (int i=1; i<m; i++)
+                    sum = sum*k + 1;
+                
+                //cout<<m<<" "<<" "<<k<<" "<<sum<<endl;
+                
+                if (sum==N) return to_string(k);
+                else if (sum>N) right = mid-1;
+                else left = mid+1;
+            }
+            
+        }
+        
+        return to_string(N-1);
+    }
+};
+::::::::::::::
+Binary_Search/0483.Smallest-Good-Base/Readme.md
+::::::::::::::
+### 483.Smallest-Good-Base
+
+问题转化为等比数列 n = k^0 + k^1 +k^2 + … + k^(m-1)，对于给定的n，求最大的 m  
+
+#### 分析：
+根据等比数列求和公式：n = (k^m-1)/(k-1)。可以看出，k越小，m越大；反之k越大，m越小。
+
+先看m的范围：因为k最小是2，那么对应项数m最大就是 log(n)/log(2)+1；m最小是1（其实是2，无所谓了），说明m是有范围的. 
+
+如果固定m之后，再查看k的范围：因为 n > k^(m-1)，所以 k< pow(n, 1/(m-1))，也有上界。k的最小值已知是2了。说明k也是有范围的。
+
+所以我们遍历m的值（注意从大到小遍历），然后对于固定的m，对k采用二分搜索，查找是否有(k,m)满足等比数列求和是n。
+
+注意：  
+1. 给出的n是字符型。
+2. 全体变量需要用长整形。  
+3. k的上限 pow(n,1.0/(m-1))，注意1.0
+4. 二分法搜索k的时候，if (sum>N) right=k-1，否则会死循环
+5. 不能使用等比公式求和公式，计算n的时候会有误差。应该采用如下的方法：
+```cpp
+long long sum=1;
+for (int i=1; i<m-1; i++)
+  sum = sum*k+1;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/smallest-good-base)::::::::::::::
+Binary_Search/0658.Find-K-Closest-Elements/658.Find-K-Closest-Elements.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) 
+    {
+        int low = 0;
+        int hi = arr.size()-k;
+        
+        while (low<hi)
+        {
+            int mid = low+(hi-low)/2;
+            
+            if (x - arr[mid] > arr[mid+k] - x)
+                low = mid+1;
+            else
+                hi = mid;
+        }
+        
+        vector<int>ret;
+        for (int i=low; i<low+k; i++)
+            ret.push_back(arr[i]);
+        
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/0658.Find-K-Closest-Elements/Readme.md
+::::::::::::::
+### 658.Find-K-Closest-Elements
+
+容易想到的基本思路是，找一个k-size的滑窗，使得x-arr[left]和arr[right]-x尽量地接近。以此为依据，调整起始点left的二分搜索范围。但这种二分法，最后的收敛结果并不一定是最终理想的k-size滑窗的起始点。
+
+有一个非常NB的方法。同样是调整起始点left的二分搜索范围，但是查看的是长度为k+1的滑窗。因为这个窗口有k+1个元素，肯定有一个元素不属于k-closest element，容易知道，这个不合格的元素肯定就是arr[left]和arr[left+k]中的一个！那怎么判断是其中哪一个呢？就找其中“相对不合格”的那个。
+
+1. 如果```x-arr[left] > arr[left+k]-x```，说明arr[left]不合格，所以最终的k-size滑窗的起始点不会是left或其左边的任何位置。
+2. 如果```x-arr[left] < arr[left+k]-x```，说明arr[left+k]不合格，所以最终的k-size滑窗的末尾点不会是right或其右边的任何位置，也就是说k-size滑窗的起始点不会是left右边的任何位置（注意可以是left）。
+3. 如果```x-arr[left] == arr[left+k]-x```，说明arr[left]和arr[left+k]并列。根据规则，第k个closest只能算一个，所以那个不合格的元素只能给arr[left+k]，因此后续的处理就同2.
+
+因为此题一定有解，所以收敛后的位置就一定是最终理想的k-size滑窗的起始点。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-k-closest-elements)::::::::::::::
+Binary_Search/0668.Kth-Smallest-Number-in-Multiplication-Table/668.Kth-Smallest-Number-in-Multiplication-Table.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthNumber(int m, int n, int k) 
+    {
+        int left=1;
+        int right=m*n;
+        if (m > n) {
+            m ^= n ^ (n = m);
+        }
+        
+        while (left<right)
+        {
+            int mid=left+(right-left)/2;
+            
+            int count=0;
+            for (int i=1; i<=m; i++)
+                count+= min(mid/i,n);
+            if (count<k)
+                left=mid+1;
+            else
+                right=mid;
+        }
+        
+        return left;
+    }
+};
+::::::::::::::
+Binary_Search/0668.Kth-Smallest-Number-in-Multiplication-Table/Readme.md
+::::::::::::::
+### 668.Kth-Smallest-Number-in-Multiplication-Table
+
+此题非常巧妙地用到了二分（值）查找的思想。
+
+初始状态left=1,right=n\*m，每次确定mid之后，计算乘法表里小于等于mid的数目。这只要按照行i=1:m进行遍历就行，count+=min(mid/i,n)。(注意有一个上限n)
+
+如果得到的count<k，那么显然这个mid太小，不满足条件，需要上调左边界，即left=mid+1；反之，count>=k的话，则说明这个mid可能太大但也可能正好就是答案（例如有很多重复的mid），无法确定，因此可以将其纳入右边界（闭区间），即right=mid，（因为答案不可能比mid更大了）。
+
+这种二分逼近得到的结果 x 是什么呢？得到的是乘法表里小于等于x的元素个数不少于k的、且最小的那个数字。这其实就是待求的第k个元素。
+
+但注意有一个问题需要考虑，最终左右指针相遇得到这个数x一定会是出现在乘法表里的吗？表面上看不出来，但答案是肯定的。这是因为满足“乘法表里小于等于x的元素个数不少于k的”，这样的x可能会有很多，但最小的那个一定是出现在乘法表里的。
+
+PS: 本题本质上和 ```378. Kth Smallest Element in a Sorted Matrix```一模一样。
+
+
+[Leetcode Link](https://leetcode.com/problems/kth-smallest-number-in-multiplication-table)::::::::::::::
+Binary_Search/0719.Find-K-th-Smallest-Pair-Distance/719.Find-K-th-Smallest-Pair-Distance.cpp
+::::::::::::::
+class Solution {
+public:
+    int smallestDistancePair(vector<int>& nums, int k) 
+    {
+        sort(nums.begin(),nums.end());
+        int N=nums.size();
+        
+        int left=nums[1]-nums[0];
+        for (int i = 0; i <= N-2; ++i)
+            left = min(left, nums[i+1] - nums[i]);
+        
+        int right=nums[N-1]-nums[0];
+        int mid;
+        
+        while (left<right)
+        {
+            mid=left+(right-left)/2;
+            int count=0;
+            for (int i=0; i<N; i++)
+            {
+                auto pos=upper_bound(nums.begin(),nums.end(), nums[i]+mid);
+                count+= pos-1-(nums.begin()+i);
+            }
+            if (count<k)
+                left=mid+1;
+            else
+                right=mid;
+        }
+        
+        return left;
+    }
+};
+::::::::::::::
+Binary_Search/0719.Find-K-th-Smallest-Pair-Distance/Readme.md
+::::::::::::::
+### 719.Find-K-th-Smallest-Pair-Distance
+
+对于能够明显判断出上下界的题目，用二分法的思想往往非常巧妙。
+
+在本题中，将nums排序后，最大的差值是nums.back()-nums[0]；最小的差值必定存在于相邻的两个元素之间，也很容易算出来。于是相当于我们知道了差值的左边界left，右边界right，需要找一个居于中间的数mid，使得差值小于等于mid的pair数目正好是k个。
+
+对于二分法的外框架，容易知道，需要二分搜索的次数就是 ```log_2^(right-left)```。对于给出的mid，如何得到差值小于等于mid的pair数目呢？也很简单，只要loop over 第一个数，那么第二个数的范围就可以通过upper_bound来确定。特别注意为什么是upper_bound.
+```
+for (int i=0; i<nums.size(); i++)
+{
+  auto pos=upper_bound(nums.begin(),nums.end(),nums[i]+mid); // 值大于nums[i]+mid的元素的指针
+  count+= pos-1-(nums.begin()+i); // 值小于等于nums[i]+mid的元素的个数
+}
+```
+用upper_bound()是 nlog(n)的复杂度。当然也可以通过双指针来做，就是o(n)的复杂度。
+
+PS:对于求Kth smallest的题目，用binary search by value的方法往往能有奇效。相似的题目有：
+```
+668	Kth-Smallest-Number-in-Multiplication-Table
+373	Find K Pairs with Smallest Sums
+81	Search in Rotated Sorted Array II
+4	Median of Two Sorted Arrays
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/find-k-th-smallest-pair-distance)::::::::::::::
+Binary_Search/0786.K-th Smallest-Prime-Fraction/786.K-th Smallest-Prime-Fraction.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> kthSmallestPrimeFraction(vector<int>& nums, int K) 
+    {
+        double left = 0;
+        double right = 1;
+        double mid;
+        
+        while (left < right)
+        {
+            mid = (left+right)/2;
+            
+            int count = 0;
+            for (int i=0; i<nums.size(); i++)
+            {
+                auto pos = lower_bound(nums.begin(),nums.end(), nums[i]*1.0/mid);
+                count += nums.end()-pos;
+            }
+            
+            if (count < K)
+                left = mid; // next time, mid >left
+            else if (count > K)
+                right = mid;
+            else
+                break; 
+        }
+        
+        cout<<mid<<endl;
+        
+        vector<int>ret;
+        double ans = 0;
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            auto pos = lower_bound(nums.begin(), nums.end(), nums[i]*1.0/mid);
+            int j = pos-nums.begin();
+            if (pos!=nums.end() && nums[i]*1.0/nums[j] > ans)
+            {
+                ans = nums[i]*1.0/nums[j];
+                ret = {nums[i], nums[j]};
+            }
+        }
+        
+        return ret;
+        
+    }
+};
+::::::::::::::
+Binary_Search/0786.K-th Smallest-Prime-Fraction/Readme.md
+::::::::::::::
+### 786.K-th Smallest-Prime-Fraction
+
+此题和 774 Minimize Max Distance to Gas Station 非常类似，用二分法的思想非常巧妙。
+
+在所有的候选分数中，第K个数会是什么呢？假设是M。我们如果想试探一个M是否成立的话，需要计算所有小于等于M的分数的个数。显然，这个是可以计算出来的：只要遍历所有的nums的元素作为分子，可以很快在nums里确定对应的临界分母，使得分数小于等于M。因此```count+=数组里大于等于这个临界分母的个数```。
+
+另外考虑，M一定会有下界```A[0]/A[n-1]```；其次它也有上界，存在于所有的相邻两个数所组成的分数```A[i-1]/A[i]```中的一个。PS：粗糙一点，直接设置上下姐是（0，1）的话也没有问题。
+
+于是二分夹逼的思路就呼之欲出了。根据```left```,```right```，得到```mid```，试探小于等于```mid```的分数的个数，并以此相应更新```left```和```right```。最后得到的```mid```，表示小于等于```mid```的分数个数恰好为```K```。
+
+有了这个```mid```，再遍历一遍```nums```的所有元素作为分子，找到对应的临界分母。取出所有“分子/分母”里最接近mid的那个就是最终答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/k-th-smallest-prime-fraction)::::::::::::::
+Binary_Search/0793.Preimage-Size-of-Factorial-Zeroes-Function/793.Preimage-Size-of-Factorial-Zeroes-Function.cpp
+::::::::::::::
+class Solution {
+public:
+    int preimageSizeFZF(int K) 
+    {
+        long left = 1;
+        long right = 5e9;
+        
+        while (left<right)
+        {
+            long mid = left+(right-left)/2;
+            
+            if (countTrailingZeros(mid) < K)
+                left = mid+1;
+            else if (countTrailingZeros(mid) > K)
+                right = mid-1;
+            else
+                right = mid;
+        }
+        
+        if (left>right) return 0;
+        if (left==right && countTrailingZeros(left)==K)
+            return 5;
+        else
+            return 0;
+    }
+    
+    long countTrailingZeros(long x)
+    {
+        long count = 0;
+        for (long i=5; i<=x; i=i*5)
+            count += x/i;
+        return count;
+    }
+};
+::::::::::::::
+Binary_Search/0793.Preimage-Size-of-Factorial-Zeroes-Function/Readme.md
+::::::::::::::
+### 793.Preimage-Size-of-Factorial-Zeroes-Function
+
+此题需要注意，并不是一定存在x使得f(x)=K。比如f(24)=4，但是f(25)=6，因此不存在任何f(x)=5。因此我们可以用二分搜索的方法尝试找到最小的x，满足f(x)==K。如果能找到，那么就直接返回5，这是因为x之后的x+1,x+2,x+3,x+4必定都不含质因数5，而x+5必定会包含新的质因数5从而增加至少一个trailing zero。反之，如果二分搜索找不到，那么就返回0.
+
+如何写f(x)呢？考虑将x!按顺序每5个分一组，就会有一个因数含有一个5；将x!按顺序每25个分一组，就会有一个因数含有两个5；将x!按顺序每125个分一组，就会有一个因数含有三个5。以此类推，可以知道```f(x) = x/5 + x/25 + x/125 + ...```
+
+因为K可以达到1e9，因此由上面的公式可知，二分搜索的上限应该设置为5e9，需要用到long类型。
+
+
+[Leetcode Link](https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function)::::::::::::::
+Binary_Search/1011.Capacity-To-Ship-Packages-Within-D-Days/1011.Capacity-To-Ship-Packages-Within-D-Days.cpp
+::::::::::::::
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int D) 
+    {
+        int left = INT_MAX;
+        int right = 0;
+        for (auto x:weights)
+        {
+            left = min(left, x);
+            right += x;
+        }
+        
+        while (left<right)
+        {
+            int cap = left+(right-left)/2;
+            if (checkOK(weights,cap,D))
+                right = cap;
+            else
+                left = cap+1;
+        }
+        
+        return left;
+        
+    }
+    
+    bool checkOK(vector<int>& weights, int cap, int D)
+    {
+        int count = 0;
+        for (int i=0; i<weights.size(); )
+        {
+            int j = i;
+            int sum = 0;
+            while (j<weights.size() && sum+weights[j]<=cap)
+            {
+                sum+=weights[j];
+                j++;
+            }
+            count+=1;
+            if (count>D) return false;
+            i = j;
+        }
+        return true;        
+    }
+};
+
+::::::::::::::
+Binary_Search/1011.Capacity-To-Ship-Packages-Within-D-Days/Readme.md
+::::::::::::::
+### 1011.Capacity-To-Ship-Packages-Within-D-Days
+
+我们猜测一个装载能力C，计算这些包裹按照每船容量为C进行安排，需要装载几次。如果次数大于D，那么下一轮需要猜测更大的C；否则猜测更小的C。
+::::::::::::::
+Binary_Search/1060.Missing-Element-in-Sorted-Array/1060.Missing-Element-in-Sorted-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int missingElement(vector<int>& nums, int k) {        
+        int left = nums[0];
+        int right = nums.back()+k;
+        while (left < right)
+        {
+            int mid = right-(right-left)/2;
+            
+            int M = mid-nums[0]; // how many nums < mid            
+            int T = lower_bound(nums.begin(), nums.end(), mid) - nums.begin(); // how many nums < mid in this array            
+            int missing = M - T;
+                        
+            if (missing > k-1)
+                right = mid-1;
+            else
+                left = mid;            
+        }
+        
+        return left;
+    }
+};
+::::::::::::::
+Binary_Search/1060.Missing-Element-in-Sorted-Array/Readme.md
+::::::::::::::
+### 1060.Missing-Element-in-Sorted-Array
+
+此题的暴力解法就不赘述了，就是令cur = nums[0]，然后不断自增1，查看这个数是否在数组中出现，统计是否missing的个数。知道missing的个数达到k时，输出cur。
+
+这里考虑一个比较高效的二分搜索方法。
+
+我们假设这个第k个missing的元素是m，那么它会有哪些性质呢？假设在从nums[0]到m-1总共有M个连续的自然数，并且我们可以知道数组里面有多少个小于m的数T。所以，我们可以计算出从nums[0]到m-1里面有多少个数是在数组里missing的。理论上我们需要missing = k-1. 这是一个必要条件。
+
+如果数组中missing > k-1，那么说明m猜得太大。如果missing < k-1，说明m猜得太小。如果missing = k-1，说明m可能是答案，但也有可能m也存在于数组中从而并不是一个missing number，所以m也得继续往大猜。综上就有这样的转移：
+```cpp
+if (missing > k-1)
+  right = m - 1;
+else
+  left = m;
+```
+应该本题一定有解，所以最终收敛的解就肯定是答案。
+::::::::::::::
+Binary_Search/1102.Path-With-Maximum-Minimum-Value/1102.Path-With-Maximum-Minimum-Value.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximumMinimumPath(vector<vector<int>>& A) 
+    {
+        int left = INT_MAX;
+        int right = INT_MIN;
+        int M = A.size();
+        int N = A[0].size();
+        for (int i=0; i<M; i++)
+            for (int j=0; j<N; j++)
+            {
+                left = min(left,A[i][j]);
+                right = max(right,A[i][j]);
+            }
+        
+        while (left<right)
+        {
+            int mid = right-(right-left)/2;
+                        
+            if (check(A,mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;        
+    }
+    
+    bool check(vector<vector<int>> A, int K)
+    {
+        if (A[0][0]<K) return false;
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        int M = A.size();
+        int N = A[0].size();
+        
+        queue<pair<int,int>>q;
+        q.push({0,0});
+        A[0][0] = -1;
+        
+        while (q.size()>0)
+        {
+            int x = q.front().first;
+            int y = q.front().second;
+            q.pop();
+            
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=M||j<0||j>=N)
+                    continue;
+                if (A[i][j]==-1)
+                    continue;                
+                if (A[i][j]<K) continue;
+                if (i==M-1 && j==N-1) return true;
+                A[i][j]=-1;
+                
+                q.push({i,j});                
+            }
+        }
+                
+        return false;
+    
+    }
+};
+::::::::::::::
+Binary_Search/1102.Path-With-Maximum-Minimum-Value/Readme.md
+::::::::::::::
+### 1102.Path-With-Maximum-Minimum-Value
+
+此题是二分法的非常精彩的应用．
+
+我们想，如果这个maximum score是ｘ，那么意味着存在一条路径，里面不能有任何小于ｘ的格子．因此，如果给定ｘ，我们尝试用ＢＦＳ的方法从左上角走到右下角．如果能抵达，说明至少存在一条成功的路，他们所有的元素都不会小于ｘ，而且ｘ还可能有提升的空间．相反，如果不能走到，说明从左上到右下被一些列小于ｘ的各自给阻断了，因此我们对于maximum score的预期必须下调，至少得小于ｘ．
+
+所以二分的策略就非常清楚了：
+```
+        while (left<right)
+        {
+            int mid = right-(right-left)/2;                        
+            if (isOK(A,mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+```        
+因为我们在收缩范围的时候，永远是将可行解放在闭区间[left,right]内，不可行解排除在闭区间外.所以当left和right收敛的时候，一定是一个可行解，直接返回left即可．
+
+
+[Leetcode Link](https://leetcode.com/problems/path-with-maximum-minimum-value)::::::::::::::
+Binary_Search/1157.Online-Majority-Element-In-Subarray/1157.Online-Majority-Element-In-Subarray.cpp
+::::::::::::::
+class MajorityChecker {
+    unordered_map<int,vector<int>>Map;
+    vector<pair<int,int>>q;
+public:
+    MajorityChecker(vector<int>& arr) 
+    {
+        for (int i=0; i<arr.size(); i++)
+            Map[arr[i]].push_back(i);
+                
+        for (auto x: Map)
+            q.push_back({x.second.size(),x.first});
+        sort(q.begin(),q.end());        
+        reverse(q.begin(),q.end());
+    }
+    
+    int query(int left, int right, int threshold) 
+    {
+        int total = right-left+1;
+        for (int i=0; i<q.size(); i++)
+        {
+            int num = q[i].second;
+            int pos1 = lower_bound(Map[num].begin(), Map[num].end(), left) - Map[num].begin();
+            int pos2 = upper_bound(Map[num].begin(), Map[num].end(), right) - Map[num].begin();
+            
+            if (pos2-pos1>=threshold)
+                return num;
+            else
+                total -= pos2-pos1;
+            
+            if (total < threshold)
+                return -1;
+            if (Map[num].size() < threshold)
+                return -1;
+        }
+        return -1;
+    }
+};
+::::::::::::::
+Binary_Search/1157.Online-Majority-Element-In-Subarray/1157.Online-Majority-Element-In-Subarray_SegTree.cpp
+::::::::::::::
+class MajorityChecker {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info, freqDiff;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),freqDiff(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = arr[a];
+            node->freqDiff = 1;
+            return;
+        }
+        
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        if (node->left->info == node->right->info)
+        {
+            node->info = node->left->info;
+            node->freqDiff = node->left->freqDiff + node->right->freqDiff;
+        }
+        else
+        {
+            if (node->left->freqDiff >= node->right->freqDiff)
+            {
+                node->info = node->left->info;
+                node->freqDiff = node->left->freqDiff - node->right->freqDiff;
+            }
+            else
+            {
+                node->info = node->right->info;
+                node->freqDiff = node->right->freqDiff - node->left->freqDiff;
+            }
+        }            
+    }
+    
+    pair<int,int> queryRange(SegTreeNode* node, int a, int b)
+    {
+        if (b < node->start || a > node->end )
+        {
+            return {0,0};
+        }
+        if (a <= node->start && b>=node->end)
+        {
+            return {node->info, node->freqDiff};
+        }        
+        
+        auto L = queryRange(node->left, a, b);
+        auto R = queryRange(node->right, a, b);
+        if (L.first==R.first)
+            return {L.first, L.second+R.second};
+        else
+        {
+            if (L.second>=R.second)
+                return {L.first, L.second-R.second};
+            else
+                return {R.first, R.second-L.second};
+        }
+    }        
+    
+    SegTreeNode* root;
+    vector<int> arr;
+    unordered_map<int,vector<int>>Map;
+    
+public:
+    MajorityChecker(vector<int>& arr) 
+    {
+        this->arr = arr;
+        int n = arr.size();
+        root = new SegTreeNode(0, n-1);
+        init(root, 0, n-1);
+                
+        for (int i=0; i<arr.size(); i++)
+            Map[arr[i]].push_back(i);
+    }
+    
+    int query(int left, int right, int threshold) 
+    {
+        auto [val, freqDiff] = queryRange(root, left, right);
+        
+        auto pos1 = lower_bound(Map[val].begin(), Map[val].end(), left);
+        auto pos2 = upper_bound(Map[val].begin(), Map[val].end(), right);
+        int count = pos2-pos1;
+        if (count >= threshold)
+            return val;
+        else
+            return -1;        
+    }
+};
+
+/**
+ * Your MajorityChecker object will be instantiated and called as such:
+ * MajorityChecker* obj = new MajorityChecker(arr);
+ * int param_1 = obj->query(left,right,threshold);
+ */
+::::::::::::::
+Binary_Search/1157.Online-Majority-Element-In-Subarray/Readme.md
+::::::::::::::
+### 1157.Online-Majority-Element-In-Subarray
+#### Binary Search
+我的突破口是考虑出现频次最多的元素a，它应该有最大的概率是[left,right]区间内的majority。这个怎么判断呢？显然我们将所有出现a的位置按照从小到大的顺序列出来作为数组p，然后找到left和right能插入的位置。比如，我们找到pos1表示p里面第一个大于等于left的位置，pos2表示p里面最后一个小于等于right的位置。这样，pos2-pos1+1就是在[left,right]区间内a出现的次数。将其与threshold比较就可以判断是否满足题意。
+
+如果a不合题意，那么数组里剩余元素的总数total就减少了pos2-pos1+1个。如果频率次高的b也不符合题意，那么剩余的total会进一步减少。如果直到剩余的total小于threshold时，说明剩下的元素即使都是同一个，也无法满足题意了，此时就可以直接返回-1.
+
+#### Segment Tree
+本题也可以用线段树来实现，来实现高效地对任意区间内的majority元素的查询．
+
+模板和基本型的线段树一样。每个节点需要存放两个信息，val表示该节点所在区间的majority candidate，另外freqDiff表示这个majority candidate在该区间的频次与其他元素的频次差的“最大可能值”。这个思想来自Boyer–Moore majority vote algorithm，可以参考```169.Majority Element```来理解。基本思想就是，如果一个属于majority的元素，与任何一个不属于majority的元素，两者同时消去，那么不影响数组剩下的元素里原本属于majority的元素的地位．
+
+假设区间d，下面二分了两个子区间d1和d2。在d1区间中的majority是val1，它的频次比其他元素多了diff1。同理在d2区间中的majority是val2，它的频次比其他元素多了diff2.首先我们要明确一个概念，d的majority一定只能是val1和val2中的一个。注意我们对于majority的定义是区间内频次大于50%的元素。显然，如果任何一个元素在两个子区间中都不占50%多数，那么在整个大区间中肯定也不会占50%多数。那么我们如何从d1和d2两个子区间的信息里得到区间d的majority呢？
+1. 如果val1==val2，那么毫无悬念，区间d的majority就是val1（或者val2）。它在整个区间里的频次优势或达到```diff = diff1+diff2```.
+2. 如果va1l!=val2，我们需要两个中间选择一个。   
+    (1) 如果diff1>diff2，则val1相比于val2更有可能是整个区间的majority。但是注意，不一定表示val1就一定真的是majority，因为这个区间可能根本没有majority，所以val1只是best majority candidate。那么对于val1而言，它在d区间内的频率优势如何计算呢？我们取diff的最大可能值：```diff1-diff2```.注意这是一个上限，即认为在d2区间内除了val1就是val2.只有这种情况下，val1才会继续保有最大的正数diff，即确立自己majority的地位。     
+    (2) 反之，如果diff1<diff2，那么我们就认为val2是整个区间的best majority candidate，对应的频率优势是```diff = diff2-diff1```.   
+
+通过上面递归的思想，我们就可以建立起一棵完全二叉树．每个节点代表的一个区间，并且记录了这个区间里的majority candidate的值val，diff表示在该区间内val的频次与非val的频次之差．再次强调，val不见得真的是该区间的majority。
+
+我们基于这棵线段树，设计```queryRangeMajority(root,a,b)```来寻找区间[a,b]内的best majority candidate的数值val。这个query函数的思想和建树时候的递归逻辑一模一样。然后我们需要校验这个val是不是“真”的。怎么做呢？我们提前用hash表来存储所有数值是x的元素的index。用二分法在这些index中找到a和b的位置，这两个位置之差从而就可以知道[a,b]之前到底有多少个val。用这个数目与threshold来比较返回答案。
+
+[Leetcode Link](https://leetcode.com/problems/online-majority-element-in-subarray)
+::::::::::::::
+Binary_Search/1201.Ugly-Number-III/1201.Ugly-Number-III.cpp
+::::::::::::::
+typedef long long ll;
+class Solution {
+public:
+    int nthUglyNumber(int n, int a, int b, int c) 
+    {
+        ll left = 1;
+        ll right = INT_MAX;
+        
+        while (left<right)
+        {
+            ll mid = left+(right-left)/2;
+            if (count(mid, a,b,c) < n )
+                left = mid+1;
+            else
+                right = mid;
+        }
+        
+        return left;
+    }
+    
+    int count(ll M, ll a, ll b, ll c)
+    {
+        return M/a+M/b+M/c-M/lcm(a,b)-M/lcm(a,c)-M/lcm(b,c)+M/lcm(lcm(a,b),c);
+    }
+    
+    ll lcm(ll a, ll b)
+    {
+        return a*b/gcd(a,b);
+    }
+    
+    ll gcd(ll a, ll b)
+    {
+        if (b==0)
+            return a;
+        return gcd(b, a%b);
+    }
+};
+::::::::::::::
+Binary_Search/1201.Ugly-Number-III/Readme.md
+::::::::::::::
+### 1201.Ugly-Number-III
+
+我们回想一道小学奥数题。问从1～120以内能被2或3或5整除的自然数有几个？这涉及到了容斥原理的一些知识。假设答案是k。那么我们反问，第k个能被2或3或5整除的自然数是谁？因为120恰好就是一个能被2或3或5整除的自然数，所以第k个这样的数一定就是120.
+
+所以，我们对于这道题，我们就是希望猜测这样一个数M，使得1～M之间能被a或b或c整除的自然数恰好有n个。言下之意，1～(M-1)之间能被a或b或c整除的自然数就只有n-1个了。对于这样的数，显然我们又可以利用二分法的策略去猜:反馈依据就是M以内能被a或b或c整除的自然数的个数，通过与n的比较来调整搜索区间。
+
+最后如何写count(M)来计算M以内能被a或b或c整除的自然数的个数的个数呢？依据容斥原理：
+```
+count(M) = M/a+M/b+M/c-M/lcm(a,b)-M/lcm(a,c)-M/lcm(b,c)+M/lcm(lcm(a,b),c);
+```
+其中最小公倍数：```lcm(a,b) = a*b/gcd(a,b)```，最大公约数则用辗转相除法：
+```
+    ll gcd(ll a, ll b)
+    {
+        if (b==0)
+            return a;
+        return gcd(b, a%b);
+    }
+```    
+
+
+[Leetcode Link](https://leetcode.com/problems/ugly-number-iii)::::::::::::::
+Binary_Search/1231.Divide-Chocolate/1231.Divide-Chocolate.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximizeSweetness(vector<int>& sweetness, int K) 
+    {
+        int sum = 0;
+        for (auto x: sweetness)
+            sum+=x;
+        
+        int left = 0;
+        int right = sum;
+        
+        while (left<right)
+        {
+            int mid = left+(right-left+1)/2;
+            if (ok(sweetness, mid, K))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        
+        return left;
+    }
+    
+    bool ok(vector<int>& sweetness, int S, int K)
+    {
+        int sum = 0;
+        int count = 0;
+        for (int i=0; i<sweetness.size(); i++)
+        {
+            sum+=sweetness[i];
+            if (sum>=S)
+            {
+                sum = 0;
+                count++;
+            }
+        }
+        return count>=K+1;
+    }
+};
+::::::::::::::
+Binary_Search/1231.Divide-Chocolate/Readme.md
+::::::::::::::
+### 1231.Divide-Chocolate
+
+很容易感觉出来，如果 minimum total sweetness 的要求越低，那么就越容易实现。极端的例子就是取数组中的最小元素为要求的甜度，那么无论怎么切，每一份的甜度都肯定是大于最小元素值的。反之，如果 minimum total sweetness 的要求越高，那么就越不容易实现。于是这就是典型的二分搜值的应用场景。只要猜测一个给定甜度值t，查验在数组中是否至少能拆分出k+1个subarray的和大于t。可以的话，那么可以猜更大的t，反之就猜测更小的t。
+::::::::::::::
+Binary_Search/1237.Find-Positive-Integer-Solution-for-a-Given-Equation/1237.Find-Positive-Integer-Solution-for-a-Given-Equation.cpp
+::::::::::::::
+/*
+ * // This is the custom function interface.
+ * // You should not implement it, or speculate about its implementation
+ * class CustomFunction {
+ * public:
+ *     // Returns f(x, y) for any given positive integers x and y.
+ *     // Note that f(x, y) is increasing with respect to both x and y.
+ *     // i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+ *     int f(int x, int y);
+ * };
+ */
+
+class Solution {
+    set<vector<int>>Set;
+public:
+    vector<vector<int>> findSolution(CustomFunction& customfunction, int z) 
+    {
+        dfs(customfunction,z,1,1000,1,1000);
+        vector<vector<int>>rets(Set.begin(),Set.end());
+        return rets;        
+    }
+    
+    void dfs(CustomFunction& customfunction, int z, int x1, int x2, int y1, int y2)
+    {
+        if (x1==x2 && y1==y2)
+        {
+            if (customfunction.f(x1,y1)==z)
+                Set.insert({x1,y1});
+            return;
+        }
+        if (x1>x2 || y1>y2)
+            return;
+        
+        int midX = x1+(x2-x1)/2;
+        int midY = y1+(y2-y1)/2;
+        
+        int val = customfunction.f(midX, midY);
+        
+        if (val==z)
+        {
+            Set.insert({midX,midY});
+            dfs(customfunction,z,midX+1,x2,y1,midY-1);
+            dfs(customfunction,z,x1,midX-1,midY+1,y2);
+            
+        }
+        else if (val<z)
+        {
+            dfs(customfunction,z,midX+1,x2,y1,y2);
+            dfs(customfunction,z,x1,x2,midY+1,y2);           
+        }
+        else
+        {
+            dfs(customfunction,z,x1,midX-1,y1,y2);
+            dfs(customfunction,z,x1,x2,y1,midY-1);    
+        }
+    }
+};
+
+
+::::::::::::::
+Binary_Search/1237.Find-Positive-Integer-Solution-for-a-Given-Equation/Readme.md
+::::::::::::::
+### 1237.Find-Positive-Integer-Solution-for-a-Given-Equation
+
+对于二元变量的二分搜索，情况远比一元变量复杂得多。可以考虑递归的形式：假设x0是x方向上的二分，y0是y方向上的二分，那么
+1. 如果f(x0,y0)>z，则说明可以将x变小（y的范围不变），或者将y变小（x的范围不变）。
+2. 如果f(x0,y0)<z，则说明可以将x变大（y的范围不变），或者将y变大（x的范围不变）。
+3. 如果f(x0,y0)==z，说明{x0,y0}是一对解；但特别注意，搜索并不能停止，此时可以将x变大的同时将y变小，或者反之，都可能继续搜索到z。
+
+另外，上述的方法会带来显著的重复搜索，所以算法效率并不高。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation)::::::::::::::
+Binary_Search/1283.Find-the-Smallest-Divisor-Given-a-Threshold/1283.Find-the-Smallest-Divisor-Given-a-Threshold.cpp
+::::::::::::::
+class Solution {
+public:
+    int smallestDivisor(vector<int>& nums, int threshold) 
+    {
+        int left = 1, right = INT_MAX;
+        while (left < right)
+        {
+            int mid = left+(right-left)/2;
+            if (isOK(mid, nums, threshold))
+                right = mid;
+            else
+                left = mid + 1;            
+        }
+        return left;        
+    }
+    
+    bool isOK(int x, vector<int>& nums, int threshold)
+    {
+        int sum = 0;
+        for (auto a: nums)
+        {
+            if (a%x==0)
+                sum+=a/x;
+            else
+                sum+=a/x+1;
+        }
+        return sum<=threshold;
+    }
+};
+::::::::::::::
+Binary_Search/1283.Find-the-Smallest-Divisor-Given-a-Threshold/Readme.md
+::::::::::::::
+### 1283.Find-the-Smallest-Divisor-Given-a-Threshold
+
+典型的二分搜值。猜测一个divisor的答案k，如果所有nums[i]/k的商的和大于threshold，那么除数太小，说明需要往大猜；否则需要往小猜。
+::::::::::::::
+Binary_Search/1292.Maximum-Side-Length-of-a-Square-with-Sum-Less-than-or-Equal-to-Threshold/1292.Maximum-Side-Length-of-a-Square-with-Sum-Less-than-or-Equal-to-Threshold.cpp
+::::::::::::::
+class Solution {
+    int m,n;
+    vector<vector<int>>presum;
+public:
+    int maxSideLength(vector<vector<int>>& mat, int threshold) 
+    {
+        m = mat.size();
+        n = mat[0].size();
+        
+        presum.resize(m+1);
+        for (int i=0; i<=m; i++)
+            presum[i].resize(n+1);
+                       
+        for (int i=1; i<=m; i++)
+            for (int j=1; j<=n; j++)
+                presum[i][j] = presum[i-1][j]+presum[i][j-1]-presum[i-1][j-1]+mat[i-1][j-1];
+
+        int left = 1, right = min(m,n);
+        while (left < right)
+        {
+            int mid = right-(right-left)/2;
+            if (isOK(mid, threshold))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        if (isOK(left, threshold)) return left;
+        else return 0;
+    }
+
+    bool isOK(int len, int threshold)
+    {
+        for (int i=len; i<=m; i++)
+            for (int j=len; j<=n; j++)
+            {
+                int sum = presum[i][j] - presum[i][j-len] - presum[i-len][j] + presum[i-len][j-len];
+                if (sum <= threshold)
+                    return true;
+            }
+        return false;
+    }
+};
+::::::::::::::
+Binary_Search/1292.Maximum-Side-Length-of-a-Square-with-Sum-Less-than-or-Equal-to-Threshold/Readme.md
+::::::::::::::
+### 1292.Maximum-Side-Length-of-a-Square-with-Sum-Less-than-or-Equal-to-Threshold
+
+本题可以遍历每个方阵，查看方阵的和sum是否满足条件。这样的时间复杂度是o(N^3)，其中遍历每个元素作为方阵的右下角需要o(N^2)，探索不同的边长需要o(N)。
+
+本题更高效的方法就是二分搜值。猜测一个边长len，查看是否有一个方阵的sum满足条件。这样的时间复杂度是o(logN*N^2).
+
+注意，本题中计算一个方阵的sum的方法可以是o(1)，只要提前计算所有(0,0)到(i,j)的矩阵和presum[i][j]。
+::::::::::::::
+Binary_Search/1300.Sum-of-Mutated-Array-Closest-to-Target/1300.Sum-of-Mutated-Array-Closest-to-Target.cpp
+::::::::::::::
+class Solution {    
+    vector<int>presum;
+public:
+    int findBestValue(vector<int>& arr, int target) 
+    {
+        sort(arr.begin(),arr.end());
+        
+        presum.resize(arr.size());
+        presum[0] = arr[0];        
+        for (int i=1; i<arr.size(); i++)
+            presum[i] = presum[i-1]+arr[i];
+
+        if (presum.back() <= target) return arr.back();
+                    
+        int left = 0;
+        int right = 1e5;
+        
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            if (helper(arr, mid)>=target)
+                right = mid;
+            else
+                left = mid+1;
+        }
+        
+        int a = helper(arr,left);
+        int b = helper(arr,left-1);
+        if (abs(a-target)<abs(target-b))
+            return left;
+        else
+            return left-1;                
+    }
+    
+    long long helper(vector<int>&arr, int value)
+    {
+        auto iter = upper_bound(arr.begin(),arr.end(),value);
+        int num = arr.end()-iter;
+        if (iter-arr.begin()-1>=0)
+            return presum[iter-arr.begin()-1]+(long long)num*value;
+        else
+            return (long long)num*value;
+    }
+};
+::::::::::::::
+Binary_Search/1300.Sum-of-Mutated-Array-Closest-to-Target/Readme.md
+::::::::::::::
+### 1300.Sum-of-Mutated-Array-Closest-to-Target
+
+这是一道典型的二分搜值的问题。我们猜测某个value，查看数组之后的sum是否大于target。如果sum>=target，那么说明我们可以把value降一点（这样使得sum会变小）。反之，如果sum>=target，那么说明我们可以把value升一点（这样使得sum会变大）。这样直至我们找到恰好使得sum比target大的那个value。自然，value-1就是恰好使得sum比target小的那个value。对于最终的答案，我们需要在二者之间选择一个更接近target的sum。
+
+但是本题有一个非常隐蔽的corner case。如果初始有的sum就已经小于target了，那么无论你如何操作都不能使得sum大于target。上述的二分法其实是失效的。对于这种情况，我们需要输出的答案是arr里面的最大值。
+::::::::::::::
+Binary_Search/1482.Minimum-Number-of-Days-to-Make-m-Bouquets/1482.Minimum-Number-of-Days-to-Make-m-Bouquets.cpp
+::::::::::::::
+class Solution {
+public:
+    int minDays(vector<int>& bloomDay, int m, int k) 
+    {
+        int n = bloomDay.size();
+        if (n<m*k) return -1;
+        
+        int left = 0;
+        int right = INT_MAX;
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            if (isOK(bloomDay, m, k, mid))
+                right = mid;
+            else
+                left = mid+1;
+        }
+        return left;
+        
+    }
+    
+    bool isOK(vector<int>& bloomDay, int m, int k, int t)
+    {
+        int cnt = 0;
+        int cur = 0;
+        for (int i=0; i<bloomDay.size(); i++)
+        {
+            if (bloomDay[i] > t)
+            {
+                cur = 0;
+            }
+            else 
+            {
+                cur += 1;
+                if (cur==k)
+                {
+                    cur = 0;
+                    cnt += 1;
+                }
+            }
+            if (cnt >=m ) return true;
+        }
+        return false;
+    }
+};
+::::::::::::::
+Binary_Search/1482.Minimum-Number-of-Days-to-Make-m-Bouquets/Readme.md
+::::::::::::::
+### 1482.Minimum-Number-of-Days-to-Make-m-Bouquets
+
+可以想见，如果天数越靠后，那么可供选择的花就越多，能找到连续的k朵花的概率就越大。这是一个单调递增的过程。所以这非常适合用二分搜值的方法。如果t天的时候，无法找到连续的k多花，那么我们就猜更大的t并检验是否能成功，反之就猜测较小的t。
+::::::::::::::
+Binary_Search/1483.Kth-Ancestor-of-a-Tree-Node/1483.Kth-Ancestor-of-a-Tree-Node.cpp
+::::::::::::::
+class TreeAncestor {
+    vector<vector<int>>p;
+public:
+    TreeAncestor(int n, vector<int>& parent) 
+    {
+        vector<vector<int>>p(n, vector<int>(20, -1));  // p[i][j] means the 2^j-th ancestor for node i
+        for (int i=0; i<n; i++)
+            p[i][0] = parent[i];
+
+        for (int j=1; j<20; j++)
+            for (int i=0; i<n; i++)
+            {
+                if (p[i][j-1]!=-1)
+                    p[i][j] = p[p[i][j-1]][j-1];
+            }
+        this->p = p;     
+    }
+    
+    int getKthAncestor(int node, int k) 
+    {
+        for (int i=0; i<20; i++)
+        {
+            if ((k>>i)&1)
+            {
+                node = p[node][i];
+                if (node == -1) break;
+            }                
+        }
+        return node;
+    }
+};
+
+/**
+ * Your TreeAncestor object will be instantiated and called as such:
+ * TreeAncestor* obj = new TreeAncestor(n, parent);
+ * int param_1 = obj->getKthAncestor(node,k);
+ */
+
+::::::::::::::
+Binary_Search/1483.Kth-Ancestor-of-a-Tree-Node/Readme.md
+::::::::::::::
+### 1483.Kth-Ancestor-of-a-Tree-Node
+假设parent[node][0]标记了每个node的1代祖先，所以如果想知道node的7代祖先，可以将```node=parent[node][0]```执行7次。
+
+假设我们额外知道每个node的2代祖先，记做p[node][1]，那么我们对node的7代祖先只要做4次操作：（7=2^0+2^1+2^1+2^1）
+```
+node = parent[node][0], node = p[node][1], node = p[node][1], node = p[node][1]
+```
+假设我们额外知道每个node的4代祖先，记做p[node][2]，那么我们对node的7代祖先只要做3次操作：（7=2^0+2^1+2^2）
+```
+node = p[node][0], node = p[node][1], node = p[node][2]
+```
+由此可知，如果我们预先知道每个node的2^i代祖先parent[node][i]，那么我们就能减少query的次数。这样能减少多少呢？对于node的k代祖先，只需要将k做二进制分解，有多少个为1的bit，就做多少次query。考虑到k<=5\*10^4，最多只需要20次query，就能够实现查询任意k代祖先。
+```cpp
+        for (int i=0; i<20; i++)
+        {
+            if ((k>>i)&1)
+            {
+                node = p[node][i];
+                if (node == -1) break;
+            }                
+        }
+        return node;
+```
+接下来我们考虑如何构建p[node][j].
+
+我们知道node的4代祖先p[node][2]，可以通过两次2代祖先的query来实现，即```node=p[node][1], node=p[node][1]```。于是我们可以发现，如果知道了p[node][j-1]，就可以推出p[node][j]。即```p[node][j] = p[p[node][j-1]][j-1]```。所以我们设置两层循环，外循环从小到大确定j，内循环设置node，就可以设置所有的p[node][j]了。
+
+这种思想叫做binary lifting.
+::::::::::::::
+Binary_Search/1508.Range-Sum-of-Sorted-Subarray-Sums/1508.Range-Sum-of-Sorted-Subarray-Sums.cpp
+::::::::::::::
+class Solution {
+    vector<int>nums;
+    int totalSum;
+public:
+    int rangeSum(vector<int>& nums, int n, int left, int right) 
+    {
+        this->nums = nums;
+        totalSum = accumulate(nums.begin(), nums.end(), 0);
+        int ret = 0;
+        int M = 1e9+7;
+        
+        for (int k = left; k <= right; k++)
+            ret = (ret + kthSum(k))%M;
+        return ret;        
+    }
+    
+    int kthSum(int k)
+    {
+        int left = 1, right = totalSum;
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            if (smallerOrEqual(mid) < k)  // how many ranges whose sum is smaller or equal to mid
+                left = mid+1;
+            else
+                right = mid;
+        }
+        return left;
+    }
+    
+    int smallerOrEqual(int s)
+    {
+        int j = 0;
+        int count = 0;
+        int sum  = 0;
+        for (int i=0; i<nums.size(); i++)
+        {            
+            while (j<nums.size() && sum+nums[j]<=s)
+            {
+                sum+=nums[j];
+                j++;
+            }                
+            count += j-i;
+            sum -= nums[i];
+        }
+        return count;        
+    }
+};
+::::::::::::::
+Binary_Search/1508.Range-Sum-of-Sorted-Subarray-Sums/Readme.md
+::::::::::::::
+###  1508.Range-Sum-of-Sorted-Subarray-Sums
+
+暴力解法是将所有的subarray sum都计算出来。因此时间复杂度是o(N^2)。
+
+如果当left和right的区间范围比较窄时，二分搜值的效率更高。我们设计```int kthSum(int k)```表示第k大的subarray sum。方法是：我们猜测某个sum值，检查nums数组里有多少个smaller or equal to sum的subarray。如果个数小于k，那么sum就要往大猜（即left=mid+1）；反之如果大于等于k，那么sum可能需要往小猜（即right=mid）。
+
+```int kthSum(int k)```这个函数可以用快慢指针来实现，时间复杂度是o(N).
+
+所以总体的时间复杂度是```(r-l)*n*log(Sum)```.
+
+本题还可以有时间复杂度更低的```n*log(Sum)```的解法，思想是：假想所有的subarray sum排序的话，令totalSum2为前right个subarray sum的sum，totalSum1前left-1个subarray sum的sum。答案就是```totalSum2-totalSum1```.但是写起来比较复杂。主要原因是：可能有重复的subarray sum都与第left个subarray sum的数值相同。同理，第right个subarray sum两边也会有若干个相同的值。
+::::::::::::::
+Binary_Search/1533.Find-the-Index-of-the-Large-Integer/1533.Find-the-Index-of-the-Large-Integer.cpp
+::::::::::::::
+/**
+ * // This is the ArrayReader's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class ArrayReader {
+ *   public:
+ *     // Compares the sum of arr[l..r] with the sum of arr[x..y] 
+ *     // return 1 if sum(arr[l..r]) > sum(arr[x..y])
+ *     // return 0 if sum(arr[l..r]) == sum(arr[x..y])
+ *     // return -1 if sum(arr[l..r]) < sum(arr[x..y])
+ *     int compareSub(int l, int r, int x, int y);
+ *
+ *     // Returns the length of the array
+ *     int length();
+ * };
+ */
+
+class Solution {
+public:
+    int getIndex(ArrayReader &reader) 
+    {
+        int n = reader.length();
+        
+        int left = 0, right = n-1;        
+        while (right-left+1>=3)
+        {
+            int k = (right-left+1)/3;
+            int ret = reader.compareSub(left, left+k-1, left+k, left+2*k-1);
+            if (ret==0)
+            {
+                left = left+2*k;                
+            }
+            else if (ret==1)
+            {                
+                right = left+k-1;
+            }
+            else
+            {
+                left = left+k;
+                right = left+k*2-1;
+            }
+            // cout<<left<<" "<<right<<endl;
+        }
+        
+        if (left==right) return left;
+        else
+        {
+            if (reader.compareSub(left,left, right,right)==1)
+                return left;
+            else
+                return right;
+        }
+        
+    }
+};
+::::::::::::::
+Binary_Search/1533.Find-the-Index-of-the-Large-Integer/Readme.md
+::::::::::::::
+### 1533.Find-the-Index-of-the-Large-Integer
+
+本题本质是三分搜索。我们将一个区间分为三分ABC，其中A和B的区间大小相等。如果A、B区间和相等，那么异类就在区间C里面。如果A、B区间和不相等，那么异类就在A、B较大的区间里面。
+
+注意外层循环的条件变成了```while (right-left+1 >= 3)```。原因是区间大学小于3的时候无法成功三分区间。
+::::::::::::::
+Binary_Search/1539.Kth-Missing-Positive-Number/1539.Kth-Missing-Positive-Number_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) 
+    {
+        unordered_set<int>Set(arr.begin(), arr.end());
+        int count = 0;
+        for (int i=1; i<=arr.back()+1000; i++)
+        {
+            if (Set.find(i)==Set.end())
+                count+=1;
+            if (count==k)
+                return i;
+        }
+        return -1;
+    }
+};
+::::::::::::::
+Binary_Search/1539.Kth-Missing-Positive-Number/1539.Kth-Missing-Positive-Number_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) 
+    {
+        int cur = 1;        
+        for (int i=0; i<arr.size(); i++)
+        {
+            if (cur > arr[i]) continue;
+            
+            if (arr[i] - cur < k)
+            {
+                k -= (arr[i]-cur);
+                cur = arr[i]+1;                    
+            }
+            else
+            {
+                cur += k-1;
+                return cur;
+            }            
+        }
+        return cur+k-1;
+    }
+};
+::::::::::::::
+Binary_Search/1539.Kth-Missing-Positive-Number/1539.Kth-Missing-Positive-Number_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) 
+    {
+        int left = 1;
+        int right = arr.back()+k;
+        while (left < right)
+        {
+            int mid = right-(right-left)/2;
+            int M = mid-1;
+            int T = lower_bound(arr.begin(), arr.end(), mid)- arr.begin();
+            int missing = M - T;
+
+            // cout<<left<<" "<<right<<" "<<mid<<" "<<M<<" "<<T<<" "<<missing<<endl;
+
+            if (missing <= k-1)
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;
+    }
+};
+::::::::::::::
+Binary_Search/1539.Kth-Missing-Positive-Number/Readme.md
+::::::::::::::
+### 1539.Kth-Missing-Positive-Number
+
+#### 解法1：
+将数组的所有元素放入一个集合。然后从1开始自增cur，查看cur是否在数组里出现过来统计missing的个数。
+
+#### 解法2：
+利用一个指针i遍历数组元素，同时用cur表示当前可能的missing number。初始时cur = 1.
+
+如果cur>arr[i]，那么考察下一个i。否则即cur<=arr[i]，说明从cur到arr[i]-1之间（双闭区间）都是missing number。于是missing number的数量减少```k-=arr[i]-cur```，下一个需要尝试的missing number更新为arr[i]+1. 直到k降为0为止。
+
+注意，如果数组遍历完之后k仍然不为0，考虑到cur本身必然就是一个missing number，那么最终的答案是cur+=k-1.
+
+#### 解法3：
+二分搜索。和```1060.Missing-Element-in-Sorted-Array```一样的思路。
+
+假设我们猜测mid是否是答案。考察[1,mid-1]这段连续自然数区间，可知道这段区间的自然数有M个，并且有T个存在于数组中（即查找数组里有多少个小于mid的元素个数，利用lower_bound）。所以，在[1,mid-1]这段连续自然数区间内有missing number = M-T个。理论上我们希望这段区间应该有missing number共k-1个，于是就可以帮助判定mid是否偏大和偏小。
+```cpp
+            if (missing <= k-1)
+                left = mid;
+            else
+                right = mid-1;
+```
+特别注意，当missing==k-1的时候，mid可能并不是最终答案，因为mid可能也存在于数组中，所以mid可以再往大猜(即left=mid)。因此这个分支在上面的代码里与```missing<k-1```合并。
+::::::::::::::
+Binary_Search/1552.Magnetic-Force-Between-Two-Balls/1552.Magnetic-Force-Between-Two-Balls.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxDistance(vector<int>& position, int m) 
+    {
+        sort(position.begin(), position.end());
+        int left = 1, right = position.back()-position[0];
+        while (left<right)
+        {
+            int mid = right-(right-left)/2;
+            if (isOK(position, mid, m))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;        
+    }
+    
+    bool isOK(vector<int>& position, int len, int m)
+    {
+        int j=0;
+        int count = 1;
+        
+        for (int i=0; i<position.size(); )
+        {
+            j = i;
+            while (j<position.size() && position[j]-position[i]<len)
+                j++;
+                        
+            if (j==position.size()) 
+                break;
+            else
+            {
+                count++;                
+                i=j;
+            }
+            if (count==m) return true;
+            
+        }
+        return false;
+    }
+};
+::::::::::::::
+Binary_Search/1552.Magnetic-Force-Between-Two-Balls/Readme.md
+::::::::::::::
+### 1552.Magnetic-Force-Between-Two-Balls
+
+常规的二分搜值。猜测一个minimum magnetic force是F，然后查看能否在数组中挑选m个位置，使得这m个位置之间的距离都大于等于F。如果能够实现，那么尝试猜测更大的F；反之就猜测更小的F。
+::::::::::::::
+Binary_Search/1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X/1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int specialArray(vector<int>& nums) 
+    {
+        int right = nums.size();
+        int left = 1;
+        while (left <= right)
+        {
+            int mid = right-(right-left)/2;
+            int count = 0;
+            for (auto x: nums)
+                if (x>=mid) count++;
+            if (count == mid)
+                return mid;
+            else if (count > mid)
+                left = mid+1;
+            else
+                right = mid-1;
+        }
+        return -1;
+    }
+};
+::::::::::::::
+Binary_Search/1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X/1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int specialArray(vector<int>& nums) 
+    {
+        int N = nums.size();
+        vector<int>freq(N+1,0);
+        for (auto x: nums)
+            freq[min(x,N)]+=1;
+
+        int count = 0;
+        for (int x=N; x>=0; x--)
+        {
+            count+=freq[x];                
+            if (count == x)
+                return x;
+        }
+        return -1;
+    }
+};
+::::::::::::::
+Binary_Search/1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X/Readme.md
+::::::::::::::
+### 1608.Special-Array-With-X-Elements-Greater-Than-or-Equal-X
+
+首先我们想一想，为什么该题如果有解，必然是唯一解？假设存在x，满足大于等于x的元素个数是x；另外有一个更大的y，满足大于等于y的元素个数是y。这有什么矛盾呢？矛盾在于，因为x小于y，所以“大于等于x的元素个数”必然多于“大于等于y的元素个数”。然而前者是x，后者是y，前者少于后者，矛盾！
+
+#### 解法1：二分搜值
+称答案X为数组的“特征值”，那么X的上限就是数组的长度N，因为你不可能有多于N个数字去计数。
+
+于是我们可以二分搜值X，对于尝试某个特征值x，我们遍历一遍整个数组统计一下大于等于x的个数count。如果count==x，那么就是唯一的答案；如果count>x，那么当前猜测的特征值偏小，使得统计到的数过多，下一次可以猜更大的数；如果count<x，那么当前猜测的特征值偏大，使得统计到的数过少，下一次可以猜更小的数。
+
+这样的时间复杂度就是 ```log(N)*N```.
+
+对于有唯一确定解的题目（注意不是有唯一最优解），除了可以沿用我一贯推荐的```while(left<=right)```模板之外，我们可以用这样的模板：
+```cpp
+while (left<=right)
+{
+  mid = ...;
+  if (isOK(mid))
+    return mid;
+  else if (isTooLarge(mid))
+    mid = right-1;
+  else if (isTooSmall(mid))
+    mid = left+1;
+}
+return -1;
+```
+再次强调，上面的模板不适合求最优解（最大/最小）的题目。
+
+#### 解法2：频率的后缀数组
+考虑到X本身并不大，我们开辟一个数组freq存放每种元素的频次，即freq[i]表示i出现了多少次。特别地，凡是大于等于N的元素，频率都统计在freq[N]里面。
+
+这样我们从大到小遍历X，遍历的过程中通过累加freq[i]自然而然地就把所有大于等于X的元素的总频次count就统计出来了。只要比较count和X，如果相等就是答案。
+
+这样的时间复杂度是o(N).
+
+::::::::::::::
+Binary_Search/1648.Sell-Diminishing-Valued-Colored-Balls/1648.Sell-Diminishing-Valued-Colored-Balls_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxProfit(vector<int>& inventory, int orders) 
+    {
+        sort(inventory.begin(), inventory.end());
+        reverse(inventory.begin(), inventory.end());
+        int n = inventory.size();
+        inventory.push_back(0);
+        long long M = 1e9+7;
+        
+        long long ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            long long a = inventory[i];
+            long long b = inventory[i+1];
+            long long total = (a-b)*(i+1);
+            
+            if (total <= (long long)orders)
+            {
+                ret += (a+b+1)*(a-b)/2*(i+1);
+                orders -= total;
+                ret %= M;
+            }
+            else
+            {                
+                long long k = orders/(i+1);
+                ret += (a+a-k+1)*k/2*(i+1);
+                ret %= M;
+                                
+                long long m = orders%(i+1);
+                ret += (a-k)*m;
+                ret %= M;
+                break;
+            }                                   
+            if (orders<=0) break;
+        }
+        return ret;
+        
+    }
+};
+::::::::::::::
+Binary_Search/1648.Sell-Diminishing-Valued-Colored-Balls/1648.Sell-Diminishing-Valued-Colored-Balls_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    long long M = 1e9+7;
+    int maxProfit(vector<int>& inventory, int orders) 
+    {
+        sort(inventory.begin(), inventory.end());
+        reverse(inventory.begin(), inventory.end());
+        int left = 1, right = inventory[0];
+        while (left <right)
+        {
+            int mid = left+(right-left)/2;
+            if (count(inventory, mid) <= orders)
+                right = mid;
+            else
+                left = mid+1;
+        }
+        long long x = left;
+        long long ret = 0;
+        for (int i=0; i<inventory.size(); i++)
+        {            
+            if (inventory[i]<x) break;
+            ret += (inventory[i]+x)*(inventory[i]-x+1)/2%M;
+            ret %= M;
+        }
+        ret += (x-1)*(orders-count(inventory,x)) % M;
+        ret %= M;
+
+        return ret;
+    }
+
+    long long count(vector<int>&inventory, int k)
+    {
+        long long total = 0;
+        for (int i=0; i<inventory.size(); i++)
+        {
+            if (inventory[i]<k) break;
+            total += inventory[i]-k+1;
+        }
+        return total;
+    }
+};
+::::::::::::::
+Binary_Search/1648.Sell-Diminishing-Valued-Colored-Balls/Readme.md
+::::::::::::::
+### 1648.Sell-Diminishing-Valued-Colored-Balls
+
+#### 解法1：数学贪心
+本题的基本策略是：将所有的颜色按照数量从高到低排列。我们优先对当前数量最多（a）的颜色取一个球，这样总价值+a。然后再对当前剩余数量最多（b）的颜色取一个球（可能仍然是同一种颜色），这样总价值+b...直到我们操作的次数达到orders。
+
+举个例子，我们将inventory从高到低排序之后，假设数组长这个样子：
+```
+10 7 4 3 2 1
+```
+第一回合：数值最大的10就是我们的操作目标，我们取一个球，总价值加10分。但是取完之后发现最大数量的颜色依然是它，但是9个球，意味着我们还可以再取一个球再增加9分。我们可以不断地取这个颜色，直至该颜色的数目和第二多的颜色数目持平（都是7）。所以这一轮我们的价值增加的是(10+9+8).
+
+第二回合：当前数值最大的7就是我们的操作目标。注意这次我们可以取2个球：包括颜色数量排名第一和第二的两种颜色。此外，我们可以从+7，+6，一直取到+5（因为数量第三多的颜色数量是4），故增加的价值是```(7+6+5)*2```
+
+可见每个回合，我们就推进了一种颜色。在处理第i种颜色时，我们可以一轮取i+1个球，这些球对应的分值是相同的，从inventory[i]、inventory[i]+1...直至inventory[i+1]+1。
+
+这里有一个比较关键的地方，就是总球数达到orders的时候，我们必须停下来。在哪个回合的哪一轮停下来，“零头”是多少，需要好好处理。从上述可知，在第i回合中，每轮可以取i+1个球，可知需要进行```q = orders/(i+1)```轮，剩下的零头```r = orders%(i+1)```个球对应的分数就是```inventory[i]-q```.
+
+另一个注意的点是，对于```10 10 8....```这种情况，根据上述的算法，第一回合其实不用做任何操作，因为第一和第二的颜色数目相同。在第二回合的操作里直接一并取两个球。
+
+#### 解法2：二分搜值
+因为每轮我们所取的球的分值都是递减1的，我们可以尝试猜测最后一整轮的球的分值是k，另外可能还有一些零头的球它们的分值是k-1. 我们需要寻找最大的k，使得分值大于等于k的球的总数不超过orders。
+
+对于任何一种颜色inventory[i]，如果inventory[i]>=k，那么它必然能贡献inventory[i]-k+1个球，其中最大分数是inventory[i]，最小分数是k。扫描一遍整个数组，我们就能把总球数求出来，与orders比较一下。如果大于orders，说明取的球太多了，k要提升一下。反之，k就要下降一点。
+
+确定了k之后，我们还要手工计算一下零头的数量是多少，他们每个球贡献的分数是k-1.
+::::::::::::::
+Binary_Search/1712.Ways-to-Split-Array-Into-Three-Subarrays/1712.Ways-to-Split-Array-Into-Three-Subarrays.cpp
+::::::::::::::
+class Solution {
+public:
+    int waysToSplit(vector<int>& nums) 
+    {
+        long long sum = accumulate(nums.begin(), nums.end(), 0);
+        int n = nums.size();
+        vector<long long>presum(n);
+        presum[0] = nums[0];
+        for (int i=1; i<n; i++)
+            presum[i] = presum[i-1] + nums[i];
+        
+        long long ret = 0;
+        long long M = 1e9+7;
+        
+        int left = 0, mid = 0, right = sum;
+        int j = 0, k = n-1;
+        for (int i=0; i<n; i++)
+        {
+            while (j<=i || (j<n && presum[j]-presum[i] < presum[i]))
+                j++;
+            if (j==n) break;
+            
+            auto iter = upper_bound(presum.begin(), presum.end(), (sum+presum[i])/2);
+            int t = iter - presum.begin() - 1;
+            if (t == n-1) t--;
+            
+            if (t<j) continue;
+            
+            ret += t - j + 1;                        
+            ret %= M;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/1712.Ways-to-Split-Array-Into-Three-Subarrays/1712.Ways-to-Split-Array-Into-Three-Subarrays_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int waysToSplit(vector<int>& nums) 
+    {
+        int n = nums.size();
+        vector<long long>presum(n,0);
+        presum[0] = nums[0];
+        for (int i=1; i<n; i++)
+            presum[i] = presum[i-1]+nums[i];
+        
+        int j = 0, k = 0;
+        long long ret = 0;
+        long long M = 1e9+7;
+        for (int i=0; i<n; i++)
+        {
+            while (j<=i || (j<n && presum[j]-presum[i] < presum[i]))
+                j++;
+            if (j==n) break;
+            
+            while (k+1<n-1 && presum[k+1]*2<=presum[i]+presum[n-1])
+                k+=1;                        
+            
+            if (k<j) continue;
+            
+            ret += k-j+1;
+            ret %= M;
+        }        
+        return ret;        
+    }
+};
+::::::::::::::
+Binary_Search/1712.Ways-to-Split-Array-Into-Three-Subarrays/Readme.md
+::::::::::::::
+### 1712.Ways-to-Split-Array-Into-Three-Subarrays
+
+#### 解法1：二分法
+我们遍历第一个subarray的位置，假设截止到i。那么第二个subarray的右端点必然有一个下限j，需要满足sum[i+1:j]恰好大于sum[0:i]。这样的j是可以用一个指针根据i单调地向右移动得到。
+
+确定了下限，那么接下来考虑第二个subarray的右端点最远可以到哪里？假设这个位置是k。k太远的话必然会挤占第三个subarray的元素和。所以k的极限需要满足sum[k+1:n-1]恰好大于sum[i+1:k]。对于区间和，我们必然会用前缀数组来实现，即```presum[n-1]-presum[k] >= presum[k]-presum[i]```，变化一下得到我们要求最大的k，使得```presum[k] <= 0.5 *(presum[n-1]+presum[i])```
+
+我们知道前缀数组presum是个单调序列。所以我们可以用二分法确定这个位置k，也就是用upper_bound找到第一个大于```0.5 *(presum[n-1]+presum[i])```的位置，再往前移动一个，就是最大的、小于等于```0.5 *(presum[n-1]+presum[i])```的位置。确定过了这个k，那么从j到k的所有位置，都可以是第二个区间的右端点，所以答案加上 j-i+1.
+
+特别注意的是，以上的二分法中可能得到的k是n-1. 这样的话，第三个区间的大小变成了0，这个是不可以的。所以如果得到k==n-1的话，我们需要把k往前再移动一位。
+
+#### 解法2：滑动窗口
+事实上，在上面的解法中，我们可以单调地移动k来找到最大的k满足```presum[k] <= 0.5 *(presum[n-1]+presum[i])```。所以每固定一个i，相应地j和k都是单调变动的。所以整体o(N)的复杂度就可以解决这题。
+::::::::::::::
+Binary_Search/1802.Maximum-Value-at-a-Given-Index-in-a-Bounded-Array/1802.Maximum-Value-at-a-Given-Index-in-a-Bounded-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxValue(int n, int index, int maxSum) 
+    {
+        int left = 1, right = maxSum;
+        while (left < right)
+        {
+            int mid = right - (right-left)/2;
+            if (count(mid, n, index) <= (long)maxSum)
+                left = mid;
+            else
+                right = mid - 1;
+        }
+        return left;        
+    }
+    
+    long count(long h, long n, long index)
+    {
+        long sum = 0;
+        if (h > index)
+        {
+            sum += (h-index + h)*(index+1)/2;
+        }
+        else
+        {
+            sum += (1+h)*h/2;
+            sum += index+1-h;
+        }
+        if (h > n-index)
+        {
+            sum += (h + h-(n-index)+1)*(n-index)/2;
+        }
+        else
+        {
+            sum += (h + 1)*h/2;
+            sum += (n - (index+h));
+        }
+        return sum-h;
+    }
+};
+::::::::::::::
+Binary_Search/1802.Maximum-Value-at-a-Given-Index-in-a-Bounded-Array/Readme.md
+::::::::::::::
+### 1802.Maximum-Value-at-a-Given-Index-in-a-Bounded-Array
+
+本题很容易想到贪心的策略。既然要使得所用的数字总和不超过maxSum，那我们就省着用。怎么用呢？令index那个位置最高，然后往两边依次递减，每移一个位置就减1。直至递减到1之后，如果还需要再往两边延伸的话，就继续维持1。这个方案是固定index的高度，同时满足所有条件下、数字总和最小的决策。反之，如果固定数字总和，那么这个方案就是满足所条件下、index位置最高的决策。
+
+我们用二分搜值的方法，探索index位置的高度。假设当高度为h时，判断该贪心决策所需要的数字总和是否小于等于maxSum。是的话，那么h可能是解，但还可以往大猜；反之，那么h不是解，且必须往小猜。
+
+在检验函数中，我们需要考虑两个等差数列。前者从index位置的h，往前逐位递减，直至递减至1或者数组的第一个位置；后者从index位置的h，往后逐位递减，直至递减至1或者数组的最后位置。计算两个等差数列之和。另外注意，等差数列降至1时，如果还有元素需要填充1，那么需要正确计算它们的个数。
+::::::::::::::
+Binary_Search/1870.Minimum-Speed-to-Arrive-on-Time/1870.Minimum-Speed-to-Arrive-on-Time.cpp
+::::::::::::::
+class Solution {
+public:
+    int minSpeedOnTime(vector<int>& dist, double hour) 
+    {
+        int n = dist.size();
+        if (hour <= n-1 ) return -1;
+        
+        int low = 1, high = 1e7;
+        
+        while (low < high)
+        {
+            int mid = low+(high-low)/2;
+            double time = helper(dist, mid);
+            if (time > hour)
+                low = mid+1;
+            else
+                high = mid;
+        }
+        
+        return low;       
+    }
+    
+    double helper(vector<int>&dist, int speed)
+    {
+        double time = 0;
+        for (int i=0; i<dist.size()-1; i++)
+        {
+            time += (dist[i]-1)/speed+1;
+        }
+        time += dist.back()*1.0/speed;
+        return time;
+    }
+
+};
+::::::::::::::
+Binary_Search/1870.Minimum-Speed-to-Arrive-on-Time/Readme.md
+::::::::::::::
+### 1870.Minimum-Speed-to-Arrive-on-Time
+
+需要特殊考虑的是什么时候无解。因为除了最后一班车，每一班车至少花费一个小时（因为需要专车），假设最后最后一班车光速不需要时间，那么总时间也不能小于n-1，其中n是班车数目.
+
+其余的就是常规的二分搜值。我们猜测一个速度s，查看该速度下所需要花费的时间time，如果大于hour，说明速度太慢那么就把速度往高调整；否则这是一个可接受的解，但仍可以尝试更低的速度（所以要保留s）。
+::::::::::::::
+Binary_Search/1889.Minimum-Space-Wasted-From-Packaging/1889.Minimum-Space-Wasted-From-Packaging.cpp
+::::::::::::::
+typedef long long ll;
+class Solution {
+public:
+    int minWastedSpace(vector<int>& packages, vector<vector<int>>& boxes) 
+    {
+        int m = packages.size();
+        sort(packages.begin(), packages.end());
+        vector<ll>presum(m);
+        ll pre = 0;
+        for (int i=0; i<m; i++)
+        {
+            pre += packages[i];
+            presum[i] = pre;
+        }
+        
+        ll ret = -1;
+        ll M = 1e9+7;
+        for (auto& box: boxes)
+        {
+            sort(box.begin(), box.end());
+            int n = box.size();
+            ll sum = 0;
+            int lastPack = -1;
+            for (int i=0; i<n; i++)
+            {
+                auto iter = upper_bound(packages.begin(), packages.end(), box[i]);
+                if (iter==packages.begin())
+                    continue;
+                int j = prev(iter)-packages.begin();
+                sum += (ll)box[i]*(ll)(j-lastPack) - (presum[j] - (lastPack==-1 ? 0:presum[lastPack])); 
+                lastPack = j;
+                if (lastPack==m-1)
+                    break;
+            }
+            if (lastPack!=m-1)
+                continue;
+            if (ret==-1)
+                ret = sum;
+            else
+                ret = min(ret, sum);            
+        }                
+        return ret % M;
+    }
+};
+::::::::::::::
+Binary_Search/1889.Minimum-Space-Wasted-From-Packaging/Readme.md
+::::::::::::::
+### 1889.Minimum-Space-Wasted-From-Packaging
+
+很显然，我们会对packages和每组box分别进行排序。从小到大查看每个box[i]，我们看它能新装下哪些packages（这是一个区间），计算wasted space。
+
+一种解法就是双指针。对于一组box，我们分别移动指向packages和box的指针，找到最大的j使得```packages[j]<=box[i]```. 双指针需要用o(m+n)的时间来计算总共的wasted space。假设有k组box，那么总的时间就是o(mk+nk)。虽然m,n,k都是1e5量级，但其中o(nk)是所有组的盒子总数，题目中说明了是1e5量级。但是o(mk)仍然会有1e10量级，故会TLE。
+
+另一种解法就是双指针，对于一组box的某个盒子box[i]，直接在packages里面用二分法，找到最大的j使得```packages[j]<=box[i]```。处理一批盒子，需要的时间复杂度是```o(logM*n)```，假设有k组，那么就是```o(logM*nk)```。因为m和nk分别是1e5量级，故时间复杂度可以接受。
+
+此题还可以用packages前缀和来简化计算针对每个box[i]的wasted space的代码。
+::::::::::::::
+Binary_Search/1891.Cutting-Ribbons/1891.Cutting-Ribbons.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxLength(vector<int>& ribbons, int k) 
+    {
+        int left = 0, right = INT_MAX;
+        while (left < right)
+        {
+            int len = right-(right-left)/2;
+            if (count(ribbons, len) >= k)
+                left = len;
+            else
+                right = len-1;
+        }
+        return left;        
+    }
+    
+    int count(vector<int>&ribbons, int len)
+    {
+        int ret = 0;
+        for (auto x: ribbons)
+        {
+            ret += x/len;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/1891.Cutting-Ribbons/Readme.md
+::::::::::::::
+### 1891.Cutting-Ribbons
+
+非常套路的二分搜值。猜测长度为len，贪心数一下每一条能割出多少块。大于等于k的话就往小猜（注意此时的len已经是一个可行解），否则就往大猜。
+::::::::::::::
+Binary_Search/1898.Maximum-Number-of-Removable-Characters/1898.Maximum-Number-of-Removable-Characters.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>pos;  // idx of s -> idx of removable
+public:
+    int maximumRemovals(string s, string p, vector<int>& removable) 
+    {
+        for (int i=0; i<removable.size(); i++)
+            pos[removable[i]] = i;
+        
+        int left = 0, right = removable.size();
+        while (left < right)
+        {
+            int mid = right-(right-left)/2;
+            if (checkOK(s,p,mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;
+    }
+    
+    bool checkOK(string& s, string& p, int k) 
+    {
+        int i = 0, j = 0;
+        int t = 0;
+        while (j<p.size())
+        {
+            while (i<s.size() && s[i]!=p[j])
+                i++;
+                        
+            if (i>=s.size()) break;
+            
+            if (pos.find(i)==pos.end() || pos[i]>=k)
+                j++;
+            
+            i++;
+        }
+        return j==p.size();
+    }
+};
+::::::::::::::
+Binary_Search/1898.Maximum-Number-of-Removable-Characters/Readme.md
+::::::::::::::
+### 1898.Maximum-Number-of-Removable-Characters
+
+本题乍看还是很有难度的。本题的核心问题是：当字符串s刨掉k个字符之后，如何高效判定p还是s的subsequence?
+
+我们先考虑，如果s不需要删除任何字符，那么判定p是否s的subsequence的方法是什么？这一点很关键，不要想歪到双序列DP（那是n^2的复杂度）。其实很简单，就是贪心法和双指针。考察每个p[j]，看是否有递增的i序列，满足```s[i]==p[j]```. 如果所有的p[j]都有了配对，那么p就是s的subsequence。
+
+接下来我们考虑有字符删除的情况。此时，顺次考察i的时候，除了检查是否有s[i]与p[j]相等之外，还要关心这个相等的s[i]是否是被删除的k个元素之一。如果是的话，那么这个i就不和条件，需要继续往后找其他的i来与p[j]匹配。很显然，我们用一个hash表来提前存储两个信息：s[i]是否是removable序列里，如果在的话它是removable序列的第几个。特别注意，即使它在removable序列里，但是它在removalbe序列的index大于等于k，说明它并不是被删除的k个元素之一（因为被删除的序号是0到k-1），这样的s[i]依然是可以算作p的一部分。
+::::::::::::::
+Binary_Search/1901.Find-a-Peak-Element-II/1901.Find-a-Peak-Element-II.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findPeakGrid(vector<vector<int>>& mat) 
+    {
+        int m = mat.size();
+        int up = 0, low = m-1;
+        while (up <= low)
+        {
+            int mid = up+(low-up)/2;
+                        
+            int upper_max = mid==0 ? -1 : *max_element(mat[mid-1].begin(), mat[mid-1].end());
+            int mid_max = *max_element(mat[mid].begin(), mat[mid].end());
+            int lower_max = mid==m-1 ? -1 : *max_element(mat[mid+1].begin(), mat[mid+1].end());
+            
+            int mx = max(upper_max, max(mid_max, lower_max));
+            if (mx == mid_max)
+                return {mid, int(max_element(mat[mid].begin(), mat[mid].end()) - mat[mid].begin())};
+            else if (mx == upper_max)
+                low = mid - 1;
+            else
+                up = mid + 1;                        
+        }
+        
+        return {-1, -1};
+    }
+};
+::::::::::::::
+Binary_Search/1901.Find-a-Peak-Element-II/Readme.md
+::::::::::::::
+### 1901.Find-a-Peak-Element-II
+
+本题的思路非常巧妙。我们搜一行max_mid，查看该行的最大值max_mid. 同时查看该行上一行的最大值max_upper，该行下一行的最大值max_lower。如果max_mid是三者中的最大，那么根据大小比较的传递性，max_mid肯定比它的上一格大，因为max_mid大于upper_mid，而upper_mid是上一行中的最大值。同理，max_mid也比它的下一个大。所以max_mid一定是一个峰值。
+
+如果max_upper是三者中的最大，那么我们就将峰值所在行的搜索范围调整为[low, mid-1];反之，如果max_lower是三者中的最大，那么我们就将峰值所在行的搜索范围调整为[mid+1,high].
+
+本题一定有解，所以当```while (low<high)```退出时，low所在行的最大值就一定是峰值。
+::::::::::::::
+Binary_Search/1918.Kth-Smallest-Subarray-Sum/1918.Kth-Smallest-Subarray-Sum.cpp
+::::::::::::::
+class Solution {
+public:
+    int kthSmallestSubarraySum(vector<int>& nums, int k) 
+    {
+        vector<int>presum(nums.size()+1);        
+        for (int i=0; i<nums.size(); i++)
+            presum[i+1] = presum[i]+nums[i];  
+                
+        int left = 0, right = INT_MAX;
+        while (left < right)
+        {
+            int mid = left + (right-left)/2;
+            
+            int count = countSmallerOrEqual(mid, presum); // # of diff <= mid
+            
+            if (count >= k) 
+                right = mid;
+            else
+                left = mid+1;                
+        }
+        return left;        
+    }
+    
+    int countSmallerOrEqual(int t, vector<int>&presum)
+    {
+        int ret = 0;
+        // for (int i=0; i<presum.size(); i++)
+        // {
+        //     auto iter = upper_bound(presum.begin(), presum.end(), t+presum[i]);
+        //     ret += iter - (presum.begin()+i+1);
+        // }
+        int j = 0;
+        for (int i=0; i<presum.size(); i++)
+        {
+            while (j<presum.size() && presum[j]-presum[i]<=t)            
+                j++;
+            ret+=j-(i+1);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/1918.Kth-Smallest-Subarray-Sum/Readme.md
+::::::::::::::
+### 1918.Kth-Smallest-Subarray-Sum
+
+此题本质等同于```719. Find K-th Smallest Pair Distance```. 在719中我们要寻找第k小的pair diff。在本题中，如果我们转成前缀和数组presum，那么本质上也就是在presum里找第k小的pair diff.
+
+对于"k-th"的题型，二分搜值是一个固定的套路。我们假设第k小的diff的数值是mid，那么我们就计算presum里有多少diff<=mid的pairs。我们期望这个数量至少要是k个。如果count<k，那么我们对于diff的猜测太小了，包括mid在内的diff都不够k个，那么mid本身的diff怎么可能是第k个，所以我们必须往更大的数值猜（即left=mid+1）。如果count>=k，那么mid本身可能是正解（因为可能多有个diff的数值是mid），同时也可能我们猜的比较大，可以往更小的数值猜（即right=mid）.
+
+那么我们如何在所有的diff里计算```countSmallerOrEqual(mid)```呢？两种思路：
+
+1. 固定presum[i]，在presum里找多少个j，使得```presum[j]-presum[i]<=mid```，变化得到```presum[j]<=mid+presum[i]```，所以可以用upper_bound定位j的邻接位置j'。从```[i+1, j')```都是可行解。
+2. 双指针。同样固定presum[i]，探索presum[j]。但是我们发现随着i的增大，j的临界位置也是单调变大的。所以j'可以用o(N)的算法找到。
+::::::::::::::
+Binary_Search/1922.Count-Good-Numbers/1922.Count-Good-Numbers.cpp
+::::::::::::::
+class Solution {
+    long long M = 1e9+7;
+public:
+    int countGoodNumbers(long long n) 
+    {
+        long long a = n/2;
+        long long b = n-a;
+
+        return mypow(5,b)*mypow(4,a)%M;
+    }
+
+    long long mypow(long long x, long long k)
+    {
+        if (k==0) return 1;
+        long long y = mypow(x, k/2);
+
+        if (k%2==0)        
+            return y*y%M;
+        else
+            return y*y%M*x%M;        
+    }
+};
+::::::::::::::
+Binary_Search/1922.Count-Good-Numbers/Readme.md
+::::::::::::::
+### 1922.Count-Good-Numbers
+
+本题就是直接用```50. Pow(x, n)```实现快速幂的代码。基本思想是：```pow(x,k) = pow(x, k/2) ^2 * (k%2==1? x:1);```
+::::::::::::::
+Binary_Search/2040.Kth-Smallest-Product-of-Two-Sorted-Arrays/2040.Kth-Smallest-Product-of-Two-Sorted-Arrays_v1.cpp
+::::::::::::::
+using LL = long long;
+class Solution {
+public:
+    long long kthSmallestProduct(vector<int>& nums1, vector<int>& nums2, long long k) 
+    {
+        if (nums1.size() > nums2.size())
+            return kthSmallestProduct(nums2, nums1, k);
+                
+        LL left = -1e10, right = 1e10;
+        while (left < right)
+        {
+            LL mid = left+(right-left)/2;
+            if (checkNums(mid, nums1, nums2) >= k)
+                right = mid;
+            else
+                left = mid+1;                
+        }
+        return left;
+    }
+    
+    LL checkNums(LL mid, vector<int>& nums1, vector<int>& nums2)
+    {
+        LL ret = 0;
+        for (int i=0; i<nums1.size(); i++)
+        {
+            LL x = nums1[i];
+            
+            if (x == 0)
+            {
+                if (mid < 0) ret+=0;
+                else ret+=nums2.size();                                
+            }
+            else if (x > 0)
+            {
+                LL yy = floor(mid*1.0/x);                    
+                auto iter = upper_bound(nums2.begin(), nums2.end(), yy);
+                ret += (iter-nums2.begin());              
+            }
+            else
+            {
+                LL yy = ceil(mid*1.0/x);
+                auto iter = lower_bound(nums2.begin(), nums2.end(), yy);
+                ret += nums2.size() - (iter-nums2.begin());                      
+            }            
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/2040.Kth-Smallest-Product-of-Two-Sorted-Arrays/2040.Kth-Smallest-Product-of-Two-Sorted-Arrays_v2.cpp
+::::::::::::::
+using LL = long long;
+class Solution {
+public:
+    long long kthSmallestProduct(vector<int>& nums1, vector<int>& nums2, long long k) 
+    {
+        if (nums1.size() > nums2.size())
+            return kthSmallestProduct(nums2, nums1, k);
+                
+        LL left = -1e10, right = 1e10;
+        while (left < right)
+        {
+            LL mid = left+(right-left)/2;
+            LL count = countSmallerOrEqual(mid, nums1, nums2);
+            if (count < k)
+                left = mid+1;
+            else
+                right = mid;                
+        }
+        return left;
+    }
+    
+    LL countSmallerOrEqual(LL mid, vector<int>& nums1, vector<int>& nums2)
+    {
+        LL ret = 0;
+        
+        if (mid >= 0)
+        {
+            int j0 = nums2.size()-1;
+            int j1 = nums2.size()-1;
+            
+            for (int i=0; i<nums1.size(); i++)
+            {
+                if (nums1[i]>0)
+                {
+                    while (j0>=0 && (LL)nums1[i]*(LL)nums2[j0] > mid)
+                        j0--;
+                    ret += j0+1;
+                }
+                else if (nums1[i]==0)
+                    ret += nums2.size();
+                else
+                {
+                    while (j1>=0 && (LL)nums1[i]*(LL)nums2[j1] <= mid)
+                        j1--;
+                    ret += nums2.size()-1-j1;
+                }
+            }
+        }
+        else
+        {
+            int j0 = 0;
+            int j1 = 0;
+            
+            for (int i=0; i<nums1.size(); i++)
+            {
+                if (nums1[i]>0)
+                {
+                    while (j0<nums2.size() && (LL)nums1[i]*(LL)nums2[j0] <= mid)
+                        j0++;
+                    ret += j0;
+                }
+                else if (nums1[i]==0)
+                    ret += 0;
+                else
+                {
+                    while (j1<nums2.size() && (LL)nums1[i]*(LL)nums2[j1] > mid)
+                        j1++;
+                    ret += nums2.size()-j1;
+                }
+            }
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Binary_Search/2040.Kth-Smallest-Product-of-Two-Sorted-Arrays/Readme.md
+::::::::::::::
+### 2040.Kth-Smallest-Product-of-Two-Sorted-Arrays
+
+本题是类似```1918.Kth-Smallest-Subarray-Sum```的套路题，采用二分搜值来猜测答案。
+
+我们令```count = countSmallerOrEqual(m)```来计算有多少对乘积小于或等于m。如果这个数目小于k，那么说明m肯定不是答案，并且易知k太小，所以应该尝试更大的数（即lower = m+1）。如果count大于等于k，说明m可能是答案（因为允许有若干对成绩都等于m）或者m可能猜大了，所以接下来尝试更小的数（即upper = m）。利用二分搜值的模板，直至收敛到```left==right```，就是最终的解。
+
+如果实现函数```countSmallerOrEqual(m)```呢？
+
+#### 方法1：
+最简单的方法就是遍历nums1[i]，在有序数组nums2里面用二分法找一个临界位置j，使得```nums1[i]*nums2[j]<=m```. 这个临界位置j的确定需要分类讨论。
+
+如果nums1[i]>0，那么我们有```nums[j] <= m/nums1[i]```，当m/nums1[i]不能整除时，我们必须保守地取floor(). 这样我们可以用upper_bound求得第一个大于m/nums1[i]的位置j，那么[0,j-1]都是满足条件的解。
+
+如果nums1[i]<0，那么根据不等式性质，移项需要变号，所以我们有```nums[j] >= m/nums1[i]```，当m/nums1[i]不能整除时，我们必须保守地取ceil(). 这样我们可以用lower_bound求得第一个大于等于m/nums1[i]的位置j，那么[j,n-1]都是满足条件的解。
+
+特殊地nums1[i]==0，那么有多少j满足```0*nums[j]<=m```呢？这个其实取决于m。如果m是负数，无解。如果m是非负数，所有的nums2都是解。
+
+#### 方法2：
+类似1918，我们也可以用双指针的单调性来实现o(n)的```countSmallerOrEqual(m)```，不过讨论起来就更复杂了。
+
+```nums1[i]* nums2[j] <= m```
+
+1. m>=0    
+(i) nums[i]>0：  我们有 nums2[j] <= m/nums1[i]。可以知道nums2[j]有个上界，且随着nums1[i]的增大，这个上界越来越小。所以我们从大到小单调地移动j，找到与i对应的临界位置j，那么[0:j]都是合法的解。   
+(ii) nums[i]==0： 所有的nums2都是解。    
+(iii) nums[i]<0：  我们有 nums2[j] >= m/nums1[i]。可以知道nums2[j]有个下界，且随着nums1[i]的增大，这个下界越来越小。所以我们从大到小单调地移动j，找到与i对应的临界位置j，那么[j:n-1]都是合法的解。   
+
+2. m<0    
+(i) nums[i]>0： 我们有 nums2[j] <= m/nums1[i]。可以知道nums2[j]有个上界，且随着nums1[i]的增大，这个上界越来越大。所以我们从小到大单调地移动j，找到与i对应的临界位置j，那么[0:j]都是合法的解。   
+(ii) nums[i]==0： 所有的nums2都不会是解 （因为不可能 ```0*nums[j] < m```）。    
+(iii) nums[i]<0： 我们有 nums2[j] >= m/nums1[i]。可以知道nums2[j]有个下界，且随着nums1[i]的增大，这个下界越来越大。所以我们从小到大单调地移动j，找到与i对应的临界位置j，那么[j:n-1]都是合法的解。   
+::::::::::::::
+Binary_Search/2064.Minimized-Maximum-of-Products-Distributed-to-Any-Store/2064.Minimized-Maximum-of-Products-Distributed-to-Any-Store.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimizedMaximum(int n, vector<int>& quantities) 
+    {
+        int left = 1, right = INT_MAX/2;
+        while (left < right)
+        {
+            int mid = left+(right-left)/2;
+            if (checkOK(quantities, n, mid))            
+                right = mid;                            
+            else
+                left = mid+1;                
+        }
+        return left;
+    }
+    
+    bool checkOK(vector<int>& quantities, int n, int limit)
+    {
+        int count = 0;
+        for (int x: quantities)
+        {
+            if (x%limit == 0)
+                count += x/limit;
+            else
+                count += x/limit+1;
+        }
+        return count <=n;
+    }
+};
+::::::::::::::
+Binary_Search/2064.Minimized-Maximum-of-Products-Distributed-to-Any-Store/Readme.md
+::::::::::::::
+### 2064.Minimized-Maximum-of-Products-Distributed-to-Any-Store
+
+我们不想让每个store存放的物品的太多，那么只好多征用store的数目。但是总的store数目是有限的，这就可能导致冲突。想要解决这个冲突，只能允许让每个store存更多的东西。至此，我们不难想到二分搜值就是一个显然易见的算法。
+
+我们尝试每个store存放物品个数的上限是limit，那么对于每一种物品，我们能算出至少需要多少store来存放。遍历所有的物品种类，就可以得出总共需要的store数目n'，然后与实际的store数目n比较。根据如果n'<=n，说明上限可以往下降（还可以占用更多的store）；反之说明上限必须提升（减少需要占用的store）。
+::::::::::::::
+Binary_Search/2071.Maximum-Number-of-Tasks-You-Can-Assign/2071.Maximum-Number-of-Tasks-You-Can-Assign.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxTaskAssign(vector<int>& tasks, vector<int>& workers, int pills, int strength) 
+    {
+        sort(tasks.begin(), tasks.end());
+        sort(workers.begin(), workers.end());
+        int left = 0, right = tasks.size();
+        while (left < right)
+        {
+            int mid = right - (right - left)/2;
+            if (checkOK(tasks, workers, pills, strength, mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;        
+    }
+    
+    bool checkOK(vector<int>& tasks, vector<int>& workers, int pills, int strength, int num)
+    {
+        if (num > tasks.size()) return false;
+        if (num > workers.size()) return false;
+        
+        multiset<int>Set(workers.begin(), workers.end());        
+                
+        for (int i=num-1; i>=0; i--)
+        {            
+            if (*Set.rbegin() >= tasks[i])            
+            {
+                Set.erase(prev(Set.end()));
+            }
+            else 
+            {
+                if (pills == 0) return false;
+                auto iter = Set.lower_bound(tasks[i]-strength);
+                if (iter == Set.end()) return false;
+                Set.erase(iter);                
+                pills--;
+            }
+        }
+        return true;
+    }
+};
+::::::::::::::
+Binary_Search/2071.Maximum-Number-of-Tasks-You-Can-Assign/Readme.md
+::::::::::::::
+### 2071.Maximum-Number-of-Tasks-You-Can-Assign
+
+这道题如果正面硬刚的话比较棘手。对于任何一个task，我们首先不清楚它是否一定要被选中。即使要选中，它是应该分给一个能够单干的工人，还是分给一个吃了大力丸的工人？同样，对于任何一个工人，我们也不清楚他是否一定要被选中，或者他是选择单干一个task，还是吃一个大力丸再找一个task。
+
+因为本题的解其实是有明确的范围的，即从0件到所有的task。所以我们可以考虑二分搜值，即猜测我们能够完成k件，看一下是否能够有一个合法的方法。
+
+我们发现如果给定了完成k件的指标，就多了很多信息。首先这k件任务一定是难度最低的k件。我们先考虑其中难度最大的。这个难度最大的任务应该是必须完成的，所以它首先会找能力最强的worker，这是因为最强能力的工人如果不去做最难的任务，那么做其他简单任务就是浪费能力。于是就会有两种情况：
+1. 当前最强工人能够单干解决它，那么就把这个任务和工人配对，记得将已经配对的工人剔除。
+2. 如果当前最强工人不能单干解决它，那么意味着我们必须要找一个工人吃大力丸来解决。显然，我们不一定要找最强工人去吃大力丸，我们只需要找一个刚刚好的工人，使得```worker+strength >= task```即可。于是这就提示我们需要将所有的worker排好序，用lower_bound来找到这个刚刚好的工人。完成这次配对之后，这个工人必须剔除。考虑到以后处理其他task时我们可能还需要剩余的工人保持有序状态，所以我们必须使用类似multiset的数据结构来保证删除一个元素之后仍然自动有序。
+
+通过以上方法，就可以贪心地确认每个task应该分给哪个工人。如果指定的k任务都能顺利分配，那么二分搜值的checkOK就可以返回true，可以考虑在下一个回合提升k；反之就要减少k。
+::::::::::::::
+Binary_Search/2137.Pour-Water-Between-Buckets-to-Make-Water-Levels-Equal/2137.Pour-Water-Between-Buckets-to-Make-Water-Levels-Equal.cpp
+::::::::::::::
+class Solution {
+public:
+    double equalizeWater(vector<int>& buckets, int loss) 
+    {
+        double left = 0;
+        double right = 0;
+        for (int x: buckets)
+            right += x;
+        
+        while (abs(right-left)>1e-5)
+        {
+            double mid = (left+right)/2;
+            double s1 = 0;
+            double s2 = 0;
+            for (int x: buckets)
+            {
+                if (x>mid)
+                    s1 += x-mid;
+                else
+                    s2 += mid -x;
+            }
+                        
+            if (s1*(100-loss)*0.01 > s2)
+                left = mid;
+            else
+                right = mid;
+        }
+        
+        return left;
+        
+    }
+};
+::::::::::::::
+Binary_Search/2137.Pour-Water-Between-Buckets-to-Make-Water-Levels-Equal/Readme.md
+::::::::::::::
+### 2137.Pour-Water-Between-Buckets-to-Make-Water-Levels-Equal
+
+二分搜值，猜测一个最终水位level。然后遍历所有水桶，将所有高于level的水量累计起来记做s1，将所有低于level的水量累计起来记做s2，如果s1扣除损耗之后仍然大于s2，那么就可以上调level，否则就下调level。
+::::::::::::::
+Binary_Search/2141.Maximum-Running-Time-of-N-Computers/2141.Maximum-Running-Time-of-N-Computers.cpp
+::::::::::::::
+using LL = long long;
+class Solution {    
+public:
+    long long maxRunTime(int n, vector<int>& batteries) 
+    {
+        LL left = 0, right = LLONG_MAX/2;
+        // sort(batteries.rbegin(), batteries.rend());
+        
+        while (left < right)
+        {
+            LL mid = right-(right-left)/2;
+            if (checkOK(mid, batteries, n))            
+                left = mid;                            
+            else
+                right = mid-1;                
+        }
+        return left;                
+    }
+    
+    bool checkOK(LL T, vector<int>&nums, int n)
+    {
+        int count = 0;
+        LL cur = 0;        
+        for (int i=0; i<nums.size(); i++)
+        {
+            cur+=min((LL)nums[i], T);
+            while (cur >= T)
+            {
+                count++;
+                cur-=T;
+            }
+            if (count >= n)
+                return true;
+        }
+        return false;
+    }
+};
+::::::::::::::
+Binary_Search/2141.Maximum-Running-Time-of-N-Computers/Readme.md
+::::::::::::::
+### 2141.Maximum-Running-Time-of-N-Computers
+
+万事不决用二分。本题的本质就是设计检验函数checkOK(int T)，看看是否能支持N台电脑运行T时间。因为电池可以任意分配给各个电脑和各个时段，所以策略很简单，把所有的电池容量加起来，查看能否支撑```T*N```即可。唯一需要注意的就是，任意一个电池都不能贡献超过时间T（因为我们只会让电脑运行时间T）。所以我们在算电池总容量的时候，取T为上限。
+
+有了checkOK函数，那么我们不断猜测T。如果返回true，说明T可能是解，但也许还可以更大，那么我们就可以再往上猜；如果返回false，说明T太长了，就往下猜。本题一定有解，那么收敛解就是最终解。

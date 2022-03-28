@@ -1,0 +1,1421 @@
+::::::::::::::
+Heap/0220.Contains-Duplicate-III/220.Contains-Duplicate-III.cpp
+::::::::::::::
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) 
+    {
+        multiset<long>Set;
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (i>k) Set.erase(Set.lower_bound((long)nums[i-k-1]));
+
+            auto iter = Set.lower_bound((long)nums[i]-t);
+            if (iter!=Set.end() && abs(*iter - (long)nums[i]) <= t) return true;
+
+            Set.insert(nums[i]);
+        }
+        return false;
+    }
+};
+::::::::::::::
+Heap/0220.Contains-Duplicate-III/Readme.md
+::::::::::::::
+### 220.Contains-Duplicate-III
+
+首先明确一下题意，i和j必须是不相同的两个下标。否则无论何时，你取i==j，总是能够满足题意的。
+
+此题没有什么高明之处，对于nums[i]，将i之前长度为k的滑动窗口放入一个multiset中。我们只需要考察这个有序集合里是否存在数值大小在```[nums[i]-t, nums[i]+t]```间的元素。我们用```Set.lower_bound(nums[i]-t)```寻找第一个大于等于nums[i]-t的位置。我们只需要判断该位置的元素是否存在（即是否非Set.end()），以及是否落在期望区间内即可。我们不需要再考察上界的位置。
+::::::::::::::
+Heap/0295.Find-Median-from-Data-Stream/295.Find-Median-from-Data-Stream.cpp
+::::::::::::::
+class MedianFinder {
+    multiset<int>Small;
+    multiset<int>Large;
+    
+public:
+    /** initialize your data structure here. */
+    MedianFinder() 
+    {
+        Small.clear();
+        Large.clear();
+    }
+    
+    void addNum(int num) 
+    {
+        if (Large.size()==0)
+            Large.insert(num);
+        else
+        {
+            if (num>=*(Large.begin()))
+                Large.insert(num);
+            else
+                Small.insert(num);
+        }
+        
+        if (Large.size()>=Small.size()+2)
+        {
+            Small.insert(*Large.begin());
+            Large.erase(Large.begin());
+        }
+        else if (Small.size()>Large.size())
+        {
+            Large.insert(*(--Small.end()));
+            Small.erase(--Small.end());
+        }
+    }
+    
+    double findMedian() 
+    {
+        if (Large.size()>Small.size())
+            return *Large.begin();
+        else
+            return (*Large.begin()+*(--Small.end()))*1.0/2.0;
+    }
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+::::::::::::::
+Heap/0295.Find-Median-from-Data-Stream/295.Find-Median-from-Data-Stream_v2.cpp
+::::::::::::::
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    double result;
+    multiset<int>Set;
+    multiset<int>::iterator iter;
+    
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) 
+    {
+        Set.insert(num);
+        
+        if (Set.size()==1)
+        {
+            iter = Set.begin();
+            result = *iter;
+            return;
+        }
+        
+        if (Set.size()%2==1)    // OOXOOO
+        {
+            if (num>=*iter)
+                iter = next(iter,1);
+            result = *iter;
+        }
+        else    // OOXOO
+        {
+            if (num<*iter)
+                iter = prev(iter,1);
+            result = *iter*0.5 + *next(iter,1)*0.5;                
+        }        
+    }
+    
+    double findMedian() 
+    {
+        return result;
+    }
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */
+::::::::::::::
+Heap/0295.Find-Median-from-Data-Stream/Readme.md
+::::::::::::::
+### 295.Find-Median-from-Data-Stream
+
+#### 解法1:
+设计两个可以实时排序的multiset，其中一个Large存放较大的那一半数据，另一个Small存放较小的那一半数据。
+
+每次读入一个新数num，将其和Large的首元素比较大小，决定是加入Large还是Small。加入之后，需要调整Large和Small的个数，使得总是保持Large比Small多一个或者两者数目相等。
+
+输出的Median就是Large的首元素，或者Large首元素和Small尾元素的平均值。
+
+#### 解法2:
+使用multiset容器和相应的迭代器的操作,非常简单明了.不断更新处于正中间或者中间偏左的那个迭代器位置即可.
+
+注意,multiset里有相同的元素加入时,新元素的迭代器位置在旧元素迭代器位置的后面.
+
+
+[Leetcode Link](https://leetcode.com/problems/find-median-from-data-stream)::::::::::::::
+Heap/0352.Data-Stream-as-Disjoint-Intervals/352.Data Stream as Disjoint Intervals.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class SummaryRanges {
+    struct cmp
+    {
+        bool operator()(Interval a, Interval b)
+        {
+            return a.start<b.end;
+        }
+    };
+    set<Interval,cmp>Set;
+    
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) 
+    {
+        int flag=0;
+        int a,b;
+        
+        // 空集特殊处理
+        if (Set.size()==0)
+        {
+            Set.insert(Interval(val,val));
+            return;
+        }
+        
+        
+        // 如果已经存在于已有的区间中，那么什么都不用做
+        auto it = Set.lower_bound(Interval(val,val));            
+        if (val>=it->start && val<=it->end)
+            return;        
+        
+        if (it!=Set.begin())
+        {
+            it--;
+            if (val>=it->start && val<=it->end)
+                return;
+        }
+            
+        // 如果可以与一个区间相接，那么更新那个区间
+        it = Set.lower_bound(Interval(val,val));
+        if (it!=Set.begin())
+        {
+            it--;
+            if (it->end==val-1)
+            {
+                a = it->start;
+                b = val;
+                Set.erase(it);
+                Set.insert(Interval(a,b));
+                flag=1;
+            }
+        }
+        
+
+        it = Set.lower_bound(Interval(val,val));
+        if (it!=Set.end() && it->start==val+1)
+        {
+            a = val;
+            b = it->end;
+            Set.erase(it);
+            Set.insert(Interval(a,b));
+            flag++;
+        }
+        
+        // 如果更新了两个区间，说明这两个区间可以拼接起来。
+        if (flag==2)
+        {
+            it = Set.lower_bound(Interval(val,val));
+            if (it!=Set.begin() && it!=Set.end())
+            {
+                auto it0=it;
+                it0--;
+                if (it0->end==it->start)
+                {
+                    a=it0->start;
+                    b=it->end;
+                    Set.erase(it0);
+                    Set.erase(it);
+                    Set.insert(Interval(a,b));
+                }
+            }
+        }
+        // 没有相邻接的区间可以更新，那么就自己单独作为一个区间
+        else if (flag==0)
+        {
+            Set.insert(Interval(val,val));
+        }
+        
+        
+    }
+    
+    vector<Interval> getIntervals() 
+    {
+        vector<Interval>results;
+        for (auto a:Set)
+            results.push_back(a);
+        return results;
+    }
+};
+
+/**
+ * Your SummaryRanges object will be instantiated and called as such:
+ * SummaryRanges obj = new SummaryRanges();
+ * obj.addNum(val);
+ * vector<Interval> param_2 = obj.getIntervals();
+ */
+::::::::::::::
+Heap/0352.Data-Stream-as-Disjoint-Intervals/352.Data-Stream-as-Disjoint-Intervals-v2.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class SummaryRanges {
+    set<int>Set;
+    
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) 
+    {
+        Set.insert(val);
+    }
+    
+    vector<Interval> getIntervals() 
+    {
+        vector<Interval>result;
+        int start;
+        int end;
+        int first=1;
+
+        for (auto a:Set)
+        {
+            if (first)
+            {
+                start=a;
+                end=a;
+                first=0;
+                continue;
+            }
+            
+            if (a==end+1)
+            {
+                end=a;
+            }
+            else
+            {
+                Interval newInterval(start,end);
+                result.push_back(newInterval);
+                start=a;
+                end=a;
+            }
+        }
+        
+        Interval newInterval(start,end);
+        result.push_back(newInterval);        
+        
+        return result;
+    }
+};
+
+/**
+ * Your SummaryRanges object will be instantiated and called as such:
+ * SummaryRanges obj = new SummaryRanges();
+ * obj.addNum(val);
+ * vector<Interval> param_2 = obj.getIntervals();
+ */
+::::::::::::::
+Heap/0352.Data-Stream-as-Disjoint-Intervals/352.Data-Stream-as-Disjoint-Intervals-v3.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class SummaryRanges {
+public:
+    map<int,int>Map;
+    
+    /** Initialize your data structure here. */
+    SummaryRanges() 
+    {
+        Map[-2]=-2;
+    }
+    
+    void addNum(int val) 
+    {
+        auto pos = Map.lower_bound(val);        
+
+        if (pos!=Map.end() && pos->first==val) return;                        
+        if (prev(pos,1)->second>=val) return;  // if val is already within an interval                                        
+        
+        if (prev(pos,1)->second==val-1)
+            prev(pos,1)->second=val;   // if val is at the right boundary of the previous interval
+        else        
+            Map[val]=val;               // if val is not connected to the previous interval, create a new one
+                
+        pos = Map.upper_bound(val);        
+        if (pos!=Map.end() && pos->first==prev(pos,1)->second+1) // if the new interval is conneted to the next interval
+        {
+            prev(pos,1)->second = pos->second;
+            Map.erase(pos);
+        }         
+        
+    }
+    
+    vector<Interval> getIntervals() 
+    {
+        vector<Interval>results;
+        for (auto a:Map)
+        {
+            if (a.first!=-2)
+                results.push_back(Interval(a.first,a.second));
+        }
+        return results;
+    }
+};
+
+/**
+ * Your SummaryRanges object will be instantiated and called as such:
+ * SummaryRanges obj = new SummaryRanges();
+ * obj.addNum(val);
+ * vector<Interval> param_2 = obj.getIntervals();
+ */
+::::::::::::::
+Heap/0352.Data-Stream-as-Disjoint-Intervals/Readme.md
+::::::::::::::
+### 352.Data-Stream-as-Disjoint-Intervals
+
+#### 方法1
+本题需要一种数据结构，能够每扔进一个元素就能自动排序。我们很容易想到priority_queue。但是我们还需要能够便于查找元素，那么priority_queue就没有办法了，它本质是栈，只能一个一个读取。我们这里采用的是有序集合（ordered set)，不仅能实现自动排序，它的lower_bound函数也很好用，可以log(N)地迅速定位查找。需要注意的是，集合的元素在物理内存上并不是连续的，所以迭代器（可以想象成指针）不能任意移动指定数目，只能通过重载的自增自减操作来实现移动。
+
+本题中，集合的元素是自定义结构Interval，所以需要自己写自动比较排序的函数. 集合的定义和自定义比较函数如下：
+```cpp
+struct cmp
+{
+   bool operator()(Interval a, Interval b)
+   {
+      return a.start<b.start;
+   }
+};
+
+set<Interval,cmp>Set;
+```
+每当新进一个元素val，我们可以得到 auto it=Set.lower_bound(val) 表示定位到的指针。注意，根据自定义函数cmp，所有start比it->start严格小的区间都在it位置之前。
+
+程序的主体根据这几种情况来分类考虑：
+1. val是否已经存在一个区间里。需要把val和it所在区间上下限比较（如果it不是Set.end()的话)；注意，还需要把val和(it--)所代表区间的上下限比较（如果it不是Set.begin()的话）
+2. val是否和一个已经存在的区间相邻接。如果 it!=Set.end() && val+1==it->start，那么把原来的it区间删除，加入一个更新了下界的区间。同理，如果it!=Set.begin()那么就可以考察it--，当it->end==val-1，那么把原来的it区间删除，加入一个更新了上界的区间。
+3. 如果发现2里面我们操作了两次，说明有两个区间可以再合并。我们再次找到it；如果it!=Set.begin()那么就可以找到it--.把上述两个迭代器对应的元素从集合里删除，取代一个新的加入。
+4. 如果发现1-3都没有操作，那么val就可以独立成为一个区间加入。
+
+本题对于Set的迭代器操作要求概念明晰。
+1. 知道对于集合，it+=1操作是不合法的，只有it++/it--操作才被合法重载。
+2. 集合里的元素只能删除、增加，不可以修改，
+
+#### 方法2
+将所有的元素都放在一个有序集合Set里，不着急处理。仅当需要输出区间数组时，根据这堆有序数列即时生成。这样就避免了考虑区间合并等复杂的处理。
+
+根据数列生成区间的方法：遍历这个集合，不断更新start和end。当集合元素a!=end+1时，就可以根据start/end生成一个区间；同时更新 start=a, end=a.
+
+#### 方法3
+使用有序的Map，key是左边界，val是右边界。总体思路和方法1差不多，需要完备考虑各种插入的情况。
+
+
+
+[Leetcode Link](https://leetcode.com/problems/data-stream-as-disjoint-intervals)::::::::::::::
+Heap/0363.Max-Sum-of-Rectangle-No-Larger-Than-K/363.Max-Sum-of-Rectangle-No-Larger-Than-K.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int k) 
+    {
+        int M = matrix.size();
+        if (M==0) return 0;
+        int N = matrix[0].size();
+        
+        if (M>N)
+        {
+            vector<vector<int>>matrix2(N,vector<int>(M,0));
+            for (int i=0; i<M; i++)
+                for (int j=0; j<N; j++)
+                    matrix2[j][i]=matrix[i][j];
+            return maxSumSubmatrix(matrix2,k);
+        }
+        
+        int result = INT_MIN;
+        
+        for (int i=0; i<M; i++)        
+        {
+            vector<int>row(N,0);
+            for (int j=i; j<M; j++)
+            {
+                for (int k=0; k<N; k++)
+                    row[k]+=matrix[j][k];
+                result = max(result,helper(row,k));
+            }
+        }        
+        return result;
+    }
+    
+    int helper(vector<int>&row, int k)
+    {
+        set<int>Set({0});
+        int preSum = 0;
+        int result = INT_MIN;
+        for (int i=0; i<row.size(); i++)
+        {
+            preSum+=row[i];
+            auto iter = Set.lower_bound(preSum-k);
+            if (iter!=Set.end()) 
+                result = max(result,preSum-*iter);
+            Set.insert(preSum);
+        }
+        return result;
+    }    
+};
+::::::::::::::
+Heap/0363.Max-Sum-of-Rectangle-No-Larger-Than-K/Readme.md
+::::::::::::::
+### 363.Max-Sum-of-Rectangle-No-Larger-Than-K
+
+Brutal Force的时间复杂度是o(m\*m\*n\*n)，肯定不明智。
+
+一个很自然的想法是：选定任意两行之后，可以利用列方向上的累加和数组转化为一维的问题： max sum of subarray No larger than K，时间复杂度可以降为o(m\*m\*n\*logn)。
+
+1.对于这个一维问题，首先构造横方向上的累加和数组sum，但注意累加和数组sum不会是单调增的，所以不能用数组的二分搜索！
+
+2.然后，问题已经简化为对于一个数组sum，找到两个位置i和j，使其差不大于k。什么思路？
+从前往后遍历j，搜索在j之前的元素是否有i满足条件 sum[j]-sum[i]<k，更新结果，并将j元素也加入累加和的序列中。
+
+3.怎么样高效搜索j之前的sum元素呢？希望累加和元素的排练是有序的！但不能是数组，否则每次加入新元素并重排的耗时很长。快速保持有序序列的数据结构可以用顺序集合set，利用函数Set.lower\_bound(val)对其迭代器进行二分查找。注意，用 auto it = lower\_bound(Set.begin(),Set.end(),val) 虽然等价但会耗时非常长。
+```cpp
+                set<int>Set;
+                Set.insert(0);
+                int CurSum=0;
+                for (int j=0; j<N; j++)
+                {
+                    CurSum+=sum[j];
+                    
+                    auto it = Set.lower_bound(CurSum-k); // 返回第一个大于等于CurSum-k的迭代器
+                    if (it!=Set.end()) 
+                        result = max(result,CurSum-*it);
+                    Set.insert(CurSum);
+                }
+```
+
+4.如果矩阵的行数远远大于列数，一定需要将矩阵转置以后再算，否则超时。
+
+
+[Leetcode Link](https://leetcode.com/problems/max-sum-of-rectangle-no-larger-than-k)::::::::::::::
+Heap/0480.Sliding-Window-Median/480.Sliding-Window-Median.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<double> medianSlidingWindow(vector<int>& nums, int k) 
+    {
+        multiset<int>Set;
+        for (int i=0; i<k; i++)        
+            Set.insert(nums[i]);
+        
+        auto pos=Set.begin();
+        for (int i=0; i<k/2; i++)
+            pos=next(pos,1);
+        
+        vector<double>results;
+        
+        for (int i=k; i<=nums.size(); i++)
+        {
+            if (k%2==1)
+                results.push_back(*pos);
+            else
+                results.push_back(*pos/2.0+*prev(pos,1)/2.0);
+            
+            if (i==nums.size()) break;
+            
+            Set.insert(nums[i]);
+            
+            if (k%2==1)   // OXO
+            {
+                if (nums[i]>=*pos)
+                    pos++;
+                                
+                // OOXO
+                if (nums[i-k]>*pos)
+                    pos--;
+                else if (nums[i-k]<*pos)
+                    ;
+                else if (nums[i-k]==*pos && *prev(pos,1)!=*pos)  
+                    // 如果X左边是个重复元素，则无需改动；如果X左边不是重复元素，则X会被删除，指针需左移
+                    pos--;                
+            }
+            else    // OOXO
+            {
+                if (nums[i]<*pos)
+                    pos--;
+                
+                // OOXOO
+                if (nums[i-k]<*pos)
+                    pos++;
+                else if (nums[i-k]>*pos)
+                    ;
+                else if (nums[i-k]==*pos)
+                    // 如果X左边是个重复元素，则会删除那个O；如果X左边不是重复元素，则会删除X。两种情况下指针都需右移
+                    pos++;
+            }
+            
+            Set.erase(Set.lower_bound(nums[i-k]));     
+        }
+        
+        return results;
+        
+    }
+};
+::::::::::::::
+Heap/0480.Sliding-Window-Median/Readme.md
+::::::::::::::
+### 480.Sliding-Window-Median
+
+希望能够自动排序的容器，首选set或者multiset。对于这类非线性的容器，不能用+k或-k来实现迭代器的移动，必须用for循环不断++/--，或者使用next或prev。例如
+```cpp
+set<int>::iterator pos = next(Set.begin(),k); //从Set.begin()开始后移k个
+set<int>::iterator pos = prev(Set.end(),k);  //从Set.end()开始前移k个
+```
+本题里设置一个multiset，初始化时用next命令把pos定位到最中间（Set容量为奇数）、或者中间靠右（Set容量为偶数）的那个迭代器。
+
+每次一进一出的操作如下。对于k奇偶性通用的代码比较难理解，那就索性分别讨论容易理清思路。
+
+```cpp            
+        for (int i=k; i<=nums.size(); i++)
+        {
+            if (k%2==1) results.push_back(*pos);
+            else results.push_back(*pos/2.0+*prev(pos,1)/2.0);
+            
+            if (i==nums.size()) break;
+            
+            Set.insert(nums[i]);
+            
+            if (k%2==1)   // 当k为奇数时，Set内的排列为 OXO，X为pos指针
+            {
+                if (nums[i]>=*pos)
+                    pos++;
+                                
+                // 加入一个元素后，此时阵型为 OOXO
+                if (nums[i-k]>*pos)
+                    pos--;
+                else if (nums[i-k]<*pos)
+                    ;
+                else if (nums[i-k]==*pos && *prev(pos,1)!=*pos)  
+                    // 如果X左边是个重复元素，则无需改动；如果X左边不是重复元素，则X会被删除，指针需左移
+                    pos--;                
+            }
+            else    // 当k为偶数时，Set内的排列为 OOXO，X为pos指针
+            {
+                if (nums[i]<*pos)
+                    pos--;
+                
+                // 加入一个元素后，此时阵型为 OOXOO
+                if (nums[i-k]<*pos)
+                    pos++;
+                else if (nums[i-k]>*pos)
+                    ;
+                else if (nums[i-k]==*pos)
+                    // 如果X左边是个重复元素，则会删除那个O；如果X左边不是重复元素，则会删除X。两种情况下指针都需右移
+                    pos++;
+            }
+            
+            Set.erase(Set.lower_bound(nums[i-k]));     
+        }
+```
+
+每次内循环之后，pos的定义不变（最中间或者最中间靠右的迭代器）。
+
+
+[Leetcode Link](https://leetcode.com/problems/sliding-window-median)::::::::::::::
+Heap/0632.Smallest-Range-Covering-Elements-from-K-Lists/632.Smallest-Range-Covering-Elements-from-K-Lists.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) 
+    {
+        set<pair<int,int>>Set;
+        int n = nums.size();
+        vector<int>pointers;
+        for (int i=0; i<n; i++)
+        {
+            pointers.push_back(0);
+            Set.insert({nums[i][0],i});
+        }
+
+        int range = INT_MAX;
+        vector<int>ret;
+        while (1)
+        {
+            if (Set.rbegin()->first - Set.begin()->first < range)
+            {
+                range = Set.rbegin()->first - Set.begin()->first;
+                ret = {Set.begin()->first, Set.rbegin()->first};
+            }            
+            int i = Set.begin()->second;
+            pointers[i]++;
+            if (pointers[i]==nums[i].size()) break;
+            Set.erase(Set.begin());
+            Set.insert({nums[i][pointers[i]],i});
+        }
+
+        return ret;
+    }
+};
+::::::::::::::
+Heap/0632.Smallest-Range-Covering-Elements-from-K-Lists/Readme.md
+::::::::::::::
+### 632.Smallest-Range
+
+本题的想法是：从小到大遍历所有的元素a，考虑如果以a为最小值，那么符合条件的最大值b是多少？
+
+我们第一个考察的a必然是全局的最小值，假设它是nums[0]的第一个元素。那么我们如何找range的其他元素呢？显然为了使得range的范围最小、并且每个nums都被覆盖到，我们必然选取的都是每个nums[i]的第一个元素。我们把这个n个数放进一个有序容器里，自动排序后就知道最大值b是多少。因此b-a就可以确定下来了。
+
+那么第二个考察的a就是全局的次小值。怎么找到这个次小值呢？我们只要把原来的a从有序容器里弹出去，再加进来nums[0]的第二个元素。此时有序容器里面的最小元素必然就是此时全局的次小值a。而且我们发现，现在容器里面的n个元素恰好覆盖了每个nums，并且都是各个nums里面的最小值（刨去已经弹走的不计）。所以我们用此时容器里面的最大值和最小值，就对应这当前range。
+
+依次类推，我们每弹出一个当前容器里的最小值，为了保证每个nums都被覆盖到，必然就从那个数组里再补进一个最小值。此时容器里面的所有元素，就是当前全局最小值所对应的range（即恰好覆盖每个nums）。直至某次弹出最小值后，发现无法再从它的nums里补进新元素，说明再无法用剩下的元素取覆盖所有nums，即推出。
+
+[Leetcode Link](https://leetcode.com/problems/smallest-range)
+::::::::::::::
+Heap/0729.My-Calendar-I/729.My-Calendar-I.cpp
+::::::::::::::
+class MyCalendar {
+    map<int,int>Map;
+public:
+    MyCalendar() {
+        
+    }
+    
+    bool book(int start, int end) 
+    {
+        auto iter1 = Map.upper_bound(start);
+        if (iter1!=Map.begin())
+        {
+            auto iter2 = prev(iter1,1);
+            if (iter2->second > start)
+                return false;
+        }
+        if (iter1 != Map.end())
+        {
+            if (iter1->first < end)
+                return false;
+        }
+        Map[start] = end;
+        return true;
+    }
+};
+::::::::::::::
+Heap/0729.My-Calendar-I/Readme.md
+::::::::::::::
+### 729.My-Calendar-I
+
+此题是训练C++里使用有序容器数据结构（比如说map，set等）基本功的一道题。
+
+首先，使用Map.upper_bound(start)找到第一个大于start的迭代器iter，检查其对应的区间[a,b)是否与[start,end)重合。记得前提是iter有意义，也就是iter!=Map.end().
+
+接着，将iter回退一个位置，找到第一个小于等于start的迭代器，检查其对应的区间[a,b)是否与[start,end)重合。同样，记得前提是此时的iter有意义，也就是iter!=Map.begin().
+
+
+[Leetcode Link](https://leetcode.com/problems/my-calendar-i)::::::::::::::
+Heap/0975.Odd-Even-Jump/975.Odd-Even-Jump.cpp
+::::::::::::::
+class Solution {
+public:
+    int oddEvenJumps(vector<int>& A) 
+    {
+        int n = A.size();
+        vector<bool>odd(n,0);
+        vector<bool>even(n,0);
+        odd[n-1] = true;
+        even[n-1] = true;
+                
+        map<int,int>Map;        
+        Map[A.back()] = n-1;
+        
+        for (int i=n-2; i>=0; i--)
+        {            
+            auto iter1 = Map.lower_bound(A[i]);   
+            if (iter1!=Map.end())
+            {                
+                if (even[iter1->second]) odd[i] = true;
+            }
+            
+            auto iter2 = Map.upper_bound(A[i]);
+            if (iter2!=Map.begin())
+            {
+                iter2 = prev(iter2,1);                
+                if (odd[iter2->second]) even[i] = true;
+            }
+            
+            Map[A[i]] = i;
+        }
+        
+        int count = 0;
+        for (int i=0; i<n; i++)
+            if (odd[i]) count++;
+        return count;
+    }
+};
+::::::::::::::
+Heap/0975.Odd-Even-Jump/Readme.md
+::::::::::::::
+### 975.Odd-Even-Jump
+
+令dp_odd[i]表示从位置i开始作为奇数次的起跳，能否到达终点；dp_even[i]表示从位置i开始作为偶数次的起跳，能否到达终点。
+
+从后往前考虑，对于元素A[i]，如果能寻找到它的下一步跳到的位置j，那么显然```dp_odd[i] = dp_even[j]```，```dp_even[i] = dp_odd[j]```.
+
+怎么高效地从i找到j呢？对于奇数次跳跃，显然考虑将i之后的所有元素放在一起排个序，有就二分法```A[j] = *lower_bound(A[i])```，然后再从这个A[j]映射回j。同理，对于偶数次跳跃，也是考虑将i之后的所有元素放在一起排个序，有```A[j] = *prev(upper_bound(A[i]),1)```，然后再从这个A[j]映射回j。
+
+显然，要保证所有i之后的元素放在一起是自动有序的，数据结构必然选择set或者map。这样每加入一个新元素，都是以log(n)的代价继续保持这个set或map是有序的。用lower_bound或upper_bound非常方便。
+
+
+[Leetcode Link](https://leetcode.com/problems/odd-even-jump)::::::::::::::
+Heap/1296.Divide-Array-in-Sets-of-K-Consecutive-Numbers/1296.Divide-Array-in-Sets-of-K-Consecutive-Numbers.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isPossibleDivide(vector<int>& nums, int k) 
+    {
+        multiset<int>Set(nums.begin(),nums.end());
+        while (Set.size()>0)
+        {
+            int a = *(Set.begin());
+            for (int i=0; i<k; i++)
+            {
+                if (Set.find(a+i)==Set.end())
+                    return false;
+                Set.erase(Set.lower_bound(a+i));
+            }            
+        }
+        return true;        
+    }
+};
+::::::::::::::
+Heap/1296.Divide-Array-in-Sets-of-K-Consecutive-Numbers/Readme.md
+::::::::::::::
+### 1296.Divide-Array-in-Sets-of-K-Consecutive-Numbers
+
+假设这个数组的元素满足条件，那么对于全局最小的元素a而言，它必然也是某个连续k序列的最小元素，即 a, a+1, a+2, ... a+k-1 这k个数必须都要在数组中存在。所以我们将这k个元素拿走之后，可以重复之前的操作：即此时全局最小元素a，必然也是某个连续k序列的最小元素，我们再将它们拿走...直至全部元素都归类完毕。如果某次删除k序列的操作不能恰好完成，那么就返回false。
+
+为了方便“删除”操作，C++我们选择multiset这个数据结构，它可以盛装重复的元素，同时是自动保持有序的。每次的全局最小元素可以直接从Set.begin()里面读就行。
+::::::::::::::
+Heap/1348.Tweet-Counts-Per-Frequency/1348.Tweet-Counts-Per-Frequency.cpp
+::::::::::::::
+class TweetCounts {
+    unordered_map<string,multiset<int>>Map;
+public:
+    TweetCounts() {
+        
+    }
+    
+    void recordTweet(string tweetName, int time) 
+    {
+        Map[tweetName].insert(time);
+    }
+    
+    vector<int> getTweetCountsPerFrequency(string freq, string tweetName, int startTime, int endTime) 
+    {
+        vector<int>rets;
+                
+        int count = 0;
+        int delta = 0;
+        if (freq=="minute")
+            delta = 60;
+        else if (freq=="hour")
+            delta = 60*60;
+        else
+            delta = 60*60*24;
+        
+        auto iter = Map[tweetName].lower_bound(startTime);                
+        
+        while (startTime <= endTime)
+        {            
+            if (iter!=Map[tweetName].end() && *iter < startTime+delta && *iter<=endTime)
+            {
+                count++;
+                iter = next(iter,1);
+            }
+            else
+            {
+                rets.push_back(count);
+                count = 0;
+                startTime += delta;
+            }
+        }
+        
+        return rets;
+    }
+};
+
+/**
+ * Your TweetCounts object will be instantiated and called as such:
+ * TweetCounts* obj = new TweetCounts();
+ * obj->recordTweet(tweetName,time);
+ * vector<int> param_2 = obj->getTweetCountsPerFrequency(freq,tweetName,startTime,endTime);
+ */
+::::::::::::::
+Heap/1348.Tweet-Counts-Per-Frequency/Readme.md
+::::::::::::::
+### 1348.Tweet-Counts-Per-Frequency
+
+这题要注意到，允许有在同一个时刻存在多个tweetName相同的帖子。因此我们应该采用multiset<int>来记录每个帖子出现的时间，并使之始终保持有序。
+
+然后比较容易想到的是用```auto iter = Map[tweetName].lower_bound(startTime);```来定位第一个大于等于startTime的帖子。那么接下来如何有条理地求得每一个区间呢？
+
+因为我们要记录所有的区间，所以我的建议是：从startTime开始，以delta为间隔，不停地往后爬。
+```cpp
+// 目标：考察[startTime, startTime+delta)区间内有几个元素
+while (startTime <= endTime)
+{  
+  if (*iter落在这个区间里）
+  {
+    count++;
+    iter++;
+  }
+  else // 这个区间里不可能再有其他元素了，就close这个区间，开启下一个
+  {
+    rets.push_back(count);
+    startTime+=delta;
+    count = 0;
+  }
+  
+}
+```
+
+但是要特别注意，\*iter有可能虽然落在了区间里但是在endTime之外。所以第一个if语句要写成：
+```cpp 
+if (iter!=Map[tweetName].end() && *iter < startTime+delta && *iter<=endTime)
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/tweet-counts-per-frequency)::::::::::::::
+Heap/1606.Find-Servers-That-Handled-Most-Number-of-Requests/1606.Find-Servers-That-Handled-Most-Number-of-Requests.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> busiestServers(int k, vector<int>& arrival, vector<int>& load) 
+    {
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>>busy;
+        set<int>free;
+        for (int i=0; i<k; i++)
+            free.insert(i);
+        vector<int>count(k,0);
+        
+        for (int i=0; i<arrival.size(); i++)
+        {
+            while (!busy.empty() && busy.top().first <= arrival[i])
+            {                
+                free.insert(busy.top().second);
+                busy.pop();
+            }
+            
+            if (free.empty()) continue;
+            
+            auto iter = free.lower_bound(i%k);
+            if (iter == free.end())
+                iter = free.begin();
+            
+            int id = *iter;
+            count[id] += 1;
+            free.erase(id);
+            busy.push({arrival[i]+load[i], id});            
+        }
+        
+        vector<int>ret;
+        int maxCount = *max_element(count.begin(), count.end());
+        for (int i=0; i<k; i++)
+            if (count[i]==maxCount)
+                ret.push_back(i);
+        return ret;
+    }
+};
+::::::::::::::
+Heap/1606.Find-Servers-That-Handled-Most-Number-of-Requests/Readme.md
+::::::::::::::
+### 1606.Find-Servers-That-Handled-Most-Number-of-Requests
+
+我们希望能有一个集合free，里面存放当前空闲的服务器id。如果这个集合是有序的，那么显然我们就很容易用二分法找到我们想要操作的服务器（也就是第一个大于等于i%k的机器，如果没有，就找id最小的机器）。然后我们会将这个机器从集合中删除。然后处理下一个任务。
+
+那么如何往free里面添加已经完成任务的呢？我们可以在处理任务i的时候，将所有arrival[i]之前就已经完工的机器加入到free里面。因此我们可以维护一个busy的优先队列，存放的都是正在工作的机器，并且按照预期完工时间从早到晚排序。因此每次我们找到处理任务i的机器时，记得将它加入busy队列。
+
+最终我们将每台机器被指派的任务累加起来找到最大值即可。
+
+时间复杂度分析：外层的循环是o(N)。内层对于free而言，每层循环有固定一次的查找、删除；对于busy而言，有固定一次的弹出。考虑到free和busy最长是K，所以最终时间复杂度大概是```O(N*logK)```
+::::::::::::::
+Heap/1675.Minimize-Deviation-in-Array/1675.Minimize-Deviation-in-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumDeviation(vector<int>& nums) 
+    {
+        multiset<int>Set;
+        for (auto x: nums)
+        {
+            if (x%2==0)
+                Set.insert(x);
+            else
+                Set.insert(x*2);
+        }
+
+        int ret = INT_MAX;
+        while (!Set.empty())
+        {
+            ret = min(ret, *Set.rbegin() - *Set.begin());
+            int k = *Set.rbegin();
+            Set.erase(prev(Set.end()));
+            if (k%2==1)
+                break;
+            else
+                Set.insert(k/2);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Heap/1675.Minimize-Deviation-in-Array/Readme.md
+::::::::::::::
+### 1675.Minimize-Deviation-in-Array
+
+对于奇数x，它可以变换成2x,x; 对于偶数x，它可以变换成x, x/2, x/4, ... 直至变成一个奇数。我们将每个数和它的变换数看作是一组。于是本题就是要求从每组里面取一个数，使得所取的这些数的range最小。这样看来，本题的本质就是和```632.Smallest-Range-Covering-Elements-from-K-Lists```一模一样了。
+
+具体的方法是，查看全局最大值x，考虑如果以x为range最大值时，此时最优的range最小值是什么？显然，除了x所在的“组”，其他的组我们都会选取该组的最大值，因为它们比同组的其他元素离x更近。于是等效于我们pick了所有组的最大元素组成一个range。如果我们用优先队列来盛装这n个元素组成的range，我们就可以知道这个range里面的最小值y，于是x-y就是deviation。
+
+接下来，我们会将全局最大值x扔掉，那么它所在组就会用该组第二大的元素来“替补”这个代表席位并放进range里。此时，全局次大值x'必然也在这个range里（因为它必然是此时某组的最大值）。于是x'减去此时range的最小值，得到的就是x'所对应的最优range的deviation。
+
+依次类推，每一轮我们扔掉之前的全局最大值，同时递补进该组的下一个元素。此时range里面的n个元素的deviation，就对应了“当前最大值”作为“range最大值”时的最优解。
+
+此题本质上和```632.Smallest-Range-Covering-Elements-from-K-Lists```非常类似。
+::::::::::::::
+Heap/1825.Finding-MK-Average/1825.Finding-MK-Average.cpp
+::::::::::::::
+class MKAverage {
+    int m,k;
+    multiset<int>left, mid, right;
+    queue<int>q;
+    long sum = 0;    
+public:
+    MKAverage(int m, int k) 
+    {
+        this->m = m;
+        this->k = k;        
+    }
+    
+    void shiftRight(multiset<int>&A, multiset<int>&B)
+    {
+        B.insert(*A.rbegin());
+        A.erase(--A.end());
+    }
+
+    void shiftLeft(multiset<int>&A, multiset<int>&B)
+    {
+        A.insert(*B.begin());
+        B.erase(B.begin());
+    }
+
+    void addElement(int num) 
+    {                
+        if (q.size() < m)
+        {                        
+            q.push(num);
+            mid.insert(num);
+            sum += num;
+
+            if (q.size()==m)
+            {
+                while (left.size()<k)
+                {
+                    sum -= *mid.begin();
+                    shiftLeft(left, mid);
+                }                    
+                while (right.size()<k)
+                {
+                    sum -= *mid.rbegin();
+                    shiftRight(mid, right);
+                }                    
+            }
+        }            
+        else if (q.size() == m)
+        {
+            // add the new element
+            q.push(num);
+            if (!left.empty() && num <= *left.rbegin())
+                left.insert(num);
+            else if (!right.empty() && num >= *right.begin())
+                right.insert(num);
+            else
+            {
+                mid.insert(num);
+                sum += num;
+            }
+
+            if (left.size() > k)
+            {   
+                sum += *left.rbegin();                             
+                shiftRight(left, mid);
+            }            
+            if (right.size() > k)
+            {
+                sum += *right.begin();
+                shiftLeft(mid, right);
+            }
+            
+            // delete the old element
+            int x = q.front();
+            q.pop();
+            if (left.find(x)!=left.end())
+                left.erase(left.find(x));
+            else if (right.find(x)!=right.end())
+                right.erase(right.find(x));
+            else
+            {
+                sum -= x;
+                mid.erase(mid.find(x));                
+            }                
+                        
+            if (left.size() < k)
+            {
+                sum -= *mid.begin();
+                shiftLeft(left, mid);                
+            }            
+            if (right.size() < k)
+            {
+                sum -= *mid.rbegin();
+                shiftRight(mid, right);
+            }                        
+        }
+    }
+    
+    int calculateMKAverage() 
+    {
+        if (q.size() < m)
+            return -1;
+        else
+            return sum / (m-2*k);
+        
+    }
+};
+
+/**
+ * Your MKAverage object will be instantiated and called as such:
+ * MKAverage* obj = new MKAverage(m, k);
+ * obj->addElement(num);
+ * int param_2 = obj->calculateMKAverage();
+ */
+
+::::::::::::::
+Heap/1825.Finding-MK-Average/Readme.md
+::::::::::::::
+### 1825.Finding-MK-Average
+
+我们设计三个mulitset：left, mid, right，分别盛装stream中从小到大的前k个、中间m-2k个、后k个元素。
+
+首先我们处理加入的num。根据是否小于等于left尾元素的值、是否大于等于right首元素的值，分别判断是否加入left或者right，否则就加入mid。此时left或者right的个数可能会大于k个。如果left的个数大于k，那么我们将left的最后一个元素移给mid。如果right的个数大于k，那么我们将right的第一个元素移给mid。此次操作后，left和right保持k个，mid的个数应该是m-2k+1个。
+
+然后我们处理删除的num。根据是否小于等于left尾元素的值、是否大于等于right首元素的值，分别判断是否从left或者right中移出。此时left或者right的个数可能会小于k个。如果left的个数小于k，那么我们将mid的第一个元素移给left。如果right的个数小于k，那么我们将mid的最后一个元素移给right。此次操作后，left和right保持k个，mid的个数应该是m-2k个。
+
+我们构造两个util函数可以简化代码：shiftRight(set1, set2)将set1的最后一个元素移给set2，shiftLeft(set1, set2)将set2的第一个元素移给set1，
+::::::::::::::
+Heap/1847.Closest-Room/1847.Closest-Room.cpp
+::::::::::::::
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[1]>b[1];
+    }
+public:
+    vector<int> closestRoom(vector<vector<int>>& rooms, vector<vector<int>>& queries) 
+    {
+        for (int i=0; i<queries.size(); i++)
+            queries[i].push_back(i);
+        
+        sort(queries.begin(), queries.end(), cmp);        
+        sort(rooms.begin(), rooms.end(), cmp);
+        
+        vector<int>rets(queries.size());
+        int i = 0;
+        set<int>Set;
+        for (auto &q: queries)
+        {
+            while (i<rooms.size() && rooms[i][1]>=q[1])
+            {
+                Set.insert(rooms[i][0]);      
+                i++;
+            }
+                
+            int ans = -1;
+            int diff = INT_MAX;
+            auto iter = Set.lower_bound(q[0]);
+            if (iter!=Set.end())
+            {
+                if (*iter - q[0] < diff)
+                {
+                    diff = *iter-q[0];
+                    ans = *iter;
+                }
+            }
+            if (iter!=Set.begin())
+            {
+                iter = prev(iter,1);
+                if (abs(*iter - q[0]) <= diff)
+                {
+                    diff = abs(*iter-q[0]);
+                    ans = *iter;
+                }
+            }
+            rets[q[2]] = ans;            
+        }
+        return rets;
+
+    }
+};
+::::::::::::::
+Heap/1847.Closest-Room/Readme.md
+::::::::::::::
+### 1847.Closest-Room
+
+对于某个query，我们需要在大于等于minSize的房间找id最接近的，我们自然希望池子里只有大于等于minSize的房间，这样我们就有机会用heap和二分来定位最接近id的元素。所以我们可以将query按照minSize排序，保证我在处理某个query时，池子里放入的全部都是大于等于minSize的房间。这就是离线querying的优势。
+
+随着query的逐个处理，进入池子的房间会单调增多。我们用heap维护这些房间的id，就很容易找到最接近preferred的id。
+
+离线查询的思想还有```LC 1697```和```LC 1707```.
+::::::::::::::
+Heap/1912.Design-Movie-Rental-System/1912.Design-Movie-Rental-System.cpp
+::::::::::::::
+class MovieRentingSystem {
+    unordered_map<int, set<array<int,2>>>left;  // movie -> {price, shop}
+    set<array<int,3>>rented; // {price, shop, movie}
+    unordered_map<int, unordered_map<int,int>> prices; // prices[shop][movie]
+public:
+    MovieRentingSystem(int n, vector<vector<int>>& entries) 
+    {
+        for (auto entry: entries)
+        {            
+            int shop, movie, price;
+            shop = entry[0], movie=entry[1], price=entry[2];
+            left[movie].insert({price, shop});
+            prices[shop][movie] = price;
+        }
+    }
+    
+    vector<int> search(int movie) 
+    {
+        vector<int>ret;
+        auto iter = left[movie].begin();
+        for (int i=0; i<5; i++)
+        {
+            if (iter == left[movie].end())
+                break;
+            ret.push_back((*iter)[1]);
+            iter = next(iter,1);
+        }
+        return ret;
+    }
+    
+    void rent(int shop, int movie) 
+    {
+        rented.insert({prices[shop][movie], shop, movie});
+        left[movie].erase({prices[shop][movie], shop});
+    }
+    
+    void drop(int shop, int movie) 
+    {
+        rented.erase({prices[shop][movie], shop, movie});
+        left[movie].insert({prices[shop][movie], shop});
+    }
+    
+    vector<vector<int>> report() 
+    {
+        vector<vector<int>>ret;
+        auto iter = rented.begin();
+        for (int i=0; i<5; i++)
+        {
+            if (iter==rented.end()) break;
+            ret.push_back({(*iter)[1], (*iter)[2]});
+            iter = next(iter);
+        }
+        return ret;
+    }
+};
+
+/**
+ * Your MovieRentingSystem object will be instantiated and called as such:
+ * MovieRentingSystem* obj = new MovieRentingSystem(n, entries);
+ * vector<int> param_1 = obj->search(movie);
+ * obj->rent(shop,movie);
+ * obj->drop(shop,movie);
+ * vector<vector<int>> param_4 = obj->report();
+ */
+::::::::::::::
+Heap/1912.Design-Movie-Rental-System/Readme.md
+::::::::::::::
+### 1912.Design-Movie-Rental-System
+
+本题就是模拟题，根据题意设计如下的数据结构：
+```cpp
+    unordered_map<int, set<array<int,2>>>left;  // movie -> {price, shop}
+    set<array<int,3>>rented; // {price, shop, movie}
+    unordered_map<int, unordered_map<int,int>> prices; // prices[shop][movie]
+```
+对于每部未租出的电影，left[movie]存放着按照价格排序的copy，以实现search的功能。
+
+对于已经租出的电影，rented存放按照价格排序的copy，以实现report的功能。
+::::::::::::::
+Heap/2102.Sequentially-Ordinal-Rank-Tracker/2102.Sequentially-Ordinal-Rank-Tracker_v1.cpp
+::::::::::::::
+class SORTracker {
+    set<pair<int,string>>Set;
+    set<pair<int,string>>::iterator iter;
+public:
+    SORTracker() 
+    {
+        Set.insert({INT_MIN, ""});
+        iter = Set.begin();
+    }
+    
+    void add(string name, int score) 
+    {
+        Set.insert({-score, name});
+        if (make_pair(-score, name) < *iter)
+            iter = prev(iter);
+    }
+    
+    string get() 
+    {
+        iter = next(iter);
+        return iter->second;
+    }
+};
+
+/**
+ * Your SORTracker object will be instantiated and called as such:
+ * SORTracker* obj = new SORTracker();
+ * obj->add(name,score);
+ * string param_2 = obj->get();
+ */
+::::::::::::::
+Heap/2102.Sequentially-Ordinal-Rank-Tracker/2102.Sequentially-Ordinal-Rank-Tracker_v2.cpp
+::::::::::::::
+#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
+using namespace __gnu_pbds;
+
+typedef tree<
+pair<int, string> ,
+null_type,
+less<pair<int, string>>,
+rb_tree_tag,
+tree_order_statistics_node_update>
+ordered_set;
+
+class SORTracker {
+    ordered_set Set;
+    int i = 0;
+public:
+    SORTracker() 
+    {
+    }
+    
+    void add(string name, int score) 
+    {
+        Set.insert({-score, name});
+    }
+    
+    string get() 
+    {
+        i++;
+        return Set.find_by_order(i-1)->second;
+    }
+};
+
+/**
+ * Your SORTracker object will be instantiated and called as such:
+ * SORTracker* obj = new SORTracker();
+ * obj->add(name,score);
+ * string param_2 = obj->get();
+ */
+::::::::::::::
+Heap/2102.Sequentially-Ordinal-Rank-Tracker/2102.Sequentially-Ordinal-Rank-Tracker_v3.cpp
+::::::::::::::
+using PIS = pair<int,string>;
+class SORTracker {
+    priority_queue<PIS>pq1;
+    priority_queue<PIS,vector<PIS>,greater<>>pq2;
+    PIS cur;
+public:
+    SORTracker() 
+    {        
+        pq1.push({INT_MIN, "#"});
+    }
+    
+    void add(string name, int score) 
+    {
+        PIS temp = make_pair(-score, name);
+        if (temp > pq1.top())
+            pq2.push(temp);
+        else
+        {
+            pq2.push(pq1.top());
+            pq1.pop();
+            pq1.push(temp);            
+        }
+    }
+    
+    string get() 
+    {
+        auto temp = pq2.top();
+        pq1.push(temp);
+        pq2.pop();
+        return temp.second;
+    }
+};
+
+/**
+ * Your SORTracker object will be instantiated and called as such:
+ * SORTracker* obj = new SORTracker();
+ * obj->add(name,score);
+ * string param_2 = obj->get();
+ */
+::::::::::::::
+Heap/2102.Sequentially-Ordinal-Rank-Tracker/Readme.md
+::::::::::::::
+### 2102.Sequentially-Ordinal-Rank-Tracker
+
+#### 解法1
+本题乍看之下，需要一个既能自动排序（像Set）、又可以按照index来读取内容（像数组）的数据结构。通常情况下这种数据结构是很难得到的。但是本题暗藏的玄机在于，它并不是真正需要随机按index来读取数据，而是固定按照递增的顺序来读取。这就意味着，每次add和get的操作，最多只会影响待读取内容的指针往左右移动最多一位即可。
+
+具体的说，我们维护一个有序集合的迭代器，指向当前的第i个位置（即下一个get所需要读取的index）。如果有新加入数据，并且新数据小于指针的数据，那么我们就可以将迭代器前移一位（用prev函数），这样依然指向的是第i个数据；如果新数据大于指针的数据，那么迭代器就不需要变化。遇到get操作时，就读取指针当前指向的内容，并且把迭代器后移一位即可（用next函数）。
+
+注意为了能使得有序集合按照「分数」从大到小、「名字｜从小到大的顺序排列，我们定义set<pair<int,string>>set，其中pair的第一个分量是-score。
+
+#### 解法2
+可以直接使用pbds的数据库和find_by_order(k)这个API。参见[模版](https://github.com/wisdompeak/LeetCode/blob/master/Template/RB_Tree/ordered_set.cpp).
+
+#### 解法3
+设置两个优先队列pq1（大顶堆，出口是最大值）,pq2（小顶堆，出口是最小值）.我们始终保持pq1含有i-1个元素。
+
+如果有新元素X进来，我们与pq1的出口元素Y比较：
+1. 如果Y更靠前的话，直接把X加入pq2，pq2出口处自动更新为当前全局的第i大元素。
+2. 如果X更靠前，那么Y就会被挤成第i大元素，所以将Y从pq1移出加入pq2，并把X加入pq1.这样pq2的出口处依然是全局的第i大元素。

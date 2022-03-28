@@ -1,0 +1,502 @@
+::::::::::::::
+LCCUP/2020Fall/LCP23.魔术排列/code.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isMagic(vector<int>& target) 
+    {        
+        int n = target.size();
+        vector<int>temp;
+        for (int i=2; i<=n; i+=2)
+            temp.push_back(i);
+        for (int i=1; i<=n; i+=2)
+            temp.push_back(i);
+        
+        int k = 0;
+        for (int i=0; i<target.size(); i++)
+        {
+            if (target[i]==temp[i])
+                k++;
+            else
+                break;
+        }
+
+        if (k==0) return false;
+
+        vector<int>a(temp.begin()+k, temp.end());
+        int count = k;
+
+        while (a.size() > 0)
+        {
+            vector<int>temp;
+            for (int i=1; i<a.size(); i+=2)
+                temp.push_back(a[i]);
+            for (int i=0; i<a.size(); i+=2)
+                temp.push_back(a[i]);
+
+            for (int i=0; i<min(k, (int)temp.size()); i++)
+            {
+                if (temp[i]!=target[count+i])
+                    return false;                    
+            }
+            count += k;
+            
+            if (k < temp.size())
+                a = vector<int>(temp.begin()+k, temp.end());
+            else
+                a = {};
+        }
+        return true;
+    }
+};
+::::::::::::::
+LCCUP/2020Fall/LCP23.魔术排列/Readme.md
+::::::::::::::
+### LCP23. 魔术排列
+
+本题的关键是看出k的取值。如果我们将第一步变化后的数组arr与target进行对比，求得它的公共前缀长度len，那么k只可能等于len。
+```
+target：2 4 9 x x x x
+arr:    2 4 6 8 1 3 5 7
+```
+在上面的例子中，len=2. 如果k=3，那么第一回合之后，arr的前3个（即2,4,6）将会永远的保存下来作为最终序列的前3个。而这样的话就与target的第三个元素矛盾。
+
+```
+target：2 4 9 x x x x
+arr:    2 | 4 6 8 1 3 5 7
+```
+在上面的例子中，len=2. 如果k=1，那么第一回合之后，arr的首元素被保存下来作为最终序列的第一个元素。arr剩余的部分[4,6,8,1,3,5,7]将会参与新的回合的操作。但是我们发现，第二回合结束后，必然是6排在arr的首位继而被保存为最终序列的第二个元素。这样就与target的第二个元素矛盾。
+
+综上所述，k只可能是len。注意，接下来只需要模拟一遍洗牌的操作（所有操作细节都已知），来判断target是否是最终序列。
+::::::::::::::
+LCCUP/2020Fall/LCP24.数字游戏/code.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> numsGame(vector<int>& nums) 
+    {
+        for (int i=0; i<nums.size(); i++)
+            nums[i] -= i;
+
+        vector<int>rets;
+        multiset<long>Set;        
+        long M = 1e9+7;
+
+        Set.insert(nums[0]);
+        auto iter = Set.begin();
+        long medium = nums[0];
+        long total = 0;
+        rets.push_back(0);
+
+        for (int i=1; i<nums.size(); i++)
+        {
+            int t = nums[i];
+            Set.insert(nums[i]);
+            if ((Set.size()-1)%2==1)  // OOXOO
+            {
+                if (t<*iter)
+                    iter = prev(iter);
+                total += abs(medium - *iter);
+            }
+            else        //OOXOOO
+            {
+                if (t>=*iter)
+                    iter = next(iter);
+            }
+            
+            total += abs(t - *iter);
+            total %= M;
+            rets.push_back(total);
+            medium = *iter;
+        }
+        return rets;
+    }
+};
+::::::::::::::
+LCCUP/2020Fall/LCP24.数字游戏/Readme.md
+::::::::::::::
+### LCP24.数字游戏
+
+令一个新的序列```nums[i] = nums[i] - i```，那么本题就转化为了对于任意区间[0:i]，求将该区间内所有元素都变equal的最少操作步数。根据LC 462的结论，这个equal value就是所有元素的中位数。
+
+我们再根据LC 295的算法，用multiset的迭代器操作，可以动态地得到data stream medium。相应地总操作步骤的更新也可以高效地计算。
+
+1. 如果当前区间元素数目是偶数，加入进来的新元素X大于等于medium，即 OOMOOOX，那么我们需要将medium右移。对于原先的元素而言，有3个元素需要增大delta，3个元素需要减小delta，最终效果是彼此抵消。其中的```detla = abs(medium- new medium)```
+
+2. 如果当前区间元素数目是偶数，加入进来的新元素X小于medium，即 XOOMOOO，那么我们不需要将medium移动。对于原先的元素而言，他们已经进行的操作不用变动。
+
+3. 如果当前区间元素数目是奇数，加入进来的新元素X大于等于medium，即 OOMOOX，那么我们不需要将medium移动。对于原先的元素而言，他们已经进行的操作不用变动。
+
+4. 如果当前区间元素数目是奇数，加入进来的新元素X小于medium，即 XOOMOO，那么我们需要将medium左移。对于原先的元素而言，有3个元素需要增大delta，2个元素需要减小delta，最终效果是多操作一个delta。其中的```detla = abs(medium- new medium)```
+
+别忘了，总操作步数还要再加上新元素的```abs(new medium - nums[i])```.
+
+
+::::::::::::::
+LCCUP/2020Fall/LCP25.古董键盘/code.cpp
+::::::::::::::
+class Solution {
+    long dp[131][27];
+public:
+    int keyboard(int k, int n) 
+    {
+        long comb[131][131];  
+        long M = 1e9+7;
+
+        for (int j=0; j<=26; j++)
+            dp[0][j] = 1;
+
+        for (int i = 0; i <= n; ++i) 
+        {
+            comb[i][i] = comb[i][0] = 1;    
+            if (i==0) continue;        
+            for (int j = 1; j <= min(n, k); ++j) 
+            {
+                comb[i][j] = comb[i - 1][j - 1] + comb[i - 1][j];
+                comb[i][j] %= M;
+            }
+        }
+
+        for (int i=1; i<=n; i++)
+            for (int j=1; j<=26; j++)
+            {                
+                for (int t = 0; t <= min(i, k); t++)
+                {
+                    dp[i][j] += dp[i-t][j-1] * comb[i][t];
+                    dp[i][j] %= M;
+                }                    
+            }
+        return dp[n][26];
+    }
+};
+::::::::::::::
+LCCUP/2020Fall/LCP25.古董键盘/Readme.md
+::::::::::::::
+### LCP25.古董键盘
+
+令dp[i][j]表示前i个敲击使用了前j种字符的方案数。
+
+为了计算dp[i][j]，我们考虑第j种字符在前i次敲击里占了几次？假设是t，那么我们需要制定这t次敲击的位置，那就是comb[i][t].只要确定了这t个位置，剩下的位置就完全等效于在i-t次敲击里使用j-1个字符。所以转移方程式：
+```cpp
+  for (int t = 0; t <= min(i, k); t++)
+  {
+      dp[i][j] += dp[i-t][j-1] * comb[i][t];                    
+  }
+```
+::::::::::::::
+LCCUP/2021Fall/LCP43.十字路口的交通/code.cpp
+::::::::::::::
+class Solution {
+    unordered_map<char, pair<int,int>>Map[4];
+    int dp[21][21][21][21];
+    unordered_map<string, vector<int>>planMemo;
+public:
+    bool cross(pair<int,int>&a, pair<int,int>&b)
+    {
+        if (a.second < b.first) return false;
+        if (b.second < a.first) return false;
+        if (a.first < b.first && a.second > b.second) return false;
+        if (b.first < a.first && b.second > a.second) return false;
+        return true;
+    }
+    
+    vector<int>strategy(string cars)
+    {
+        if (planMemo.find(cars)!=planMemo.end())
+            return planMemo[cars];
+        
+        vector<int>rets;
+        for (int state=1; state<(1<<4); state++)
+        {
+            int flag = 1;
+            for (int i=0; i<4; i++) 
+            {
+                if (((state>>i)&1) && cars[i]=='#')
+                    flag = 0;
+            }
+            if (flag == 0) continue;
+                        
+            vector<pair<int,int>>lines;
+            for (int i=0; i<4; i++)
+            {
+                if ((state>>i)&1) 
+                {
+                    auto [start,end] = Map[i][cars[i]];
+                    int a = min(start, end);
+                    int b = max(start, end);                
+                    lines.push_back({a,b});                    
+                }                
+            }            
+            
+            for (int i=0; i<lines.size(); i++)
+                for (int j=i+1; j<lines.size(); j++)
+                    if (cross(lines[i], lines[j]))
+                    {
+                        flag = 0;
+                        break;
+                    }
+            
+            if (flag == 1)
+                rets.push_back(state);
+        }
+        
+        planMemo[cars] = rets;
+        return rets;
+    }
+
+    int trafficCommand(vector<string>& directions) 
+    {        
+        Map[0]['S'] = {0,3};
+        Map[0]['W'] = {0,5};
+        Map[0]['N'] = {0,7};
+        Map[1]['W'] = {2,5};
+        Map[1]['N'] = {2,7};
+        Map[1]['E'] = {2,1};
+        Map[2]['N'] = {4,7};
+        Map[2]['E'] = {4,1};
+        Map[2]['S'] = {4,3};
+        Map[3]['E'] = {6,1};
+        Map[3]['S'] = {6,3};
+        Map[3]['W'] = {6,5};
+        
+        int n0 = directions[0].size();
+        int n1 = directions[1].size();
+        int n2 = directions[2].size();
+        int n3 = directions[3].size();
+        
+        directions[0]+="#";
+        directions[1]+="#";
+        directions[2]+="#";
+        directions[3]+="#";
+        
+        for (int i=0; i<=n0; i++)
+            for (int j=0; j<=n1; j++)
+                for (int k=0; k<=n2; k++)
+                    for (int t=0; t<=n3; t++)
+                        dp[i][j][k][t] = INT_MAX/2;
+        dp[0][0][0][0] = 0;
+        
+        for (int i=0; i<=n0; i++)
+            for (int j=0; j<=n1; j++)
+                for (int k=0; k<=n2; k++)
+                    for (int t=0; t<=n3; t++)
+                    {
+                        string cars;
+                        cars.push_back(directions[0][i]);
+                        cars.push_back(directions[1][j]);
+                        cars.push_back(directions[2][k]);
+                        cars.push_back(directions[3][t]);
+                        
+                        vector<int>plans = strategy(cars);                        
+                        for (int plan : plans)
+                        {                            
+                            int ii = i+ ((plan>>0)&1);
+                            int jj = j+ ((plan>>1)&1);
+                            int kk = k+ ((plan>>2)&1);
+                            int tt = t+ ((plan>>3)&1);
+                            dp[ii][jj][kk][tt] = min(dp[ii][jj][kk][tt], dp[i][j][k][t]+1);                            
+                       }
+                    }
+        
+        return dp[n0][n1][n2][n3];
+    }
+};
+::::::::::::::
+LCCUP/2021Fall/LCP43.十字路口的交通/Readme.md
+::::::::::::::
+### LCP43.十字路口的交通
+
+令dp[i][j][k][t]表示当前时刻，东南西北各个路口待发车的编号分别是第i辆（也就是说已经开走了i辆车）、第j辆、第k辆、第t辆的时候，已经花费的最小时间。此时我们考虑在此形势下可以有几种合法的发车方案，计算在plans里面。其中的每个plan是一个4 bit的二进制数，表示对应的路口是否可以发车。比如0110，表示南路口和西路口可以同时发车且不会冲突，这样的话就可以更新未来的状态：```dp[i][j+1][k+1][t] = min(dp[i][j+1][k+1][t], dp[i][j][k][t]+1```
+
+那么如何求这些plans呢？我们可以穷举所有的plan（总共2^4种可能），然后检查每个plan是否可行。怎么检查某个plan是否可行呢？我们先做这样的标记，将每个车道进行编号：
+```
+        6 7  
+        | ^
+        * |        
+5 <--        <-- 0
+6 -->        --> 1
+        | ^
+        * |
+        3 2
+```
+这样的话，每一个路口的每一种行车路线都对应着一对车道的编号。比如说```Map[0]['W'] = {0,5}```表示东路口往西走的车辆，将会从0号车道变更到5号车道。```Map[1]['E'] = {2,1}```表示南路口往东走的车辆，将会从2号车道变更到1号车道。以此类推。于是我们有非常好的性质：我们将行车路线对应的一对车道编号想象成一个区间，那么任意不相互切割的区间（即要么完全分离、要么完全包含），一定对应着不冲突的行车路线。比如说Map[0]['N']={0,7}, Map[2]['W']={2,5}, Map[3]['S']={6,3}，这三个路口的三辆车的行车路线是不冲突的，因为{0,7},{2,5},{3,6}这几个区间不互相切割。
+
+由此我们可以对任何一个并行发车的plan做出判断是否合法，仅将合法的plan可以被dp[i][j][k][t]用来更新后续状态。最终的答案是输出dp[n0][n1][n2][n3]，其中ni表示第i个路口的原始车辆数目。
+
+此题还需要记忆化。对于dp[i][j][k][y]所对应的交通形势（比如说是“NWES”），存储下相应的plans。这样以后如果遇到相同的交通形势，直接调用对应的合法plans。
+::::::::::::::
+LCCUP/2021Spring/code.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+class Solution {    
+public:
+    int processTasks(vector<vector<int>>& tasks) 
+    {
+        int runtime = 0;  // the minimum time to run jobs
+        priority_queue<PII, vector<PII>, greater<>>pq; // {latestTimeToStart, duration}
+        sort(tasks.begin(), tasks.end());
+        tasks.push_back({1000000005, 1000000005, 1});
+
+        for (auto task: tasks)
+        {
+            while (!pq.empty() && pq.top().first + runtime < task[0])
+            {
+                if (runtime >= pq.top().second) 
+                    pq.pop();
+                else
+                    runtime += min(pq.top().second, task[0]-pq.top().first) - runtime;
+            }
+            pq.push({task[1]-task[2]+1-runtime, task[2]+runtime});
+        }
+        return runtime;
+    }
+};
+::::::::::::::
+LCCUP/2021Spring/LCP35.电动车游城市/code.cpp
+::::::::::::::
+typedef array<int,3> AI3;
+class Solution {    
+    int visited[100][100];
+    vector<pair<int,int>> next[100];
+public:
+    int electricCarPlan(vector<vector<int>>& paths, int cnt, int start, int end, vector<int>& charge) 
+    {
+        priority_queue<AI3, vector<AI3>, greater<>>pq; // {cost, i, battery}
+        pq.push({0, start, 0});
+        int n = charge.size();        
+
+        for (auto path: paths)
+        {
+            next[path[0]].push_back({path[1], path[2]});
+            next[path[1]].push_back({path[0], path[2]});
+        }
+
+        while (!pq.empty())
+        {
+            auto [cost, cur, battery] = pq.top();
+            pq.pop();
+            if (visited[cur][battery]==1) continue;
+            visited[cur][battery] = 1;
+
+            if (cur==end) return cost;
+
+            for (int b=battery+1; b<=cnt; b++)
+            {
+                if (visited[cur][b]==1) continue;
+                pq.push({cost+(b-battery)*charge[cur], cur, b});
+            }
+                
+            for (auto [nxt, len]: next[cur])
+            {
+                if (battery < len) continue;
+                if (visited[nxt][battery-len]) continue;
+                pq.push({cost + len, nxt, battery - len});
+            }
+        }
+
+        return 0;
+    }
+};
+::::::::::::::
+LCCUP/2021Spring/LCP35.电动车游城市/Readme.md
+::::::::::::::
+### LCP35.电动车游城市
+
+我们将{cost, city, battery}作为节点建图，其中battery表示存留的电量。起点是{0, start,0}，终点是{x, end, x}. 用Dijkstra算法求起点到终点的最短距离。
+
+记每次弹出优先队列的节点是{cost, curCity, curBat}，那么它有两类后继节点：
+1. 原地充电：{cost+b, curCity, curBat+b}，其中```curBat+b<cnt```。
+2. 开往邻接城市: {cost+len, nxtCity, curBat-len}，其中```curBat>=len```.
+
+::::::::::::::
+LCCUP/2021Spring/LCP36.最多牌组数/code.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxGroupNumber(vector<int>& tiles) 
+    {
+        map<int,int>count;
+        for (auto x: tiles)
+            count[x]++;
+
+        vector<vector<int>>dp(5,vector<int>(5));
+        int last = -1;
+
+        for (auto [val, freq]: count)
+        {
+            if (last!=val-1)
+            {
+                int maxDp = 0;
+                for (int i=0; i<=4; i++)
+                    for (int j=0; j<=4; j++)
+                    {
+                        maxDp = max(maxDp, dp[i][j]);
+                        dp[i][j] = -1;                        
+                    }                        
+                dp[0][0] = maxDp;
+            }
+
+            vector<vector<int>>dp2(5,vector<int>(5, -1));
+            for (int i=0; i<=4; i++)
+                for (int j=0; j<=4; j++)
+                {
+                    if (dp[i][j]==-1) continue;
+
+                    for (int a = 0; a <= min(freq, min(i, j)); a++) // # of (x-2, x-1, x)
+                    {                        
+                        int j_max = j - a;
+                        int k_max = min(4, freq - a);
+
+                        for (int jj=0; jj<=j_max; jj++)
+                            for (int kk=0; kk<=k_max; kk++)
+                            {
+                                dp2[jj][kk] = max(dp2[jj][kk], dp[i][j] + a + (j - a - jj)/3 + (freq - a - kk)/3 + (i - a)/3); 
+                            }
+                    }                    
+                }
+            dp = move(dp2);
+            last = val;
+        }
+
+        int ret = 0;
+        for (int i=0; i<=4; i++)
+            for (int j=0; j<=4; j++)
+                ret = max(ret, dp[i][j]);
+        return ret;
+    }
+};
+::::::::::::::
+LCCUP/2021Spring/LCP36.最多牌组数/Readme.md
+::::::::::::::
+### LCP36.最多牌组数
+
+我们令dp[i][j]表示当我们处理完牌面x-1时，手头存有的牌面为x-2的有i张、牌面为x-1的有j张时，所能够构建的最多牌组数，并且在相同牌组数的情况下取顺子最少的方案。类似地，当我们处理完牌面x后，我们目的是推导出新的dp2[jj][kk]，表示当我们处理完牌面为x时，且手头存有的牌面为x-1的有jj张、牌面为x的有kk张时，所能够构建的最多牌组数。由此我们不断地处理完所有牌面。最终答案在dp[n-1][n]中取最大值。
+
+这里解释一下“在相同牌组数的情况下取顺子最少的方案”。比如说我们手头有x-2的牌3张，x-1的牌3张，x的牌3张。我们会构建三组```(x-2,x-2,x-2)，(x-1,x-1,x-1)，(x,x,x)```，而非三组```(x-2,x-1,x)```。
+
+接下来我们查看dp的这两个维度的范围，我们断言只需要考虑i与j的范围不超过4（精确地说i不需要超过2）. 为什么呢？假设我们在处理牌面x前，手头有牌面为x-2的有3张，那么这三张x-2该怎么和后续的牌发挥组合作用呢？显然只有一种途径，那就是在x-1和x都至少有三张牌的前提下，我们可以打出三组```(x-2,x-1,x)```；否则这三张x-2等于没有用。但是即使很幸运，x-1和x都很给力，可以组成三组```(x-2,x-1,x)```，但是这就违反了我们之前的约定：“在相同牌组数的情况下取顺子最少的方案”，我们事实上只会构建三组刻子。那么意味着如果牌面为x-2的剩余三张或以上的话，其实并不会与后续牌面组合起实质性作用，不如在当初就早早打出```(x-2,x-2,x-2)```.这就告诉我们，dp[i][j]中的i其实超过2是没有意义的，即dp[3][j]其实就是dp[0][j]+1, dp[4][j]其实就是dp[1][j]+1 ... 
+
+同理我们可以分析dp[i][j]中的j其实超过4是没有意义的。所以我们在读取或者更新dp[i][j]时始终只考虑i,j<=4的情况。
+
+接下来的转移方程就比较容易想了。我们遍历i和j的取值，表示当前存有i张牌面x-2，j张牌面x-1，同时有牌面x的个数是freq。
+
+我们先考虑可以构造多少```(x-2,x-1,x)```。这个组数就是```a = min(i,j,freq)```. 确定了这个组合，那么此时牌面x-2剩下i-a张，牌面x-1剩下j-a张，牌面x剩下freq-a张。
+
+这个时候我们计算下一轮的dp2[jj][kk]，表示如果处理完牌面x之后，如果保留x-1的牌面jj张，x的牌面kk张（供以后使用），那么此时收获多少组合？那么就是```dp[i][j] + a + (i-a)/3 + (j-a-jj)/3 + (freq-a-kk)/3```.最后三项就是刻子的组合数。
+
+本题还有一个很重要的边界条件。就是如果处理当前牌面x时，发现没有牌面x-1怎么办？注意：这样的话上一轮的dp[i][j]其实并不能用来推导这一轮的dp2[jj][kk]。但是有一项是例外的，就是dp[0][0]，我们虚拟的认为此时存有0张牌面x-2、0张牌面x-1，但注意dp[0][0]的值应该取当前dp[?][?]里的最大值。虽然dp[i][j]不能用来推导新的dp，但是它们代表了之前已经构造的最大组数，需要将这个信息保留。
+::::::::::::::
+LCCUP/2021Spring/Readme.md
+::::::::::::::
+### LCP32.批量处理任务
+
+每个任务都有一个最早开始时间。我们将所有tasks按照最早开工时间依次处理并放入任务池中。任务池中的tasks意味着你可以选择开工减少它们的工作量，当然也可以不开工。如果不在池中的tasks则无法做任何操作。
+
+对于任务池中的tasks，我们将其按照最晚开工时间保持有序。最晚开工时间的意思是，你必须在这个时刻开工并且直到全部完成其工作量，否则就来不及了。
+
+我们令runtime表示当前（已经将部分tasks放入任务池）我们已经（不得不）开工的时长。我们现在需要考虑一个新任务A，准备加入任务池。而此刻任务池中某任务B对应着最早的“最晚开工时间”。此时，如果B的最晚开工时间晚于A的最早开工时间，那么意味着当前没有任何due time，我们不着急开工，可以再拖一拖，可以将A先放入任务池再说。而如果B的最晚开工时间早于A的最早开工时间，意味着B等不及了，我们在将A放入任务池之前必须开工了，那么至少开工多长时间呢？三种情况：
+1. 如果当前的runtime已经比B需要的工作时长多。那么说明任务B已经完成了，那么将B从任务池中拿走。
+2. 如果在A的最早开工时间之前就可以把B做完，那么需要再跑：B需要的工作时长减去已经开工的runtime。
+3. 如果在A的最早开工时间之前并不能把B做完，那么需要再跑：A的最早开工时间减去B的最晚开工时间，也就是将时间线拉到A的最早开工时间。
+
+然后我们需要将A放入任务池。但是任务池里面的tasks都已经跑过runtime了，A与它们并没有直接的可比性呀。我们做一个处理：假设A的最晚开工时间为t，需要工作时长为d，那么A就等效于任务A'，其最晚开工时间为t-runtime，需要工作时长为d+runtime。这样将A'放入任务池后，任务池中的所有任务都可以认为已经跑过了runtime的时间，彼此之间可以放心地按照“最晚开工时间”排序。

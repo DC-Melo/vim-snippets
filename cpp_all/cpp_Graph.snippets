@@ -1,0 +1,797 @@
+::::::::::::::
+Graph/0787.Cheapest-Flights-Within-K-Stops/787.Cheapest-Flights-Within-K-Stops_Dijkstra.cpp
+::::::::::::::
+using AI3 = array<int,3>;
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) 
+    {
+        vector<vector<pair<int,int>>>next(n);        
+        for (auto flight: flights)
+        {
+            int a = flight[0], b = flight[1], w = flight[2];
+            next[a].push_back({b, w});
+        }            
+
+        vector<vector<int>>cost(n, vector<int>(K+2, INT_MAX/2));
+        priority_queue<AI3, vector<AI3>, greater<>>pq;
+        pq.push({0, src, 0});        
+
+        while (!pq.empty())
+        {
+            auto [c, cur, stops] = pq.top();
+            pq.pop();
+            
+            if (cur == dst) return c;
+            if (stops == K+1) continue;
+            if (cost[cur][stops] < INT_MAX/2) continue;                       
+            cost[cur][stops] = c;
+
+            for (auto ticket: next[cur])
+            {
+                auto [nxt, price] = ticket;
+                if (cost[nxt][stops+1] < INT_MAX/2) continue;
+                pq.push({c+price, nxt, stops+1});
+            }
+        }
+
+        return -1;        
+    }
+};
+::::::::::::::
+Graph/0787.Cheapest-Flights-Within-K-Stops/787.Cheapest-Flights-Within-K-Stops_DP.cpp
+::::::::::::::
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) 
+    {
+        vector<vector<int>>dp(n, vector<int>(K+2, INT_MAX/2));
+        dp[src][0] = 0;
+        int ret = INT_MAX/2;
+
+        for (int j=1; j<=K+1; j++)
+            for (auto flight: flights)
+            {
+                int a = flight[0], b = flight[1], p = flight[2];
+                dp[b][j] = min(dp[b][j], dp[a][j-1]+p);
+                if (b==dst) ret = min(ret, dp[b][j]);
+            }
+
+        return ret >= INT_MAX/2 ? -1 : ret;
+    }
+};
+::::::::::::::
+Graph/0787.Cheapest-Flights-Within-K-Stops/Readme.md
+::::::::::::::
+### 787.Cheapest-Flights-Within-K-Stops
+
+### 解法1：Floyd（错误）
+Floy算法的本质就是DP。复习一下传统的Floy算法,需要三重循环:
+```cpp
+for(k=0;k<n;k++)
+  for(i=0;i<n;i++)
+    for(j=0;j<n;j++)
+      if( e[i][k]+e[k][j]<e[i][j])
+         e[i][j] = e[i][k]+e[k][j];
+```
+在此题中,还有一个总转机次数不超过K的限制,所以除了e[i][j]表示每两个城市之间的最短距离外,还需要创建t[i][j]来存储对应e[i][j]的转机次数.于是代码转化为
+```cpp
+for(k=0;k<n;k++)
+  for(i=0;i<n;i++)
+    for(j=0;j<n;j++)
+      if( e[i][k]+e[k][j]<e[i][j] &&  t[i][k]+t[k][j]+1<=K)
+      {
+         e[i][j] = e[i][k]+e[k][j];
+         t[i][j] = t[i][k]+t[k][j]+1;
+      }
+```
+很不幸，以上的算法是错误的。周赛过后补充了一个例子：[[0,1,1],[0,2,5],[1,2,1],[2,3,1]]
+
+当要求最多转1次（即两趟飞机），从0到3的最小代价。事实上的解是: 0->2->3，代价是5+1=6. 但是上面的算法返回的却是无解。这是因为前半段0->2的行程，floyd提前算出来的最优解是0->1->2，因为代价最小(1+1=2)，但是需要转机两次。所以再加上2->3这段时，因为转机的次数限制，被算法判断为无解。
+
+### 解法2：DP
+我们可以利用dp的思想。令dp[k][b]表示从起点坐k次飞机能过够到达城市b的最小代价。显然，它之前的状态就是做k-1次飞机能到哪里。于是我们有状态转移方程：
+```
+dp[k][b] = min(dp[k][b], dp[k-1][a] + cost[a][b]), where there is a flight from a to b.
+``` 
+注意答案是 ```min(dp[k][dst]) for k=0,1,..,K+1```
+
+当然我们也可以把dp[k][b]定义成：从起点“最多”坐k次飞机能过够到达城市b的最小代价。那么对应的转移方程：
+```
+dp[b] = min(dp[k][b], dp[k-1][b], dp[k-1][a] + cost[a][b]), where there is a flight from a to b.
+```
+相应地最终答案就是 ```dp[K+1][dst]```，不需要再遍历飞行的次数。
+
+### 解法3：BFS(Dijkstra)
+利用Dijkstra求最短权重路径的算法思想，可以简单的理解为基于优先队列的BFS。从起点src开始不停地做BFS，但是队列里弹出的永远是权重最小的路径（所达到的点）。这样任何弹出的点，如果是第一次到达的话，那么它一定经历的是最短路径。所以，一旦BFS的过程中遇到了终点，就可以输出它的最短代价。
+
+但是本题不同之处在于，对于任何中转点（非终点），最短路径不一定就是最优方案，因为还有转机次数的考虑因素。举个例子，假设最多允许转机5次，一种方案是你转机3次花费10到达A地（非终点），另一种方案是转机4次花费8到达A，对于后续的影响而言孰优孰劣我们是无法判断的。所以我们必须将它们都加入BFS的队列之中。当然，如果之前曾经以相同的转机次数到达过A，那么我们肯定只会保留最小代价的方案，所以我们需要一个visited[city][times]来记忆化之前所经历过的代价。
+
+
+
+[Leetcode Link](https://leetcode.com/problems/cheapest-flights-within-k-stops)
+::::::::::::::
+Graph/1059.All-Paths-from-Source-Lead-to-Destination/1059.All-Paths-from-Source-Lead-to-Destination.cpp
+::::::::::::::
+class Solution {
+    int visited[10001];
+    vector<vector<int>>nextNodes;
+public:
+    bool leadsToDestination(int n, vector<vector<int>>& edges, int source, int destination) 
+    {
+        nextNodes.resize(n+1);
+        for (auto edge: edges)
+            nextNodes[edge[0]].push_back(edge[1]);
+        
+        return dfs(source, destination);        
+    }
+    
+    bool dfs(int cur, int dest)
+    {
+        visited[cur] = 2;
+        if (nextNodes[cur].size() == 0)
+        {
+            if (cur!=dest)
+                return false;
+            else
+            {
+                visited[cur] = 1;
+                return true;
+            }                
+        }
+        
+        for (auto next: nextNodes[cur])
+        {
+            if (visited[next]==1) continue;
+            if (visited[next]==2) return false;
+            if (dfs(next, dest)==false)
+                return false;
+        }
+        visited[cur] = 1;
+        return true;
+    }
+};
+::::::::::::::
+Graph/1059.All-Paths-from-Source-Lead-to-Destination/Readme.md
+::::::::::::::
+### 1059.All-Paths-from-Source-Lead-to-Destination
+
+此题的本质是用DFS来检查图内是否有环。模板如下：
+```cpp
+    bool dfs(int cur)
+    {
+        visited[cur] = 2;
+        for (int next: graph[cur])
+        {
+            if (visited[next]==1) continue;
+            if (visited[next]==2) return false;
+            if (dfs(next)==false)  return false;
+        }
+        visited[cur] = 1;
+        return true;
+    }
+```
+
+另外，如果DFS到了端点节点，还要检查是否是destination。
+::::::::::::::
+Graph/1514.Path-with-Maximum-Probability/1514.Path-with-Maximum-Probability_bfs.cpp
+::::::::::::::
+class Solution {
+public:
+    double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start, int end) 
+    {
+        vector<vector<pair<int, double>>>Next(n);
+        for (int i=0; i<edges.size(); i++)
+        {
+            Next[edges[i][0]].push_back({edges[i][1], succProb[i]});
+            Next[edges[i][1]].push_back({edges[i][0], succProb[i]});
+        }
+        
+        vector<double>prob(n);
+        prob[start] = 1;
+        queue<int>q;
+        q.push(start);
+        
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            for (auto next: Next[cur])
+            {
+                if (prob[next.first] >= prob[cur] * next.second) continue;
+                prob[next.first] = prob[cur]*next.second;
+                q.push(next.first);
+            }
+        }
+        return prob[end];
+        
+    }
+};
+::::::::::::::
+Graph/1514.Path-with-Maximum-Probability/1514.Path-with-Maximum-Probability_dijkstra.cpp
+::::::::::::::
+using PDI = pair<double, int>;
+class Solution {
+public:
+    double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start, int end) 
+    {
+        vector<vector<pair<int, double>>>Next(n);
+        for (int i=0; i<edges.size(); i++)
+        {
+            Next[edges[i][0]].push_back({edges[i][1], -log(succProb[i])});
+            Next[edges[i][1]].push_back({edges[i][0], -log(succProb[i])});
+        }
+
+        vector<double>prob(n,-1);
+        priority_queue<PDI, vector<PDI>, greater<>> pq;
+        pq.push({0, start});
+        
+        while (!pq.empty())
+        {
+            auto [dist, curNode] = pq.top();
+            pq.pop();
+
+            if (prob[curNode]!=-1) continue;
+            prob[curNode] = dist;
+            
+            if (curNode==end) return exp(-prob[curNode]);
+
+            for (auto next: Next[curNode])
+            {
+                int nextNode = next.first;
+                double edge = next.second;
+                if (prob[nextNode]!=-1) continue;
+                pq.push({dist + edge, nextNode});
+            }
+        }
+        
+        return 0;
+    }
+};
+::::::::::::::
+Graph/1514.Path-with-Maximum-Probability/Readme.md
+::::::::::::::
+### 1514.Path-with-Maximum-Probability
+
+#### 解法1：常规BFS
+常规的BFS解法就是从start出发往周围的点遍历。但是，并不是某个点被遍历过之后就不要再遍历了。这是因为通过不同路径到达某个点时的概率是不同的。某些路径虽然在BFS的算法中晚遍历到点A，但路径概率更大，这就意味着从A往后延伸的路径必须再次重新遍历。这个算法的时间复杂度可以很高。
+
+#### 解法2：Dijkstra 贪心
+回顾一下Dijkstra算法。它适合单源非负权重图。所谓“单源”，就是它只能求某个特定节点作为起点的最短路径。思想是基于BFS的贪心策略。在队列中的所有节点都按照“（从起点）到达路径长度”排序，任何轮次中，最先弹出的节点A如果之前从没有访问过，那么它所对应的路径就一定是从起点到A的最短路径。
+
+本题需要改造一番才能使用Dijkstra算法。原本的题意是求最大乘积路径问题：
+```
+maxmize prob(E1)*prob(E2)*...*prob(Ek) 
+= maxmize log[prob(E1)]+log[prob(E2)] + ... + log[prob(Ek)] 
+= minimize -log[prob(E1)] -log[prob(E2)] - ... -log[prob(Ek)]
+```
+我们发现每条边的-log[prob(Ek)]都是正数，并且目标是最小化路径之和。所以考虑-log[prob(Ek)]为权重的图，原题就可以转化成标准的最短路径问题。
+::::::::::::::
+Graph/1719.Number-Of-Ways-To-Reconstruct-A-Tree/1719.Number-Of-Ways-To-Reconstruct-A-Tree_v1.cpp
+::::::::::::::
+class Solution {
+    int flag = 1;
+    unordered_set<int>nodeSet;
+    vector<int> relative[501];
+    int isRelative[501][501];    
+    vector<int> children[501];    
+    unordered_set<int>visited;
+
+public:
+    int checkWays(vector<vector<int>>& pairs) 
+    {
+        for (auto pair: pairs)
+        {
+            nodeSet.insert(pair[0]);
+            nodeSet.insert(pair[1]);                                    
+            relative[pair[0]].push_back(pair[1]);
+            relative[pair[1]].push_back(pair[0]);
+            isRelative[pair[0]][pair[1]] = 1;
+            isRelative[pair[1]][pair[0]] = 1;            
+        }
+
+        vector<int>nodes(nodeSet.begin(), nodeSet.end());
+        sort(nodes.begin(),nodes.end(),[&](int x,int y)->bool{return relative[x].size()<relative[y].size();});
+
+        int root = -1;
+
+        for (int i=0; i<nodes.size(); i++)
+        {
+            int j = i+1;
+            while (j<nodes.size() && !isRelative[nodes[i]][nodes[j]])
+                j++;
+            if (j<nodes.size())
+            {                       
+                children[nodes[j]].push_back(nodes[i]);
+                if (relative[nodes[j]].size() == relative[nodes[i]].size())
+                {
+                    flag = 2;
+                }
+            }
+            else
+            {
+                if (root==-1)
+                    root = nodes[i];
+                else
+                    return 0;
+            }                
+        }
+
+        dfs(root,0);
+        
+        return flag;
+    }
+
+    int dfs(int cur, int depth)
+    {
+        if (flag==0) return -1;
+        if (visited.find(cur)!=visited.end())
+        {
+            flag = 0;
+            return -1;
+        }
+        visited.insert(cur);
+        int sum = 0;
+        for (int child: children[cur])
+        {
+            sum += dfs(child, depth+1);
+        }
+        if (sum+depth!=relative[cur].size())
+        {
+            flag = 0;
+            return -1;
+        }
+        return sum+1;
+    }
+};
+::::::::::::::
+Graph/1719.Number-Of-Ways-To-Reconstruct-A-Tree/1719.Number-Of-Ways-To-Reconstruct-A-Tree_v2.cpp
+::::::::::::::
+class Solution {
+    int flag = 1;
+    unordered_set<int>nodeSet;
+    vector<int> relative[501];
+    int isRelative[501][501];    
+
+public:
+    int checkWays(vector<vector<int>>& pairs) 
+    {
+        for (auto pair: pairs)
+        {
+            nodeSet.insert(pair[0]);
+            nodeSet.insert(pair[1]);                                    
+            relative[pair[0]].push_back(pair[1]);
+            relative[pair[1]].push_back(pair[0]);
+            isRelative[pair[0]][pair[1]] = 1;
+            isRelative[pair[1]][pair[0]] = 1;            
+        }
+
+        vector<int>nodes(nodeSet.begin(), nodeSet.end());
+        sort(nodes.begin(),nodes.end(),[&](int x,int y)->bool{return relative[x].size()<relative[y].size();});
+
+        int root = -1;
+
+        for (int i=0; i<nodes.size(); i++)
+        {
+            int j = i+1;
+            while (j<nodes.size() && !isRelative[nodes[i]][nodes[j]])
+                j++;
+            if (j<nodes.size())
+            {
+                for (auto r: relative[nodes[i]])
+                {
+                    if (r!=nodes[j] && isRelative[r][nodes[j]]==0)
+                        return 0;
+                }
+                if (relative[nodes[j]].size() == relative[nodes[i]].size())
+                {
+                    flag = 2;
+                }
+            }
+            else
+            {
+                if (root==-1)
+                    root = nodes[i];
+                else
+                    return 0;
+            }
+        }
+        return flag;
+    }
+};
+::::::::::::::
+Graph/1719.Number-Of-Ways-To-Reconstruct-A-Tree/Readme.md
+::::::::::::::
+### 1719.Number-Of-Ways-To-Reconstruct-A-Tree
+
+此题是LC周赛历史难题的top 1，难度分是3018。特别注意，题意的意思是，任意两点如果是一对pair（即是在一条直系链上），它们必须出现在pairs里面。
+
+我们定义如果x和y是一对pair，那么他们彼此是直系亲属关系。我们定义每个节点的degree为它的直系亲属的个数。对于节点x，我们将它的所有直系亲属都收集起来看，根据定义，它们必然是一条直系链。
+
+我们观察一下如果仅是一条直系链，那么里面的每个节点的degree都是相等的。并且任意两点互换，都不改变这个结构的pairs。也就是说，这样的“直系链”的拓扑结构不唯一。
+
+如果这条直系链的某个祖先有一条分叉，那么我们发现原来的直系链上的节点，从该祖宗以上的部分的degree都会增加（因为它们有其他更多的直系子孙了）。这就告诉我们，对于同一条直系链上的节点，从高到低的degree必然是下降/不增的。所以我们如果把relative[x]的所有节点按照degree从大到小排列，那么x的父节点应该就是degree恰好大于或等于x的那个节点。当然，这样的节点可能会有多个，我们可以强制选定其中一个，因为之前说过，同一个直系链里面degree相同的节点可以互换。但是注意，这种“强制”必须是全局一致的，举个例子
+```
+    a
+    b
+   c  e
+  d    f
+```
+在直系链a-b-c-d中，a和b的度相等，如果我们制定c的父节点是b的话，那么在直系链a-b-e-f中，e的父节点就不能随意指定，必须也是b而不能是a。为了保证这种“全局一致性”，我们需要将全部节点nodes按照度来从小到大排序编号，比如说上面的例子就是"dcfeba"，我们规定属于同一个直系链、度相同的两个节点，排序靠前的节点更靠下层。这样对于c而言，它有两个度相同的祖先a和b，根据规则b是它的父亲。同理对于e而言，也可以判定b是它的父亲，而不是a。
+
+有了上述的nodes数组，对于任意的节点nodes[i]，我们都可以确定它的父节点：那就是在i之后的第一个j，s.t. (1) nodes[i]和nodes[j]是直系亲属，并且 (2)nodes[j]的度大于等于nodes[i]。于是我们可以依次方法确定每个点的父节点。整张树的拓扑结构也就确定了下来。
+
+注意树的根是没有父节点的。如果我们发现有两个或以上的节点没有父节点，说明这张图是被割裂成几部分的，直接返回0.
+
+接下来的思路有两种：
+1. 利用这个树的拓扑结构，来验证是否和题目所给的pairs一致。对于每个点而言，它的直系亲属的个数应该是它的深度+它的子孙的个数。前者可以从pairs中统计，后者可以从树的遍历中统计。两者如果有任何不匹配，则返回0.
+2. 有一个不是很直观的充要条件来判定构建的这棵树是否与pairs一致。对于nodes[i]，我们找到了nodes[j]是它的父亲，那么nodes[i]的所有亲属，必然是nodes[j]的亲属。如果发现nodes[i]的某个直系亲属r不是nodes[j]的直系亲属，那么显然是矛盾的。如果所有的r都满足，则说明这棵树的结构与pairs没有矛盾。
+
+以上的算法判断是否存在这样的树。那么怎么判断这棵树是否唯一呢？其实很简单，如果任何一个nodes[i]和它的父亲的度相同，那么根据之前的分析，这两个节点其实是可以互换而不影响pairs的。如果最终答案是“树可行”（非0）的话，那么就可以输出2.
+::::::::::::::
+Graph/1761.Minimum-Degree-of-a-Connected-Trio-in-a-Graph/1761.Minimum-Degree-of-a-Connected-Trio-in-a-Graph.cpp
+::::::::::::::
+class Solution {
+    int connect[401][401];
+    int degree[401];
+    vector<int> next[401];
+public:
+    int minTrioDegree(int n, vector<vector<int>>& edges) 
+    {
+        for (auto e:edges)
+        {
+            connect[e[0]][e[1]] = 1;
+            connect[e[1]][e[0]] = 1;
+            degree[e[0]] += 1;
+            degree[e[1]] += 1;
+            
+            int x = min(e[0],e[1]), y = max(e[0],e[1]);            
+            next[x].push_back(y);            
+        }
+        
+        int ret = INT_MAX;
+        for (int a = 1; a <=n; a++)
+        {
+            for (int i=0; i<next[a].size(); i++)
+                for (int j=i+1; j<next[a].size(); j++)
+                {
+                    int b = next[a][i], c = next[a][j];
+                    if (connect[b][c]==1)
+                        ret  = min(ret, degree[a]+degree[b]+degree[c]-6);
+                }
+        }
+        
+        return ret==INT_MAX? -1:ret;
+    }
+};
+::::::::::::::
+Graph/1761.Minimum-Degree-of-a-Connected-Trio-in-a-Graph/Readme.md
+::::::::::::::
+### 1761.Minimum-Degree-of-a-Connected-Trio-in-a-Graph
+
+我们要找一个trio，肯定要先遍历其中的一个点A。而该trio的另外两个点B和C，必然也都是A的邻接节点。所以我们在A的邻接节点集合next[A]中寻找B和C显然效率更高。但是我们似乎没有特别高效的方法直接在next[A]中找出符合条件的二元对{B,C}，只能在next[A]中用二重循环枚举B和C，再查看B和C是否是邻接的。查看B和C是否邻接，我们可以通过预处理的邻接矩阵c[x][y]来实现o(1)的查询。预先构造的邻接矩阵c[x][y]表示任意两点之间是否相邻，时间复杂度是o(E)，是可以接受的。
+
+所以整体而言，寻找三元对{A,B,C}需要o(N^3)的大框架：
+```py
+for A in range(1,n):
+  for (B,C) in next[A]:
+    if c[B][C]==1: 
+      (A,B,C)是一个trio
+      ret += inDegree[A] + inDegree[B] + inDegree[C] - 6
+```
+
+以上的方法会TLE。如何改进呢？我们发现，根据A找(B,C)，等价于根据B找(A,C)，根据C找(A,B)。所以整体的时间复杂度浪费了三倍。如何避免这个问题呢？解决方法是：把无向图变成有向图。也就是说，从A能找到(B,C)，但是让B不会找到(A,C)，因此我们可以令AB为单向边，即只允许A->B. 同理如果也令A->C为单向边的话，那么C就不会找到(A,B)。由这个技巧，我们可以将整体o(N^3)的复杂度降低至1/3。
+::::::::::::::
+Graph/1782.Count-Pairs-Of-Nodes/1782.Count-Pairs-Of-Nodes.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> countPairs(int n, vector<vector<int>>& edges, vector<int>& queries) 
+    {
+        vector<int>count(n);
+        unordered_map<long, int>edgeCount;             
+        long M = 20001;
+        
+        for (auto edge: edges)
+        {
+            int a = min(edge[0]-1, edge[1]-1);
+            int b = max(edge[0]-1, edge[1]-1);
+            count[a]++;
+            count[b]++;
+            edgeCount[a*M+b]++;
+        }
+               
+        auto count2 = count;
+        sort(count2.begin(), count2.end());
+        
+        vector<int>rets;
+        for (int q: queries)
+        {
+            int sum = 0;
+            int j = n-1;
+            for (int i=0; i<n; i++)
+            {
+                if (i>=j)
+                {
+                    sum += n-i-1;
+                }
+                else
+                {
+                    while (i<j && count2[i]+count2[j] > q)
+                        j--;
+                    sum += n-j-1;                    
+                }                
+            }
+                        
+            for (auto [edgeIdx, cnt]:edgeCount)
+            {
+                int a = edgeIdx/M;
+                int b = edgeIdx%M;
+                if (count[a]+count[b]>q && count[a]+count[b]-cnt<=q)
+                {
+                    sum--;
+                }
+            }
+            rets.push_back(sum);
+        }        
+        
+        return rets;
+
+    }
+};
+::::::::::::::
+Graph/1782.Count-Pairs-Of-Nodes/Readme.md
+::::::::::::::
+### 1782.Count-Pairs-Of-Nodes
+
+我们可以很容易地求出每个节点的边的数目count[i]. 那么属于一个节点{a,b}的边的数目就是count[a]+count[b]-num[a][b]，其中num[a][b]就是从a到b的边的数目（因为可能会有重复的边）。减去的这部分，是因为“a-b”这条边被两个节点共享，所以count[a]和count[b]重复计算了两次，需要减去。注意我们只需要减去一次num[a][b]，而不用再减去num[b][a]。
+
+假设query的数值是x，那么我们需要寻找有多少个点对{a,b}，满足```count[a]+count[b]-num[a][b] > x```。暴力枚举{a,b}的话，那需要o(N^2)的时间，显然会TLE。
+
+我们发现，如果不考虑num[a][b]这部分，那么点对{a,b}的数目其实可以用o(VlogV)的时间复杂度计算。将count排序后，如果固定a指针，那么b指针相应地从后往前移动直到不满足```count[a]+count[b]>x```为止，那么说明以a为第一个点时，b有n-b-1种选择。这样我们依次遍历所有的a，就可以累加得到所有{a,b}的点对数目count。
+
+以上的count其实是一个被高估的数目。因为很多点对不满足```count[a]+count[b]-num[a][b] > x```。那么如何排除掉这些不满足条件的点对呢？难道还是要枚举a和b呢？其实这里有一个巧妙的视角。满足```count[a]+count[b] > x```但是不满足```count[a]+count[b]-num[a][b] > x```的点对，一定是有边互联的点对。所以我们只需要遍历所有的边，查看这条边所连接的两个节点是否属于被“误判”的点对。是的话，从count里面减去就行了。
+
+这里需要注意的是，因为有重复的边，所以我们只能遍历所有unique的边。否则被“误判”的点对可能会被删除多次。为了标记unique的边，我们可以用边的两个端点a和b编码成一个```index=a*M+b```，其中a<b。这样连接同一对点的边都会有独一无二的index。
+::::::::::::::
+Graph/1820.Maximum-Number-of-Accepted-Invitations/1820.Maximum-Number-of-Accepted-Invitations.cpp
+::::::::::::::
+class Solution {
+    int m, n, t;
+    vector<int> next[400];
+    int match[400];
+public:
+    int maximumInvitations(vector<vector<int>>& grid) 
+    {
+        m = grid.size();
+        n = grid[0].size();
+        t = m+n;
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j])
+                {
+                    next[i].push_back(m+j);
+                    next[m+j].push_back(i);
+                }
+            }
+        
+        for (int i=0; i<t; i++)
+            match[i] = -1;
+        
+        vector<bool>visited(t);
+        
+        int count = 0;
+        for (int i=0; i<m; i++)
+        {
+            visited.assign(t, 0);
+            if (dfs(i, visited))
+                count++;            
+        }
+        return count;
+    }
+    
+    bool dfs(int i, vector<bool>&visited)
+    {
+        for (int j: next[i])
+        {
+            if (visited[j]) continue;
+            visited[j] = true;
+            if (match[j]==-1 || dfs(match[j], visited))
+            {
+                match[i] = j;
+                match[j] = i;
+                return true;
+            }
+        }
+        return false;
+    }
+};
+::::::::::::::
+Graph/1820.Maximum-Number-of-Accepted-Invitations/Readme.md
+::::::::::::::
+### 1820.Maximum-Number-of-Accepted-Invitations
+
+我们将所有学生看做为节点，部分节点之间有边相连（本题里只是男生和女生之间）。显然，这一定是个二分图。然后，我们希望选取最多的边且每个节点最多只能与一条边相连。于是这就是求无权二分图最大匹配的模板题，使用的是经典的匈牙利算法。
+
+#### DFS
+首先定义两个概念：
+1. 交替路：从一个未匹配点出发，依次经过非匹配边、匹配边、非匹配边……形成的路径叫交替路。所谓的匹配边，就是这条边被选中了；非匹配边，就是这条边未被选中。
+2. 增广路：从一个未匹配点出发，走交替路，最终到达另一个未匹配点（一定是对面的节点），则这条交替路称为增广路（agumenting path）。增广路的特点就是，非匹配边的数目比匹配边的数目恰好多一个。
+
+我们依次查看左图的节点。记当前的左图节点A尚未配对，那么我们用DFS找到一条以A为起点的增广路径（找一条即可），假设终点为B，这条增广路径上的匹配边个数是k，非匹配边的个数是k+1. 我们接下来做一个重要的操作：取消所有的匹配边，将非匹配边改为匹配边。这样操作的结果是：1. 不引入矛盾，即不会有任何一个点与对面的两个点相连。2. 配对的pair比原来多了1对。3. 保证了A被匹配。如果我们找不到这样的以A为起点的增广路径，那么就说明无法将A匹配的同时不影响匹配边的总量，也就是说我们要放弃对A的匹配。
+
+其中核心的dfs代码：如果右边有j与左边i连通但未匹配，则增广路径get；否则我们从match[j]（这是一个左边的节点）为起点再继续递归。
+```cpp
+    bool dfs(int i, vector<bool>&visited)
+    {
+        for (int j: next[i])
+        {
+            if (visited[j]) continue;
+            visited[j] = true;
+            if (match[j]==-1 || dfs(match[j], visited))
+            {
+                match[i] = j;
+                match[j] = i;
+                return true;
+            }
+        }
+        return false;
+    }
+```    
+::::::::::::::
+Graph/2097.Valid-Arrangement-of-Pairs/2097.Valid-Arrangement-of-Pairs.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,vector<int>>Map;
+    unordered_map<int,int>in;
+    unordered_map<int,int>out;
+
+public:
+    vector<vector<int>> validArrangement(vector<vector<int>>& pairs) 
+    {
+        
+        for (auto pair: pairs)
+        {
+            Map[pair[0]].push_back(pair[1]);
+            in[pair[1]]++;
+            out[pair[0]]++;
+        }
+        
+        int start = -1;
+        for (auto x: Map)
+        {
+            int p = x.first;
+            if (out[p]-in[p]==1)
+                start = p;            
+        }
+        
+        if (start==-1) 
+            start = pairs[0][0];
+        
+        vector<int>path;
+        DFS(start, path);
+        reverse(path.begin(), path.end());
+        
+        vector<vector<int>>rets;
+        for (int i=0; i<path.size()-1; i++)
+            rets.push_back({path[i], path[i+1]});
+        return rets;                
+    }
+
+    
+    void DFS(int start, vector<int>& path)
+    {
+        while (Map[start].size()>0)
+        {
+            int nextStart = Map[start].back();
+            Map[start].pop_back();
+            DFS(nextStart, path);
+        }
+        path.push_back(start);
+    }
+};
+::::::::::::::
+Graph/2097.Valid-Arrangement-of-Pairs/Readme.md
+::::::::::::::
+### 2097.Valid-Arrangement-of-Pairs
+
+因为本题保证一定有解，所以这就是一个欧拉路径问题：我们将每个数字当做节点，每个pair看做是两个节点之间的路径，那么本题就是规划一条路径，要求不重复地走过所有边。类似的题目有LC332。
+
+对于欧拉路径，我们回顾一下相关的知识点：
+
+欧拉路径：从一个点出发，到达另外一个点，所有的边都经过且只经过1次。
+
+欧拉回路：欧拉路径中，终点能回到起点。
+
+如果判断是否存在欧拉路径？
+
+1.无向图：(a) 如果只有两个点的度是奇数，其他的点的度都是偶数，则存在从一个奇数度点到另一个奇数度点的欧拉路径（不是回路）。(b) 如果所有的点的度都是偶数，那么就是欧拉回路。
+
+2.有向图：(a) 如果最多有一个点出度大于入度by1，且最多有一个点入度大于出度by1，那么就有一条从前者（如果没有则可以任意）到后者（如果没有则可以任意）的欧拉路径。(b) 如果所有的点的入度等于出度，那么就存在欧拉回路。
+
+对于本题而言，我们只要根据有向图的规则，找到```出度-入度==1```的那个点作为起点。如果不存在，就可以任意为起点。
+
+那么如何规划这条路径呢？我们需要有这样一个概念：对于一个注定存在欧拉路径的图而言，抛开起点，只可能最多有一个dead end （这是注定的终点）。假设存在这样一个死胡同，那么你从任意一个点出发，在不重复走边的前提下任意走，最终状态一定会走进这个死胡同；并且此时未走过的边，必然都是一个一个封闭的环。这是因为欧拉路径里除了起点和终点，其他所有点都是入度等于出度，因此除了dead end外，你只要能从某条边进入某点，必然可以通过另一条边出去。
+
+于是我们可以这样规划DFS算法：当你打算从start出发，随便选一个出口，就无脑递归下去，这条路径最终会走进一个dead end，我们记做path1. 然后我们考察start还有其他未被遍历的那些边。根据之前的分析，走这些边之后必然是经历一个封闭的环，也就是你无论选哪个边走下去，最终都肯定会走回来，我们将这些记做path2a, path2b, path2c... 于是我们只要这样规划路径：```start + ... + path2c + path2b + path2a + path1```，也就是将唯一会走入死胡同的路径放在最后一个即可，这样就构造一条从start开始的欧拉路径。
+
+那么如果全图没有dead end呢？那么相当于没有path1，你从start的任何一个边出去，都一定会再转回来。上述的算法依然有效。
+::::::::::::::
+Graph/2123.Minimum-Operations-to-Remove-Adjacent-Ones-in-Matrix/2123.Minimum-Operations-to-Remove-Adjacent-Ones-in-Matrix.cpp
+::::::::::::::
+class Solution {
+    vector<int> next[90000];
+    int match[90000];
+public:
+    int minimumOperations(vector<vector<int>>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        int t = m*n;
+        
+        vector<pair<int,int>>dir({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]==0) continue;
+                for (int k=0; k<4; k++)
+                {
+                    int x = i+dir[k].first;
+                    int y = j+dir[k].second;
+                    if (x<0||x>=m||y<0||y>=n) continue;
+                    if (grid[x][y]!=1)  continue;
+                    next[i*n+j].push_back(x*n+y);
+                }
+            }
+        
+        for (int i=0; i<t; i++)
+            match[i] = -1;
+        
+        vector<bool>visited(t);
+        
+        int count = 0;
+        for (int i=0; i<t; i++)
+        {
+            if (match[i]!=-1) continue;
+            visited.assign(t, 0);
+            if (dfs(i, visited))
+                count++;            
+        }
+        
+        return count;
+        
+    }
+                                        
+    bool dfs(int i, vector<bool>&visited)
+    {
+        for (int j: next[i])
+        {
+            if (visited[j]) continue;
+            visited[j] = true;
+            if (match[j]==-1 || dfs(match[j], visited))
+            {
+                match[i] = j;
+                match[j] = i;
+                return true;
+            }
+        }
+        return false;
+    }                                        
+};
+::::::::::::::
+Graph/2123.Minimum-Operations-to-Remove-Adjacent-Ones-in-Matrix/Readme.md
+::::::::::::::
+### 2123.Minimum-Operations-to-Remove-Adjacent-Ones-in-Matrix
+
+本题的难点在于如何看出这是一个二分图最大匹配问题。
+
+我们只考虑图中为1的点，每两个相邻的1之间看做存在一条边。我们发现这个图中肯定不会出现“含有奇数个节点的环”，故此图肯定可以被分割为[二分图](https://www.renfei.org/blog/bipartite-matching.html)。在本题的语境就是，我们可以将所有为1的节点分为AB两组，每组内部没有边连接，所有的边都跨越这AB两组之间。
+
+很显然，如果我们将B组里的节点都翻转为0，那么原图就会变得满足条件（原先的边现在跨接的两端是1和0）。于是根据题意，我们希望二分图的划分策略是让A里的元素越多越好，B里的元素越少越好。
+
+那么B集合少到极致意味着什么呢？意味着B里的每一个元素都会有至少一条边通向A（否则我们就可以把它放入A而不影响二分图）；但是反之不一定，A里的某些元素可能没有边通向B（当然也不可能通向A的其他元素，否则违反了二分图的定义）。此时，我们回顾一下二分图的最大匹配的定义：指的是选取最多的跨接AB的边，但是所选取的边都不能有公共顶点。于是我们可以推理：因为B一定有一条边指向A，那么二分图的最大匹配边的数目一定就是B的个数。
+
+于是本题就只需要套用匈牙利算法的模板，代码和```1820.Maximum-Number-of-Accepted-Invitations ```非常相似。

@@ -1,0 +1,645 @@
+::::::::::::::
+Deque/0239.Sliding-Window-Maximum/239.Sliding-Window-Maximum_deque.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) 
+    {        
+        vector<int>results;
+        deque<int>q;
+        for (int i=0; i<nums.size(); i++)
+        {
+            while (q.size()>0 && nums[q.back()]<nums[i])
+                q.pop_back();
+            q.push_back(i);
+
+            if (q.front()<=i-k)
+                q.pop_front();
+
+            if (i>=k-1)
+                results.push_back(nums[q.front()]);
+        }
+        return results;
+    }
+};
+::::::::::::::
+Deque/0239.Sliding-Window-Maximum/239.Sliding-Window-Maximum_heap.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) 
+    {
+        vector<int>results;
+        multiset<int>Set;
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            Set.insert(nums[i]);
+            if (Set.size()>k)
+                Set.erase(Set.lower_bound(nums[i-k]));
+            
+            if (Set.size()<k) continue;
+            results.push_back(*Set.rbegin());
+        }
+        
+        return results;
+    }
+};
+::::::::::::::
+Deque/0239.Sliding-Window-Maximum/Readme.md
+::::::::::::::
+### 239.Sliding-Window-Maximum
+
+#### 解法1
+我们希望设计这样一个队列，每次读入一个新数nums[i]之后，希望队列弹出的就是当前窗口的最大值。当然，这个最大值不一定要真正“弹出去”，因为可能它处于窗口的中间位置，等下一个新数来的时候，可能依然是读取这个最大值。所以我们希望这个最大值能就一直保持在队列的首端，等待需要的时候再真正清除。什么时候需要清除呢？那就是发现当这个最大值的index等于i-k的时候，说明它超出了窗口长度，不得不踢掉了。
+
+如果把这个最大值踢掉了，我们希望在队列首端的是接下来第二大的值。于是，这就提示了我们：这个队列盛装的是一个递减的序列！这个序列是这个窗口里的最大的几个值的降序排列。这就告诉我们，每进入一个新数nums[i]，这个队列尾端的那些小于nums[i]的都可以踢掉了，然后把新数装进去。这样，直到nums[i]离开窗口之前，函数读取的最大值都是这些比nums[i]大的数。
+
+可以想见，我们需要的数据结构就是一个双端队列dequeu。每次加入新数nums[i]，但从后端弹出一些，以使得里面保持一个递减的序列。每次的队首元素就是当前k窗口的最大值，直到这个队首元素对应的index超出了k窗口的范围才被弹出。
+
+这种解法的时间复杂度是O(N)。
+
+#### 解法2
+可以直接使用multiset，能够实时有序，并且允许多个相同元素的存在。这个代码比较好写，但时间复杂度是 o(NlogK)
+
+
+[Leetcode Link](https://leetcode.com/problems/sliding-window-maximum)
+::::::::::::::
+Deque/0862.Shortest-Subarray-with-Sum-at-Least-K/862.Shortest-Subarray-with-Sum-at-Least-K.cpp
+::::::::::::::
+class Solution {
+public:
+    int shortestSubarray(vector<int>& A, int K) 
+    {        
+        int N = A.size();
+        
+        A.insert(A.begin(),0);
+        
+        vector<int>Sum(N+1,0);
+        map<int,int>Map;
+        
+        Map[0] = 0;        
+        int ret = INT_MAX;
+        
+        for (int i=1; i<=N; i++)
+        {
+            Sum[i]=Sum[i-1]+A[i];
+                        
+            int num = Sum[i]-K;            
+            
+            auto it = Map.upper_bound(num);            
+            if (it!=Map.begin())
+            {                
+                it = prev(it,1);
+                ret = min(ret, i-it->second);
+            }
+            
+            Map[Sum[i]] = i;
+            while (Map.rbegin()->first!=Sum[i])
+                Map.erase(Map.rbegin()->first);            
+        }
+        
+        if (ret==INT_MAX)
+            return -1;
+        else
+            return ret;                    
+    }
+};
+::::::::::::::
+Deque/0862.Shortest-Subarray-with-Sum-at-Least-K/862.Shortest-Subarray-with-Sum-at-Least-K_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int shortestSubarray(vector<int>& A, int K) 
+    {
+        int N = A.size();
+        vector<int>presum(N+1,0);        
+        for (int i=0; i<N; i++) presum[i+1]=presum[i]+A[i];
+        
+        deque<int>q;
+        int result = INT_MAX;
+        for (int i=0; i<=N; i++)
+        {
+            while (q.size()>0 && presum[q.front()]+K<=presum[i])
+            {
+                result = min(result,i-q.front());
+                q.pop_front();
+            }
+            while (q.size()>0 && presum[q.back()]>=presum[i])
+                q.pop_back();
+            q.push_back(i);
+        }
+        return result==INT_MAX? -1:result;
+        
+    }
+};
+::::::::::::::
+Deque/0862.Shortest-Subarray-with-Sum-at-Least-K/Readme.md
+::::::::::::::
+### 862.Shortest-Subarray-with-Sum-at-Least-K
+
+#### 解法１
+遇到continous subarray的题目,最常用的策略就是构建累加和preSum数组.这样,此题就转化为在preSum中找到两个间距最短的位置j和i,使得```preSum[j]-preSum[i]>=K```.对于这种题,通常我们会遍历i,然后在每个i之前的index查找满足条件的最小j.
+
+对于此类问题,我们会把所有经历过的preSum都存在一个有序集合里.这里我们使用map,记录曾经出现过的preSum以及它对应的在数组中的index.注意到如果遇到相同的preSum,后加入的index会覆盖先前的值,这是合理的:因为对于任何preSum我们恰需要更新的,较大的index来保持[j,i]之间的距离最短.
+
+假设我们考虑某个i,那么在i之前出现的所有preSum都已经在map里.此时如果map里所有键小于```preSum[i]-K```的preSum都是符合要求的.我们只要遍历这些键对应的值(也就是index),找到最大的那个就是距离i最近的j.
+
+这样的算法仍然会超时,主要是因为上面遍历键值的过程花时间.怎么优化呢?
+
+我们每次在将```{preSum[i],i}```插入map时,插入的可能是map中间的某个位置.我们发现,此时所有大于preSum[i]的键都是没有意义的,因为你preSum[i]带来了当前最新(也是最大)的值i.举个例子,如果此时目标键为k且k>preSum[i],那么在map中搜索所有小于等于k的"键"并且找它们之中最大的"值",得到的结果必然是i.所以每个回合里,我们插入```{preSum[i],i}```之后,可以将map从后往前不断删除元素,直至遇到preSum[i]为止,这样可以使得map始终保持精简.
+
+上面这个操作会带来一个意想不到的好处!那就是我们不需要找在map里遍历所有小于等于```preSum[i]-K```的所有键并求最大的值．因为这些"键"对应的最大"值"就存在于离```preSum[i]-K```最近的那个键里面．更本质的原因是，map里不仅键是递增的，而且对应的值也是递增的．
+
+所以每个回合的过程可以总结为:
+```
+1.在map里找到小于并且离preSum[i]-K最近的那个键,其值就是所需的满足条件的最大j
+2.在map里插入{preSum[i],i}
+3.在map删除所有大于preSum[i]的键
+```
+
+#### 解法2
+上述的解法复杂度是o(NlogN),但实际上还有更好的o(N)的解法．
+
+我们维护一个双端队列q，里面存储的q[j]表示的是一个递增的index的序列．同时要保证presum[q[j]]也是递增的．是不是有点绕？
+
+假设我们现在处理A[i]，其对应的前缀和是presum[i]，那么我们想在这个队列里面找到一个位置j，恰好使得```presum[q[j]]+K<=presum[i]```，那么队列中的q[0]~q[j]这些index都是满足at least K条件的位置，我们可以找其中最大的一个，比如说q[j']，就能使得subarray长度i-q[j']是最小的．接下来的操作很重要，我们可以将q[0]到q[j']都从队列前端弹出．因为以后的i会更大，如果它在队列中找到的满足at least K条件的左边界位置比q[j']小的话，不会比已经得到的result更好．所以任何早于q[j']的队列元素对以后的搜索都没有帮助．
+
+接下来，我们需要将presum[i]的信息加入这个队列．我们的策略是不断在后端弹出元素，直到```presum[q.back()]<presum[i]```，即保证这个队列对应的presum依然是递增的．这个比较好理解，和解法１的道理一样．因为当前的i是最靠后，那么所有队里中已有的presum大于presum[i]的元素都是没有意义的，完全可以被i取代（即依然保证at least K同时能使subarray更短）．
+
+所以每次处理一个presum[i]时，遵循上述两个步骤，就能保证队列存储的是一个递增的index序列，而且对应的presum也是递增的．
+
+
+[Leetcode Link](https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k)
+::::::::::::::
+Deque/1425.Constrained-Subsequence-Sum/1425.Constrained-Subsequence-Sum_deque.cpp
+::::::::::::::
+class Solution {
+public:
+    int constrainedSubsetSum(vector<int>& nums, int k) 
+    {
+        int n = nums.size();
+        vector<int>dp(n,0);
+        deque<int>q;
+        
+        int ret = INT_MIN;
+        for (int i=0; i<n; i++)
+        {
+            while (q.size()>0 && q.front() < i-k)
+                q.pop_front();
+            
+            dp[i] = nums[i];
+            if (q.size()>0) dp[i] = max(dp[i], dp[q.front()] + nums[i]);            
+            
+            while (q.size()>0 && dp[q.back()] <= dp[i])
+                q.pop_back();
+            q.push_back(i);
+        }
+                
+        for (int i=0; i<n; i++)
+            ret = max(ret, dp[i]);
+        return ret;
+        
+    }
+};
+::::::::::::::
+Deque/1425.Constrained-Subsequence-Sum/1425.Constrained-Subsequence-Sum_heap.cpp
+::::::::::::::
+class Solution {
+public:
+    int constrainedSubsetSum(vector<int>& nums, int k) 
+    {
+        int n = nums.size();
+        multiset<int>Set;
+        vector<int>dp(n,0);
+        
+        int ret = INT_MIN;
+        
+        for (int i=0; i<n; i++)
+        {
+            if (Set.size()>k && i-k-1>=0)
+                Set.erase(Set.lower_bound(dp[i-k-1]));
+            
+            dp[i] = nums[i];
+            if (Set.size()>0) dp[i] = max(dp[i], *Set.rbegin()+nums[i]);
+            ret = max(ret, dp[i]);
+            
+            Set.insert(dp[i]);            
+        }
+        
+        return ret;
+        
+    }
+};
+::::::::::::::
+Deque/1425.Constrained-Subsequence-Sum/Readme.md
+::::::::::::::
+### 1425.Constrained-Subsequence-Sum
+
+#### 解法1：DP
+显然，如果设计dp[i]表示以nums[i]结尾的subsequence能够得到的满足条件的最大和，那么我们可以很轻松地写出转移方程：
+```
+dp[i] = max{nums[i], dp[i-k] + nums[i]}, k=1,2,...,K
+```
+那么这显然是一个O(NK)级别的算法，根据数据范围肯定会超时。
+
+#### 解法2：Heap
+一个优化的思路就是我们在这K个candidate中高效地找到最大值。这可以用自动排序的容器比如说multiset来实现。我们在Set中维护最近的K个dp值并保持升序，这样每次直接在Set尾部取值就行。但是注意的是，每一个回合我们需要弹出最老的那个DP值（即dp[i-k]），那个值是什么我们需要额外记录，并且手工从Set中删除掉。
+
+#### 解法2：单调队列 mono deque
+数据结构“双端队列dequeu”不是很常用，但其最重要的用法就是维护单调队列。
+
+我们想象，如果最近得到了一个dp[i]，如果它比我们以前所遇到的dp值都要大，那么就意味着以前所有的dp值我们都不需要再保留？为什么？因为i是最近的index，而且dp[i]又最大，这种“又新又大”的特点使得它在两个维度上都是最优的解。因此，在i之后的任何元素j都只可能与i关联，而不会与i之前的元素关联。所以我们不用保留任何i之前的dp值了。
+
+这就提示了我们，我们需要保留的dp值应该是一个单调递减的序列。队列首端的元素最大，但是比较老；队列末端的元素最小，但是比较新。它们有各自的优势。对于任何新来的元素nums[i]，它要与队列中的哪个元素关联，都是有可能的。具体的方案是：首先看队列首的元素j（因为它最大），如果满足在index上的条件i-j>=K，那么就以为着关联成功，dp[i]=dp[j]+nums[i]。否则说明j这个index太老了，无法满足i-j>=k，以后也肯定不会再用到了，可以直接踢出队列。就这样不停地后移j，直到找到合适的元素。
+
+再更新dp[i]之后，我们也需要将其加入队列。注意到之前的结论，我们需要保持队列单调递减。如果队列尾部的元素dp[j]比dp[i]小，那么我们就可以直接弹出j。道理已经解释过了，j相比于i而言“又老又小”，总是不合算的。
+
+用单调队列的做法，时间复杂度就是o(N).
+::::::::::::::
+Deque/1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit/1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit_deque.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int limit) 
+    {
+        deque<int>qmax({0});
+        deque<int>qmin({0});
+
+        int j = 0;
+        int ret = 1;
+        int mx = nums[0], mn = nums[0];
+        for (int i=0; i<nums.size() && j<nums.size(); i++)
+        {
+            while (mx-mn <= limit)
+            {
+                ret = max(ret, j-i+1);
+                j++;
+                if (j>=nums.size()) break;
+
+                while (qmax.size()>0 && nums[j] >= nums[qmax.back()])                
+                    qmax.pop_back();                
+                qmax.push_back(j);
+                mx = nums[qmax.front()];
+                
+                while (qmin.size()>0 && nums[j] <= nums[qmin.back()])                
+                    qmin.pop_back();
+                qmin.push_back(j);
+                mn = nums[qmin.front()];
+            }
+
+            if (j>=nums.size()) break;
+
+            if (qmax.size()>0 && qmax.front()<=i)
+            {
+                qmax.pop_front();
+                mx = nums[qmax.front()];
+            }
+            if (qmin.size()>0 && qmin.front()<=i)
+            {
+                qmin.pop_front();
+                mn = nums[qmin.front()];
+            }
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Deque/1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit/1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit_heap.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int limit) 
+    {
+        multiset<int>Set({nums[0]});
+        int j = 0;
+        int ret = 0;        
+        
+        for (int i=0; i<nums.size(); i++)
+        {            
+            while (*Set.rbegin()-*Set.begin()<=limit)
+            {
+                ret = max(ret, j-i+1);
+                j++;
+                if (j>=nums.size()) break;
+                Set.insert(nums[j]);
+            }
+
+            if (j>=nums.size()) break;
+            
+            Set.erase(Set.find(nums[i]));     
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Deque/1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit/Readme.md
+::::::::::::::
+### 1438.Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit
+
+#### 解法1：Heap
+本题如果用multiset会非常好做。固定左端点i，不断试探右端点j能前进到哪里。[i,j]内的元素都放入一个multiset，自动就知道了最大值和最小值。如果满足```mx-mn<=limit```，则这段区间长度就合法。否则我们就移动一次左端点i，同时要更新这个set把nums[i]从中移出去。
+
+#### 解法2：monotone deque
+multiset是o(NlogN)的解法，如果使用单调队列，可以优化到o(N)。
+
+我们不用multset来维护最大值和最小值，而是用一个deque来维护当前区间[i,j]的最大值，用另一个deque来维护当前区间[i,j]的最小值。其中用deque来维护一个滑动窗口的最大值，就是```239.Sliding-Window-Maximum```的做法。
+
+基本思想是：当将nums[j]加入队列时，如果发现它比队尾的元素还大，那么说明此时队尾元素可以抛弃，这是因为在未来相当一段时间内区间都会包含有j，所以最大值肯定轮不到是队尾的那个元素。这就提示我们维护的这个deque应该是单调递减的（因为新元素会把所有小的队尾元素都弹出）。每次我们要找当前区间的最大值，就只要看deque的队首元素就行。
+
+同理，我们维护一个单调递增的deque来获取当前区间的最小值，其中最小值也是deque的队首元素。
+
+注意，当j前进到区间[i,j]无法满足```mx-mn<=limit```时，j的前进就停止，我们要移动i。因此需要将nums[i]从这两个deque中移出。移出的操作就是看队首元素（的index）是否就是i，是的话把这个队首元素弹出就行。同时记得更新mx和mn。
+::::::::::::::
+Deque/1499.Max-Value-of-Equation/1499.Max-Value-of-Equation.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMaxValueOfEquation(vector<vector<int>>& points, int k) 
+    {
+        int ret = INT_MIN;
+        deque<int>q;
+        for (int i=0; i<points.size(); i++)
+        {
+            while (q.size()>0 && points[q.front()][0] < points[i][0]-k)
+                q.pop_front();
+            
+        	if (q.size() > 0)
+        	    ret = max(ret, -points[q.front()][0]+points[q.front()][1] + points[i][0]+points[i][1]);
+
+            while (q.size()>0 && -points[q.back()][0]+points[q.back()][1] < -points[i][0]+points[i][1])
+                q.pop_back();
+            q.push_back(i);
+            
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Deque/1499.Max-Value-of-Equation/Readme.md
+::::::::::::::
+### 1499.Max-Value-of-Equation
+
+如果我们固定j点，那么原题就是求```max{yi+yj+xj-xi} = max{-xi+yi} + xj+yj ```.也就是要在|xi-xj|<k的范围内，找到一个i点，使得-xi+yj最大。这就是一个典型的sliding window maximum，标准解法使用双端队列，时间复杂度是o(N).
+
+注意，这里的sliding window并不是固定长度的，我们保持的是一个满足首尾元素|xi-xj|<k的窗口。队列中保持递减的序列。任何新进来的元素，如果-x+y比队尾元素要大，说明队尾的元素就不再有任何利用的价值（又旧又小，永远不会被用到），那么队尾元素都可以弹出。
+::::::::::::::
+Deque/1562.Find-Latest-Group-of-Size-M/1562.Find-Latest-Group-of-Size-M.cpp
+::::::::::::::
+class Solution {
+public:
+    int findLatestStep(vector<int>& arr, int m) 
+    {
+        int n = arr.size();
+        arr.insert(arr.begin(),0);
+        int ret = -1;
+        
+        if (n==m) return n;
+        vector<int>day(n+1);
+        for (int i=1; i<=n; i++)
+            day[arr[i]] = i;
+        
+        deque<int>dq;
+
+        for (int i=1; i<=n; i++)
+        {
+            while (dq.size() > 0 && day[dq.back()] < day[i])
+                dq.pop_back();
+            while (dq.size() > 0 && i - dq.front() >= m)
+                dq.pop_front();
+            dq.push_back(i);
+
+            if (i < m) continue;
+
+            int maxDay = day[dq.front()];
+
+            int left = INT_MAX, right = INT_MAX;
+            if (i-m >= 1) left = day[i-m];
+            if (i+1<=n) right = day[i+1];
+            
+            if (maxDay < left && maxDay < right)
+                ret = max(ret, min(left,right)-1);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Deque/1562.Find-Latest-Group-of-Size-M/1562.Find-Latest-Group-of-Size-M_v2.cpp
+::::::::::::::
+
+class Solution {
+public:
+    int findLatestStep(vector<int>& arr, int m) 
+    {
+        const int n = arr.size();        
+        vector<pair<int, int>> ranges(n, make_pair(-1, -1));
+        
+        int countsForM = 0;
+        int ans = -1;
+        for (int i = 0; i < n; ++i) 
+        {
+            int flipIndex = arr[i] - 1;
+            
+            pair<int, int> newRange{flipIndex, flipIndex};
+            
+            if (flipIndex < n - 1) 
+            {
+                auto nextRange = ranges[flipIndex + 1];
+                if (nextRange.first != -1) 
+                {
+                    newRange.second = nextRange.second;                    
+                    if (nextRange.second - nextRange.first + 1 == m) 
+                        --countsForM;
+                }
+            }
+            
+            if (flipIndex > 0) 
+            {
+                auto prevRange = ranges[flipIndex - 1];
+                if (prevRange.first != -1) 
+                {
+                    newRange.first = prevRange.first;                
+                    if (prevRange.second - prevRange.first + 1 == m) 
+                        --countsForM;
+                }
+            }
+            
+            if (newRange.second - newRange.first + 1 == m) 
+                ++countsForM;
+            
+            if (countsForM > 0) 
+                ans = i + 1;
+            
+            ranges[newRange.first] = newRange;
+            ranges[newRange.second] = newRange;
+            
+        }
+        
+        return ans;
+    }
+};
+::::::::::::::
+Deque/1562.Find-Latest-Group-of-Size-M/Readme.md
+::::::::::::::
+### 1562.Find-Latest-Group-of-Size-M
+
+#### 解法1：deque
+首先要正确理解题意。举个例子，arr[3]=4的意思是，第3天的时候，将第4个bit位置为1. 如果需要，我们可以反过来定义一个day[4]=3，表示第4个bit位，我们在第3天的时候将其置为1.
+
+文中要找到某一天t，存在一个长度恰为m的区间[i,j]其bit为都是1。那么区间内所有bit对应的day都要小于等于t（不晚于第t天变成1）。显然，对于这个区间而言最早的t，就是这个区间内最大的那个day。也就是说，当[i,j]内最后一个bit变为1的时候，那么整个区间恰好都变成了1.
+
+同时因为“长度恰为m”，说明在第t天完成的时候，第i-1个bit位和第j+1个bit位必须都还是0，也就是要求day[i-1]>t 且 day[j+1]>t。如果满足上面的条件，就可以判定这个[i,j]区间就是我们想要找的“恰好长度为m的全1串”。
+
+本题中，我们很容易遍历一个长度m的滑窗[i,j]，根据这个滑窗内部的day的信息，套用sliding window maximum的做法，可以o(1)时间知道```t = max(day[k]) k=i,...,j```。然后只需查看一下是否day[i-1]>t且day[j+1]>t。是的话，那么意味着在t之后、min(day[i-1], day[j+1])之前的这段时间，这个全1的区间恰好就是m的长度。显然，我们会挑尽量靠后的日子，也就是 ```min(day[i-1], day[j+1])-1```
+
+所以，最终的答案就是遍历长度为m的滑窗，如果判断出这个滑窗符合要求，那么就有机会用```min(day[i-1], day[j+1])-1```更新result. 最终result会取全局所有滑窗里最大的那个答案。
+
+参考 239. sliding window maximum 的deque方法，用o(n)时间求固定长度滑窗的最大值。
+
+#### 解法2：区间合并
+我们给每一个已经翻转的位置存储一个range的属性，记录它所在的连续是1的区间的左边界和右边界。
+
+当我们在i天翻转flipIndex这个位置时，它可能连接起了左边的连续1区间和右边的连续1区间。我们查看flipIndex-1所属的区间范围，它的左边界就是新的左边界；同时查看flipIndex+1所属的区间范围，它的右边界就是新的右边界。同时我们要把这个newRange信息传播给整个大区间，但是不用传播给每一个位置，只要传播给当前大区间最左边的位置和最右边的位置即可。
+
+我们用一个countsForM来记录当前全局总共有多少个恰为M的连续1区间。当我们合并区间的操作中，如果合并的左区间长度就是M，那么这个计数器减一；如果合并的右区间长度也是M，那么这个计数器减一；如果合并后的大区间长度就是M，那么这个计数器加一。答案是保持```countsForM > 0```的最晚的一天。
+::::::::::::::
+Deque/1696.Jump-Game-VI/1696.Jump-Game-VI.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxResult(vector<int>& nums, int k) 
+    {
+        int n = nums.size();
+        deque<pair<int,int>>dq;
+        dq.push_back({nums[0],0});
+        for (int i=1; i<n; i++)
+        {
+            while (!dq.empty() && i - dq.front().second > k)
+                dq.pop_front();
+
+            int curSteps = dq.front().first + nums[i];
+            while (!dq.empty() && curSteps > dq.back().first)
+                dq.pop_back();
+            dq.push_back({curSteps,i});
+        }
+        return dq.back().first;
+    }
+};
+::::::::::::::
+Deque/1696.Jump-Game-VI/Readme.md
+::::::::::::::
+### 1696.Jump-Game-VI
+
+本题初看很像第二类序列型DP，令dp[i]表示跳到第i个位置所能得到的最大得分。很容易写出状态转移方程：
+```
+dp[i] = max(dp[j] + nums[i]) for j=i-k, i-k+1, ... i-1
+```
+这样的话时间复杂度是o(NK)，根据数据范围可以判断会超时。如何改进呢？我们发现，dp[i]的关键是在[i-k,i-1]这个区间里找最大的dp值；类似地，dp[i+1]的关键是在[i-k+1,i]这个区间里找最大的dp值。这两步的两个区间是大部分重叠的，因此应该有高效地方法来分享这些信息，将取区间最大值的操作耗时均摊变小。
+
+显然，这本质就是一个sliding window maximum的问题。我们关注一个长度为k的滑动窗口，里面的最大值就用来更新窗口后的第一个元素的dp值。sliding window maximum的标准解法是用deque，维护一个单调递减的队列。如果有新元素比队尾元素更大，那么它就更有竞争力（更新、更大）被用来更新后面的dp值，故队尾元素就可以舍弃而加入新元素。此外，如果队首元素脱离了这个滑动窗口的范围，也就可以将其舍弃。在每一个回合，deque里面的最大元素就是队首元素。
+
+所以本题最优解的时间复杂度是o(N)
+::::::::::::::
+Deque/1776.Car-Fleet-II/1776.Car-Fleet-II.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<double> getCollisionTimes(vector<vector<int>>& cars) 
+    {
+        int n = cars.size();
+        vector<double>rets(n);
+        
+        deque<array<double,2>>dq; // {t, v}
+        dq.push_back({0, (double)cars.back()[1]});
+        rets[n-1] = -1;
+        
+        
+        for (int i=cars.size()-2; i>=0; i--)
+        {            
+            int dS = cars[i+1][0] - cars[i][0];
+            double vv = cars[i][1];
+            double total = 0;
+            
+            if (vv <= dq.back()[1])
+            {
+                dq.clear();
+                dq.push_back({0, vv});
+                rets[i] = -1;
+                continue;
+            }
+            
+            double t = dq.front()[0];
+            double v = dq.front()[1];            
+            dq.pop_front();
+                        
+            while (dq.size()>0)
+            {                
+                if (total + v*(dq.front()[0] - t) + dS >= vv*dq.front()[0])
+                {
+                    total += v*(dq.front()[0] - t);
+                    t = dq.front()[0];
+                    v = dq.front()[1];                    
+                    dq.pop_front();
+                }
+                else
+                    break;
+            }            
+            
+            double dt = (dS - (t*vv - total)) *1.0 / (vv-v);
+            
+            dq.push_front({t+dt, v});
+            dq.push_front({0, vv});
+            
+            rets[i] = t+dt;
+        }
+        
+        return rets;
+        
+    }
+};
+::::::::::::::
+Deque/1776.Car-Fleet-II/Readme.md
+::::::::::::::
+### 1776.Car-Fleet-II
+
+本题的关键是明确这样一个概念：任何一辆车的行驶历程，初始速度是它本身的速度，之后的速度如果有变化，那么只可能越来越慢（没有任何理由会让一辆车加速）。第一次变慢的原因就是因为它和前面的车相撞，速度被降下来。注意，此时的速度不一定是前车的原始速度，而是前车在碰撞时刻的速度，因为前车在之前可能也经历了一些碰撞。而第一次相撞之后，它的速度就完全和前面那辆车一样了。
+
+我们给每一辆车建立“速度-时间”曲线。这个曲线一定是分段阶跃函数，每一次阶跃点代表着碰撞的时刻。所以这个曲线可以用若干个{tk,vk}来表示，即tk时刻之后该车的速度变成了vk，这样在t-v曲线上就有表现为若干段柱状。这些bar围成的面积就是代表这辆车随着时间的推移，所行驶的距离。
+
+对于第0辆车（最前面的车），它的曲线就是{0, v0}。在图像上就是从(0,v0)开始的一条横向直线。
+
+对于第1辆车，如果它会与0号车相撞的话，它的曲线就是{0, v1}, {t1, v0}. 也就是在某一个时刻t之后，它的速度就变成了前车的速度v0。这个相撞时刻t1在此时并不难求。在图像上，1号车的曲线行程了两块bar（第二块bar是无限向右延申的）
+
+对于第2辆车，如果它会与1号车相撞的话，我们需要计算它具体的相撞时间t2。注意这个t2的时刻可能是在t1之前，那样的话，2号车的曲线就是{0,v2},{t2,v1},{t1,v0}；也有可能t2的时刻在t1之后，那么2号车的曲线局势{0,v2},{t2,v0}. 
+
+所以对于第i辆车的曲线，它基本上是继承了第i-1辆车的曲线，区别有两处：1. 它的第一段横线开始于它的原始速度{0,vi}。 2. 第一段横线一致延伸到了与前车的相撞时刻ti。注意：ti之后的曲线完全与前车在ti之后的曲线相同。
+
+我们现在假设这个ti已知。从出发时刻到ti，第i号车行使的距离就是x = ti\*vi。相同时间内第i-1号车行驶的距离y是可以从它的曲线里读出来的：就只要数一下ti时间内包含了几块bar以及它覆盖的面积（注意可能最后包含了某块bar的一部分）。如果两车相遇，那么一定要满足```x - y = gap```，即两车的初始间隔。于是，我们可以根据这个条件反推ti。
+
+举个例子。假设第i-1辆车的曲线是{0,v0},{t1,v1},{t2,v2},{t3,v3} .... 我们就挨个查看i号车与i-1号车相撞时间的时间ti是在{0,t1,t2,t3...}的那个区间里。即查看是否
+```
+t1*vi >= gap + v0*(t1-0)
+```
+如果不满足，说明在t1之前都没有追上，那么就查看
+```
+t2*vi >= gap + v0*(t1-0) + v1*(t2-t1)
+```
+如果还不满足，说明在t2之前都没有追上，那么就查看
+
+```
+t3*vi >= gap + v0*(t1-0) + v1*(t2-t1) + v2*(t3-t2)
+```
+假设满足了，那么说明碰撞时刻就在t2和t3之间。那么具体的时刻，就等于考察这段区间内的追及问题。在这个区间内，两辆车都是匀速运动，所以需要花费的追及时间是：
+```
+dt = [ gap + v0*(t1-0) + v1*(t2-t1) - t2*vi ] / (vi - v2)
+```
+也就是说在t2再过了dt之后，这两辆车相遇了，相撞之后速度都变成了v2（此时前车的速度）。于是我们就马上得到了第i号车的曲线：{0,vi},{t2+dt,v2},{t3,v3}... 这个曲线就是在第i-1辆车的曲线基础上，弹出若干个前端的区间，依次push_front两个新区间。
+
+时间复杂度：我们每处理一辆车，就修改部分的曲线区间。其实每一个区间其实对应的是一个撞车事件。因为总共只会有n个撞车事件，所以整体的时间复杂度就是o(N). 这里我用了deque来方便对于前端区间的弹出、加入操作，但是本质上可以看出就等效于使用了一个栈。
+
+
+
+

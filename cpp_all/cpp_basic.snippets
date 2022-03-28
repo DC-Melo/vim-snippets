@@ -1,0 +1,177 @@
+priority -50
+
+extends c
+
+# We want to overwrite everything in parent ft.
+priority -49
+###########################################################################
+#			    Global functions 						  #
+###########################################################################
+
+global !p
+
+def write_docstring_args(arglist, snip):
+	args = str(arglist).split(',')
+
+	if len(args) > 1:
+		c = 0
+		for arg in args:
+			if c == 0:
+				snip.rv += arg
+				c = 1
+			else:
+				snip += '*       : %s' % arg.strip()
+	else:
+		snip.rv = args[0]
+
+
+endglobal
+
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+snippet mainAppFW "main and App"
+/* code by 王江 DC-Melo */
+#include <string>
+#include <vector>
+#include <chrono>
+#include <iostream>
+using namespace std;
+class App
+{
+public:
+    App() {}
+    ~App() {}
+private:
+};
+int main() {
+	/* timestamp begin */
+    auto tBegin = std::chrono::high_resolution_clock::now();
+	/* code heer */
+
+	/* timestamp end */
+    auto tEnd = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tBegin).count();
+    std::cout << "\nprogram cust " <<  duration <<" microseconds" << std::endl;
+    return 0;
+}
+$0
+endsnippet
+
+snippet initInclude "init include "
+using namespace std;
+// #include <bits/stdc++.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include "math.h"
+#include <string>
+#include <set>
+#include <sstream>
+#include <cstring>
+#include <ctime>
+#include <vector>
+#include <iostream>
+#include <unordered_map>
+#include <chrono>
+$0
+endsnippet
+
+snippet initArray "array init"
+// Initializing a array
+int arr[] = { 1, 2, 3, 4, 5 };
+// loop through the array elements
+for (size_t i = 0; i < sizeof(arr)/sizeof(arr[0]); i++) std::cout << arr[i] << ' '; std::cout << endl;
+// Print contents of an array in C++ using range-based for-loop
+for (const auto &value: arr)  std::cout << value << ' '; std::cout << endl;
+// Print contents of an array in C++ using iterators
+for (auto it = std::cbegin(arr); it != std::cend(arr); it++) std::cout << *it << ' ';std::cout << endl;
+// Print contents of an array in C++ using `std::for_each`
+std::for_each(std::begin(arr), std::end(arr), print);
+$0
+endsnippet
+
+snippet initVector "vector init"
+// 1. Initializing by pushing values one by one :
+vector<int> vect;
+vect.push_back(10);
+vect.push_back(20);
+vect.push_back(30);
+// 2. Specifying size and initializing all values :
+vector<int> vect(3, 10);
+// 3. Initializing like arrays :
+vector<int> vect{ 10, 20, 30 };
+// 4. Initializing from an array :
+int arr[] = { 10, 20, 30 };
+int n = sizeof(arr) / sizeof(arr[0]);
+vector<int> vect(arr, arr + n);
+// print vector
+for (int x : vect) cout << x << " ";
+$0
+endsnippet
+
+snippet initMatrix "matrix init"
+// Initializing a 2D Vector i.e. vector of vectors
+vector<vector<int>> matrix = {  {1, 2, 3, 4, 5  },
+								{6, 7, 8, 9, 10 },
+								{5, 6, 8, 1, 12 },
+								{1, 7, 2, 4, 18 },
+							 };
+App app = new App();
+// Print 2D vector matrix
+for_each(matrix.begin(), matrix.end(),
+	[](const auto & row ) {
+		for_each(row.begin(), row.end(),
+				[](const auto & elem){
+					cout<<elem<<", ";
+				});
+		cout<<endl;
+	});
+cout<<endl;
+int array[3][4] = {1,1,2,3,4,5,6,7,8,9,0,10}
+$0
+endsnippet
+
+snippet listnodeStruct "int listlode struct formwork"
+/* code by 王江 DC-Melo */
+// Definition for singly-linked list.
+struct ListNode {
+	int val;
+	ListNode *next;
+	ListNode() : val(0), next(nullptr) {}
+	ListNode(int x) : val(x), next(nullptr) {}
+	ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+$0
+endsnippet
+
+snippet appendListNodeStruct "append listnode"
+/* code by 王江 DC-Melo */
+void appendListNode(struct ListNode *head, int n) {
+	ListNode *newNode = new ListNode;
+	newNode->val = n;
+	newNode->next = NULL;
+	ListNode *cur = head;
+	while(cur) {
+		if(cur->next == NULL) {
+			cur->next = newNode;
+			return;
+		}
+		cur = cur->next;
+	}
+}
+$0
+endsnippet
+
+snippet initListNode "init list node"
+ListNode* head = new ListNode(0);
+for(ListNode* pi =l2;pi!=NULL;pi=pi->next) cout<<pi->val << " "; std::cout << std::endl;
+ListNode* ptr =head;
+while(ptr!=NULL){
+	cout<<ptr->val<<endl;
+	ptr = ptr->next;
+}
+$0
+endsnippet
+

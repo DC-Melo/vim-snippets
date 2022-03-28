@@ -1,0 +1,5276 @@
+
+
+# ::::::::::::::
+# BFS/0126.Word-Ladder-II/126.Word-Ladder-II.cpp
+# ::::::::::::::
+snippet snipAllFormwork "snippet All formwork test" b
+class Solution {
+public:
+    unordered_set<string>wordSet;
+    unordered_map<string,vector<string>>next;
+    unordered_map<string,unordered_set<string>>prev;
+    vector<vector<string>>results;
+    string beginWord;
+    
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) 
+    {   
+        wordList.push_back(beginWord);        
+        
+        for (auto str:wordList)
+            wordSet.insert(str);
+        this->beginWord = beginWord;
+        
+        if (wordSet.find(endWord)==wordSet.end()) return {};
+                
+        for (int i=0; i<wordList.size(); i++)
+        {
+            string str = wordList[i];
+            for (int k=0; k<str.size(); k++)
+            {                
+                for (char ch='a'; ch<='z'; ch++)
+                {
+                    string temp = str;
+                    temp[k] = ch;
+                    if (temp==str) continue;
+                    if (wordSet.find(temp)!=wordSet.end())
+                        next[str].push_back(temp);                    
+                }
+            }
+        }
+        
+        unordered_set<string>visited;
+        queue<string>q;
+        int flag = 0;
+        
+        q.push(beginWord);
+        visited.insert(beginWord);
+        
+        while (!q.empty())
+        {
+            int len = q.size();
+            unordered_set<string>newVisited;
+            
+            for (int k=0; k<len; k++)
+            {
+                string str = q.front();
+                q.pop();
+                                
+                for (auto nextStr: next[str])
+                {                                        
+                    if (visited.find(nextStr)!=visited.end())
+                        continue;                                                                                
+                    prev[nextStr].insert(str);
+                    newVisited.insert(nextStr);
+                    
+                    if (nextStr==endWord) flag = 1;
+                }
+            }    
+            
+            for (auto x: newVisited)
+            {
+                visited.insert(x);                
+                q.push(x);
+            }                
+            
+            if (flag==1) break;
+        }       
+        
+        if (flag==0) return {};
+        
+        DFS(endWord,{endWord});
+        
+        return results;
+    }
+    
+    void DFS(string word, vector<string> path)
+    {
+        if (word==beginWord)
+        {
+            reverse(path.begin(),path.end());
+            results.push_back(path);
+            return;
+        }
+        
+        for (auto preStr:prev[word])
+        {
+            vector<string>newPath=path;
+            newPath.push_back(preStr);
+            DFS(preStr, newPath);
+        }
+        return;
+    }
+};
+
+$0
+endsnippet
+# ::::::::::::::
+# BFS/0126.Word-Ladder-II/Readme.md
+# ::::::::::::::
+# ### 126.Word-Ladder-II
+# 
+# 这是一道考点比较综合全面的ＢＦＳ题．需要注意的几点是：
+# 
+# １．提前处理这个wordList，将其放入一个wordSet中．并且对于每个单词，我们都提前计算好它的next可能是哪些．
+# 
+# ２．看清题意，这个wordSet必须包含endWord，否则直接返回空．另外，记得把beginWord也要放进去，否则就不会生成它的next.
+# 
+# 3.题目要求所有的最短路径．这就说明不仅仅是搜到endWord就停止，必须把同一个层级的都搜索完．所以建议用如下的trick
+# ```
+# while (!q.empty())
+# {
+#   int len = q.size();
+#   for (int k=0; k<len; k++)
+#   {
+#     ...
+#     if (endWord) flag=1;
+#   }
+#   if (flag==1) break;
+# }
+# ```
+# 要保证一个for循环完整地执行完．
+# 
+# 4.要找到回溯的路径，就需要保存所有单词的prev．因为可能有多条最短路径都经过str，那么str的ｐｒｅｖ需要是一个集合．最后回溯的方法用DFS.
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/word-ladder-ii)
+# 
+::::::::::::::
+BFS/0127.Word-Ladder/127.Word-Ladder.cpp
+::::::::::::::
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) 
+    {
+        unordered_map<string,vector<string>>Map;
+        unordered_map<string,int>visited;
+        unordered_set<string>Set;
+        for (int i=0; i<wordList.size(); i++)
+        {
+            Set.insert(wordList[i]);
+            visited[wordList[i]]=0;
+        }
+        
+        wordList.push_back(beginWord);
+        for (int i=0; i<wordList.size(); i++)
+        {
+            string s=wordList[i];
+            for (int j=0; j<s.size(); j++)
+            {
+                string t=s;
+                for (char ch='a'; ch<='z'; ch++)
+                {
+                    if (ch==s[j]) continue;
+                    t[j]=ch;
+                    if (Set.find(t)!=Set.end())
+                        Map[s].push_back(t);
+                }
+            }
+        }
+        
+        queue<string>q;
+        q.push(beginWord);
+        int step = 1;
+        
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)            
+            {
+                string s = q.front();                
+                q.pop();
+                for (auto t:Map[s])
+                {
+                    if (visited[t]==1) continue;
+                    if (t==endWord) return step+1;                    
+                    visited[t]=1;
+                    q.push(t);                    
+                }                
+            }      
+            step++;
+        }        
+        return 0;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0127.Word-Ladder/Readme.md
+# ::::::::::::::
+# ### 127.Word-Ladder
+# 
+# 典型的BFS求最短路径。为了更高效地遍历，我们需要提前构建好graph，即节点与节点之间的边关系。对于任意两个单词，我们判定是否可以通过transform进行转化，可以的话就说明有这两个单词的联通关系。这个时间复杂度是o(N^2)。
+# 
+# 也有其他的方法构建边。对于一个单词，我们对它每个字母尝试变更为其他字母，看看变更后这个新单词是否是集合中已有的其他单词。这个时间复杂度是```O(N*5*26)```.
+# 
+# 
+::::::::::::::
+BFS/0207.Course-Schedule/207.Course-Schedule_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) 
+    {
+        vector<vector<int>>next(numCourses);
+        vector<int>InDegree(numCourses);
+        for (auto p: prerequisites)
+        {
+            next[p[0]].push_back(p[1]);
+            InDegree[p[1]]++;
+        }
+        queue<int>q;
+        int count = 0;
+        for (int i=0; i<numCourses; i++)
+        {
+            if (InDegree[i]==0) 
+            {
+                q.push(i);
+                count++;
+            }
+        }
+                    
+        while (!q.empty())
+        {
+            int curCourse = q.front();
+            q.pop();
+            for (auto nextCourse: next[curCourse])
+            {
+                InDegree[nextCourse]--;
+                if (InDegree[nextCourse]==0)
+                {
+                    q.push(nextCourse);
+                    count++;
+                }                    
+            }
+        }        
+        
+        return count==numCourses;        
+    }
+};
+
+
+::::::::::::::
+BFS/0207.Course-Schedule/207.Course-Schedule_DFS.cpp
+::::::::::::::
+class Solution {
+    vector<int>visited;
+    vector<vector<int>>next;
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) 
+    {
+        visited.resize(numCourses, 0);
+        next.resize(numCourses);        
+        for (auto p: prerequisites)        
+            next[p[0]].push_back(p[1]);
+        
+        for (int i=0; i<numCourses; i++)
+        {            
+            if (dfs(i)==false) return false;            
+        }
+        
+        return true;
+    }
+    
+    bool dfs(int cur)
+    {
+        if (visited[cur]==1) return true;
+
+        visited[cur] = 2;
+        for (int next: next[cur])
+        {
+            if (visited[next]==1) continue;
+            if (visited[next]==2) return false;
+            if (dfs(next)==false)  return false;
+        }
+        visited[cur] = 1;
+        return true;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0207.Course-Schedule/Readme.md
+# ::::::::::::::
+# ### 207.Course-Schedule
+# 
+# 我们将依赖关系表述成一条有向边。课程a需要先修课程b，那么就有一条边从a指向b。本题的本质就是在一个有向图中判断是否有环。如果有环，意味着循环依赖，就需要返回false。
+# 
+# 在图论中，判断有向图是否有环，一般有DFS和BFS两种做法。
+# 
+# #### 解法1： DFS
+# DFS的基本思想是从任意一个未访问过的节点开始做DFS的遍历。如果在某条支路的遍历过程中（没有遍历到出度为0的端点）遇到了任何在这条支路中已经访问过的节点，那么就能判断成环。
+# 
+# 注意，“遇到了任何在这条支路中已经访问过的节点”和“遇到了任何已经访问过的节点”，是不同的概念。比如：
+# ```
+# 1 -> 2 -> 3 -> 4 
+#           ^
+# 5 -> 6 -> 7 -> 8 
+#           ^____|
+# ```
+# 我们从1开始依次访问1->2->3->4，然后遍历结束。然后从5开始依次访问5->6->7->3的时候，3已经被访问过了。但是这不会误判成环。因为3并不是在当前未完待续的支路中。我们再看5->6->7->8->7这条线路，此时的7已经被这条支路访问过，并且这条支路并没有走到底，这个时候就应该判断成环。
+# 
+# 所以我们需要标记两种visited[i]。如果节点i已经在其他遍历到底的支路中被访问过了，标记1.如果节点i是在当前未完待续的支路中被访问过了，标记2.只有在遍历过程中遇到了2，才算是判断有环。那么是什么时候标记1什么时候标记2呢？方法是：在某条DFS的路径上，第一次遇到的节点i的时候标记2.在回溯返回节点i的时候标记1（因为能成功返回的话，说明后续的节点都没有环，都是死胡同，此后任何任何入度指向这个节点i的话，我们都不用担心后续的遍历会遇到环）.
+# 
+# 核心的dfs代码很简单：
+# ```cpp
+#     bool dfs(int cur)
+#     {
+#         visited[cur] = 2;
+#         for (int next: graph[cur])
+#         {
+#             if (visited[next]==1) continue;
+#             if (visited[next]==2) return false;
+#             if (dfs(next)==false)  return false;
+#         }
+#         visited[cur] = 1;
+#         return true;
+#     }
+# ```
+# 
+# #### 解法2： BFS
+# BFS的算法思想是拓扑排序：从外围往核心进发。我们每次在图中找入度为0的点，然后移除。如果最后没有入度为0的点，但是图中仍有点存在，那么这些剩下来的点一定是交错成环的。
+# 
+# 
+::::::::::::::
+BFS/0210.Course-Schedule-II/210.Course-Schedule-II.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) 
+    {
+        int n = numCourses;
+        unordered_map<int,vector<int>>nextCourses(n);
+        unordered_map<int,int>degree(n);
+        
+        for (auto edge: prerequisites)
+        {
+            int a = edge[0];
+            int b = edge[1];
+            nextCourses[b].push_back(a);
+            degree[a]+=1;
+        }
+        
+        queue<int>q;
+        for (int i=0; i<n; i++)
+            if (degree[i]==0)
+                q.push(i);
+        
+        vector<int>rets;
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            rets.push_back(cur);
+            
+            for (auto next: nextCourses[cur])
+            {
+                degree[next] -= 1;
+                if (degree[next]==0)
+                    q.push(next);
+            }
+        }
+        
+        if (rets.size()!=n)
+            return {};
+        else
+            return rets;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0210.Course-Schedule-II/Readme.md
+# ::::::::::::::
+# ### 210.Course-Schedule-II
+# 
+# 拓扑排序最基本的应用。显然我们应该优先访问那些入度为零的节点（也就是不需要先修课程的课程）。删去第一批最外围的节点后，再继续访问此时入度更新为零的节点。依次类推。使用的数据结构就是BFS，
+# 
+# 如何确定第二批最外围的节点呢？一个拓扑排序最基本的技巧就是：对于每一个当前最外围的节点x，我们都找它的后继y。删除x意味着y的入度减少了一。当y的入度刚好被删到为零的时候，就说明它就能成为新的外围节点。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/course-schedule-ii)
+# 
+::::::::::::::
+BFS/0269.Alien-Dictionary/269.Alien-Dictionary.cpp
+::::::::::::::
+class Solution {
+public:
+    string alienOrder(vector<string>& words) 
+    {
+        unordered_map<char,unordered_set<char>>Next;
+        unordered_map<char,int>inDegree;
+        
+        for (int i=0; i<words.size(); i++)
+            for (int j=0; j<words[i].size(); j++)
+                inDegree[words[i][j]] = 0;
+        
+        for (int i=1; i<words.size(); i++)
+        {
+            string word1 = words[i-1];
+            string word2 = words[i];
+            
+            if (word1.size()>word2.size() && word1.substr(0, word2.size())==word2) return "";
+            
+            for (int i=0; i<min(word1.size(),word2.size()); i++)
+            {
+                if (word1[i]==word2[i]) continue;                
+                if (Next[word1[i]].find(word2[i])==Next[word1[i]].end())
+                {
+                    Next[word1[i]].insert(word2[i]);
+                    inDegree[word2[i]]++;
+                }
+                break;
+            }            
+        }
+                        
+        queue<char>q;
+        for (auto a:inDegree) 
+            if (a.second==0) q.push(a.first);
+        string result;
+        
+        while (!q.empty())
+        {
+            char current = q.front();
+            q.pop();
+            result+=current;
+            
+            for (auto a: Next[current])
+            {
+                inDegree[a]--;
+                if (inDegree[a]==0)                
+                    q.push(a);                
+            }            
+        }
+               
+        if (result.size()==inDegree.size())
+            return result;
+        else
+            return "";
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0269.Alien-Dictionary/Readme.md
+# ::::::::::::::
+# ### 269.Alien-Dictionary
+# 
+# 我们比较任何两个相邻的单词，逐个对比每个字母，可以得到两个字母之间的字典序大小的关系。如果a<b，那么我们就定义一条有向边a->b。
+# 
+# 于是本题就转化为：有一系列的有向边，要求给出一个包括所有节点的顺序排列，使得任何一条边x->y的两个节点(x,y)在这个序列里的顺序都是满足x的位置在y之前。这是一个拓扑排序的问题，适合BFS来做。
+# 
+# 我们需要预处理所有的节点，得到所有节点的入度值。在队列的初始值里，加入所有的外围字母（即入度为零的节点）。因为这些字母的入度为0，说明没有任何字母比它们更小，所以可以安全地放在字典序中的最前面（它们彼此之间的顺序无所谓）。接着在BFS过程中，每弹出一个字母x，就找到对应的后续节点y（可能有多个），并将y的入度减一（因为我们已经处理完了字母x）。如果此时y的入度降至0，那么我们就可以将其加入队列中，做为下一批的外围节点。
+# 
+# 核心代码如下：
+# ```cpp
+# while (!q.emtpy())
+# {
+#    char current = q.front();
+#    q.pop();
+#    for (auto next: Next[current])
+#    {
+#       inDegree[next]--;
+#       if (inDegree[next]==0)
+#         q.push(next);
+#    }
+# }
+# ```
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/alien-dictionary)
+# 
+# 
+::::::::::::::
+BFS/0310.Minimum-Height-Trees/310.Minimum-Height-Trees.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) 
+    {
+        if (n==1) return {0};
+        if (n==2) return {0,1};
+        
+        vector<vector<int>>next(n);
+        vector<int>degree(n);
+        
+        for (auto edge: edges)
+        {
+            int a = edge[0], b = edge[1];
+            degree[a]++;
+            degree[b]++;
+            next[a].push_back(b);
+            next[b].push_back(a);
+        }
+        
+        queue<int>q;
+        vector<int>visited(n);
+        for (int i=0; i<n; i++)
+        {
+            if (degree[i]==1)
+                q.push(i);
+        }
+        
+        int count = 0;
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)
+            {
+                int cur = q.front();
+                q.pop();
+                count++;
+                visited[cur] = 1;
+                for (int nxt: next[cur])
+                {
+                    degree[nxt]--;
+                    if (degree[nxt]==1)
+                        q.push(nxt);
+                }                
+            }
+            if (count==n-1 || count==n-2)
+                break;
+        }
+        
+        vector<int>rets;
+        while (!q.empty())
+        {
+            rets.push_back(q.front());
+            q.pop();                
+        }
+            
+        return rets;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0310.Minimum-Height-Trees/Readme.md
+# ::::::::::::::
+# ### 310.Minimum-Height-Trees
+# 
+# 本题表面上是关于图、关于树，本质上我觉得更像BFS，或者说树的level order traversal.
+# 
+# 本题的意思是，想从一棵树的一群nodes里找出一个node作为根，使得从这个根节点出发，发散到周围的叶子节点的路径范围最短。可以想见，这个根节点必然得尽可能地位于“中央”。如何确定“中央”的位置呢？我们其实可以反其道而行之，从“边疆”出发往内地进军。从所有的叶子节点（入度为1、出度为0）同步出发，一步一步地往前走，那么它们的最终汇合点，必然就是最“中央”的地方。
+# 
+# 很明显，这就是一棵树的层级遍历 (level order tranversal)。传统的树操作都是从root开始的（因为通常只给你一个root），必须从顶往底用队列的结构一层一层遍历。但这里给出了图的表述，这样我们就可以轻易地找出哪些是最底端的叶子节点，从叶子节点反推上去。
+# 
+# 基本的算法思想就是ＢＦＳ，具体的做法很像拓扑排序，可以参见269．Alien Dictionary.我们要借助一个Ｈａｓｈ表记录所有节点的度．每次我们将度为１（说明是叶子节点或边缘节点）加入队列．队列每弹出一个元素，我们就找这个元素的相邻节点，将它们的度都减一，一旦减至１（说明这个节点被砍成了边缘节点），就可以把这个节点加入队列．
+# 
+# 直到什么时候停止呢？直到所有已弹出的元素数目，加上已经加入队列的元素数目，恰好等于ｎ为止．这时候，队列的元素数目，要么为１，要么为２，这一个或两个元素就是答案．
+# 
+# 注意：为什么最后会有一个或两个元素可以作为答案。我也是看网上参考才知道的。不过这也非常好理解。如果最后还剩下三个连通的节点（因为这是一棵树，必然彼此连通），显然还有从两边“往中央进军”的余地，必然只有一个是中央；如果最后还剩下两个连通的节点，两边各进一步的话就僵持住了，显然可以是并列的“中央”
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/minimum-height-trees)
+# 
+::::::::::::::
+BFS/0407.Trapping-Rain-Water-II/407.Trapping-Rain-Water-II.cpp
+::::::::::::::
+typedef vector<int> VI;  // {h,x,y}
+
+class Solution {
+public:
+    int trapRainWater(vector<vector<int>>& heightMap) 
+    {
+        int m = heightMap.size();
+        int n = heightMap[0].size();
+        
+        priority_queue<VI, vector<VI>, greater<>>pq;
+        auto visited = vector<vector<int>>(m, vector<int>(n,0));
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                if (i==0||i==m-1||j==0||j==n-1)
+                {
+                    pq.push({heightMap[i][j],i,j});
+                    visited[i][j] = 1;
+                }
+                    
+        
+        int ret = 0;
+        int cur = INT_MIN;
+        while (!pq.empty())
+        {
+            int h = pq.top()[0];
+            int x = pq.top()[1];
+            int y = pq.top()[2];
+            pq.pop();
+                        
+            if (h>cur) cur = h;
+            ret += cur - h;
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=m||j<0||j>=n) continue;
+                if (visited[i][j]) continue;
+                visited[i][j] = 1;
+                pq.push({heightMap[i][j],i,j});                
+            }            
+        }
+        
+        return ret;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0407.Trapping-Rain-Water-II/README.md
+# ::::::::::::::
+# ### 407.Trapping-Rain-Water-II
+# 
+# 注意此题和一维的版本不一样，无法使用DP的思想。
+# 
+# 我们将矩阵所有的边界格子加入一个优先队列，里面的格子按照海拔从低到高排列。这些边界格子相当于闭合的堤岸，围了中间的区域。
+# 
+# 我们想象一下海平面逐渐上涨的过程，当海平面cur上涨到优先队列里最矮的那个元素时，就相当于从那里冲破了堤岸，拓展进了内陆、同时会有新的堤岸格子加入队列。如果加入队列的这一系列新格子高度都小于cur，那么它们其实也被淹没了，洪水可以基于它们的位置继续向四周扩展。这个“泛滥”的过程直到队列里面的所有元素高度（也就是首元素）都大于cur为止。在上面的过程中，所有被“淹没”的格子(i,j)，计算```cur-h(i,j)```就是该点的储水量。
+# 
+# 然后重复上述的过程，再次想象海平面cur上涨到队列最矮元素的高度，这样就再一次“决堤”，这个泛滥的过程依然是在各地“储水”的机会，直至队列里面的堤岸都高于海平面cur位置，“泛滥”结束。
+# 
+# 以上过程中，所有被“决堤”或者被“淹没”的格子，都要做标记，不用重复入队列。直至队列为空停止。
+# 
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/trapping-rain-water-ii)
+# 
+# 
+::::::::::::::
+BFS/0444.Sequence-Reconstruction/444.Sequence-Reconstruction.cpp
+::::::::::::::
+class Solution {
+public:
+    bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) 
+    {
+        if (seqs.size() == 0)
+            return false;
+        int n = org.size();
+        vector<int>indegree(n+1);
+        vector<vector<int>>out(n+1);
+        
+        for (auto seq: seqs)
+            for (int i: seq)
+                if (i>n || i<1) return false;
+        
+        for (auto seq: seqs)
+        {            
+            for (int i=1; i<seq.size(); i++)
+            {                
+                out[seq[i-1]].push_back(seq[i]);
+                indegree[seq[i]]++;
+            }                
+        }
+        
+        queue<int>q;
+        for (int i=1; i<=n; i++)
+        {
+            if (indegree[i]==0)
+                q.push(i);
+        }
+        
+        int i = 0;
+        while (!q.empty())
+        {
+            if (q.size()>1)
+                return false;
+            
+            int x = q.front();            
+            q.pop();
+            if (x!=org[i]) return false;
+            i++;
+            
+            for (int next: out[x])
+            {
+                indegree[next]--;
+                if (indegree[next]==0)
+                    q.push(next);
+            }
+        }
+        
+        if (i!=org.size()) return false;
+        
+        return true;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0444.Sequence-Reconstruction/Readme.md
+# ::::::::::::::
+# ### 444.Sequence-Reconstruction
+# 
+# 本题巧妙地应用了拓扑排序的原理。我们根据seqs可以得到每个节点的入度和（有向的）邻接节点。我们每个回合里，统计当前入度为零的节点，这样的节点必须只有一个。如果有若干个，那么他们彼此之间的先后顺序必然是不确定的。此外，这唯一的入度为零的节点（整个图的起点），也必须是org里当前的首元素。如果不满足这两个条件，我们就返回false。
+# 
+# 在满足这两个条件之后，我们就弹出org的首元素，考察它所邻接的节点及其更新后的入度（它们的入度要减一），继续寻找其中入度为零的节点。不断重复直至遍历完所有的拓扑关系。
+# 
+# 当遍历完所有的拓扑关系后，我们要求也恰好遍历完org里面所有的节点。否则返回false。
+# 
+# 此外，seqs里面所有的节点必须是在[1,n]的范围里。
+# 
+# 
+::::::::::::::
+BFS/0499.The-Maze-III/499.The-Maze-III.cpp
+::::::::::::::
+using TP = tuple<int, string, int, int>;
+class Solution {
+    vector<pair<int,int>>dir = {{1,0},{0,-1},{0,1},{-1,0}};  // d,l,r,u
+    int m,n;
+public:
+    string findShortestWay(vector<vector<int>>& maze, vector<int>& ball, vector<int>& hole) 
+    {
+        m = maze.size(), n = maze[0].size();
+        
+        priority_queue<TP, vector<TP>, greater<>>pq;  // {dist, string, node_x, node_y}
+        pq.push({0, "", ball[0], ball[1]});
+        
+        vector<vector<int>>dist(m, vector<int>(n,INT_MAX)); 
+        string ret;
+        
+        while (!pq.empty())
+        {
+            auto [d, s, x, y] = pq.top();
+            pq.pop();
+            
+            if (d > dist[x][y]) continue;
+            else dist[x][y] = d;
+            
+            if (x==hole[0] && y==hole[1])
+            {
+                ret = s;
+                break;
+            }
+            
+            for (int k=0; k<4; k++)
+            {
+                int step = Next(x,y,k,maze, hole);
+                int i = x + dir[k].first * step;
+                int j = y + dir[k].second * step;
+                
+                char ch = '0'+k;
+                if (d+step >= dist[i][j]) continue;
+                pq.push({d+step, s+ch, i, j});
+            }            
+        }
+        
+        for (int i=0; i<ret.size(); i++)
+        {
+            if (ret[i]=='0') ret[i] = 'd';
+            else if (ret[i]=='1') ret[i] = 'l';
+            else if (ret[i]=='2') ret[i] = 'r';
+            else if (ret[i]=='3') ret[i] = 'u';
+        }
+        
+        if (ret=="") return "impossible";
+        else return ret;        
+    }
+    
+    int Next(int x, int y, int k, vector<vector<int>>& maze, vector<int>& hole)
+    {
+        int step = 0;
+        while (x+dir[k].first >= 0 && x+dir[k].first < m && y+dir[k].second >= 0 && y+dir[k].second < n && maze[x+dir[k].first][y+dir[k].second]!=1)
+        {            
+            step++;
+            x+=dir[k].first;
+            y+=dir[k].second;
+            if (x==hole[0] && y==hole[1])
+                break;
+        }
+        return step;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0499.The-Maze-III/Readme.md
+# ::::::::::::::
+# ### 499.The-Maze-III
+# 
+# 此题在505.The-Maze-II的基础上增加了一个条件：在最短距离相同的情况下，要更新为字典序最小的指令。
+# 
+# 事实上本题与505并没有太大的区别，只不过优先队列的比较函数里增加一个条件：当（离源点）路径距离相等的时候，将路径指令的字典序更小的节点排在更前面。这样当终点第一次从优先队列里弹出的时候，不仅对应的距离最短，而且如果有多个相同距离的路径的话，指令也是最小的。
+# 
+# 有人会疑问，当终点第一次从队列里弹出的时候，固然对应着距离最短的路径，那么怎么保证所有该有着相同最短距离、但指令不同的路径都已经进入队列了呢？这是因为，假设终点第一次弹出队列所对应的路径长度是x，那么此时所有路径长度小于x的路径必然已经都弹出队列了，他们的后续路径必然包括了所有以距离x达到终点的路径。
+# 
+# 
+::::::::::::::
+BFS/0505.The-Maze-II/505.The-Maze-II.cpp
+::::::::::::::
+typedef vector<int> VI;
+
+class Solution {
+public:
+    int shortestDistance(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination) 
+    {
+        int M=maze.size();
+        int N=maze[0].size();
+        
+        auto dir=vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});        
+        auto resolved = vector<vector<int>>(M,vector<int>(N,0));
+        
+        priority_queue<VI, vector<VI>, greater<>>pq;
+        pq.push({0, start[0], start[1]});
+        
+        while (!pq.empty())
+        {
+            int d = pq.top()[0];
+            int x = pq.top()[1];
+            int y = pq.top()[2];
+            pq.pop();
+            if (x==destination[0] && y==destination[1])
+                return d;
+            
+            if (resolved[x][y]==1) continue;
+            resolved[x][y] = 1;
+            
+            for (int k=0; k<4; k++)
+            {
+                int i = x, j = y, step=0;
+                while (i+dir[k].first>=0 && i+dir[k].first<M && j+dir[k].second>=0 && j+dir[k].second<N && maze[i+dir[k].first][j+dir[k].second]==0)
+                {
+                    step++;
+                    i = i+dir[k].first;
+                    j = j+dir[k].second;
+                }
+                if (resolved[i][j]) continue;
+                pq.push({d+step, i, j});
+            }
+        }
+        
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0505.The-Maze-II/Readme.md
+# ::::::::::::::
+# ### 505.The-Maze-II
+# 
+# 本题中从某点朝四个方向走的路径权重不同，所以本题不适合用常规的BFS求解最短路径。此题是适用标准Dijkstra（BFS+PQ）算法的模板题。
+# 
+# Dijkstra算法的整体框架类似于BFS，将起点放入一个队列中。每个回合从队首弹出一个位置，然后将这个位置邻接的四个位置压入队列，直至我们弹出终点。不同之处在于我们使用的是一个优先队列，里面存放给的是行走状态的两个信息{steps, position}，并且按照steps从小到大排序。如果某个position第一次从队列中弹出，那么根据贪心思想，意味着从起点到达这个position的最短路径就是steps。
+# 
+# 注意，已经被确认最短路径的position就再不需要放入队列中。
+# 
+# 
+::::::::::::::
+BFS/0529.Minesweeper/529.Minesweeper.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<char>> updateBoard(vector<vector<char>>& board, vector<int>& click) 
+    {
+        int M = board.size();
+        int N = board[0].size();
+        
+        if (board[click[0]][click[1]]=='M')
+        {
+            board[click[0]][click[1]] = 'X';
+            return board;
+        }
+        
+        auto visited = vector<vector<int>>(M,vector<int>(N,0));
+        auto dir = vector<pair<int,int>>({{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1},{1,1}});
+        
+        queue<pair<int,int>>q;
+        q.push({click[0],click[1]});
+        visited[click[0]][click[1]] = 1;
+        
+        while (!q.empty())
+        {
+            int x0 = q.front().first;
+            int y0 = q.front().second;
+            q.pop();
+            
+            int count = 0;
+            vector<pair<int,int>>next;
+            
+            for (int k=0; k<8; k++)
+            {
+                int x = x0+dir[k].first;
+                int y = y0+dir[k].second;
+                
+                if (x<0||x>=M||y<0||y>=N)
+                    continue;
+                
+                if (board[x][y]=='M')
+                    count++;
+                else
+                {
+                    if (visited[x][y]==0)
+                        next.push_back({x,y});
+                }
+                    
+            }
+            
+            if (count==0)
+            {
+                board[x0][y0] = 'B';
+                for (auto p: next)
+                {
+                    q.push(p);
+                    visited[p.first][p.second] = 1;
+                }  
+            }
+            else
+            {
+                board[x0][y0] = '0'+count;
+            }
+        }
+        
+        return board;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0529.Minesweeper/Readme.md
+# ::::::::::::::
+# ### 529.Minesweeper
+# 
+# 此题首选BFS，基础题，但队列中的操作需要仔细考虑成熟。
+# 
+# 我们点击一个格子，首先判断是否是M，是的话直接返回。
+# 
+# 如果是非M，我们就考察周围8个格子，计算他们中间有地雷的个数。如果有地雷的话，那么就将这个格子标记数字，结束对这个格子的操作。特别注意，这个时候不能直接返回board，因为队列中还有很多各自没处理呢。如果一圈都没有地雷的话，就标记'B'，并把这一圈的格子加入队列处理。
+# 
+# 上面的操作可行，但是会MLE。一个格子A将周围的8个收入队列中，而它相邻的格子B也会将周围的8个收入队列中，会有大量的重复。所以需要一个visited来记录每个已经收入队列中的格子，已经收录的就不要再收了。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/minesweeper)
+# 
+::::::::::::::
+BFS/0637.Average-of-Levels-in-Binary-Tree/637.Average-of-Levels-in-Binary-Tree.cpp
+::::::::::::::
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<double> averageOfLevels(TreeNode* root) 
+    {
+        queue<TreeNode*>q;
+        q.push(root);
+        
+        vector<double>results;        
+        
+        while (!q.empty())
+        {
+            int n=q.size();
+            double sum=0;
+            for (int i=0; i<n; i++)
+            {
+                TreeNode* node=q.front();
+                sum+=node->val;
+                if (node->left!=NULL) q.push(node->left);
+                if (node->right!=NULL) q.push(node->right);
+                q.pop();
+            }
+            results.push_back(sum/n);            
+        }
+        
+        return results;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0637.Average-of-Levels-in-Binary-Tree/Readme.md
+# ::::::::::::::
+# ### 637.Average-of-Levels-in-Binary-Tree
+# 
+# BFS所用的队列不必用pair来携带level信息。在遍历完一层之后，就能用一个for循环来指定遍历下一个层级节点的数目。
+# 
+# 另一个好处是，这样在队列的构造过程中就可以进行平均数的计算，不必等到整棵树遍历完之后再做计算。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/average-of-levels-in-binary-tree)
+# 
+::::::::::::::
+BFS/0675.Cut-Off-Trees-for-Golf-Event/675.Cut-Off-Trees-for-Golf-Event.cpp
+::::::::::::::
+class Solution {
+public:
+    int cutOffTree(vector<vector<int>>& forest) 
+    {
+        map<int,pair<int,int>>Map;
+        int M=forest.size();
+        int N=forest[0].size();
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (forest[i][j]>1)            
+                 Map[forest[i][j]]={i,j};             
+         }
+        
+        int x=0;
+        int y=0;
+        int result=0;
+        for (auto a:Map)
+        {
+            int m=a.second.first;
+            int n=a.second.second;
+            
+            int step=Go(x,y,m,n,forest);
+            if (step==-1) return -1;
+            else result+=step;
+            x=m;
+            y=n;
+        }
+        
+        return result;
+            
+    }
+    
+    int Go(int x0, int y0, int m, int n, vector<vector<int>>& forest)
+    {
+        vector<pair<int,int>>dir={{0,1},{0,-1},{1,0},{-1,0}};
+        int M=forest.size();
+        int N=forest[0].size();
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+        
+        queue<pair<int,int>>q;
+        q.push({x0,y0});
+        visited[x0][y0]=1;
+        int count=-1;
+        
+        while (!q.empty())
+        {
+            int num=q.size();
+            count++;
+            
+            for (int i=0; i<num; i++)
+            {
+                int x=q.front().first;
+                int y=q.front().second;                
+                q.pop();
+                if (x==m && y==n) return count;                
+                                
+                for (int k=0; k<4; k++)
+                {
+                    int a=x+dir[k].first;
+                    int b=y+dir[k].second;
+                    if (a<0 || a>=M || b<0 || b>=N) continue;
+                    if (forest[a][b]==0) continue;
+                    if (visited[a][b]==1) continue;
+                    q.push({a,b});
+                    visited[a][b]=1;
+                }
+            }
+        }
+        
+        return -1;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0675.Cut-Off-Trees-for-Golf-Event/Readme.md
+# ::::::::::::::
+# ### 675.Cut-Off-Trees-for-Golf-Event
+# 
+# 典型的用BFS求最短路径的问题。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/cut-off-trees-for-golf-event)
+# 
+::::::::::::::
+BFS/0694.Number-of-Distinct-Islands/694.Number-of-Distinct-Islands.cpp
+::::::::::::::
+class Solution {
+    unordered_set<string>Set;
+public:
+    int numDistinctIslands(vector<vector<int>>& grid) 
+    {
+        int M=grid.size();
+        int N=grid[0].size();
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+                
+        vector<pair<int,int>>dir={{1,0},{0,1},{-1,0,},{0,-1}};        
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (grid[i][j]==0) continue;
+             if (visited[i][j]==1) continue;
+             
+             string path="*";
+             queue<pair<int,int>>q;
+             q.push({i,j});
+             visited[i][j]=1;
+             
+             while (!q.empty())
+             {
+                 int m=q.front().first;
+                 int n=q.front().second;
+                 q.pop();
+                 
+                 for (int k=0; k<4; k++)
+                 {
+                    int x=m+dir[k].first;
+                    int y=n+dir[k].second;
+                 
+                    if (x<0||x>=M||y<0||y>=N || grid[x][y]==0 || visited[x][y]==1) 
+                        continue;                                         
+                    
+                    visited[x][y]=1;
+                    path+=to_string(k);
+                    q.push({x,y});
+                 }
+                 path+='*';
+             }
+             
+             Set.insert(path);             
+         }
+        
+        return Set.size();        
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/0694.Number-of-Distinct-Islands/Readme.md
+# ::::::::::::::
+# ### 694.Number-of-Distinct-Islands
+# 
+# 一个岛屿的形状，可以通过BFS遍历的路径来表示。遍历的起始点永远是这个岛屿的左上角（x最小的条件下、y最小）。每遍历到一个点，就在path中加入相邻可以继续遍历的点的方向。比如可以往左、往右、往下遍历，就path+="013"；如果不可以继续遍历，那就不加任何信息。
+# 
+# 注意每遍历一个点，都需要用*号隔开。
+# 
+# 最后这个path字符串就代表了唯一一种岛屿的形状。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/number-of-distinct-islands)
+# 
+::::::::::::::
+BFS/0743.Network-Delay-Time/743.Network-Delay-Time_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) 
+    {
+        unordered_map<int,int>EarliestTime; // node->earliestTime;
+        for (int i=1; i<=N; i++)
+            EarliestTime[i] = INT_MAX;
+        EarliestTime[K] = 0;
+        
+        unordered_map<int,vector<pair<int,int>>>next;
+        for (auto time: times)
+        {
+            next[time[0]].push_back({time[1],time[2]});
+        }
+        
+        queue<pair<int,int>>q; // {node,earliestTime}
+        q.push({K,0});
+        
+        while (!q.empty())
+        {
+            int curNode = q.front().first;
+            int curTime = q.front().second;
+            q.pop();
+            
+            if (curTime>EarliestTime[curNode]) continue;
+            
+            for (auto t: next[curNode])
+            {
+                int nextNode = t.first;
+                int weight = t.second;
+                
+                if (EarliestTime[nextNode] <= EarliestTime[curNode]+weight)
+                    continue;
+                EarliestTime[nextNode] = EarliestTime[curNode]+weight;
+                q.push({nextNode,EarliestTime[nextNode]});
+            }
+        }
+        
+        int result = 0;
+        for (int i=1; i<=N; i++)
+            result = max(result, EarliestTime[i]);
+        if (result==INT_MAX) return -1;
+        else return result;        
+    }
+};
+
+
+::::::::::::::
+BFS/0743.Network-Delay-Time/743.Network-Delay-Time_Dijkstra_ElogE.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int K) 
+    {        
+        vector<vector<PII>>Map(n+1);
+        for (auto t: times)
+            Map[t[0]].push_back({t[1], t[2]});
+            
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0, K});
+        vector<int>resolved(n+1,0);
+        int ret = 0;
+        
+        while (!pq.empty())
+        {
+            auto [d, cur] = pq.top();
+            pq.pop();
+            
+            if (resolved[cur]==1) continue;
+            resolved[cur] = 1;
+            ret = max(ret, d);  // dist[cur] = d
+            
+            for (auto [next, weight]: Map[cur])
+            {
+                if (resolved[next]) continue;
+                pq.push({d+weight, next});
+            }            
+        }
+        
+        for (int i=1; i<=n; i++)
+            if (resolved[i]==0) return -1;
+        
+        return ret;
+    }
+};
+
+
+::::::::::::::
+BFS/0743.Network-Delay-Time/743.Network-Delay-Time_Dijkstra_N2.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) 
+    {
+        unordered_map<int, vector<PII>>Map;
+        for (auto t: times)
+            Map[t[0]].push_back({t[1], t[2]});
+
+        vector<int>dist(n+1, INT_MAX);
+        vector<bool>seen(n+1, 0);
+        dist[k] = 0;
+        
+        for (int i=1; i<=n; i++)
+        {
+            int minVal = INT_MAX;
+            int minNode = -1;
+            for (int j=1; j<=n; j++)
+            {
+                if (!seen[j] && dist[j]<minVal)
+                {
+                    minVal = dist[j];
+                    minNode = j;
+                }
+            }    
+            if (minNode==-1) break;
+            seen[minNode] = 1;        
+            for (auto [next, d]: Map[minNode])
+                dist[next] = min(dist[next], dist[minNode]+d);            
+        }
+        
+        int ret = 0;
+        for (int i=1; i<=n; i++)
+            ret = max(ret, dist[i]);            
+
+        return ret == INT_MAX ? -1: ret;
+    }
+};
+
+
+::::::::::::::
+BFS/0743.Network-Delay-Time/743.Network-Delay-Time_Floyd.cpp
+::::::::::::::
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+        
+        auto dp = vector<vector<int>>(N+1, vector<int>(N+1, INT_MAX/2));
+        
+        for (auto& t: times)
+            dp[t[0]][t[1]] = t[2];
+        for (int i=1; i<=N; i++)
+            dp[i][i] = 0;
+        
+        for (int k =1; k<=N; k++)
+            for (int i=1; i<=N; i++)
+                for (int j=1; j<=N; j++)
+                    dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j]);
+        
+        int ret = 0;
+        for (int i=1; i<=N; i++)
+            ret = max(ret, dp[K][i]);
+        
+        return (ret==INT_MAX/2) ? -1: ret;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0743.Network-Delay-Time/Readme.md
+# ::::::::::::::
+# ### 743.Network-Delay-Time
+# 
+# #### BFS
+# 此题和＂913　Cat and Mouse＂一样，扩展了我们对于BFS的认识．BFS的节点的状态可以是多个参数的．在这里，队列里每个节点的状态表示为```(node,ArrivalTime)```.注意，这里的ArrivalTime是只入队列时候的．此外，我们还需要一个map，来记录每个节点当前最新的earliestArrivalTime，这个是实时更新的．
+# 
+# 我们取出一个节点，查看它的ArrivalTime是否能给它的邻接点带来时间上的更新．也就是比较```ArrivalTime+weight < earliestArrivalTime[nextNode]```，是的话，我们就更新nextNode并且把这个新状态```(nextNode,ArrivalTime+weight)```加入队列．
+# 
+# 当队列为空时，说明没有什么可以更新的了．此时查看map里存放的就是每个节点的最终earliestArrivalTime．
+# 
+# #### Dijkstra (BFS+PQ)
+# 对于BFS，每一次扩展对应的只是“几何意义上的”层级的自增1，只适合寻找“最少步数”。如果每一步有权重（相当于边有权值）、求起点到终点最短权重总和的问题，那么传统的BFS就不太方便。
+# 
+# Dijkstra的本质就是将BFS的传统队列替换为优先队列，采用贪心的策略。每次从优先队列中弹出当前离起点最近的点cur，然后将它所有邻接的点以{dist, next}的形式加入队列，其中dist就是起点到cur的距离再加上cur->next的这条边权。我们有这样一个贪心的结论：如果某个节点第一次从这个优先队列中弹出来，它所对应的dist就是起点到该节点的最短距离。
+# 
+# 这种方法的时间复杂度是ElogE. 通常情况下，如果不是稠密图，ElogE会比N^2有优势。
+# 
+# Dijkstra也有o(N^2)的实现方法。每个回合在所有的点中找到未收录的、离起点最近的那个节点，然后收录这个节点（确认这个节点的最短距离），并以这个节点更新它的所有邻接节点的距离。重复N个回合。
+# 
+# #### Floyd
+# 求两点之间的最短路径，典型的图论中的基本算法。Floyd是我的首选，因为代码短，容易理解，而且对于边权的值没有正数的限制。本质就是轮遍所有的节点k看是否能对dp[i][j]的更新做贡献。即 ```dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j])```
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/network-delay-time)
+# 
+# 
+::::::::::::::
+BFS/0778.Swim-in-Rising-Water/778.Swim-in-Rising-Water.cpp
+::::::::::::::
+typedef vector<int> VI;
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        priority_queue<VI, vector<VI>, greater<VI>>pq;
+        pq.push({grid[0][0],0,0});
+        
+        int N = grid.size();
+        auto visited = vector<vector<int>>(N,vector<int>(N,0));
+        
+        int ret = 0;
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        while (!pq.empty())
+        {
+            int h = pq.top()[0];
+            int x = pq.top()[1];
+            int y = pq.top()[2];
+            ret = max(ret, h);
+            pq.pop();
+            
+            if (visited[x][y]) continue;            
+            visited[x][y] = 1;
+            
+            if (x==N-1 && y==N-1)
+                return ret;
+            
+            for (int k = 0; k<4; k++)
+            {
+                int xx = x+dir[k].first;
+                int yy = y+dir[k].second;
+                if (xx<0||xx>=N||yy<0||yy>=N)
+                    continue;
+                if (visited[xx][yy]==1)
+                    continue;
+                pq.push({grid[xx][yy],xx,yy});
+            }            
+        }
+        
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0778.Swim-in-Rising-Water/Readme.md
+# ::::::::::::::
+# ### 778.Swim-in-Rising-Water
+# 
+# 此题和```407.Trapping-Rain-Water-II```非常像，可以比照学习。
+# 
+# 我们想象从起点开始，人随着海平面的高度上升。我们将起点周围的格子作为“堤岸”放入一个优先队列里，PQ里面的元素按照高度从低到高。显然，当海平面高度cur涨至PQ的最小元素高度时，就会从那里“决堤而入”，这时候那个决堤口周围的新格子就可以作为新“堤岸”放入PQ。
+# 
+# 如果下一个回合PQ里面的最小元素也小于等于cur时，说明那个格子也会被“淹没”，我们继续将那个格子周围的格子作为“堤岸”加入队列。如果下一个回合PQ里面的最小元素大于cur时，那么就需要让整个海平面cur继续上涨，直至到达PQ里面的最小元素高度，从而引发又一次“决堤泛滥”的过程。
+# 
+# 整个海平面上涨的过程持续到我们能淹没右下角的格子为止。
+# 
+# [Leetcode Link](https://leetcode.com/problems/swim-in-rising-water)
+# 
+# 
+::::::::::::::
+BFS/0785.Is-Graph-Bipartite/785.Is-Graph-Bipartite.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isBipartite(vector<vector<int>>& graph) 
+    {
+        int n = graph.size();
+        vector<int>visited(n,-1);
+        
+        for (int i=0; i<n; i++)
+        {
+            if (visited[i]!=-1)
+                continue;
+            
+            queue<pair<int,int>>q;
+            q.push({i,0}); // {node, group}
+            visited[i] = 0;
+        
+            while (!q.empty())
+            {
+                int node = q.front().first;
+                int group = q.front().second;
+                q.pop();
+                        
+                for (auto next: graph[node])
+                {                   
+                
+                    if (visited[next]!=-1)
+                    {
+                        if (visited[next]!=1-group)
+                            return false;
+                    }
+                    else
+                    {
+                        visited[next] = 1-group;                
+                        q.push({next, 1-group});
+                    }
+                }
+            }        
+        }
+                
+        return true;        
+    }
+};
+
+
+::::::::::::::
+BFS/0785.Is-Graph-Bipartite/785.Is-Graph-Bipartite_UnionFind.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    bool isBipartite(vector<vector<int>>& graph) 
+    {
+        int N=graph.size();
+        for (int i=0; i<N; i++)
+            Father[i]=i;
+        for (int i=0; i<N; i++)
+        {
+            int k;
+            if (graph[i].size()>0)
+                k = graph[i][0];
+            
+            for (auto j:graph[i])
+            {
+                if (FindSet(i)==FindSet(j))
+                    return false;                
+                Union(k,j);
+            }
+        }
+        
+        return true;
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        if (x<y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0785.Is-Graph-Bipartite/Readme.md
+# ::::::::::::::
+# ### 785.Is-Graph-Bipartite
+# 
+# 对于任意一个定点（比如说节点0），假设将其归入A组，那么所有0节点的相邻节点必定都要归入B组；同理0节点的相邻节点的相邻节点，必定又都要归入A组。由此可以发现，我们从0节点开始做BFS的遍历，扩展的时候以A组/B组的次序交替标记，就可以将与0节点在同一个连通图内的所有节点进行分组。如果在BFS过程中遇到已经分组的节点并且发现矛盾之处，那么就可以返回false。
+# 
+# 注意，以上的BFS是针对同一个连通图而言。如果整个graph有若干个连通图（彼此之间不相连），那么就需要遍历所有的节点（查找未曾访问过的节点作为一个连通图的起始节点），以保证所有的连通图都被逐一访问和BFS遍历过。
+# 
+# 当然，本题也可以用并查集来做。根据题意，对于graph[i]内的所有节点{j}，它们必定属于同一集合。因此我们Union每个graph[i]的点集，并查看过程中是否遇到任何矛盾。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/is-graph-bipartite)
+# 
+::::::::::::::
+BFS/0802.Find-Eventual-Safe-States/802.Find-Eventual-Safe-States_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) 
+    {
+        int n = graph.size();
+        vector<int>outDegree(n,0);
+        vector<vector<int>>prev(n);
+        for (int i=0; i<n; i++)        
+            for (auto j: graph[i])
+            {
+                prev[j].push_back(i);
+                outDegree[i]+=1;
+            }       
+
+        vector<int>ret;         
+        queue<int>q;
+        for (int i=0; i<n; i++)
+        {
+            if (outDegree[i]==0) 
+            {
+                q.push(i);
+                ret.push_back(i);
+            }
+        }
+            
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            for (int prev: prev[cur])
+            {
+                outDegree[prev] -= 1;
+                if (outDegree[prev]==0)
+                {
+                    q.push(prev);
+                    ret.push_back(prev);                    
+                }
+            }
+        }
+        sort(ret.begin(), ret.end());
+        return ret;        
+    }
+
+};
+
+
+::::::::::::::
+BFS/0802.Find-Eventual-Safe-States/802.Find-Eventual-Safe-States_DFS.cpp
+::::::::::::::
+class Solution {
+    vector<int>visited;
+    vector<vector<int>>graph;
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) 
+    {
+        int n = graph.size();
+        visited.resize(n,0);
+        this->graph = graph;
+        vector<int>rets;
+        for (int i=0; i<n; i++)
+            if (DFS(i)) rets.push_back(i);
+        return rets;
+    }
+
+    bool DFS(int cur)
+    {
+        if (visited[cur]==1) return true;
+        if (visited[cur]==2) return false;
+        visited[cur] = 2;
+        for (int next: graph[cur])
+        {
+            if (!DFS(next)) return false;
+        }
+        visited[cur] = 1;
+        return true;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0802.Find-Eventual-Safe-States/Readme.md
+# ::::::::::::::
+# ### 802.Find-Eventual-Safe-States
+# 
+# 这是一道经典的涉及有向图是否存在环的问题。DFS和BFS都有经典的解决方案。
+# 
+# #### DFS
+# 用DFS来判定是否有环，可以参考 207.Course-Schedule。基本思想是，将每个节点的visited标记为三种状态。第一次遍历到节点i标记2；如果从节点i后续的DFS都没有检测到环，成功回溯到节点i时，改标记为1.因此在遍历的过程中，遇到了已经标记为1的点，则说明之后肯定“安全”，不用再走下去；如果遇到了已经标记为2的点，则表示该DFS的路线遇到了环。
+# 
+# 在本题中，对任意节点i，如果DFS(i)判定无环，则可以放入答案中。
+# 
+# #### BFS
+# 拓扑排序的应用。最容易判定safe的节点，是那些出度为0的节点。将这些点剪除之后，接下来出度为0的节点，肯定还是safe的节点。以此BFS不断推进，如果还有剩下的节点，那么他们肯定出度都不为0，即是互相成环的，可以终止程序。
+# 
+# 
+# 
+::::::::::::::
+BFS/0815.Bus-Routes/815.Bus-Routes_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int numBusesToDestination(vector<vector<int>>& routes, int S, int T) 
+    {
+        if (S==T) return 0;
+        
+        unordered_map<int,vector<int>>stop2routes;
+        for (int i=0; i<routes.size(); i++)        
+            for (int j=0; j<routes[i].size(); j++)
+                stop2routes[routes[i][j]].push_back(i);
+        
+        queue<pair<int,int>>q;
+        unordered_set<int>visitedRoutes;
+        unordered_set<int>visitedStops;
+        for (auto route: stop2routes[S])
+        {
+            q.push({route,1});
+            visitedRoutes.insert(route);
+            visitedStops.insert(S);
+        }            
+        
+        while (!q.empty())
+        {
+            int curRoute = q.front().first;
+            int step = q.front().second;
+            q.pop();
+            
+            for (int stop: routes[curRoute])
+            {
+                if (stop==T) return step;
+                if (visitedStops.find(stop)!=visitedStops.end()) continue;
+                    
+                visitedStops.insert(stop);
+                for (int nextRoute: stop2routes[stop])
+                {
+                    if (visitedRoutes.find(nextRoute)!=visitedRoutes.end())
+                        continue;
+                    visitedRoutes.insert(nextRoute);
+                    q.push({nextRoute,step+1});
+                }
+            }            
+        }
+        return -1;
+    }
+};
+
+
+::::::::::::::
+BFS/0815.Bus-Routes/815.Bus-Routes_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int numBusesToDestination(vector<vector<int>>& routes, int S, int T) 
+    {
+        if (S==T) return 0;
+        
+        unordered_map<int,vector<int>>stop2bus;
+        for (int i=0; i<routes.size(); i++)
+        {
+            for (auto j: routes[i])
+                stop2bus[j].push_back(i);
+        }
+        
+        unordered_set<int>visitedStop;
+        unordered_set<int>visitedBus;
+        
+        queue<int>q;
+        q.push(S);
+        visitedStop.insert(S);
+        int step = -1;
+        
+        while (!q.empty())
+        {
+            step += 1;
+            
+            int len = q.size();
+            while (len--)
+            {
+                int curStop = q.front();
+                q.pop();
+                
+                for (auto bus: stop2bus[curStop])
+                {
+                    if (visitedBus.find(bus)!=visitedBus.end())
+                        continue;
+                    visitedBus.insert(bus);                        
+                    
+                    for (auto nextStop: routes[bus])
+                    {
+                        if (visitedStop.find(nextStop)!=visitedStop.end())
+                            continue;
+                        if (nextStop==T)
+                            return step+1;
+                        
+                        q.push(nextStop);
+                        visitedStop.insert(nextStop);
+                    }
+                }
+            }
+        }
+        
+        return -1;
+    }
+};
+
+
+::::::::::::::
+BFS/0815.Bus-Routes/815.Bus-Routes_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {
+        if(source == target) return false;
+        int nSets = routes.size();
+        unordered_map<int, vector<int>> stop2sets;
+
+        for(int i = 0; i < nSets; ++i) {
+            for(auto x: routes[i]) {
+                stop2sets[x].push_back(i);
+            }
+        }
+
+        vector<vector<int>> graph(nSets);  // relation between graph sets
+        vector<vector<int>> dp(nSets, vector<int>(nSets, INT_MAX / 2));
+
+        // n^3: 500^3 = 125e6
+        // if in the same stop set, takes at most 0 bus
+        // if source and target are the same, should return 0
+        for(int i = 0; i < nSets; ++i) {
+            dp[i][i] = 0;
+        } 
+
+        // if with a stop joint, it takes at most 1 bus
+        for(auto it = stop2sets.begin(); it != stop2sets.end(); ++it) {
+            auto& v = it->second;
+
+            for(int i = 0; i < v.size(); ++i) {
+                for(int j = i + 1; j < v.size(); ++j) {
+                    graph[v[i]].push_back(v[j]);
+                    graph[v[j]].push_back(v[i]);
+                    dp[v[i]][v[j]] = min(dp[v[i]][v[j]], 1);
+                    dp[v[j]][v[i]] = min(dp[v[j]][v[i]], 1);
+                }
+            }
+        }
+
+        auto& ss1 = stop2sets[source];  // stopset1
+        auto& ss2 = stop2sets[target];  // stopset2
+        for(int len = 1; len < nSets; ++len) {
+            for(int x = 0; x < nSets - len; ++len) {
+                for(int len2 = 1; len2 < len; ++len2) {
+                    dp[x][x+len] = min(dp[x][x+len], dp[x][x+len2] + dp[x+len2][x+len]);
+                    dp[x+len][x] = dp[x][x+len];
+                }
+            }
+        }
+
+        int ret = INT_MAX;
+        for(auto x: ss1) {
+            for(auto y: ss2) {
+                ret = min(dp[x][y], ret);
+            }
+        }
+
+        return ret > 1e8 ? -1: (ret+1); // it takes one step from the stop to the joint
+    }
+};
+
+// treat each bus connected stops sets as a node in a graph
+// routes between stop sets, map: stop -> set of stops
+// two stops sets are interconntected when the stop sets of them have common stops
+// Shortest path from source to target, is the shortest path from the sets that includes source and the sets that includes the target
+// dp[i][j]: shortest distance between stop set i and stop set j
+
+
+# ::::::::::::::
+# BFS/0815.Bus-Routes/Readme.md
+# ::::::::::::::
+# ### 815.Bus-Routes
+# 
+# 此题求最短的路径，可以尝试ＢＦＳ．有两种完全对称的思路．
+# 
+# 第一种：因为题目问搭乘最少的route数目，我们可以尝试队列里放的就是routes.初始时，队列放S所连接的所有routes，然后对队列里的route查看它所到达的stop继而遍历这些stop可以继续延伸的routes．如果新的路线没有被访问过，就可以加入队列．结果是TLE．原因在于，从一个curRoute，考察所有的stop继而再考察所有延伸的nextRoute，这散开的规模非常大．
+# 
+# 针对上面的算法，一个显而易见的改进就是，不仅考虑visitedRoutes，也需要考虑visitedStops，用两个集合来剪枝．这样可以勉强AC．之所以勉强，是因为在代码里我们需要先考虑的是ｖisitedStops，而一个stop所对应的route数量比较少，所以能对应节省的routes搜索比较有限．
+# 
+# 第二种：我们考虑另外一种队列的结果，里面存放的不是route而是stop．初始时，队列里只有Ｓ．从起点开始，查看这个站点可以搭乘哪些routes，继而遍历这些routes可以继续到达的stops.同样，我们需要两个集合visitedRoutes和visitedStops来一起去重．这个算法和第一种算法完全对偶，但要比第一种快得多．这是因为代码里我们会先根据visitedRoutes来筛选，通常一条线路会有很多的stops,所以我们通过这个步骤先期筛除的stop会更多．
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/bus-routes)
+# 
+::::::::::::::
+BFS/0838.Push-Dominoes/838.Push-Dominoes.cpp
+::::::::::::::
+using PII = pair<int,int>;
+class Solution {
+public:
+    string pushDominoes(string dominoes) 
+    {
+        int n = dominoes.size();
+        vector<int>rets(n, -2);
+        
+        queue<PII>q;
+        for (int i=0; i<n; i++)
+        {
+            if (dominoes[i]=='L')
+            {
+                q.push({i, -1});
+                rets[i] = -1;
+            }                
+            else if (dominoes[i]=='R')
+            {
+                q.push({i, 1});            
+                rets[i] = 1;
+            }                
+        }
+                
+        while (!q.empty())
+        {
+            int len = q.size();
+            unordered_map<int,int>Map;
+            while (len--)
+            {
+                auto [pos, dir] = q.front();
+                q.pop();
+                
+                if (dir==1 && pos+1<n && rets[pos+1]==-2)
+                    Map[pos+1] += 1;
+                if (dir==-1 && pos-1>=0 && rets[pos-1]==-2)
+                    Map[pos-1] -= 1;
+            }
+            for (auto x: Map)
+            {
+                q.push(x);
+                rets[x.first] = x.second;
+            }                
+        }
+        
+        string ans;
+        for (int i=0; i<n; i++)
+        {
+            if (rets[i]==1)
+                ans.push_back('R');
+            else if (rets[i]==-1)
+                ans.push_back('L');
+            else
+                ans.push_back('.');
+        }
+        return ans;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0838.Push-Dominoes/Readme.md
+# ::::::::::::::
+# ### 838.Push-Dominoes
+# 
+# 根据题意，我们按照回合的顺序进行BFS模拟。队列的初始，放入所有被推导的骨牌。
+# 
+# 在一个回合里，我们弹出所有在上一回合被推倒的骨牌。如果是个刚被往左推倒的骨牌，会在此回合影响它左边的骨牌（如果未被推倒的话），使其有左倾的趋势；同理，对于刚被往右推倒的骨牌，会在此回合影响它右边的骨牌（如果未被推倒的话），使其有右倾的趋势。注意，有些骨牌可能会在此回合里既被左倾也被右倾，那么它就最终的状态是站立。这一回合结束时，我们要将所有在本回合被推倒的骨牌加入队列中。
+# 
+# 最终所有骨牌会在BFS的过程中被加入队列确认状态。
+# 
+# 
+::::::::::::::
+BFS/0847.Shortest-Path-Visiting-All-Nodes/847.Shortest-Path-Visiting-All-Nodes.cpp
+::::::::::::::
+class Solution {
+    int visited[12][1<<12];
+public:
+    int shortestPathLength(vector<vector<int>>& graph) 
+    {
+        int n=graph.size();        
+                       
+        queue<pair<int,int>>q;        
+                
+        for (int i=0; i<n; i++)
+        {            
+            q.push({i,1<<i});
+            visited[i][1<<i] = 1;
+        }
+        
+        int step = 0;
+        while (q.size()!=0)
+        {
+            int len = q.size();
+            while (len--)
+            {
+                auto [cur, state] = q.front();
+                q.pop();
+                
+                for (int i: graph[cur])
+                {                    
+                    if ((state | (1<<i)) == (1<<n)-1) return step+1;                        
+                    if (visited[i][state]==1) continue;
+                    visited[i][state] = 1;
+                    q.push({i, state | (1<<i)});
+                }                
+            }
+            step++;            
+        }
+        
+        return 0;
+    }
+
+};
+
+
+# ::::::::::::::
+# BFS/0847.Shortest-Path-Visiting-All-Nodes/Readme.md
+# ::::::::::::::
+# ### 847.Shortest-Path-Visiting-All-Nodes
+# 
+# 如果我们想找一条满足题意的路径，该怎么做呢？无非就是搜索嘛。但无论是DFS还是BFS，需要考虑的一个重要问题就是如何去重，否则就会无休止地搜索下去。此题中，我们应该如何记录“状态”呢？显然，我们不能单纯地将某个node，或者某条edge是否访问过作为存储的状态，因为我们极有可能需要访问某个node或edge多次。
+# 
+# 那么我们是否可以将所有访问过的node的集合作为一个状态呢？这样也是不行的。比如考虑这个网络“0-1,0-2,0-3”，我们访问完了0,1之后，不得不返回0再去访问其他的节点，这个过程中，node的集合其实是不变的。如果我们将node的集合作为状态存储起来做去重的操作，就会被舍弃掉正确的方案。
+# 
+# 所以，正确的状态应该是“当前所在节点+已经访问过的node的集合”。依据这种定义，如果在BFS中遇到重复的状态，毫无疑问，就没有继续搜索的必要了。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/shortest-path-visiting-all-nodes)
+# 
+::::::::::::::
+BFS/0854.K-Similar-Strings/854.K-Similar-Strings.cpp
+::::::::::::::
+class Solution {
+public:
+    int kSimilarity(string A, string B) 
+    {
+        if (A==B) return 0;
+        
+        queue<string>q;
+        q.push(A);
+        
+        int step = -1;
+        unordered_set<string>visited;
+        visited.insert(A);
+        
+        while (!q.empty())
+        {
+            int len = q.size();
+            step++;
+            
+            while (len--)
+            {
+                string str = q.front();
+                q.pop();
+                
+                int i = 0;
+                while (str[i]==B[i])
+                    i++;
+                
+                for (int j=i+1; j<str.size(); j++)
+                {
+                    if (str[j]!=B[i])
+                        continue;
+                    
+                    string newStr = str;
+                    swap(newStr[i], newStr[j]);
+                    
+                    if (newStr==B)
+                        return step+1;
+                    
+                    if (visited.find(newStr)==visited.end())
+                    {
+                        q.push(newStr);
+                        visited.insert(newStr);
+                    }
+                    
+                    //cout<<str<<": "<<newStr<<endl;
+                }
+            }
+            
+        }
+        
+        return -1;
+        
+    }
+};
+
+
+::::::::::::::
+BFS/0864.Shortest-Path-to-Get-All-Keys/864.Shortest-Path-to-Get-All-Keys.cpp
+::::::::::::::
+class Solution {
+public:
+    int shortestPathAllKeys(vector<string>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        
+        auto visited = vector<vector<unordered_set<int>>>(m,vector<unordered_set<int>>(n));
+        
+        queue<vector<int>>q;  // {x,y,state}
+        int count = 0;
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]=='@')
+                {
+                    q.push({i,j,0});
+                    visited[i][j].insert(0);
+                }
+                    
+                else if (grid[i][j]>='a' && grid[i][j]<='f')
+                    count++;
+            }
+        
+        int finalState = 0;
+        for (int i=0; i<count; i++)
+            finalState |= (1<<i);
+        
+        int step = -1;
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        
+        while (!q.empty())
+        {
+            step++;
+            
+            int len = q.size();            
+            while (len--)
+            {
+                int x = q.front()[0];
+                int y = q.front()[1];
+                int state = q.front()[2];
+                q.pop();
+                
+                for (int k=0; k<4; k++)
+                {
+                    int i = x + dir[k].first;
+                    int j = y + dir[k].second;
+                    int newState = state;
+                    
+                    if (i<0||i>=m||j<0||j>=n)
+                        continue;
+                    if (grid[i][j]=='#')
+                        continue;
+                    if (grid[i][j]>='A' && grid[i][j]<='F' && ((state>>(grid[i][j]-'A'))&1)==0)
+                        continue;
+                    
+                    if (grid[i][j]>='a' && grid[i][j]<='f')
+                        newState |= (1<<(grid[i][j]-'a'));
+                    
+                    if (visited[i][j].find(newState)!=visited[i][j].end())
+                        continue;
+                    
+                    if (newState == finalState)
+                        return step+1;
+                    
+                    q.push({i,j,newState});
+                    visited[i][j].insert(newState);
+                
+                }
+            }
+            
+        }
+        
+        return -1;
+    }
+};
+
+
+
+# ::::::::::::::
+# BFS/0864.Shortest-Path-to-Get-All-Keys/Readme.md
+# ::::::::::::::
+# ### 864.Shortest-Path-to-Get-All-Keys
+# 
+# 传统的BFS是不允许重复访问相同的节点的，否则重复的元素会不停地加入队列，造成爆炸。但明显可以看出，这道题的解可能需要多次访问一个grid。怎么处理呢？
+# 
+# 其实同一个grid被重复走过并不要紧，只要它所携带的“状态”不同即可。什么是“状态”呢？就是可以理解为身上带有了几把钥匙。我第一次经过A点的时候一把钥匙都没有；但第二次经过A点的时候，身上多了一把钥匙，这是完全合理的：比如说第一次经过A点是为了进一个死胡同取钥匙，现在再走回头路，是为了出来取解对应的某个锁。相反，如果经过同一个点的时候，“状态”一点都没变的话，显然第二次的路过是完全没有意义的，所以就不会加入队列。
+# 
+# 这道题和```847.Shortest Path Visiting All Nodes```的解法非常相似。在那题中，相同的node可以在BFS的过程中重复经过，只要对应的（已经访问过的节点）“状态”不一样即可。这两题可以一起体会。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/shortest-path-to-get-all-keys)
+# 
+::::::::::::::
+BFS/0882.Reachable-Nodes-In-Subdivided-Graph/882.Reachable-Nodes-In-Subdivided-Graph_v1.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+
+class Solution {
+public:
+    int reachableNodes(vector<vector<int>>& edges, int maxMoves, int n) 
+    {
+        unordered_map<int, vector<PII>>Map;
+        for (auto e:edges)
+        {
+            Map[e[0]].push_back({e[1], e[2]});
+            Map[e[1]].push_back({e[0], e[2]});
+        }
+        unordered_map<int, unordered_map<int,int>>edgeVisitedNodes;
+
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0,0});
+        vector<int>resolved(n);
+
+        while (!pq.empty())
+        {
+            auto [d, cur] = pq.top();
+            pq.pop();
+
+            if (resolved[cur]) continue;
+            resolved[cur] = 1;
+
+            for (auto [next, cnt]: Map[cur])
+            {
+                // if (resolved[next]) continue;  // Do NOT add this line.
+                edgeVisitedNodes[cur][next] = min(maxMoves - d, cnt);
+                if (maxMoves >= d+cnt+1)
+                    pq.push({d+cnt+1, next});
+            }
+        }
+
+        int count = 0;
+        for (auto e: edges)
+        {
+            int a = e[0], b = e[1], cnt = e[2];
+            count += min(cnt, edgeVisitedNodes[a][b]+edgeVisitedNodes[b][a]);
+        }
+        for (int i=0; i<n; i++)
+            if (resolved[i])
+                count++;
+        return count;
+    }
+};
+
+
+::::::::::::::
+BFS/0882.Reachable-Nodes-In-Subdivided-Graph/882.Reachable-Nodes-In-Subdivided-Graph_v2.cpp
+::::::::::::::
+typedef pair<int,int> PII; 
+
+class Solution {
+    int dist[3000];
+    int resolved[3000];
+public:
+    int reachableNodes(vector<vector<int>>& edges, int maxMoves, int n) 
+    {
+        vector<PII> adj[3000];  // {nextNode, weight}
+        for (auto e: edges)
+        {
+            adj[e[0]].push_back({e[1], e[2]+1});
+            adj[e[1]].push_back({e[0], e[2]+1});
+        }
+        
+        priority_queue<PII, vector<PII>, greater<>>pq;  // {dist, nodeIdx}
+        pq.push({0,0});        
+        
+        while (!pq.empty())
+        {
+            auto [d, cur] = pq.top();
+            pq.pop();
+            if (resolved[cur]) continue;
+            resolved[cur] = 1;
+            dist[cur] = d;
+                        
+            for (auto [next, weight] : adj[cur])
+            {
+                if (resolved[next]) continue;
+                if (d+weight <= maxMoves)
+                    pq.push({d+weight, next});
+            }            
+        }
+        
+        int count = 0;
+        for (auto e: edges)
+        {
+            int a = e[0], b = e[1];
+            int sum = 0;
+            if (resolved[a]) sum += maxMoves - dist[a];
+            if (resolved[b]) sum += maxMoves - dist[b];
+            count += min(sum, e[2]);
+        }
+        
+        for (int i=0; i<n; i++)
+            if (resolved[i])
+                count++;
+        
+        return count;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0882.Reachable-Nodes-In-Subdivided-Graph/Readme.md
+# ::::::::::::::
+# ### 882.Reachable-Nodes-In-Subdivided-Graph
+# 
+# 我们可以用Dijkstra求出从0点到任意原始节点i的最短距离（最少需要的moves），记为dist[i]。那么这个结果对于解题有什么帮助呢？
+# 
+# 我们令edgeVisitedNodes[i][j]表示从i->j这条边，我们最多能再走几步（即访问多少个“细分点”）。因为总的maxMoves是固定的，我们自然希望到达i点时用的步数越少的话，那么我们在i->j这条边上能走的步数就越多。也就是说，我们能在i->j这条边上再走```maxMoves-dist[i]```步。注意，我们只考虑“细分点”而不考虑端点，因此这个数字不能超过这条边的cnt，即 ```VisitedSubNodes[i][j] = min(cnt, maxMoves - dist[i])```
+# 
+# 同理，我们也可以求出我们能在j->i这条边上再走多少步，即 ```VisitedSubNodes[i][j] = min(cnt, maxMoves - dist[i])```。
+# 
+# 有了以上的数据，我们再遍历所有的边```i<->j```，那么除了两个端点，我们能在这条边上访问到的“细分点”数目应该是```min(VisitedSubNodes[i][j]+VisitedSubNodes[j][i], cnt)```. 我们另外从dist[i]统计所有能走到的端点。最终答案是两者之和。
+# 
+# 
+::::::::::::::
+BFS/0913.Cat-and-Mouse/913.Cat-and-Mouse.cpp
+::::::::::::::
+class Solution {
+    int color[50][50][3];
+    
+public:
+    int catMouseGame(vector<vector<int>>& graph) 
+    {
+        int N = graph.size();
+                
+        queue<vector<int>>q;
+        for (int i=0; i<N; i++)
+            for (int turn=1; turn<=2; turn++)
+            {
+                color[0][i][turn] = 1;  // mouse win conditions
+                q.push({0,i,turn});
+                
+                if (i!=0)               
+                {
+                    color[i][i][turn] = 2;  // cat win conditions
+                    q.push({i,i,turn});
+                }
+            }
+        
+        while (!q.empty())
+        {            
+            int m = q.front()[0]; 
+            int c = q.front()[1];
+            int t = q.front()[2];            
+            int status = color[m][c][t];
+            q.pop();
+                        
+            for (auto nextNode: findAllParents(graph,m,c,t))
+            {
+                int m2 = nextNode[0];
+                int c2 = nextNode[1];
+                int t2 = nextNode[2];
+                
+                if (color[m2][c2][t2]!=0) continue; // has been determined
+                
+                if (t2==status)   // immediate win, (m2,c2,t2)->(m,c,t)
+                {
+                    color[m2][c2][t2] = status;
+                    q.push({m2,c2,t2});                    
+                }
+                else if (allChildrenWin(graph, m2,c2,t2))    // eventually lose
+                {
+                    color[m2][c2][t2] = (t2==1)? 2:1;
+                    q.push({m2,c2,t2});                
+                }                
+            }
+        }
+        return color[1][2][1];
+    }
+    
+    
+    vector<vector<int>> findAllParents(vector<vector<int>>& graph, int m, int c, int t)
+    {
+        vector<vector<int>>neighbours;
+        if (t==1)
+        {
+            for (int c_next: graph[c])
+                if (c_next!=0) neighbours.push_back({m,c_next,2});
+        }
+        else
+        {
+            for (int m_next: graph[m])
+                neighbours.push_back({m_next,c,1});
+        }
+        return neighbours;
+    }
+    
+    bool allChildrenWin(vector<vector<int>>& graph, int m, int c, int t)
+    {
+        if (t==1)
+        {
+            for (int m_next: graph[m])
+                if (color[m_next][c][2]!=2)
+                    return false;
+        }
+        else if (t==2)
+        {
+            for (int c_next: graph[c])
+                if (c_next!=0 && color[m][c_next][1]!=1)
+                    return false;
+        }
+        return true;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0913.Cat-and-Mouse/Readme.md
+# ::::::::::::::
+# ### 913.Cat-and-Mouse
+# 
+# 此题是game thoery中的好题．看上去像常规的minMax问题，但实际上几乎所有的DFS解法都是不完备的，参看leetcode的讨论区．
+# 
+# 正确的解法是用BFS.我们设计节点状态是(m,c,turn)，用color[m][c][turn]来记忆该状态的输赢情况．
+# 
+# 首先我们将所有已知的状态加入一个队列．已知状态包括(0,c,turn)肯定是老鼠赢，(x,x,turn)且x!=0肯定是猫赢．我们尝试用BFS的思路，将这些已知状态向外扩展开去．
+# 
+# 扩展的思路是：从队列中取出队首节点状态（m,c,t），找到它的所有邻接的parent的状态（m2,c2,t2）．这里的父子关系是指，(m2,c2,t2)通过t2轮（老鼠或猫）的操作，能得到(m,c,t).我们发现，如果(m,c,t)是老鼠赢而且t2是老鼠轮，那么这个(m2,c2,t2)一定也是老鼠赢．同理，猫赢的状态也类似．于是，我们找到了一种向外扩展的方法．
+# 
+# 向外扩展的第二个思路是：对于(m2,c2,t2)，我们再去查询它的所有children（必定是对手轮）是否都已经标注了赢的状态．如果都是赢的状态，那么说明(m2,c2,t2)无路可走，只能标记为输的状态．特别注意的是，第一条规则通过child找parent，和第二条规则通过parent找child的算法细节是不一样的，一定要小心．
+# 
+# 这样我们通过BFS不断加入新的探明输赢的节点．直到队列为空，依然没有探明输赢的节点状态，就是平局的意思！
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/cat-and-mouse)
+# 
+::::::::::::::
+BFS/0928.Minimize-Malware-Spread-II/928.Minimize-Malware-Spread-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int minMalwareSpread(vector<vector<int>>& graph, vector<int>& initial) 
+    {
+        int N = graph.size();
+        vector<vector<int>>sources(N); // node -> vector of adjacent infection sources
+        unordered_set<int>initials(initial.begin(),initial.end());
+        
+        vector<vector<int>>nextNodes(N);
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+                if (i!=j && graph[i][j]==1)
+                {
+                    nextNodes[i].push_back(j);
+                    nextNodes[j].push_back(i);
+                }
+                    
+        for (int start: initial)
+        {
+            queue<pair<int,int>>q;
+            q.push({start,start});
+            unordered_set<int>visited;
+            visited.insert(start);
+            
+            while (!q.empty())
+            {
+                int cur = q.front().first;
+                int source = q.front().second;
+                q.pop();
+            
+                for (auto next: nextNodes[cur])
+                {
+                    if (visited.find(next)!=visited.end())
+                        continue;
+                    if (initials.find(next)!=initials.end())
+                        continue;
+                    
+                    sources[next].push_back(source);
+                    
+                    q.push({next,source});
+                    visited.insert(next);
+                }
+            }            
+        }
+        
+        unordered_map<int,int>count; // source -> how many nodes can be reached
+        for (auto x: sources)
+        {
+            if (x.size()==1)
+            {
+                int s = x[0];
+                count[s] += 1;
+            }
+        }
+        
+        int size = 0;
+        int ret = -1;
+        for (auto x: count)
+        {
+            if (x.second > size)
+            {
+                ret = x.first;
+                size = x.second;
+            }
+            else if (x.second == size && x.first < ret)
+                ret = x.first;
+        }
+        
+        if (ret==-1)
+        {
+            sort(initial.begin(),initial.end());
+            return initial[0];
+        }
+        else
+            return ret;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/0928.Minimize-Malware-Spread-II/Readme.md
+# ::::::::::::::
+# ### 928.Minimize-Malware-Spread-II
+# 
+# 本题的切入点是，什么样的node我们可以挽救？答案是邻接的感染源数目为1的node才行。如果某个node邻接的直接感染源（指不需要经过其他感染源就可以到达）的数目为2或以上，说明任何remove的操作都无法征求这个node，总会被其他的感染源所扩散到。
+# 
+# 所以，我们对于某个node，如果它的直接感染源是source且唯一，那么说明我们只要remove source的话，就可以使得这个node免受感染。即这个node是source的“直接保护对象”。如果我们对于每个source，都可以计算出它的直接保护对象的数目。自然答案就是取“直接保护对象”最多的那个感染源。
+# 
+# 怎么高效地求出每个source的“保护对象”的个数呢？这个逻辑有点绕。我们需要先从每个source出发，看看它能直接覆盖到的node（不需要经过其他感染源就可以到达）是哪些，这个用BFS即可。依次类推，重复K次BFS（K是感染源的个数）。最终可以记录下每个node都可以被哪些感染源“直接覆盖”。如果某个node的邻近感染源的数目是1时，才给对应的source的“直接保护对象”的计数器加一。于是就解决了这个问题。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/minimize-malware-spread-ii)
+# 
+::::::::::::::
+BFS/1036.Escape-a-Large-Maze/1036.Escape-a-Large-Maze.cpp
+::::::::::::::
+class Solution {
+
+private:
+  using point_t = std::vector<int>;
+
+  static inline uint64_t hash(const point_t &p)
+  {
+    return p[0] * 1e6 + p[1];
+  }
+
+public:
+  bool isEscapePossible(vector<vector<int>>& blocked,
+                        vector<int>& source,
+                        vector<int>& target)
+  {
+    // blocked points set, uint64_t is selected since it is larger than 1e6*le6
+    std::unordered_set<uint64_t> bps;
+
+    for (auto &x: blocked)
+      bps.insert(hash(x));
+
+    auto e1 = enclose(source, bps, target);
+    auto e2 = enclose(target, bps, source);
+
+    return !e1 && !e2;
+  }
+
+private:
+  bool enclose(const point_t &s,
+               const std::unordered_set<uint64_t> & b,
+               const point_t &d)
+  {
+    int max_points = (1+b.size()-1) * b.size()/2;
+
+    std::deque<point_t> Q;
+    Q.push_back(s);
+
+    std::unordered_set<uint64_t> visited;
+    visited.insert(hash(s));
+
+    while (!Q.empty() && visited.size() <= max_points)
+    {
+      int &r = Q.front()[0];
+      int &c = Q.front()[1];
+
+      static std::vector<std::pair<int, int>> ds
+      {
+        {0, 1}, {-1, 0}, {0, -1}, {1, 0}
+      };
+
+      for (auto &dir: ds)
+      {
+        auto rr = r + dir.first;
+        auto cc = c + dir.second;
+
+        std::vector<int> p{rr, cc};
+
+        if (rr < 0 || rr >= 1e6                   || // out of bound
+            cc < 0 || cc >= 1e6                   || // out of bound
+            visited.find(hash(p)) != visited.end()|| // visited
+            b.find(hash(p)) != b.end()             ) // blocked
+          continue;
+
+        if (p == d) // reached out to destination
+          return false;
+
+        Q.push_back(p);
+        visited.insert(hash(p));
+      }
+
+      Q.pop_front();
+    }
+    // no points left in queue, indicating this attempt is enclosed
+    return Q.empty();
+  }
+};
+
+# ::::::::::::::
+# BFS/1036.Escape-a-Large-Maze/Readme.md
+# ::::::::::::::
+# ### 1036.Escape-a-Large-Maze
+# 
+# 首先，对于1M by 1M的网格内，想要进行任意两点间的寻路几乎是不可能的。本题的关键在于blocked的位置最多只有200个。
+# 
+# 正常情况下，200个元素可以围成最大的区域面积是多少呢？肯定是一个中心对称的图形。我们如果从起点走一步，可以发现能走到的范围是一个边长是2、倾斜了45度的正方形。走两步的话，能覆盖的范围是一个边长是3、倾斜了45度的正方形。依次类推，考虑总周长为200的正方形，说明其边长是50，也就是从起点最多走49步。这种正方形最紧凑，是固定周长的条件下能够覆盖的最大的面积（2500）。
+# 
+# 于是我们换个角度想：如果从起点出发向外扩散，并且最终可以扩展到超过2500个元素的区域（且没有遇到终点），这说明什么？因为根本没有周长是200的图形可以封闭住这么的面积，所以blocked对于这个起点而言是无效的。也就是说，blocked并不能完全围住起点。
+# 
+# 同理，如果我们又发现blocked也不能围住终点的话，那么说明起点和终点势必会相遇。
+# 
+# 所以这是一个BFS题，只要从一个点出发开始发散，当visited的网格数目（也就是覆盖的面积）大于2500的时候，就说明这个点并没有被封闭。
+# 
+# 有了这个基本思路后，我们需要注意，其实200的周长最大能封闭的面积可以是19900，而不是2500.原因是这200个点可以以45度倾斜地围住一个角。因此```0+1+2+...+199 = 19900```才是最大的封闭面积。只有发散的区域超过了这个面积，才能保证不被封闭。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/escape-a-large-maze)
+# 
+::::::::::::::
+BFS/1066.Campus-Bikes-II/1066.Campus-Bikes-II_v1.cpp
+::::::::::::::
+class Solution {    
+    int dist[10][10];
+public:
+    int assignBikes(vector<vector<int>>& workers, vector<vector<int>>& bikes) 
+    {
+        int m = bikes.size();
+        int n = workers.size();
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int x1 = bikes[i][0];
+                int y1 = bikes[i][1];
+                int x2 = workers[j][0];
+                int y2 = workers[j][1];
+                dist[i][j] = abs(x1-x2)+abs(y1-y2);
+            }
+        
+        int ret = INT_MAX/2;
+        vector<int>dp(1<<m, INT_MAX/2);
+        dp[0] = 0;
+        for (int j=0; j<n; j++)
+        {            
+            int state = (1 << (j+1)) - 1;            
+            while (state < (1 << m))  // iterate all state that contain j+1 bits of "1"
+            {
+                for (int i=0; i<m; i++)
+                {
+                    if ((state >> i) &1)
+                        dp[state] = min(dp[state], dp[state- (1<<i)] + dist[i][j]);
+                    
+                    if (j==n-1) ret = min(ret, dp[state]);
+                }     
+
+                int c = state & - state;
+                int r = state + c;
+                state = (((r ^ state) >> 2) / c) | r;
+            }
+        }
+        
+        return ret;
+    }
+};
+
+
+::::::::::::::
+BFS/1066.Campus-Bikes-II/1066.Campus-Bikes-II_v2.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+
+class Solution {
+    int dist[10][10];
+    int visited[1024];
+public:
+    int assignBikes(vector<vector<int>>& workers, vector<vector<int>>& bikes) 
+    {
+        int m = workers.size();
+        int n = bikes.size();
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int x1=workers[i][0];
+                int y1=workers[i][1];
+                int x2=bikes[j][0];
+                int y2=bikes[j][1];
+                dist[i][j] = abs(x1-x2)+abs(y1-y2);
+            }
+        
+        priority_queue<PII, vector<PII>, greater<>>pq;        
+        pq.push({0, 0});        
+        
+        while (!pq.empty())
+        {
+            auto [cost, state] = pq.top();
+            pq.pop();
+                        
+            if (visited[state]) continue;
+            visited[state] = 1;
+            
+            int i = __builtin_popcount(state);
+            if (i==m) return cost;
+                
+            for (int j=0; j<bikes.size(); j++)
+            {
+                if ((state>>j)&1) continue;
+                int newState = state+(1<<j);
+                if (visited[newState]) continue;                    
+                pq.push({cost+dist[i][j], newState});
+            }
+        }
+                
+        return 0;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1066.Campus-Bikes-II/Readme.md
+# ::::::::::::::
+# ### 1066.Campus-Bikes-II
+# 
+# 此题是著名的带权二分图的最优匹配问题，可由KM算法解决。在这里，因为数据量比较小，我们通常可以用状态压缩DP，或者基于状压的最小路径问题来解决。类似的题目还有1879,1947
+# 
+# #### DP
+# 我们令m是自行车的数量，n是人的数量。我们通常会约定，按人的先后顺序依次挑自行车（因为人的数量少于自行车，每个人一定能配对自行车；反之不成立）。
+# 
+# 我们将“自行车被选取的状态”作为节点，比如```state = 1001010```表示第0、3、5号自行车被配对。特别注意，因为我们约定了工人按顺序挑自行车，所以这三辆自行车一定是被前3号工人调走的。我们想要求该状态的最优解dp[state]（即实现该状态对应的最小配对代价），突破口就是最后一个人（即第2号工人）挑选的是其中的哪一辆。例如，上面的例子里，我们分别遍历第0,3,5好自行车与第2号工人配对的可能，即state的前驱状态就有```001010, 1000010,1001000```三种。所以状态转移方程就是
+# ```
+# dp[state] = min{dp[state - (1<<i)] + dist[i][j]} for all i where the i-th bit of state is 1
+# ```
+# 其中j可以由state确定。假设state里含有3个1 bit，说明有三辆自行车被匹配，对应的是前3号工人，那么j就是最后一个已配对工人的编号2。
+# 
+# #### Dijsktra
+# 我们将“自行车被选取的状态”作为节点，状态之间的跳转理解为节点之间的相邻关系，状态之间的权重差就是相邻边的权重，就可以用Dijkstra算法了。举个例子，状态0110表示前两个工人（0号和1号）已经被配对1号和2号自行车的最优价值（即最小的配对距离之和）。注意，这个状态中我们不再区分前两个工人分别配对了哪辆自行车，我们不关心，我们只关心前两个工人的总和状态。状态0110可以转移到另外两种状态：如果2号工人选择0号自行车，即转移到了1110，权重的变化就是dist[2][2]；如果2号工人选择3号自行车，即转移到了0111，权重的变化就是dist[3][2]。
+# 
+# 我们的起点是全为0的state，终点是一个包含m个1（工人数目）的state，求其最短路径。至此，我们已经完全把这道题转化为了Dijkstra的模板了。BFS+PQ利用贪心法的思想就可以很容易解决：利用优先队列来进行BFS搜索，所有状态在队列里按照cost从小到大排序。如果某个状态第一次被PQ弹出，那么它对应的cost就是实现该状态的最优解。
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/campus-bikes-ii)
+# 
+# 
+::::::::::::::
+BFS/1136.Parallel-Courses/1136.Parallel-Courses.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumSemesters(int N, vector<vector<int>>& relations) 
+    {
+        vector<vector<int>>next(N+1);
+        vector<int>inDegree(N+1,0);
+        for (auto x:relations)
+        {
+            next[x[0]].push_back(x[1]);
+            inDegree[x[1]] += 1;
+        }
+        
+        queue<int>q;        
+        int count = 0;
+        for (int i=1; i<=N; i++)
+        {
+            if (inDegree[i]==0)
+            {
+                count += 1;
+                q.push(i);
+            }                
+        }
+                
+        int step = 0;
+        
+        while (!q.empty())
+        {
+            int len = q.size();
+            step += 1;
+            while (len--)
+            {
+                int cur = q.front();
+                q.pop();
+                for (auto next: next[cur])
+                {
+                    inDegree[next] -= 1;
+                    if (inDegree[next]==0)
+                    {
+                        q.push(next);
+                        count++;
+                    }                        
+                }
+            }                        
+        }
+        
+        if (count!=N)
+            return -1;
+        else
+            return step;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1136.Parallel-Courses/Readme.md
+# ::::::::::::::
+# ### 1136.Parallel-Courses
+# 
+# 常规的拓扑排序。在BFS的过程中，将层级遍历的“层数”记录下来，就是答案。
+# 
+# 
+::::::::::::::
+BFS/1203.Sort-Items-by-Groups-Respecting-Dependencies/1203.Sort-Items-by-Groups-Respecting-Dependencies.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> sortItems(int n, int m, vector<int>& group, vector<vector<int>>& beforeItems) 
+    {
+        unordered_map<int, unordered_set<int>>groupItems;
+        int nextGroupId = m;
+
+        for (int i=0; i<n; i++)
+        {
+            if (group[i]==-1)
+            {
+                group[i] = nextGroupId;
+                nextGroupId += 1;
+            }
+            groupItems[group[i]].insert(i);
+        }
+
+        // build graph inside each group
+        unordered_map<int, unordered_set<int>>next;
+        unordered_map<int, int>inDegree;
+        for (int i=0; i<n; i++)        
+            for (int j: beforeItems[i])
+            {
+                if (group[i]!=group[j]) continue;
+                if (next[j].find(i)==next[j].end())                
+                {
+                    next[j].insert(i);
+                    inDegree[i] += 1;
+                }
+            }
+        // sort nodes inside each group
+        unordered_map<int, vector<int>>groupItemsOrdered;
+        for (auto x: groupItems)
+        {
+            int groupId = x.first;
+            groupItemsOrdered[groupId] = topologySort(groupItems[groupId], next, inDegree);
+            if (groupItemsOrdered[groupId].size() != groupItems[groupId].size())
+                return {};
+        }
+
+        // build graph among groups
+        next.clear();
+        inDegree.clear();
+        for (int i=0; i<n; i++)        
+            for (int j: beforeItems[i])
+            {
+                if (group[i]==group[j]) continue;
+                if (next[group[j]].find(group[i])==next[group[j]].end())                
+                {
+                    next[group[j]].insert(group[i]);
+                    inDegree[group[i]] += 1;
+                }
+            }
+        // sort groups
+        unordered_set<int>groups;
+        for (int i=0; i<n; i++) groups.insert(group[i]);
+        vector<int>groupOrdered = topologySort(groups, next, inDegree);
+
+        vector<int>rets;
+        for (int groupId: groupOrdered)
+        {
+            for (auto node: groupItemsOrdered[groupId])
+                rets.push_back(node);
+        }
+        return rets;
+    }
+
+    vector<int> topologySort (unordered_set<int>&nodes, unordered_map<int, unordered_set<int>>&next, unordered_map<int, int>&inDegree)
+    {
+        queue<int>q;
+        vector<int>ret;
+        for (auto node: nodes)
+        {
+            if (inDegree[node]==0)
+                q.push(node);
+        }
+         while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            ret.push_back(cur);            
+            for (auto next: next[cur] )
+            {
+                inDegree[next] -= 1;
+                if (inDegree[next] == 0)
+                    q.push(next);
+            }
+        }
+        
+        if (ret.size()==nodes.size())
+            return ret;
+        else
+            return {};
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1203.Sort-Items-by-Groups-Respecting-Dependencies/Readme.md
+# ::::::::::::::
+# ### 1203.Sort-Items-by-Groups-Respecting-Dependencies
+# 
+# 本题本质是两遍拓扑排序。
+# 
+# 首先，我们收集每个group内的节点关系，在每个组内进行拓扑排序。
+# 
+# 其次，对于任何跨组的一对节点的先后顺序，本质上反映的就是两个组的先后顺序。因此收集完所有的组间顺序的要求后，可以重复利用拓扑排序的代码，对组进行排序。
+# 
+# 最终，安排两层循环，大循环按照已经排好的组的顺序、小循环按照已经排好的组内节点的顺序，依次输出所有的节点，就是答案。
+# 
+# 
+::::::::::::::
+BFS/1245.Tree-Diameter/1245.Tree-Diameter.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>adj;
+    int V;
+public:
+    int treeDiameter(vector<vector<int>>& edges) 
+    {
+        V = edges.size()+1;
+        adj.resize(V);
+        for (auto edge:edges)
+        {
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+        }
+        
+        auto t1 = bfs(0); 
+        auto t2 = bfs(t1.first); 
+        return t2.second;        
+    }
+        
+    pair<int, int> bfs(int u) 
+    { 
+        vector<int>dis(V, -1);
+        queue<int> q; 
+        q.push(u); 
+      
+        dis[u] = 0; 
+        
+        while (!q.empty()) 
+        { 
+            int t = q.front();       
+            q.pop(); 
+            
+            for (auto it = adj[t].begin(); it != adj[t].end(); it++) 
+            { 
+                int v = *it; 
+                if (dis[v] == -1) 
+                { 
+                    q.push(v);   
+                    dis[v] = dis[t] + 1; 
+                } 
+            } 
+        } 
+  
+        int maxDis = 0; 
+        int nodeIdx; 
+          
+        for (int i = 0; i < V; i++) 
+        { 
+            if (dis[i] > maxDis) 
+            { 
+                maxDis = dis[i]; 
+                nodeIdx = i; 
+            } 
+        } 
+        return make_pair(nodeIdx, maxDis); 
+    }     
+};
+
+
+# ::::::::::::::
+# BFS/1245.Tree-Diameter/Readme.md
+# ::::::::::::::
+# ### 1245.Tree-Diameter
+# 
+# 对于一张无向图的树，求最长的点到点距离，有一个非常成熟的做法。我们可以任意取一点A，用BFS找到距离A最远的节点B。那么B一定是就是“最长的点到点距离”的其中一个点。然后我们再以B为起点，用BFS找到距离B最远的节点C。那么BC就是答案。
+# 
+# 证明：从任意点A开始，能够到达的最远的距离是B。另外，整张图里“最长的点到点距离”是S和T。我们要证明B只可能是S或者T中的一点。如果不是，那么分情况讨论：
+# 1. AB与ST完全不相交。那么我们从A找一条路径能够到达ST的路径，并令交点是X。因为AB是从A起始的最长路径，那么```AB>AX+XT```. 那么我们观察路径B->A->X->S，其距离```BA+AX+XS > 2*AX+XT+XS > 2*AX+ST > ST```，这就与ST是全局“最长的点到点距离”矛盾。
+# 2. AB与ST相交于X。因为AB是从A起始的最长路径，那么```AX+XB>AX+XS```，即```XB>XS```. 我们观察路径B->X->T，其距离```BX+XT > XS+XT = ST```，这就与ST是全局“最长的点到点距离”矛盾。
+# 
+# 
+::::::::::::::
+BFS/1263.Minimum-Moves-to-Move-a-Box-to-Their-Target-Location/1263.Minimum-Moves-to-Move-a-Box-to-Their-Target-Location.cpp
+::::::::::::::
+class Solution {
+    struct Node {
+        int bx, by, px, py;        
+    };
+public:
+    int minPushBox(vector<vector<char>>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        int bx,by,px,py,tx,ty;
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]=='S')
+                {
+                    px = i, py = j;
+                    grid[i][j] = '.';
+                }
+                else if (grid[i][j]=='B')
+                {
+                    bx = i, by = j;
+                    grid[i][j] = '.';
+                }
+                else if (grid[i][j]=='T')
+                {
+                    tx = i, ty = j;
+                    grid[i][j] = '.';
+                }
+            }
+        
+        deque<Node>q;
+        q.push_back({bx,by,px,py});
+        int memo[21][21][21][21];
+        memset(memo, 255, sizeof(memo));
+        memo[bx][by][px][py] = 0;
+        
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        while (!q.empty())
+        {
+            auto [bx, by, px, py] = q.front();
+            q.pop_front();
+            if (bx==tx && by==ty)
+                return memo[bx][by][px][py];
+            
+            for (int k=0; k<4; k++)
+            {
+                int x = px+dir[k].first;
+                int y = py+dir[k].second;
+                if (x<0||x>=m||y<0||y>=n) continue;
+                if (grid[x][y]!='.') continue;
+                if (x==bx && y==by) continue;
+                if (memo[bx][by][x][y]>=0) continue;
+                memo[bx][by][x][y] = memo[bx][by][px][py];
+                q.push_front({bx,by,x,y});               
+            }
+            if (abs(px-bx)+abs(py-by)==1)
+            {
+                for (int k=0; k<4; k++)
+                {
+                    if (px+dir[k].first==bx && py+dir[k].second==by)
+                    {
+                        int bx2 = bx+dir[k].first;
+                        int by2 = by+dir[k].second;
+                        if (bx2<0||bx2>=m||by2<0||by2>=n) continue;
+                        if (grid[bx2][by2]!='.') continue;
+                        if (memo[bx2][by2][bx][by]>=0) continue;
+                        memo[bx2][by2][bx][by] = memo[bx][by][px][py]+1;
+                        q.push_back({bx2,by2,bx,by});
+                    }
+                }
+            }
+        }
+        return -1;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1263.Minimum-Moves-to-Move-a-Box-to-Their-Target-Location/Readme.md
+# ::::::::::::::
+# ### 1263.Minimum-Moves-to-Move-a-Box-to-Their-Target-Location
+# 
+# 这道题可以用比较粗暴的BFS来实现。每个状态包括(bx,by,px,py)表示box和person的坐标，同时用一个四维数组flag[bx][by][px][py]来记录到达这个状态需要多少次移动（move）。
+# 
+# 每次从队列中弹出一个状态，我们就遍历person朝四个方向可以变动的位置，再加入队列之中。注意到这个新状态对应的最少移动次数```flag[bx][by][px_new][py_new]=flag[bx][by][px][py]```不会变化，但如果我们仍然依照传统BFS的策略将这个新状态加入队列末尾，可能会导致队列中的状态所对应的move不是递增的，最终无法搜索到正确的最少move次数。解决方法是：用deque而不是queue，将这个新状态加入到队列的首端而不是末端！完美！
+# 
+# 对于每次从队列中弹出的一个状态，我们还需要查看person是否就在box的四周且可以推动它。如果是的话，我们就推动盒子，从而得到新的状态(bx_new,by_new,bx,by)。易知```flag[bx_new][by_new][bx][by]=flag[bx][by][px][py]+1```。所以我们应该将这个新状态应该加入双端队列的末尾！
+# 
+# 这种用双端队列来实现BFS的技巧，值得好好体会！
+# 
+# 
+# [Leetcode Link](https://leetcode.com/problems/minimum-moves-to-move-a-box-to-their-target-location)
+# 
+::::::::::::::
+BFS/1293.Shortest-Path-in-a-Grid-with-Obstacles-Elimination/1293.Shortest-Path-in-a-Grid-with-Obstacles-Elimination.cpp
+::::::::::::::
+class Solution {
+    int visited[40][40][1601];
+public:
+    int shortestPath(vector<vector<int>>& grid, int K) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        
+        queue<vector<int>>q;
+        q.push({0,0,0});
+        if (m==1 && n==1) return 0;        
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        int step = 0;
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)
+            {
+                int x = q.front()[0];
+                int y = q.front()[1];
+                int k = q.front()[2];
+                q.pop();
+            
+                for (int t=0; t<4; t++)
+                {
+                    int i = x+dir[t].first;
+                    int j = y+dir[t].second;
+                    if (i<0||i>=m||j<0||j>=n) continue;
+                    
+                    if (i==m-1 && j==n-1) return step+1;
+                
+                    if (grid[i][j]==1)
+                    {
+                        if (k==K) continue;
+                        if (visited[i][j][k+1]==1) continue;
+                        visited[i][j][k+1] = 1;
+                        q.push({i,j,k+1});
+                    }
+                    else
+                    {
+                        if (visited[i][j][k]==1) continue;
+                        visited[i][j][k] = 1;
+                        q.push({i,j,k});
+                    }
+                }
+            }            
+            step++;            
+        }        
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1293.Shortest-Path-in-a-Grid-with-Obstacles-Elimination/Readme.md
+# ::::::::::::::
+# ### 1293.Shortest-Path-in-a-Grid-with-Obstacles-Elimination
+# 
+# 如果是不允许穿越障碍，那么我们用通常的BFS的做法，就可以记录到达每个位置(i,j)所需要的最短步数dp[i][j].但是现在允许穿越障碍，到达(i,j)的最短步数就要有所区分：
+# ```
+# O X O O
+# O X O O
+# O O O O
+# ```
+# 在上面的例子中，如果不穿越障碍，从(0,0)到(0,2)需要6步；但是如果允许穿越障碍，那么只需要2步。那么到底选择哪个更好呢？答案是说不准。前者使用的elemination次数少（可以留着给之后的步骤用），后者的实际步数更少。所以这两种状态我们都要记录下来。因此我们使用dp[i][j][k]表示，从(0,0)走到(i,j)，并且使用了k次障碍消除，所需要的最短步数。
+# 
+# 因为本题是允许上下左右移动，没有“无后效性”，所以dp[i][j][k]无法使用动态规划来转移，只能用BFS的暴力搜索来前进。比如，我们知道```dp[i][j][k]=step```，那么如果向右走一步到空地，就有```dp[i][j+1][k]=step+1```；但是特别注意，如果向右走一步是障碍的话，那么需要使用一次障碍消除，即```dp[i][j+1][k+1]=step+1```
+# 
+# 直到我们第一次走到dp[m-1][n-1][k]，并且k不大于K的时候，dp值就是最少的步骤。如果BFS进行了K轮还没有走到右下角，那么说明无解。
+# 
+# 
+::::::::::::::
+BFS/1298.Maximum-Candies-You-Can-Get-from-Boxes/1298.Maximum-Candies-You-Can-Get-from-Boxes.cpp
+::::::::::::::
+class Solution {
+    unordered_set<int>key;
+    int ret = 0;
+public:
+    int maxCandies(vector<int>& status, vector<int>& candies, vector<vector<int>>& keys, vector<vector<int>>& containedBoxes, vector<int>& initialBoxes) 
+    {
+        queue<int>q;
+        for (auto b: initialBoxes)
+            q.push(b);
+        
+        bool changed = 1;
+        while (q.size()>0 && changed)
+        {
+            changed = 0;
+            int len = q.size();
+            while (len--)
+            {
+                int b = q.front();
+                q.pop();
+                
+                if (status[b]==0 && key.find(b)==key.end())
+                {
+                    q.push(b);
+                }
+                else
+                {
+                    changed = 1;
+                    ret+=candies[b];
+                    for (auto k: keys[b])
+                        key.insert(k);
+                    for (auto bb: containedBoxes[b])
+                        q.push(bb);                
+                }
+            }
+        }
+        return ret;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1298.Maximum-Candies-You-Can-Get-from-Boxes/Readme.md
+# ::::::::::::::
+# ### 1298.Maximum-Candies-You-Can-Get-from-Boxes
+# 
+# 本题只要读清题意就不难。我们手头有些已经开启的盒子，盒子里面有糖果（收益）、钥匙（可以开启其他盒子）和其他的盒子（可能已经开启，也可能还未开启需要钥匙）。问题是不断打开我们能打开的盒子，最终的总收益是多少。
+# 
+# 用BFS可以比较容易解决。队列里永远是还没有被打开的盒子。每一个回合，检查一遍队列里的盒子：1.如果盒子还不能打开（状态是关闭并且没有钥匙），则继续塞回队列。2.如果盒子能够打开，那么就打开它，拿取收益、收藏钥匙、将新盒子塞进队列。
+# 
+# 直至队列在经过一个回合之后没有任何变化，即没有任何盒子被打开，那么就说明进入了僵局不会再可能有进展，即终止程序。
+# 
+# 
+::::::::::::::
+BFS/1311.Get-Watched-Videos-by-Your-Friends/1311.Get-Watched-Videos-by-Your-Friends.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<string> watchedVideosByFriends(vector<vector<string>>& watchedVideos, vector<vector<int>>& friends, int id, int level) 
+    {
+        int n = watchedVideos.size();
+        vector<int>visited(n,0);
+
+        queue<int>q;        
+        q.push(id);
+        visited[id] = 1;
+
+        int step = 0;
+        vector<int>persons;
+        while (!q.empty())
+        {
+            int len = q.size();
+            step += 1;
+            while (len--)
+            {
+                int cur = q.front();
+                q.pop();
+
+                for (auto f: friends[cur])
+                {
+                    if (visited[f]==1) continue;
+                    visited[f] = 1;
+                    q.push(f);
+                    if (step==level)
+                        persons.push_back(f);
+                }
+            }
+            if (step==level) break;
+        }
+
+        unordered_set<string>VideoSet;
+        for (auto p: persons)
+            for (auto v: watchedVideos[p])
+                VideoSet.insert(v);
+
+        unordered_map<string,int>freq;
+        for (auto p: persons)
+            for (auto v: watchedVideos[p])
+                freq[v] += 1;
+        
+        vector<pair<int,string>>temp;
+        for (auto v: VideoSet)
+            temp.push_back({freq[v], v});
+        sort(temp.begin(), temp.end());
+
+        vector<string>rets;
+        for (auto x: temp)
+            rets.push_back(x.second);
+        return rets;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1311.Get-Watched-Videos-by-Your-Friends/Readme.md
+# ::::::::::::::
+# ### 1311.Get-Watched-Videos-by-Your-Friends
+# 
+# 假设某人是自己的好友的好友，同时也是自己的直接好友，那么只能记做是level为1的好友。因此此题注定用BFS的效率更高。
+# 
+# 我们先用BFS找到level为k的好友，然后取出他们所看过的视频。再统计这些视频的观看次数。最后排序。
+# 
+# 
+::::::::::::::
+BFS/1345.Jump-Game-IV/1345.Jump-Game-IV.cpp
+::::::::::::::
+class Solution {
+public:
+    int minJumps(vector<int>& arr) 
+    {
+        int n = arr.size();
+        if (n==1) return 0;
+        unordered_map<int,vector<int>>Map;
+        for (int i=0; i<n; i++)
+            Map[arr[i]].push_back(i);
+        
+        vector<int>visited(n,0);
+        queue<int>q;
+        q.push(0);
+        visited[0] = 1;
+        
+        int step = 0;
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)
+            {
+                int cur = q.front();
+                q.pop();
+                
+                if (cur+1 < n && visited[cur+1]==0)
+                {
+                    q.push(cur+1);
+                    visited[cur+1] = 1;
+                }
+                if (cur-1 >= 0 && visited[cur-1]==0)
+                {
+                    q.push(cur-1);
+                    visited[cur-1] = 1;
+                }
+                for (int next: Map[arr[cur]])
+                {
+                    if (visited[next] == 0)
+                    {
+                        q.push(next);
+                        visited[next] = 1;
+                    }
+                } 
+                Map.erase(arr[cur]);
+                
+            }
+            step += 1;
+            if (visited[n-1] == 1)
+                return step;
+        }
+        
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1345.Jump-Game-IV/Readme.md
+# ::::::::::::::
+# ### 1345.Jump-Game-IV
+# 
+# 一道基本的BFS题。每增加一步，可以延展到一些新的位置，包括+1, -1, 以及所有arr数值相同的位置。
+# 
+# 本题需要注意的是：如果你扩展了所有数值是val的点，那么请立即将val从Hash表里删除。否则一旦遇到再次一个值为val的点，你会依然继续考察所有值为val的点，即使你使用了visited做了去重标记，但这些不必要的考察还是很低效的。极端的例子就是[1,1,1,1,1,1,1....]。你的第一步，就会在队列中收录N个1. 此后每弹出一个1，都会再试图考察所有值为1的点。
+# 
+# 
+::::::::::::::
+BFS/1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid/1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid_BFS.cpp
+::::::::::::::
+
+class Solution {
+    int visited[101][101];
+    int m,n;
+    vector<pair<int,int>>dir;
+public:
+    int minCost(vector<vector<int>>& grid) 
+    {
+        m = grid.size();
+        n = grid[0].size();
+        dir = {{0,1},{0,-1},{1,0},{-1,0}};
+
+        queue<pair<int,int>>q;
+        vector<pair<int,int>>temp;
+        dfs(0,0,temp,grid);
+        for (auto x: temp)
+            q.push(x);
+        
+        int step = 0;
+        
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)
+            {
+                int x = q.front().first;
+                int y = q.front().second;
+                q.pop();
+                for (int k=0; k<4; k++)
+                {
+                    int a = x+dir[k].first;
+                    int b = y+dir[k].second;
+                    if (a<0||a>=m||b<0||b>=n) continue;
+                    if (visited[a][b]==1) continue;
+
+                    vector<pair<int,int>>temp;
+                    dfs(a,b,temp,grid);
+                    for (auto x:temp)
+                    {
+                        if (x.first==m-1 && x.second==n-1)
+                            return step+1;
+                        q.push(x);                        
+                    }
+                }
+            }
+            step++;
+        }
+        return 0;
+    }
+
+    void dfs(int x, int y, vector<pair<int,int>>&temp, vector<vector<int>>& grid)
+    {
+        if (x<0||x>=m||y<0||y>=n) return;
+        if (visited[x][y]==1) return;
+        temp.push_back({x,y});
+        visited[x][y] = 1;
+
+        int i = x + dir[grid[x][y]-1].first;
+        int j = y + dir[grid[x][y]-1].second;
+        dfs(i,j,temp,grid);
+    }
+};
+
+
+::::::::::::::
+BFS/1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid/1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid_Dijkstra.cpp
+::::::::::::::
+typedef array<int,3> AI3;
+class Solution {
+    int visited[101][101];    
+public:
+    int minCost(vector<vector<int>>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        priority_queue<AI3, vector<AI3>, greater<>>pq;
+        pq.push({0,0,0});
+        
+        auto dir = vector<pair<int,int>>({{0,1},{0,-1},{1,0},{-1,0}});
+        while (!pq.empty())
+        {
+            auto [steps, x, y] = pq.top();
+            pq.pop();
+            if (visited[x][y]) continue;
+            visited[x][y] = 1;
+
+            if (x==m-1 && y==n-1)
+                return steps;
+
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=m||j<0||j>=n) continue;
+                if (visited[i][j]==1) continue;
+                int addon = grid[x][y]==k+1 ? 0:1;
+                pq.push({steps+addon, i, j});
+            }
+        }
+        return 0;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid/Readme.md
+# ::::::::::::::
+# ### 1368.Minimum-Cost-to-Make-at-Least-One-Valid-Path-in-a-Grid
+# 
+# ### 解法1：BFS
+# 
+# 如果不给修改的机会，那么我们能遍历到哪些格子？显然就是从(0,0)顺着箭头走，假设能走到Set0 = {p1,p2,...pk}这些位置。
+# 
+# 然后考虑如果给一次修改的机会，我们能遍历到哪些格子？我们会从之前Set0集合里考察每一个格子，思考如果不按照当前的箭头走，而是可以修改成任意方向的话，下一步会到哪里？比如说p1原本的箭头指向p2，现在我们允许修改一次p1的箭头方向，那么p1可能可以走到上述集合之外的q1。同时我们顺着q1的箭头走，又可以遍历到q2,q3,q4...等一系列的位置。可见这一系列{qi}点集就是“给一次修改机会”所能到达的位置。同理，我们还可以修改p1的箭头指向r1，或者选择Set0中的其他格子修改箭头，这些操作都能得到“给一次修改机会”所能到达的位置，我们标记为Set1。
+# 
+# 我们看出来，从Set0到Set1，就是一个BFS的过程。同理从Set1到Set2，也是BFS的过程：不断从一个集合，扩展到下一个集合，伴随step+=1.直到发现经过若干步（即修改若干次箭头）之后，就可以遍历到右下角，那么就可以返回答案。
+# 
+# 需要注意的是，在上述过程中，从q1顺着原有的箭头扩展到q2,q3,q4...的过程也是遍历，这层遍历时的step都是保持不变的。对于这层遍历，我们也可以用dfs来实现。
+# 
+# ### 解法2：Dijkstra
+# 如果格子A的符号导向的是格子B，那么我们就认为AB之间的边权重是0；否则我们就认为AB之间的边权重是1. 于是本题就变成了求起点到终点的最短路径问题。因为图中任意两点之间的边权重不等，所以用Dijkstra是显而易见的方案。
+# 
+# 
+::::::::::::::
+BFS/1462.Course-Schedule-IV/1462.Course-Schedule-IV.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<bool> checkIfPrerequisite(int n, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) 
+    {
+        vector<unordered_set<int>>next(n);
+        vector<int>inDegree(n,0);
+        vector<unordered_set<int>>preSet(n);
+        
+        for (auto edge: prerequisites)
+        {
+            next[edge[0]].insert(edge[1]);
+            inDegree[edge[1]] += 1;
+        }
+        
+        queue<int>q;
+        for (int i=0; i<n; i++)
+        {
+            preSet[i].insert(i);
+            if (inDegree[i]==0)
+                q.push(i);
+        }            
+        
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            
+            for (int next: next[cur])
+            {
+                for (auto x: preSet[cur])
+                    preSet[next].insert(x);
+                
+                inDegree[next] -= 1;
+                if (inDegree[next]==0)
+                    q.push(next);
+            }
+        }
+        
+        vector<bool>rets;
+        for (auto query: queries)
+        {
+            rets.push_back(preSet[query[1]].find(query[0])!=preSet[query[1]].end());
+        }
+        return rets;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1462.Course-Schedule-IV/Readme.md
+# ::::::::::::::
+# ### 1462.Course-Schedule-IV
+# 
+# 考虑到n<=100，即使将每个节点的所有先修课程都记录下来，时间复杂度o(n^2)也是可以接受的。于是本题就是常规的拓扑排序算法，需要特别处理的是：每次从cur拓展到下一个next节点时，要把cur的所有先修课程都复制一遍给next。至于数据结构，显然用集合来实现去重和查询query都很方便。
+# 
+# 
+::::::::::::::
+BFS/1559.Detect-Cycles-in-2D-Grid/1559.Detect-Cycles-in-2D-Grid.cpp
+::::::::::::::
+class Solution {
+public:
+    bool containsCycle(vector<vector<char>>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        auto visited = vector<vector<int>>(m,vector<int>(n,0));
+        
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (visited[i][j] == 1) continue;
+               
+                queue<vector<int>>q;
+                q.push({i,j,-1});
+                visited[i][j] = 1;
+                
+                while (!q.empty())
+                {
+                    int x = q.front()[0];
+                    int y = q.front()[1];
+                    int d = q.front()[2];
+                    q.pop();
+                    
+                    for (int k=0; k<4; k++)
+                    {
+                        if (d==0 && k==1) continue;
+                        if (d==1 && k==0) continue;
+                        if (d==3 && k==2) continue;
+                        if (d==2 && k==3) continue;
+                        int a = x+dir[k].first;
+                        int b = y+dir[k].second;
+                                                                        
+                        if (a<0||a>=m||b<0||b>=n) continue;                        
+                        if (grid[a][b]!=grid[x][y]) continue;
+                        
+                        if (visited[a][b]==1) return true;                                                
+                        visited[a][b]=1;
+                        q.push({a,b,k});
+                    }
+                }
+            }
+        
+        return false;
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/1559.Detect-Cycles-in-2D-Grid/Readme.md
+# ::::::::::::::
+# ### 1559.Detect-Cycles-in-2D-Grid
+# 
+# 从任意一点开始，对同一个value的所有像素做常规的遍历。如果遍历的过程中遇到了之前访问过的格子，那么就是有环。注意遍历的过程中不能走“回头路”，即从A遍历到B，那么从B开始的遍历就不能包括A。
+# 
+# 
+::::::::::::::
+BFS/1568.Minimum-Number-of-Days-to-Disconnect-Island/1568.Minimum-Number-of-Days-to-Disconnect-Island.cpp
+::::::::::::::
+class Solution {
+    int m,n;
+public:
+    int minDays(vector<vector<int>>& grid) 
+    {
+        m = grid.size();
+        n = grid[0].size();
+        
+        int count = islands(grid);
+        if (count > 1) return 0;
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]==0) continue;
+                grid[i][j] = 0;
+                int count = islands(grid);
+                if (count > 1) return 1;
+                grid[i][j] = 1;
+            }
+        
+        return 2;        
+    }
+    
+    int islands(vector<vector<int>>& grid)
+    {
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        auto visited = vector<vector<int>>(m, vector<int>(n,0));
+        int count = 0;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]==0) continue;
+                if (visited[i][j]==1) continue;
+                
+                queue<pair<int,int>>q;
+                q.push({i,j});
+                visited[i][j] = 1;
+                                
+                count++;
+                
+                while (!q.empty())
+                {
+                    int x = q.front().first;
+                    int y = q.front().second;
+                    q.pop();
+                    
+                    for (int k=0; k<4; k++)
+                    {
+                        int a = x+dir[k].first;
+                        int b = y+dir[k].second;
+                        if (a<0||a>=m||b<0||b>=n) continue;
+                        if (grid[a][b]==0) continue;
+                        if (visited[a][b]==1) continue;
+                        q.push({a,b});
+                        visited[a][b] = 1;                        
+                    }
+                }
+                
+                if (count == 2) return 2;
+            }
+        return count;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1568.Minimum-Number-of-Days-to-Disconnect-Island/Readme.md
+# ::::::::::::::
+# ### 1568.Minimum-Number-of-Days-to-Disconnect-Island
+# 
+# 此题乍看没有头绪。但是考虑到这只是一个6分题，必然有巧解。
+# 
+# 首先想到的是，如果一个格子最多只会被四个邻接陆地包围，所以答案不会超过4.
+# 
+# 其次，想到肯定不会所有的格子都被四个邻接陆地包围，肯定会有“边缘”的格子，有一边是邻接水域或者边界。对于这个格子，我们只要断开另外三面陆地连接即可。所以答案不会超过3.
+# 
+# 再看一下例子，发现sample里的答案没有超过2的。细想一下，确实无论什么几何形状，都会有“角落”的格子。所谓的“角落”，指的是只有两个邻接点是与大陆相连。所以答案又可以缩小为不会超过2.
+# 
+# 如今答案的可能只有0，1，2。答案是否为零很好判断，扫一遍全局看是否只有一个岛。答案是否为1呢？如果只要删除一块陆地就能使得岛的数量大于等于2，那么我们就遍历每一块陆地，假设删除它，再查看一下剩下的地形的岛的数量即可。遍历一块“删除之地”大概是o(900)，然后每次搜索全局数一下剩余岛的个数也是o(900)，总共的时间复杂度是o(810000)，是可以接受的。如果答案不为1，那么答案就肯定是2了。
+# 
+# 所以本题的本质就是一个暴力枚举+BFS搜索判断岛数量。
+# 
+# 
+::::::::::::::
+BFS/1591.Strange-Printer-II/1591.Strange-Printer-II_bfs.cpp
+::::::::::::::
+class Solution {
+    int numNodes;    
+    vector<vector<int>>next;
+    
+bool bfs() 
+{        
+    queue<int>q;
+    int count = 0;
+
+    vector<int>InDegree(numNodes,0);
+    for (int i=0; i<numNodes; i++)
+    	for (int j: next[i])
+    		InDegree[j]++;
+
+    for (int i=0; i<numNodes; i++)
+    {
+        if (InDegree[i]==0) 
+        {
+            q.push(i);
+            count++;
+        }
+    }
+                
+    while (!q.empty())
+    {
+        int curCourse = q.front();
+        q.pop();
+        for (auto child: next[curCourse])
+        {
+            InDegree[child]--;
+            if (InDegree[child]==0)
+            {
+                q.push(child);
+                count++;
+            }                    
+        }
+    }        
+    
+    return count==numNodes;        
+}    
+    
+public:
+    bool isPrintable(vector<vector<int>>& targetGrid) 
+    {
+        int m = targetGrid.size();
+        int n = targetGrid[0].size();
+        vector<int>left(61, n);
+        vector<int>right(61, -1);
+        vector<int>top(61, m);
+        vector<int>bottom(61, -1);
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int color = targetGrid[i][j];
+                left[color] = min(left[color], j);
+                right[color] = max(right[color], j);
+                top[color] = min(top[color], i);
+                bottom[color] = max(bottom[color], i);
+            }
+        
+        next.resize(61);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                for (int color=1; color<=60; color++)
+                {
+                    if (i>=top[color]&&i<=bottom[color]&&j>=left[color]&&j<=right[color])
+                    {
+                        if (color!=targetGrid[i][j])
+                            next[targetGrid[i][j]].push_back(color);
+                    }
+                }                
+            }
+
+        numNodes = 61;       
+        return bfs();
+    }
+};
+
+
+::::::::::::::
+BFS/1591.Strange-Printer-II/1591.Strange-Printer-II_dfs.cpp
+::::::::::::::
+class Solution {
+    int visited[61];
+    vector<vector<int>>next;
+    
+bool dfs(int cur)
+{
+    if (visited[cur]==1) return true;
+
+    visited[cur] = 2;
+    for (int next: next[cur])
+    {
+        if (visited[next]==1) continue;
+        if (visited[next]==2) return false;
+        if (dfs(next)==false)  return false;
+    }
+    visited[cur] = 1;
+    return true;
+}  
+    
+    
+public:
+    bool isPrintable(vector<vector<int>>& targetGrid) 
+    {
+        int m = targetGrid.size();
+        int n = targetGrid[0].size();
+        vector<int>left(61, n);
+        vector<int>right(61, -1);
+        vector<int>top(61, m);
+        vector<int>bottom(61, -1);
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int color = targetGrid[i][j];
+                left[color] = min(left[color], j);
+                right[color] = max(right[color], j);
+                top[color] = min(top[color], i);
+                bottom[color] = max(bottom[color], i);
+            }
+        
+        next.resize(61);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                for (int color=1; color<=60; color++)
+                {
+                    if (i>=top[color]&&i<=bottom[color]&&j>=left[color]&&j<=right[color])
+                    {
+                        if (color!=targetGrid[i][j])
+                            next[targetGrid[i][j]].push_back(color);
+                    }
+                }                
+            }
+        
+        for (int i=1; i<=60; i++)
+        {            
+            if (dfs(i)==false) return false;            
+        }
+        
+        return true;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1591.Strange-Printer-II/Readme.md
+# ::::::::::::::
+# ### 1591.Strange-Printer-II
+# 
+# 首先，我们解决一个问题：如果矩形里有色彩1，那么我们能知道选种色彩1的色块的形状和位置吗？这个不难做到，我们只要把所有呈现色彩1的格子都找出来，找到能覆盖它的最小的矩形框即可。举个例子：
+# ```
+# 1 2 1
+# 2 1 3
+# 2 4 4
+# ```
+# 我们把所有1的格子都找出来，就可以确定这个色块的上边界、下边界、左边界、右边界。由此我们可以发现色彩1的范围应该就是2x3。同理我们可以确定色块2的范围是左边3x2。
+# 
+# 这里可能会有一个疑问，为什么色块2的范围不能更大一些？其余部分可不可能被其他色彩覆盖了？诚然确实有这个可能，在超过左边3x2的部分，可能还会有被遮住的2。但是那些“多余的”2对我们来说并没有影响。我们可以认为它存在，也可以认为它不存在。因为它从来没有真正显现过，它的存在与否无从考证。如果它的存在影响了我们其他的结论，那么我们索性就认为它不存在。从后面的分析可知，索性认为它“不存在”会给我们带来更方便的分析。
+# 
+# 通过这样的分析，我们可以确定每一个色块的大小和位置。因此也就是说，对于每个格子而言，它被哪些色块覆盖过就都知道了。比如说(0,0)就被1,2填色过；(0,0)就被1,2填色过；(1,2)就被1,3填色过；(2,1)就被1,2,4填色过...
+# 
+# 由此，我们还可以有一个重要的发现。(0,0)就被1,2填色过，但最终显示的是颜色1，因此说明色块1应该出现在色块2之后（才能将其覆盖）；(1,2)就被1,3填色过，但最终显示的是颜色3，因此说明色块3应该出现在色块2之后（才能将其覆盖）；(1,2)就被1,2,4填色过，但最终显示的是颜色4，因此说明色块4应该出现在色块1和色块2之后（才能将其覆盖）...
+# 
+# 由此我们可以知道部分的色块填充顺序要求。如果我们能找到一种所有色块的填充顺序，满足这些要求，那就意味着这些格子都能被顺利填色，并且最终显示的的色彩一定就是我们看到的色彩。
+# 
+# 这样的色彩填充顺序有很多，我们不一定要真正写出来。我们只要判断是否存在即可。那么如果不存在的原因是什么呢？那就仅有一种：色彩的覆盖顺序出现了循环。比如说对于某个格子，我们发现要求色彩1覆盖色彩2；但是对于另外一个格子，我们发现要求色彩2覆盖色彩1。这样的话，我们是无法确定一种所有色彩的填充顺序的。其他任何情况，我们都可以设计出一种不与要求矛盾的色彩填充顺序。
+# 
+# 如果我们能够有这样的色彩填充顺序，那么就一定能实现最终呈现的色彩分布吗？是的，就是这样。我们可以想象堆砌房子，一个个不同颜色的矩形往上堆，从天空俯视到的每个格子的色彩，就是最终覆盖这个格子的色彩。只要堆砌顺序设计出来、并且满足最后堆砌的色彩就是现实的色彩，那么就说明实现了题目的要求。
+# 
+# 所以本题就是转化为了：构建一个有向图、判断是否有环。有环的话输出false，无环的话输出true。
+# 
+# 
+# 
+::::::::::::::
+BFS/1617.Count-Subtrees-With-Max-Distance-Between-Cities/1617.Count-Subtrees-With-Max-Distance-Between-Cities.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>adj;   
+public:
+    vector<int> countSubgraphsForEachDiameter(int n, vector<vector<int>>& edges) 
+    {
+        adj.resize(n);
+        for (auto edge: edges)
+        {
+            adj[edge[0]-1].push_back(edge[1]-1);
+            adj[edge[1]-1].push_back(edge[0]-1);
+        }
+        
+        vector<int>allow(n);
+        vector<int>rets(n,0);
+        vector<int>dist(n);
+        for (int state=1; state<(1<<n); state++)
+        {
+            int start;
+            int count = 0;
+            for (int i=0; i<n; i++)
+            {
+                if (((state>>i)&1)==1)
+                {
+                    allow[i]=1;
+                    start = i;
+                    count++;
+                }                    
+                else
+                    allow[i]=0;
+            }
+            
+            for (int i=0; i<n; i++)
+                dist[i] = -1;
+            int v1 = bfs(start, dist, allow);
+
+            int countVisited = 0;
+            for (int i=0; i<n; i++)
+                countVisited += (dist[i]!=-1);
+            if (countVisited!=count)
+                continue;
+            
+            for (int i=0; i<n; i++)
+                dist[i] = -1;
+            int v2 = bfs(v1, dist, allow);
+            int maxDist = *max_element(dist.begin(), dist.end());
+            
+            rets[maxDist]++;
+        }
+        
+        rets.erase(rets.begin());
+        return rets;        
+    }
+    
+    int bfs(int start, vector<int>&dis, vector<int>&allow)
+    {
+        int n = dis.size();
+        queue<int> q; 
+        q.push(start);       
+        dis[start] = 0; 
+        int maxDis = 0;
+        int maxId = start;
+        
+        while (!q.empty()) 
+        { 
+            int cur = q.front();
+            q.pop(); 
+            
+            for (auto next: adj[cur]) 
+            {       
+                if (allow[next]==0) continue;
+                if (dis[next] == -1) 
+                { 
+                    q.push(next);   
+                    dis[next] = dis[cur] + 1; 
+                    if (dis[next] > maxDis)
+                    {
+                        maxDis = dis[next];
+                        maxId = next;
+                    }
+                } 
+            } 
+        }
+        return maxId; 
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1617.Count-Subtrees-With-Max-Distance-Between-Cities/Readme.md
+# ::::::::::::::
+# ### 1617.Count-Subtrees-With-Max-Distance-Between-Cities
+# 
+# 本题要求统计：对于每一种长度d，有多少个subtree的最大直径等于d。根据长度来“构造”满足条件的树，其实是比较困难的。我们可以反过来想，对于每个subtree，我们查看它的最大直径是多少，然后做统计的aggregation。根据一个固定的subtree，求最大直径，这是一个确定性的问题，通常比构造性的问题简单的多。另外这个题目中节点数目小于等于15，穷举所有subtree（包括非法的不连通的图），也就是2^15=32768种，这是可以接受的。
+# 
+# 给定了一棵树的拓扑结构，如何计算它的最长直径呢？这是一个经典的问题，有着经典的o(N)的解法：（参见 LC 1245.Tree-Diameter）
+# 1. 以图里的任意一个节点作为起始点A（看做根），往外做BFS遍历，能够到达的最远的节点B，那么B一定是最大直径的一个端点。
+# 2. 我们以B作为起始点（看做根），往外做BFS遍历，能够到达的最远的节点C，那么BC的路径就是最大直径的距离。
+# 
+# 我们来给第一步的这个结论做个证明。第二步其实就是再次利用了这个结论。
+# 
+# 假设从任意点A开始，能够到达的最远的距离是B。另外，整张图里“最长的点到点距离”是S和T。我们要证明B只可能是S或者T中的一点。如果不是，那么分情况讨论：
+# 
+# (1) AB与ST完全不相交。
+# ```
+#  A --X-- B
+#      |
+#  S --Y-- T
+# ``` 
+# 那么我们从A找一条能够到达ST的路径，并令分叉点是X和Y。因为AB是从A起始的最长路径，那么AB>AX+XY+XT，即BX>XY+YT. 
+# 
+# 那么我们观察路径S->Y->X->B，其距离```SY+YX+XB > SY+2XY+YT = ST+2XY > ST```，这就与ST是全局“最长的点到点距离”矛盾。
+# 
+# (2) AB与ST相交于X。
+# ```
+#      A 
+#      |
+#  S ==X== T
+#      |
+#      B
+# ```     
+# 因为AB是从A起始的最长路径，那么AX+XB>AX+XS，即XB>XS. 
+# 
+# 我们观察路径B->X->T，其距离```BX+XT > XS+XT = ST```，这就与ST是全局“最长的点到点距离”矛盾。
+# 
+# (3) 还有一些corner cases，都容易结合图形分析。
+# 
+# 由此我们证明了，只要用两次BFS找到两个“最远距离”，就可以确定一棵树的最大直径。
+# 
+# 本题的基本思路就是：
+# 1. 枚举节点的组合尝试构成一棵树
+# 2. 如果这棵树是联通的，那么就求它的最长直径。
+# 3. 对于该直径的subtree统计就加1。
+# 
+# 如何快速判断树是联通的呢？很简单，在BFS的时候判断是否经过了所有这个树的节点就行了。
+# 
+# 
+::::::::::::::
+BFS/1654.Minimum-Jumps-to-Reach-Home/1654.Minimum-Jumps-to-Reach-Home.cpp
+::::::::::::::
+class Solution {
+    int visited[8001][2];
+public:
+    int minimumJumps(vector<int>& forbidden, int a, int b, int x) 
+    {
+        if (x==0) return 0;
+        int max_forbid = *max_element(forbidden.begin(), forbidden.end());
+        int limit = max(x, max_forbid)+b;
+
+        for (auto x:forbidden)
+        {
+            visited[x][0] = -1;
+            visited[x][1] = -1;
+        }
+        visited[0][0] = 0;
+        
+        queue<pair<int,int>>q;
+        q.push({0,0});
+        int step = 0;
+
+        while (!q.empty())
+        {
+            int len = q.size();
+            step++;
+            while (len--)
+            {
+                int i = q.front().first;
+                int k = q.front().second;
+                q.pop();
+
+                if (i <= limit && visited[i+a][0] == 0)
+                {
+                    visited[i+a][0] = 1;
+                    q.push({i+a,0});
+                    if (i+a==x) return step;
+                }
+                
+                if (k==0)
+                {
+                    if (i-b>=0 && visited[i-b][1] == 0)
+                    {
+                        visited[i-b][1] = 1;
+                        q.push({i-b,1});
+                        if (i-b==x) return step;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1654.Minimum-Jumps-to-Reach-Home/Readme.md
+# ::::::::::::::
+# ### 1654.Minimum-Jumps-to-Reach-Home
+# 
+# 本题看上去是一个常规的BFS求最短路径问题：每到一处新的位置，我们有两种选择，向左走或者向右走。已经走过的地方就标记visited以后不再访问。直至访问到x位置。
+# 
+# 但是在写代码的过程中，我们会发现一个问题，那就是如果无限制使用朝右走的权利的话，永远不会停止，这样这个队列不会收敛到空。所以我们似乎应该有一个limit，往右边超越这个limit的时候就不该继续走下去。
+# 
+# 这个limit如何设计呢？我们假设整个路径是通过m次右移和n次左移实现从0到x的。我们可以知道这m次右移和n次左移，我们任意打乱先后顺序的话（但这个乱序要避免碰到forbidden），并不影响最终到达x的结论。既然如此，我们就没有必要让人一路狂飙到右极限再一路狂飙回来。只要出现```cur-b > x```的状态，那么就意味着我们之后至少需要一次左移（目的是拉回x附近），那么我们索性就规定这种情况下只能左移，不允许右移。如果需要右移，可以安排在这一步之后再走，并且这不会影响到达x的结论。
+# 
+# 于是我们就找到了这样的一个limit = x + b，如果当前位置cur超过了这个limit的话就只可以选择左移。
+# 
+# 但是这个limit有一个bug，那就是如果cur>limit，但是选择左移的时候碰到的是一个forbidden位置，岂不是意味着这个状态就没有任何后继节点了？这就涉及到了上面提到的那个问题，理论上m次右移和n次左移都可以实现从0到x，但是条件是该行走顺序中间不能碰到任何forbidden。为了解决这个问题，我们松弛这个limit的要求，如果能保证 cur-b 大于x、并且也大于任何可能的forbidden位置，那么我们就可以放心地只选择左移。因此这个limit的边界定义为 max(x, max_forbidden) + b。
+# 
+# 综上，本题的BFS策略是：
+# 1. 如果```cur <= limit```，允许往右移动（前提是不触碰forbidden）
+# 2. 如果到达cur时是右移的，那么允许往左移动（前提是不触碰forbidden且不越过0点）
+# 
+# 
+::::::::::::::
+BFS/1728.Cat-and-Mouse-II/1728.Cat-and-Mouse-II.cpp
+::::::::::::::
+class Solution {
+    int memo[9][9][9][9][3];
+    pair<int,int>mouse;
+    pair<int,int>cat;
+    pair<int,int>food;    
+    int catJump;
+    int mouseJump;
+public:
+    bool canMouseWin(vector<string>& grid, int catJump, int mouseJump) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        queue<array<int,5>>q;
+        this->catJump = catJump;
+        this->mouseJump = mouseJump;
+
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]=='M')
+                    mouse = {i,j};
+                if (grid[i][j]=='C')
+                    cat = {i,j};
+                if (grid[i][j]=='F')
+                    food = {i,j};
+            }
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]=='#') continue;
+                if (i==food.first && j==food.second) continue;
+                memo[food.first][food.second][i][j][1] = 1; // mouse win
+                memo[food.first][food.second][i][j][2] = 1; // mouse win
+                memo[i][j][food.first][food.second][1] = 2; // cat win                
+                memo[i][j][food.first][food.second][2] = 2; // cat win                
+                q.push({food.first, food.second, i, j, 1}); 
+                q.push({food.first, food.second, i, j, 2}); 
+                q.push({i, j, food.first, food.second, 1});                   
+                q.push({i, j, food.first, food.second, 2});  
+            }
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]=='#') continue;
+                memo[i][j][i][j][1] = 2; // cat win
+                memo[i][j][i][j][2] = 2; // cat win                                
+                q.push({i, j, i, j, 1}); 
+                q.push({i, j, i, j, 2}); 
+            }
+        
+        int step = 0;
+        while (!q.empty())
+        {            
+            step++;
+            if (step>2000) return false;
+            int len = q.size();
+            while (len--)
+            {
+                int mx = q.front()[0];
+                int my = q.front()[1];
+                int cx = q.front()[2];
+                int cy = q.front()[3];
+                int t = q.front()[4];   
+                int status = memo[mx][my][cx][cy][t];
+                q.pop();
+                
+                for (auto nextNode: findAllAdjacents(grid,mx,my,cx,cy,t))
+                {
+                    int mx2 = nextNode[0];
+                    int my2 = nextNode[1];
+                    int cx2 = nextNode[2];
+                    int cy2 = nextNode[3];                                        
+                    int t2 = nextNode[4];
+
+                    if (memo[mx2][my2][cx2][cy2][t2]!=0) continue; // has been determined
+
+                    if (t2==status)   // immediate win, (m2,c2,t2)->(m,c,t)
+                    {
+                        memo[mx2][my2][cx2][cy2][t2] = status;
+                        q.push({mx2,my2,cx2,cy2,t2});
+                    }
+                    else if (allAdjacentsWin(grid, mx2,my2,cx2,cy2,t2))    // eventually lose
+                    {
+                        memo[mx2][my2][cx2][cy2][t2] = (t2==1)? 2:1;
+                        q.push({mx2,my2,cx2,cy2,t2});              
+                    }                
+                }                
+            }
+        }
+        
+        return memo[mouse.first][mouse.second][cat.first][cat.second][1]==1;        
+    }
+    
+    vector<vector<int>> findAllAdjacents(vector<string>& grid, int mx, int my, int cx, int cy, int t)
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        vector<vector<int>>neighbours;
+        if (t==1)
+        {
+            for (int k=0; k<4; k++)
+                for (int a = 0; a<=catJump; a++)
+                {
+                    int cx2 = cx+dir[k].first*a;
+                    int cy2 = cy+dir[k].second*a;
+                    if (cx2<0||cx2>=m||cy2<0||cy2>=n) break;
+                    if (grid[cx2][cy2]=='#') break;
+                    neighbours.push_back({mx,my,cx2,cy2,2});
+                }
+        }
+        else
+        {
+            for (int k=0; k<4; k++)
+                for (int a = 0; a<=mouseJump; a++)
+                {
+                    int mx2 = mx+dir[k].first*a;
+                    int my2 = my+dir[k].second*a;
+                    if (mx2<0||mx2>=m||my2<0||my2>=n) break;
+                    if (grid[mx2][my2]=='#') break;
+                    neighbours.push_back({mx2,my2,cx,cy,1});
+                }
+        }
+        return neighbours;
+    }
+    
+    bool allAdjacentsWin(vector<string>& grid, int mx, int my, int cx, int cy, int t)
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        if (t==1)
+        {
+            for (int k=0; k<4; k++)
+                for (int a = 0; a<=mouseJump; a++)
+                {
+                    int mx2 = mx+dir[k].first*a;
+                    int my2 = my+dir[k].second*a;
+                    if (mx2<0||mx2>=m||my2<0||my2>=n) break;
+                    if (grid[mx2][my2]=='#') break;
+                    if (memo[mx2][my2][cx][cy][2]!=2)
+                        return false;
+                }                
+        }
+        else if (t==2)
+        {
+            for (int k=0; k<4; k++)
+                for (int a = 0; a<=catJump; a++)
+                {
+                    int cx2 = cx+dir[k].first*a;
+                    int cy2 = cy+dir[k].second*a;
+                    if (cx2<0||cx2>=m||cy2<0||cy2>=n) break;
+                    if (grid[cx2][cy2]=='#') break;
+                    if (memo[mx][my][cx2][cy2][1]!=1)
+                        return false;
+                }
+        }
+        return true;
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/1728.Cat-and-Mouse-II/Readme.md
+# ::::::::::::::
+# ### 1728.Cat-and-Mouse-II
+# 
+# 此题是```913.Cat-and-Mouse```的一道延伸，基本思路是一致的，就是BFS。建议先仔细阅读913的题解和视频。
+# 
+# 对于这种策略型的问题，DFS的解法是错误的。为什么呢？这是因为有“和”的可能。我们回想一下如果用通常用递归来做决策问题时，我们的思路大致是：如果我当前轮的每一种决策，都会导致对手的胜利，那么我这一轮必败；如果我当前轮的某一种决策，会导致对手的失败，那么我这一轮必胜。
+# 
+# 但是本题中会有“和”的可能，比如说food被墙壁包围，但是猫永远抓不到老鼠（e.g.绕着圈跑）。这种“和”的决策是递归无法判断的，就目前所知，我们无法写出正确的递归决策表达式。
+# 
+# 另外，注意一点，本题也不是简单的判断“老鼠和猫哪个离food近”。猫可以离food更远，但是它可能离老鼠更近，或者可以堵住老鼠的出路而必杀老鼠。
+# 
+# 所以本题和913需要采用同样的策略，那就是设计决策状态，然后从最终状态通过BFS逆推最初状态！
+# 
+# 我们设计状态(m,c,t)表示当前老鼠在m的位置、猫在c的位置、此时谁先动（1表示老鼠，2表示猫）的状态，其值有三种，0（平局，老鼠和猫都到不了food且不能相遇）、1（老鼠必赢）、2（猫必赢）。
+# 
+# 我们先考察哪些状态是已知的，有下面几类：
+# 1. 老鼠已经在food，猫在其他地方，无论turn是谁，老鼠已赢
+# 2. 猫已经在food，老鼠在其他地方，无论turn是谁，猫已赢
+# 3. 老鼠和猫在同一个地方，无论turn是谁，猫已赢
+# 
+# 我们将这些状态放入一个队列之中。我们尝试从这些已知的(c,m,t)的状态通过BFS外推出其他的状态的结论（赢或者输），直至得到(m0,c0,1)就是我们的答案，其中m0和c0就是老鼠和猫的初始位置。
+# 
+# 那么如何从某个已知的(c,m,t)，来推导另一个(c2,m2,t2)呢？这个决策机制比较神奇，需要好好体会：
+# 1. 我们如何推出某个新状态是必赢的结论呢？如果(c,m,t)是老鼠轮、但结论是已知猫必赢，那么任何能够走向(c,m,t)的状态(c2,m2,t2)，必然也是猫必赢，因为t2是猫轮，猫必然会选择(c,m,t)这个状态。我称之为immediate win。类似地，反过来也成立： 如果(c,m,t)是猫轮、但结论是老鼠必赢，那么任何能够走向(c,m,t)的状态(c2,m2,t2)，必然也是老鼠必赢
+# 2. 我们如何推出某个新状态是必输的结论呢？如果(c2,m2,t2)是老鼠轮、而且它下一步的所有猫的决策(c,m,t)都是已知老鼠输，那么(c2,m2,t2)就是老鼠必输，因为它没有任何能导致自己不输的手段。同理，反之，如果(c2,m2,t2)是猫轮、而且它下一步的所有老鼠的决策(c,m,t)都是已知猫输，那么(c2,m2,t2)就是猫必输，
+# 
+# 以上两点就是拓展新状态的输赢结论的方法，事实上其他任何情况下我们都无法推断某个状态的输赢。所以当BFS结束（队列为空的时候），其实会有很多(c,m,t)的结论位置，其实这些状态就意味着猫鼠游戏会是平局。
+# 
+# 注意本题里超过1000步、或者猫鼠永远不相遇，也都意味着老鼠输。所以返回结果是判断(c0,m0,t)==1.
+# 
+# 
+::::::::::::::
+BFS/1786.Number-of-Restricted-Paths-From-First-to-Last-Node/1786.Number-of-Restricted-Paths-From-First-to-Last-Node.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+
+class Solution {
+    vector<PII> next[20001];
+    int dist[20001];
+    int visited[20001];
+    int pathNum[20001];
+    long M = 1e9+7;
+    int n;
+public:
+    int countRestrictedPaths(int n, vector<vector<int>>& edges) 
+    {
+        this->n = n;
+        for (auto e:edges)
+        {
+            int a = e[0]-1;
+            int b = e[1]-1;
+            next[a].push_back({b, e[2]});
+            next[b].push_back({a, e[2]});            
+        }
+        
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0,n-1});        
+        
+        while (!pq.empty())
+        {
+            auto [d, cur] = pq.top();
+            pq.pop();
+            if (visited[cur]) continue;
+            dist[cur] = d;
+            visited[cur] = 1;
+            
+            for (auto [nxt, len] : next[cur])
+            {
+                if (visited[nxt]) continue;
+                pq.push({ d + len, nxt});
+            }            
+        }
+        
+        for (int i=0; i<n; i++)
+            pathNum[i] = -1;
+        
+        long ret = dfs(0);
+        return ret;
+    }
+    
+    long dfs(int cur)
+    {
+        if (cur==n-1) return 1;
+        if (pathNum[cur]!=-1) return pathNum[cur];
+        
+        long sum = 0;
+        for (auto [nxt, len]: next[cur])
+        {
+            if (dist[nxt] >= dist[cur]) continue;
+            sum += dfs(nxt);
+            sum %= M;
+        }
+        pathNum[cur] = sum;
+        return sum;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1786.Number-of-Restricted-Paths-From-First-to-Last-Node/Readme.md
+# ::::::::::::::
+# ### 1786.Number-of-Restricted-Paths-From-First-to-Last-Node
+# 
+# 题意描述：我们认为节点n是海平面，把distanceToLastNode(x)理解为节点x到节点n的海拔高度。我们需要找一条从节点1到节点n的路径，其中依次经过的每个点的“海拔”都是递减的。问这样的路径有多少条。
+# 
+# 首先，这是一个single source, non-negative weight的图论问题，我们会用Dijkstra算法很容易地计算出每个节点距离节点n的最短路径距离，也就是“海拔”。
+# 
+# 然后我们从节点1开始，用DFS来统计到达节点n的路径数目。注意，我们每次从当前节点a往后进行分支搜索的时候，根据题目要求，我们只会选择海拔相对a更低的节点递归下去，而不是选择所有的相邻节点。另外，考虑到图的结构很可能错综复杂，所以记忆化是必须的。
+# 
+# 另外想提的一点是，DFS的过程中我们并不需要使用visited来去重。这是因为我们在递归的过程中永远遵循“水往低处流”的规则，所以不可能会在DFS的过程中遇到任何已经访问过的节点。
+# 
+# 
+::::::::::::::
+BFS/1810.Minimum-Path-Cost-in-a-Hidden-Grid/1810.Minimum-Path-Cost-in-a-Hidden-Grid.cpp
+::::::::::::::
+/**
+ * // This is the GridMaster's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class GridMaster {
+ *   public:
+ *     bool canMove(char direction);
+ *     int move(char direction);
+ *     boolean isTarget();
+ * };
+ */
+typedef array<int,3> AI3;
+
+class Solution {
+    int visited[201][201];
+    int cost[201][201];
+    string d = "ULRD";
+    int targetX, targetY;
+    vector<pair<int,int>> dir = {{-1,0},{0,-1},{0,1},{1,0}};
+    
+public:
+    int findShortestPath(GridMaster &master) 
+    {
+        for (int i=0; i<201; i++)
+            for (int j=0; j<201; j++)
+                cost[i][j] = -1;
+        
+        int x0 = 100, y0 = 100;
+        dfs(master, x0, y0);
+        return dijkstra(x0, y0);
+    }
+    
+    void dfs(GridMaster &master, int x, int y)
+    {
+        if(visited[x][y]==1) return;
+        visited[x][y] = 1;
+        
+        if (master.isTarget())
+        {
+            targetX = x;
+            targetY = y;
+        }
+        
+        for (int k=0; k<4; k++)
+        {       
+            if (master.canMove(d[k]))
+            {                
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                cost[i][j] = master.move(d[k]);
+                dfs(master, i,j);
+                master.move(d[3-k]);
+            }            
+        }
+    }
+    
+    int dijkstra(int x0, int y0)
+    {
+        vector<vector<int>>visited(201, vector<int>(201));        
+        priority_queue<AI3,vector<AI3>, greater<>>pq;
+        pq.push({0,x0,y0});
+                
+        while (!pq.empty())
+        {
+            auto [c,x,y] = pq.top();
+            pq.pop();
+            if (visited[x][y]==1) continue;
+            visited[x][y] = 1;        
+            if (x==targetX && y==targetY)
+                return c;
+            
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0 || i>=200 || j<0|| j>=200) continue;
+                if (cost[i][j]==-1) continue;                    
+                if (visited[i][j]==1) continue;
+                
+                pq.push({c+cost[i][j], i, j});
+            }
+        }
+        
+        return -1;  
+    }
+    
+};
+
+
+# ::::::::::::::
+# BFS/1810.Minimum-Path-Cost-in-a-Hidden-Grid/Readme.md
+# ::::::::::::::
+# ### 1810.Minimum-Path-Cost-in-a-Hidden-Grid
+# 
+# 开辟一个200x200的二维矩阵。将起始点设置为(100,100)。先通过DFS走遍所有的格子，标记每个格子的cost和是否是障碍物，以及终点的位置。然后再从起点开始，用Dijkstra算法求得起点到终点的最小权重路径，
+# 
+# 
+::::::::::::::
+BFS/1857.Largest-Color-Value-in-a-Directed-Graph/1857.Largest-Color-Value-in-a-Directed-Graph.cpp
+::::::::::::::
+class Solution {
+    int inD[100000];    
+    vector<int>next[100000];
+public:
+    int largestPathValue(string colors, vector<vector<int>>& edges) 
+    {
+        int ans = 1;
+        for (auto edge: edges)
+        {            
+            int a = edge[0], b = edge[1];
+            next[a].push_back(b);
+            inD[b]++;
+        }
+        
+        unordered_set<char>Set(colors.begin(), colors.end());
+        for (char ch='a'; ch<='z'; ch++)
+        {
+            if (Set.find(ch)==Set.end()) continue;
+            int t = helper(ch-'a', colors, edges);
+            if(t==-1) return -1;
+            ans = max(ans, t);
+        }
+        return ans;        
+    }
+    
+    int helper(int k, string colors, vector<vector<int>>& edges) 
+    {
+        int n = colors.size();
+        vector<int>count(n, 0);
+        vector<int>in(n, 0);
+        for (int i=0; i<n; i++)
+            in[i] = inD[i];
+        
+        int nodes = 0;
+        queue<int>q;
+        for (int i=0; i<n; i++)
+        {
+            if (in[i]==0)
+            {
+                nodes++;
+                if (colors[i]-'a'==k) count[i]++;
+                q.push({i});
+            }
+        }
+        
+        int ret = 0;
+        while (!q.empty())
+        {
+            auto cur = q.front();
+            q.pop();            
+            
+            for (auto p: next[cur])
+            {
+                count[p] = max(count[p], count[cur]+ (colors[p]-'a'==k));                
+                ret = max(ret, count[p]);                
+                in[p]--;
+                if (in[p]==0)
+                {                    
+                    nodes++;
+                    q.push(p);                 
+                }
+            }            
+        }
+        
+        if (nodes!=n) return -1;
+        return ret;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1857.Largest-Color-Value-in-a-Directed-Graph/Readme.md
+# ::::::::::::::
+# ### 1857.Largest-Color-Value-in-a-Directed-Graph
+# 
+# 首先一張圖里是否有环，这个容易判断。我们现在只考虑这张图没有环的情况，也就是这张图里的每个连通区域都是树。
+# 
+# 显然，为了最大化题目所求的最大元素频次，我们显然会希望这个路径尽量地长，这样才能经过更多的节点，增多每个元素的频次。所以我们必然会找那些入度为零的节点作为路径起点。
+# 
+# 如果这条路径没有分叉，那么我们在前进的过程中只要维护一个长度为26的计数器就行，用来记录从路径起点到该节点时所经过的字符频次。接下来一个关键的问题是，假如有一条路径到A时的频次统计是count1，另一条路径到B时的频次统计是count2，而且A和B都会指向C，那么我们如何设置C的频次统计？此时我们并不清楚，C的频次统计是应该继承自A还是B，这是因为我们不知道最终哪个字符的频次会最大。可能在count1里面字母a出现得最多，在count2里面字母b出现得最多；如果最终全局来看a的频次最多，那么C应该继承自count1，以最大化a的频次；否则就应该继承自count2.
+# 
+# 所以我们这里就会发现，如果不知道我们关注的究竟是哪个字符，那么在这个交叉点上的选择会很纠结。所以这就提示我们，不妨将“关注的字符”给固定下来。将原本的问题变成26个子问题，分别求一条路径里出现a的最多频次、一条路径里出现b的最多频次、一条路径里出现c的最多频次... 对于每个子问题，我们用拓扑排序（考察当前入度是否为零）来遍历所有节点，时间复杂度为o(N)。此时重新回顾上面的问题，C节点应该继承自哪个路径？取决于考察的字符ch，只需贪心地选count1和count2中ch的频次更多的那个。
+# 
+# 将问题拆解之后，整体的复杂度就是O(26N). 但是仍有case会遇到TLE。改进的方法是指考察colors里面出现过的字符，而不用26个字符都跑一遍。
+# 
+# 
+# 
+::::::::::::::
+BFS/1879.Minimum-XOR-Sum-of-Two-Arrays/1879.Minimum-XOR-Sum-of-Two-Arrays_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumXORSum(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int m = nums1.size();
+        vector<int>dp(1<<m, INT_MAX/2);
+        vector<int>dp2(1<<m);
+        dp[0] = 0;
+        
+        for (int i=0; i<m; i++)
+        {
+            dp2 = dp;
+            
+            for (int state = 1; state < (1<<m); state++)
+            {
+                dp[state] = INT_MAX/2;
+                for (int j=0; j<m; j++)
+                {
+                    if ((state>>j)&1)
+                    {
+                        dp[state] = min(dp[state], dp2[state-(1<<j)]+(nums1[j]^nums2[i]));
+                    }                        
+                }
+            }            
+        }
+        return dp[(1<<m)-1];
+    }
+};
+
+
+::::::::::::::
+BFS/1879.Minimum-XOR-Sum-of-Two-Arrays/1879.Minimum-XOR-Sum-of-Two-Arrays_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumXORSum(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int m = nums1.size();
+        vector<int>dp(1<<m, INT_MAX/2);
+        vector<int>dp2(1<<m);
+        dp[0] = 0;
+        
+        for (int i=0; i<m; i++)
+        {
+            dp2 = dp;
+                
+            int k = i+1;            
+            int state = (1 << k) - 1;            
+            while (state < (1 << m))
+            {
+                dp[state] = INT_MAX/2;
+                for (int j=0; j<m; j++)
+                {
+                    if ((state>>j)&1)
+                    {
+                        dp[state] = min(dp[state], dp2[state-(1<<j)]+(nums1[j]^nums2[i]));
+                    }                        
+                }               
+                int c = state & - state;
+                int r = state + c;
+                state = (((r ^ state) >> 2) / c) | r;
+            }                        
+        }
+        return dp[(1<<m)-1];
+    }
+};
+
+
+::::::::::::::
+BFS/1879.Minimum-XOR-Sum-of-Two-Arrays/1879.Minimum-XOR-Sum-of-Two-Arrays_v3.cpp
+::::::::::::::
+typedef pair<int,int> PII;
+
+class Solution {
+public:
+    int minimumXORSum(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int m = nums1.size();
+        int n = nums2.size();
+        vector<int>visited(1<<m, 0);        
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0,0});
+        
+        while (!pq.empty())
+        {
+            auto [cost, state] = pq.top();
+            pq.pop();
+                        
+            if (visited[state]) continue;
+            visited[state] = 1;
+            
+            int j = __builtin_popcount(state);
+            if (j==n) return cost;
+                
+            for (int i=0; i<m; i++)
+            {
+                if ((state>>i)&1) continue;
+                int newState = state+(1<<i);
+                if (visited[newState]) continue;                                 
+                pq.push({cost+(nums1[i]^nums2[j]), newState});
+            }
+        }
+        
+        return -1;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1879.Minimum-XOR-Sum-of-Two-Arrays/Readme.md
+# ::::::::::::::
+# ### 1879.Minimum-XOR-Sum-of-Two-Arrays
+# 本题属于带权二分图匹配问题，标准的解法是KM算法。这里只用状态压缩的搜索算法解决。思路和```1066.Campus bike II```差不多。
+# 
+# 
+# #### 解法1
+# 我们用压缩状态state来代表nums1里有哪些元素已经匹配。比如01101表示nums1里面的第0,2,3号元素已经匹配。dp[state]表示当前该状态下能够得到的最优代价。注意到，dp[state]并不区分已经匹配的nums1元素究竟分别是和哪些nums2元素配对的。相比于暴力搜索我们需要穷举所有的配对细节，这样的“模糊处理”是节省时间和空间的关键。
+# 
+# 我们依次遍历每个nums2的元素，考察nums2[j]加入后，能够如何更新dp[state]。举个例子，当考察j=2时，dp[state]表示使用了nums2的前3个（包括j=2）元素之后state的最优代价。那么state里面到底哪个nums1元素是与j相匹配呢？我们只要遍历state里面的bit 1即可，记那些bit 1对应的nums1的元素是i。于是就有转移方程```dp[state] = dp[state-(1<<i)] + (nums1[i]^nums2[j])```.
+# 
+# 最终的答案就是当nums1的所有元素都被匹配时的最优代价，即```dp[(1<<m)-1]```.
+# 
+# #### 解法2
+# 在解法1的基础上可以有优化。根据题意，在考察nums2[j]的时候，说明我们已经匹配了nums2的前j+1个元素；因此相应地state必须恰好含有j+1个nums1的元素。所以我们不需要遍历所有的state，只需要遍历bit 1数目为j+1的state即可。这就可以用到Gospher's hack.
+# 
+# #### 解法3
+# 如果在状态A的基础上，我们再加上一对元素的配对，得到状态B，那么我们可以认为A到B之间有一条路径。比如，假设状态A是00101（nums1[0]和nums1[2]已经与nums2的前两个元素配对），在此基础上我们再将nums1[3]和nums2的第三个元素配对的话，就可以得到状态B是01101. 那么我们就认为A到B的路径的权重就是```nums1[3]^nums2[2]```. 于是这道题就转化为了求从00000走到11111（nums1的所有元素都被配对）的最短距离。这就是Dijkstra算法。
+# 
+# 
+::::::::::::::
+BFS/1905.Count-Sub-Islands/1905.Count-Sub-Islands.cpp
+::::::::::::::
+class Solution {
+public:
+    int ret = 0;
+    int countSubIslands(vector<vector<int>>& grid1, vector<vector<int>>& grid2) 
+    {
+        int m = grid1.size();
+        int n = grid1[0].size();
+                
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid2[i][j] == 1)                    
+                    bfs(grid1, grid2, i, j);                
+            }
+                
+        return ret;
+    }
+    
+    void bfs(vector<vector<int>>& grid1, vector<vector<int>>& grid, int x0, int y0)
+    {        
+        queue<pair<int,int>>q;
+        q.push({x0,y0});
+        grid[x0][y0] = -2;
+        
+        auto dir = vector<pair<int,int>>({{0,1},{0,-1},{1,0},{-1,0}});
+        int m = grid.size();
+        int n = grid[0].size();
+
+        int flag = 1;
+
+        while (!q.empty())
+        {
+            int x = q.front().first;
+            int y = q.front().second;
+            q.pop();
+            if (grid1[x][y]!=1) flag = 0;
+            
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=m||j<0||j>=n) continue;
+                if (grid[i][j]!=1) continue;
+
+                grid[i][j] = -2;
+                q.push({i,j});
+            }
+        }
+
+        if (flag==1) ret+=1;
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/1905.Count-Sub-Islands/Readme.md
+# ::::::::::::::
+# ### 1905.Count-Sub-Islands
+# 
+# 本题的思路其实很简单，就是在grid2里面bfs搜索每一个联通的island。如果island的每一个格子在grid1里面都对应着1，那么这个island就是一个sub island。
+# 
+# 
+::::::::::::::
+BFS/1928.Minimum-Cost-to-Reach-Destination-in-Time/1928.Minimum-Cost-to-Reach-Destination-in-Time.cpp
+::::::::::::::
+typedef array<int,3> AI3;
+class Solution {        
+public:
+    int minCost(int maxTime, vector<vector<int>>& edges, vector<int>& passingFees) 
+    {
+        int n = passingFees.size();
+        vector<vector<int>>dp(n, vector<int>(maxTime+1,INT_MAX/2));
+        vector<int>earliestTime(n+1, INT_MAX/2);
+        vector<int>smallestFee(n+1, INT_MAX/2);
+                        
+        vector<pair<int,int>> next[1001];
+        for (auto edge: edges)
+        {
+            next[edge[0]].push_back({edge[1], edge[2]});
+            next[edge[1]].push_back({edge[0], edge[2]});
+        }
+                        
+        queue<pair<int,int>>q;
+        dp[0][0] = passingFees[0];
+        q.push({0, 0});        
+        
+        while (!q.empty())
+        {
+            auto [city, time] = q.front();
+            int fee = dp[city][time];
+            q.pop();
+            
+            for (auto [nxt, t]: next[city])
+            {
+                int newTime = time + t;
+                int newFee = fee + passingFees[nxt];                
+                
+                if (newTime > maxTime) continue;
+                if (newTime > earliestTime[nxt] && newFee > dp[nxt][earliestTime[nxt]])
+                    continue;
+                
+                if (newFee < dp[nxt][newTime])
+                {                    
+                    dp[nxt][newTime] = newFee;
+                    q.push({nxt, newTime});
+                    earliestTime[nxt] = min(earliestTime[nxt], newTime);
+                }
+            }
+        }
+        
+        int ret = INT_MAX/2;
+        for (int t=0; t<=maxTime; t++)
+            ret = min(ret, dp[n-1][t]);
+        
+        if (ret>=INT_MAX/2)
+            return -1;
+        else
+            return ret;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/1928.Minimum-Cost-to-Reach-Destination-in-Time/Readme.md
+# ::::::::::::::
+# ### 1928.Minimum-Cost-to-Reach-Destination-in-Time
+# 
+# 求最短路径的题目，首选考虑常规的BFS和Dijsktra。因为本题有两个维度，时间和费用，所以Dijsktra不是很容易想。我们就考虑常规的BFS。
+# 
+# 我们会注意到，对于任意一个中转城市C，假设有两种方案：时间10和花费20，时间20和花费10，这两种方案并没有明显的优劣之分，它们都有可能是到达终点的必经之路。前者虽然花费多，但用时少；后者虽然花费少，但用时多，可能会最终导致无法按时到达终点。所以我们在BFS的时候，不能将认为某个城市访问过了就不用再访问了，而是要把时间也当做一个状态。在不同时间到达不同的城市，都有可能影响最终结果。我们用dp[city][time]记录在time时刻到达城市city的最小花费。初始状态就是```dp[0][0]=passingFees[0]```，将{city=0,time=0}加入队列之中，然后根据edge的几何关系进行拓展到下邻接的{nextCity, nextTime}。
+# 
+# BFS的过程中，如果发现dp[city][time]已经赋值过了，但是搜索到了该状态的更小花费，那么我们就需要再将{city,time}放入队列中重新拓展搜索。
+# 
+# 最终BFS的结果是将所有可能达到的dp[city][time]都赋值了一遍。我们的答案是```min{dp[n-1][t]}, for t=0,1,2,..maxTime```。
+# 
+# 此外，有一个加速的技巧就是，我们到达{city,time}的状态时，可以看一下历史上曾经记录过的、最早访问该city的时刻earliestTime。如果```dp[city][earliestTime] < dp[city][time]```，那么{city,time}这个状态就没有价值，不必再放入队列中。
+# 
+# 
+::::::::::::::
+BFS/1976.Number-of-Ways-to-Arrive-at-Destination/1976.Number-of-Ways-to-Arrive-at-Destination.cpp
+::::::::::::::
+using LL = long long;
+using PII = pair<LL,LL>;
+
+class Solution {
+    vector<vector<LL>>adj[201];        
+    LL dist[201];
+    LL count[201];    
+    long M = 1e9+7;
+public:
+    int countPaths(int n, vector<vector<int>>& roads) 
+    {        
+        for (auto road: roads)
+        {
+            LL u = road[0], v = road[1], len = road[2];
+            adj[u].push_back({v, len});
+            adj[v].push_back({u, len});
+        }
+        
+        for (int i=0; i<n; i++)
+            dist[i] = -1;
+        
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0,0});
+        
+        while (!pq.empty())
+        {
+            auto [d, c] = pq.top();
+            pq.pop();
+            if (dist[c]!=-1)
+                continue;
+            if (dist[c]==-1)
+                dist[c] = d;
+            
+            for (auto x: adj[c])
+            {                
+                LL nxt = x[0], len = x[1];
+                if (dist[nxt]!=-1) continue;
+                pq.push({d+len, nxt});
+            }            
+        }
+                
+        for (int i=0; i<n; i++)
+            count[i] = -1;
+        return dfs(n-1, dist[n-1]);;
+    }
+    
+    LL dfs(int cur, long d)
+    {        
+        if (d != dist[cur])
+            return 0;
+        if (cur==0) return 1;
+        if (count[cur]!=-1)
+            return count[cur];
+        
+        LL c = 0;
+        for (auto x: adj[cur])
+        {
+            LL nxt = x[0], len = x[1];
+            c += dfs(nxt, d-len);
+            c %= M;
+        }
+        count[cur] = c;
+        return c;
+    }
+    
+};
+
+
+# ::::::::::::::
+# BFS/1976.Number-of-Ways-to-Arrive-at-Destination/Readme.md
+# ::::::::::::::
+# ### 1976.Number-of-Ways-to-Arrive-at-Destination
+# 
+# 如果是求起点到终点的最短时间，那么可以采用标准的Dijsktra算法。但是本题更进一步，需要求最短距离的方案数，有什么变化呢。
+# 
+# 比较直观的想法就是倒推。假设从起点到终点的最短时间是T，并且终点的邻接城市是Ai（距离是ti），那么意味着我们需要在T-ti的时间到达Ai。同时我们注意到Dijsktra算法可以求得起点到任意位置的最短时间T[Ai]，那么我们就可以发现：如果```T > T[Ai] + ti```，这是不可能的，否则我们就找到了一条里终点更短的路径. 如果```T < T[Ai] + t[i]```，那么Ai也不会是最优路径上的一点，因为起点->Ai->终点的耗时会更长。所以我们知道最优路径的倒数第二站，应该是那些满足```T = T[Ai]+ti```的位置。所以我们就可以递归得到 
+# ```
+# count(Destination) = sum { count(Ai) } , for T[Ai] + ti = T[Destination]
+# ```
+# 由此我们可以递归下去。边界条件是count(Start) = 0.
+# 
+# 
+::::::::::::::
+BFS/2045.Second-Minimum-Time-to-Reach-Destination/2045.Second-Minimum-Time-to-Reach-Destination.cpp
+::::::::::::::
+using PII = pair<int,int>;
+class Solution {
+public:
+    int secondMinimum(int n, vector<vector<int>>& edges, int time, int change) 
+    {
+        vector<int>next[n+1];
+        for (auto edge: edges)
+        {
+            int a = edge[0], b = edge[1];
+            next[a].push_back(b);
+            next[b].push_back(a);
+        }        
+        
+        vector<int>visited(n+1,0);
+        vector<int>dist(n+1,-1);
+        queue<PII>q;
+        q.push({1,0});
+        dist[1] = 0;
+
+        while (!q.empty())
+        {
+            auto [cur, t] = q.front();
+            q.pop();
+
+            int tt;
+            int round = t/change;
+            if (round%2==0)
+                tt = t+time;
+            else
+                tt = (round+1)*change + time;
+
+            for (int nxt: next[cur])
+            {
+                if (visited[nxt]<2 && dist[nxt] < tt)
+                {
+                    dist[nxt] = tt;
+                    visited[nxt]+=1;
+                    q.push({nxt, tt});
+
+                    if (visited[nxt]==2 && nxt==n)
+                        return tt;
+                }
+            }
+        }
+        return -1;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/2045.Second-Minimum-Time-to-Reach-Destination/Readme.md
+# ::::::::::::::
+# ### 2045.Second-Minimum-Time-to-Reach-Destination
+# 
+# 这道题很多人看到最短路径就下意识地用Dijkstra算法。事实上这是不必要的，否则还会造成TLE。
+# 
+# 很多最短路径问题需要使用Dijkstra算法的原因，在于各个边的权重并不一致。传统的BFS算法里，弹出队首元素cur -> 扩展至若干相邻元素```nxt = cur + edge(cur->nxt)``` -> 将nxt放入队尾，这个流程会因为edge长度的不同，造成队列里面的节点所对应的路径并不保证递增。因此当我们从队列里第一次弹出终点时，并不能保证就是最短距离。于是Dijkstra就利用了贪心的思想，实时把当前最优（某个节点）的解弹出，直到我们遇到终点。
+# 
+# 在本题中，虽然有了红绿灯的干扰，但是我们仔细想一想，无论什么情况下，后加入的节点时间一定会比先加入的节点时间晚。不可能出现这种情况：A先弹出可到达C，B后弹出可到达D，结果D比C的到达时间反而早。这是因为即使A被红灯耽搁了出发，那么B必然不会赶在那个红灯前出发。无论如何D不会早C。
+# 
+# 基于以上分析，传统的BFS就可以解这道题了。本题tricky的地方在于求到达终点的第二最短路径（时间）。传统的BFS求最短路径，每个节点我们只需要访问一次，任何路径如果访问了二次相同的节点必然不会是最短距离。但本题中，我们BFS需要遍历每个节点两次，即得到它的最早到达和次早到达时间。但也仅此而已。因为在从起点到终点的第二最短路径所经过的所有节点里，肯定不会有某个节点被走了3次或以上。这个可以反证。假设从起点到终点的第二最短路径经过了```A->...->B1->...->B2->...->B3->...->C```，那么我们只要把多绕的圈子去掉，必然有两条更短的路径```A->...->B1->...->B2->...-->C```和```A->...->B1->...->C```。
+# 
+# 
+::::::::::::::
+BFS/2050.Parallel-Courses-III/2050.Parallel-Courses-III.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumTime(int n, vector<vector<int>>& relations, vector<int>& time) 
+    {
+        vector<vector<int>>next(n+1);
+        vector<int>indegree(n+1);
+        for (auto relation: relations)
+        {
+            int a = relation[0], b = relation[1];
+            next[a].push_back(b);
+            indegree[b]++;
+        }
+        queue<int>q;
+        vector<int>t(n+1);
+        for (int i=1; i<=n; i++)
+            if (indegree[i]==0)
+            {
+                q.push(i);
+                t[i] = time[i-1];
+            }
+                
+        int ret = 0;
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            ret = max(ret, t[cur]);
+            for (int nxt: next[cur])
+            {
+                t[nxt] = max(t[nxt], t[cur]+time[nxt-1]);
+                indegree[nxt]--;
+                if (indegree[nxt]==0)
+                    q.push(nxt);
+            }            
+        }
+
+        return ret;
+    }
+};
+
+
+# ::::::::::::::
+# BFS/2050.Parallel-Courses-III/Readme.md
+# ::::::::::::::
+# ### 2050.Parallel-Courses-III
+# 
+# 本题本质是求有向无环图里的最长路径。图论里有各种基于松弛的算法，但是本题最容易理解的其实就是拓扑排序。
+# 
+# 对于任何一门课程a，它的最早完成时间t(a)取决于它的所有先修课程的完成时间里最长的那个，即```t(a) = max{t(bi)+time[a]}```，其中bi是a的先修课程。因为本题给出的是有向无环图，所以不会有循坏依赖，即t(bi)不会依赖于t(a)本身。那么我们什么时候知道可以t(a)更新完毕了呢？很简单，只要每确定了一个t(bi)，我们就把a的入度减一。当发现a的入度为0时，说明t(a)已经被更新完毕。
+# 
+# 实现拓扑排序一般会用BFS。队列初始时刻加入那些入度为0的课程。每次弹出一门课程，它的所以后续课程就有机会更新一次。发现某个后续课程的入度减至了零，说明它的所有先修课程已经都确定了，那么这么后续课程也就确定了，就可以加入队列。
+# 
+# 本题输出的结果是所有课程的完成时刻里的最大值。
+# 
+# 
+::::::::::::::
+BFS/2093.Minimum-Cost-to-Reach-City-With-Discounts/2093.Minimum-Cost-to-Reach-City-With-Discounts.cpp
+::::::::::::::
+using AI3 = array<int,3>;
+class Solution {
+public:
+    int minimumCost(int n, vector<vector<int>>& highways, int discounts) 
+    {
+        vector<vector<pair<int,int>>>next(n);
+        for (auto x: highways)
+        {
+            int a = x[0], b = x[1], w = x[2];
+            next[a].push_back({b, w});
+            next[b].push_back({a, w});
+        }
+        
+        vector<vector<int>>cost(n, vector<int>(discounts+1, INT_MAX));  // cost[city][discounts]
+        priority_queue<AI3, vector<AI3>, greater<>> pq; // {cost, city, discounts}
+        pq.push({0,0,discounts});
+        
+        while (!pq.empty())
+        {
+            auto [c, cur, times] = pq.top();
+            pq.pop();
+            
+            if (c >= cost[cur][times]) continue;
+            cost[cur][times] = c;
+            if (cur == n-1) return c;
+            
+            for (auto x: next[cur])
+            {
+                auto [nxt, toll] = x;
+                if (cost[nxt][times]==INT_MAX)                    
+                    pq.push({c+toll, nxt, times});
+                if (times >= 1 && cost[nxt][times-1]==INT_MAX)
+                    pq.push({c+toll/2, nxt, times-1});                
+            }            
+        }
+        
+        return -1;        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/2093.Minimum-Cost-to-Reach-City-With-Discounts/Readme.md
+# ::::::::::::::
+# ### 2093.Minimum-Cost-to-Reach-City-With-Discounts
+# 
+# 本题看上去就像最短路径问题。难点在于，我们在某个位置时，无法知道当前使用折扣的权利是否为最优方案。因此本题的“图”的节点定义应该设计为二元参数 {node, discountsLeft}。在用Dijsktra遍历图的过程中，即使多次来到相同的位置，但是剩余折扣次数的不同的话，应当视为不同的“状态”。所以我们记录答案的数据应该是为二位的：dist[node][discounts]。
+# 
+# 在PQ里弹出当前的{curNode, discountsLeft}后，可以扩展加入PQ的“状态”包括两部分，“使用折扣权利”或者“不使用”：
+# ```cpp
+# for (auto nxt: next[curNode])
+# { 
+#   auto [nxtNode, len] = nxt;
+#   pq.push(curDist+len, nxtNode, discountsLeft);
+#   if (discountsLeft >= 1)
+#     pq.push(curDist+len/2, nxtNode, discountsLeft-1);
+# }
+# ```
+# 
+# 
+::::::::::::::
+BFS/2101.Detonate-the-Maximum-Bombs/2101.Detonate-the-Maximum-Bombs.cpp
+::::::::::::::
+using LL = long long;
+class Solution {
+    vector<int>next[100];
+public:
+    int maximumDetonation(vector<vector<int>>& bombs) 
+    {
+        int n = bombs.size();
+        for (int i=0; i<n; i++)
+            for (int j=0; j<n; j++)
+            {
+                LL dx = bombs[i][0]-bombs[j][0];
+                LL dy = bombs[i][1]-bombs[j][1];
+                LL r = bombs[i][2];
+                if (dx*dx+dy*dy<=r*r)
+                    next[i].push_back(j);
+            }
+
+        int ret = 0;        
+        for (int s=0; s<n; s++)
+        {
+            queue<int>q;
+            q.push(s);
+            vector<int>visited(n);
+            visited[s] = 1;
+            while (!q.empty())
+            {
+                int cur = q.front();
+                q.pop();
+                for (int i: next[cur])
+                {
+                    if (visited[i]) continue;
+                    q.push(i);
+                    visited[i] = 1;
+                }
+            }
+            int count = 0;
+            for (int i=0; i<n; i++)
+                count+=visited[i];
+            ret = max(count, ret);
+        }
+        return ret;
+        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/2101.Detonate-the-Maximum-Bombs/Readme.md
+# ::::::::::::::
+# ### 2101.Detonate-the-Maximum-Bombs
+# 
+# 根据题目的范围n<=100，可以大胆地设计n^3时间复杂度的算法。我们随意采用一个炸弹作为初始引爆点，题目所给的条件可以知道哪些后续炸弹会被第一个引爆。于是我们将这些后续一定会被引爆的炸弹也放入一个队列。之后队列里只要每弹出一个能被引爆的炸弹，我们就加入后续能被引爆的炸弹（已经引爆过的不算）。于是这就是一个非常直观的BFS。
+# 
+# 注意本题的时间复杂度。选取初始引爆炸弹需要o(n)的遍历；之后的队列的维护生成需要o(n)；每次我们根据一个已引爆炸弹穷举所有可能被引爆的炸弹，这也需要o(n)。所以总的时间复杂度是o(n^3).
+# 
+# 
+::::::::::::::
+BFS/2115.Find-All-Possible-Recipes-from-Given-Supplies/2115.Find-All-Possible-Recipes-from-Given-Supplies.cpp
+::::::::::::::
+class Solution {    
+public:
+    vector<string> findAllRecipes(vector<string>& recipes, vector<vector<string>>& ingredients, vector<string>& supplies) 
+    {
+        queue<string>q;
+        for (auto x: supplies)
+            q.push(x);
+        
+        unordered_map<string,int>indegree;
+        unordered_map<string, vector<string>>next;
+        unordered_set<string>wanted(recipes.begin(), recipes.end());
+        
+        for (int i=0; i<recipes.size(); i++)
+            for (int j=0; j<ingredients[i].size(); j++)
+            {
+                next[ingredients[i][j]].push_back(recipes[i]);
+                indegree[recipes[i]] += 1;
+            }                
+        
+        vector<string>rets;
+        while (!q.empty())
+        {
+            string cur = q.front();
+            q.pop();
+            if (wanted.find(cur)!=wanted.end())
+                rets.push_back(cur);
+            for (auto x: next[cur])
+            {
+                indegree[x]-=1;
+                if (indegree[x]==0)                
+                    q.push(x);                
+            }
+        }
+
+        return rets;
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/2115.Find-All-Possible-Recipes-from-Given-Supplies/Readme.md
+# ::::::::::::::
+# ### 2115.Find-All-Possible-Recipes-from-Given-Supplies
+# 
+# 此题非常类似那些“先修课程”的题目：必须已经访问过若干个节点（ingredient）之后才能访问一个新节点（recipe）。所以用拓扑排序是非常自然的想法。
+# 
+# 具体做法：BFS队列的初始节点就是那些supplies。每次从队列里弹出一个物品，查看它可能“解锁”哪些新物品，确认这个新物品的所有条件都已经满足（入度为零）之后就把其加入队列。
+# 
+# 
+::::::::::::::
+BFS/2127.Maximum-Employees-to-Be-Invited-to-a-Meeting/2127.Maximum-Employees-to-Be-Invited-to-a-Meeting.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximumInvitations(vector<int>& favorite) 
+    {
+        int n = favorite.size();
+        vector<int>indegree(n);
+        for (int i=0; i<n; i++)
+            indegree[favorite[i]]++;
+
+        queue<int>q;        
+        vector<int>visited(n);
+        vector<int>depth(n,1);
+        for (int i=0; i<n; i++)
+        {
+            if (indegree[i]==0)
+            {
+                depth[i] = 1;
+                visited[i] = 1;
+                q.push(i);
+            }                
+        }
+        
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            int nxt = favorite[cur];
+            indegree[nxt]--;
+            if (indegree[nxt]==0)            
+            {
+                q.push(nxt);                                      
+                visited[nxt] = 1;
+            }                
+            depth[nxt] = depth[cur]+1;
+        }
+
+        int max_circle_size = 0;                
+        int max_link_size = 0;        
+        for (int i=0; i<n; i++)
+        {
+            if (visited[i]==1) continue;
+            int j = i;
+            int count = 0;
+            while (visited[j]==0)
+            {
+                count++;
+                visited[j] = 1;
+                j = favorite[j];
+            }
+            if (count>2)
+                max_circle_size = max(max_circle_size, count);
+            else if (count==2)
+                max_link_size += depth[i]+depth[favorite[i]];
+        }
+
+        return max(max_circle_size, max_link_size);        
+    }
+};
+
+
+# ::::::::::::::
+# BFS/2127.Maximum-Employees-to-Be-Invited-to-a-Meeting/Readme.md
+# ::::::::::::::
+# ### 2127.Maximum-Employees-to-Be-Invited-to-a-Meeting
+# 
+# 我们设想一下从任意一个人出发，不停地沿着“舔狗链”传递，最终会出现什么情况？一定会出现一个环。因为本题里规定了所有的人都有出度（即有喜欢的人），否则没有环的话那就一定有出度为0的dead end。所以题目中构造出的图，一定长得是这样的模式：一个连通图以一个环为主体，另外可能有若干单链指向环上的节点。当然，这种连通图可能会有多个（即彼此不相连）。
+# 
+# 此时我们可以想到的是，选择这些环一定是满足条件的策略。因为只有环才能满足每个人都与喜欢的人相邻，否则引入任何其他分支（单链）都无法满足条件（因为在接入点处，会有一个出度，两个入度，但每个人在圆桌上只允许有两个邻居）。于是，选择其中最大的环，似乎就是最佳选择。
+# 
+# 但是以上的分析只适用于环的节点个数>=3的时候。如果存在一个节点数为2的环（即两个人A和B互相喜欢），那么任何指向A的单链和指向B的单链加入其中，依然是合法的圆桌策略。所以我们需要考虑这一种可能：大小为2的环，加上两个节点所外接的各自最长单链。更神奇的时候，事实上我们把所有这种“二元环+二单链”模式的连通图的节点都围坐起来，依然是一个合法的策略。
+# 
+# 所以本题的答案应该是```max{“最大的多元环”的大小，所有“二元环+二单链模式”的大小之和}```.
+# 
+# 具体的做法如下：
+# 1. 利用拓扑排序，把所有非环的外围单链砍掉。同时有一个附加的好处，我们从每个入度为0的点开始标记深度，待拓扑排序结束后，我们就能得到所有环上的节点所外接的其中最长单链的长度。
+# 2. 将剩余的节点（一定都在环上）任取一个开始遍历，可以得到一个完整的环的大小。由此遍历所有的环。每遍历一个环，需要考察是二元环还是多元环。
+# 3. 输出答案：```max{“最大的多元环”的大小，“所有二元环+二单链模式”的大小之和}```.
+# 
+# 
+::::::::::::::
+BFS/2203.Minimum-Weighted-Subgraph-With-the-Required-Paths/2203.Minimum-Weighted-Subgraph-With-the-Required-Paths.cpp
+::::::::::::::
+using LL = long long;
+using PII = pair<LL,LL>;
+
+class Solution {
+    int n;
+public:
+    long long minimumWeight(int n, vector<vector<int>>& edges, int src1, int src2, int dest) 
+    {
+        this->n = n;
+        vector<vector<PII>>next(n);
+        vector<vector<PII>>prev(n);
+        for (auto edge: edges)
+        {
+            int a = edge[0], b = edge[1], w = edge[2];
+            next[a].push_back({b,w});
+            prev[b].push_back({a,w});
+        }
+        
+        vector<LL>AtoOthers = dijkstra(src1, next);
+        vector<LL>BtoOthers = dijkstra(src2, next);
+        vector<LL>CtoOthers = dijkstra(dest, prev);
+        
+        LL ret = LLONG_MAX/3;
+        for (int i=0; i<n; i++)        
+            ret = min(ret, AtoOthers[i]+BtoOthers[i]+CtoOthers[i]);    
+            
+        if (ret==LLONG_MAX/3)
+            return -1;        
+        else
+            return ret;
+    }
+    
+    vector<LL>dijkstra(int start, vector<vector<PII>>&adj)
+    {
+        vector<LL>dist(n, LLONG_MAX/3);            
+        priority_queue<PII, vector<PII>, greater<>>pq;
+        pq.push({0,start});
+        
+        while (!pq.empty())
+        {
+            auto [d, c] = pq.top();
+            pq.pop();
+            if (dist[c] < LLONG_MAX/3)
+                continue;            
+            dist[c] = d;
+            
+            for (auto x: adj[c])
+            {                
+                LL nxt = x.first, len = x.second;
+                if (dist[nxt] < LLONG_MAX/3) continue;
+                pq.push({d+len, nxt});
+            }
+        }
+        return dist;
+    }    
+};
+
+
+# ::::::::::::::
+# BFS/2203.Minimum-Weighted-Subgraph-With-the-Required-Paths/Readme.md
+# ::::::::::::::
+### 2203.Minimum-Weighted-Subgraph-With-the-Required-Paths
+
+# 本题的路径模式抽象起来其实就只有一种：就是分别从src1和src2出发的两条路径在某个位置交汇（记做M），然后再从M连通到target。所以本题就是找一个M点，使得M到三个位置（src1，src2，target）的最短路径之和最小。很显然，调用三次Dijkstra算法即可，每次调用求得全局任何位置到指定起点的最短路径，并将其记录下来。

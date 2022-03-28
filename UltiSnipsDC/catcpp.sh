@@ -1,0 +1,30 @@
+cat ../cpp_all/cpp_basic.snippets >> cpp.snippets
+cat ../cpp_all/cpp_leetcode.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_BFS.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Binary_Search.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Bit_Manipulation.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Deque.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Design.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_DFS.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Divide_Conquer.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Dynamic_Programming.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Graph.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Greedy.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Hash.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Heap.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_LCCUP.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Linked_List.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Math.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Others.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Priority_Queue.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Recursion.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Segment_Tree.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Simulation.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Stack.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_String.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Template.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_tests.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Tree.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Trie.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Two_Pointers.snippets >> cpp.snippets
+# cat ../cpp_all/cpp_Union_Find.snippets >> cpp.snippets

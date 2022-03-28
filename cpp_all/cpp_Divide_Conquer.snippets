@@ -1,0 +1,610 @@
+::::::::::::::
+Divide_Conquer/0315.Count-of-Smaller-Numbers-After-Self/315.Count-of-Smaller-Numbers-After-Self.cpp
+::::::::::::::
+class Solution {    
+public:
+    vector<int> countSmaller(vector<int>& nums) 
+    {        
+        int N = nums.size();
+        if (N==0) return {};
+        
+        vector<int>sortedNums = nums;        
+        vector<int>counts(N,0);
+        DivideConque(nums,sortedNums, counts, 0, nums.size()-1);  // 0表示起点，N-1表示终点
+        return counts;
+    }
+    
+    void DivideConque(vector<int>&nums, vector<int>&sortedNums, vector<int>&counts, int start, int end)
+    {
+        if (start==end) return;
+        
+        // 如果需要处理的元素有多个，则折半分治处理。注意：分治处理后的sortedNums前后两部分元素都是有序的。
+        int mid = start+(end-start)/2;
+        DivideConque(nums, sortedNums, counts, start,mid);
+        DivideConque(nums, sortedNums, counts, mid+1, end);
+        
+        // OK，既然现在start~mid和mid+1~end这两段都分别有序，
+        // 那么对于start~mid中的任何一个元素，我们都可以轻易地知道在mid+1~end中有多少小于它的数
+        for (int i=start; i<=mid; i++)
+        {
+            int val = nums[i];
+            auto pos = lower_bound(sortedNums.begin()+mid+1, sortedNums.begin()+end+1,val);            
+            counts[i] += pos-(sortedNums.begin()+mid+1);
+        }
+        
+        // 将两段已经有序的数组段start~mid,mid+1~end合起来排序。
+        // 如果写归并排序的code会更快一些。这里就偷懒了，直接用sort函数。        
+        sort(sortedNums.begin()+start,sortedNums.begin()+end+1);        
+    }
+};
+::::::::::::::
+Divide_Conquer/0315.Count-of-Smaller-Numbers-After-Self/315.Count-of-Smaller-Numbers-After-Self-v2.cpp
+::::::::::::::
+class Solution {
+public:
+  std::vector<int> countSmaller(std::vector<int> &nums)
+  {
+    // when iterating to index i, we want to efficiently
+    // know how many elements on the right are less than nums[i]
+
+    // it may be impossible to get to know this information in O(1)
+    // therefore, O(logn) is the best achievement.
+
+    // considering O(logn), there are two data structure candidates
+
+    // binary indexed tree and segment tree
+
+    // since, we only want to count element of which value < nums[i]
+    // instead of ? < value < nums[i]
+
+    // binary indexed tree is the choice.
+
+    if (nums.empty())
+      return std::vector<int>();
+
+    auto [min_it, max_it] = std::minmax_element(nums.begin(), nums.end());
+
+    // mapping *min_it to be 1
+    int delta = 1 - *min_it;
+
+    int min = *min_it + delta;
+    int max = *max_it + delta;
+
+    // There are 2107 trees on the dota 2 map.
+    binary_indexed_tree tree(max);
+
+    std::vector<int> counts(nums.size(), 0);
+
+    for (int i = nums.size()-1; i >= 0; --i)
+    {
+      // query how many elements are less than nums[i]
+      int num = nums[i] + delta;
+      counts[i] = tree.query(num-1);
+
+      tree.update(num, 1);
+    }
+
+    return counts;
+  }
+
+private:
+  struct binary_indexed_tree
+  {
+    std::vector<int> _arr;
+
+    binary_indexed_tree(int max_val)
+    : _arr(max_val+1, 0)
+    {
+      // for binary indexed tree, index 0 means nothing,
+      // therefore, if we want to store the information of max_val
+      // we need an array of which the length is equal to max_val+1
+    }
+
+    /** @brief query prefix sum of range [0, i] of internal array
+     *  @param: i  int   inclusive end pos of prefix sum array
+     *  @return: prefix sum value
+     **/
+    int query(int i)
+    {
+      assert (i < _arr.size());
+
+      int ret = 0;
+
+      for (auto j = i; j > 0; j -= lowbit(j))
+        ret += _arr[j];
+
+      return ret;
+    }
+
+    void update(int i, int val)
+    {
+      assert (i > 0); // logical error to touch array[i]
+      assert (i < _arr.size());
+
+      for (auto j = i; j < _arr.size(); j += lowbit(j))
+        _arr[j] += val;
+    }
+
+    int lowbit(int i) { return i & (-i); }
+  };
+};
+::::::::::::::
+Divide_Conquer/0315.Count-of-Smaller-Numbers-After-Self/Readme.md
+::::::::::::::
+### 315.Count-of-Smaller-Numbers-After-Self
+
+分治法的最常见的应用就是与归并排序相结合。将数组对半划分为左右两部分，两部分各自排序，然后将两部分整体归并，在归并的过程中就可以解决一些问题。比如LeetCode的 493,315,327
+
+本题中带有鲜明的特征，即求nums[i]右边的所有小于它的数，这暗示了用分治和归并排序的算法。
+
+在每一轮，序列start~end对半分为两部分，左序列区间从start到mid，右序列区间从mid+1到end。两个部分各自递归调用分治排序的函数后，都变得有序（存放在sortedNums里）。此时，对于左序列的任意nums[i]，都可以轻易在有序的右序列中用lower_bound找到可以插入的位置，也就知道了右序列中有多少小于它的数。据此可以更新count[i].
+
+有人会问，那么在左序列中（从nums[start]到nums[mid]），肯定也有一些数小于nums[i]并且位于它右边呀。为什么不考虑呢？其实这部分在之前对于start~mid区间调用分治排序的函数处理过了。请仔细体会。
+
+最后注意，本题需要三个数组，nums, sortedNums, count。原来的数据存在nums, 归并排序后的数组存在sortedNums, count[i]对应的是nums[i]的 number of smaller elements to the right.
+
+
+[Leetcode Link](https://leetcode.com/problems/count-of-smaller-numbers-after-self)::::::::::::::
+Divide_Conquer/0327.Count-of-Range-Sum/ 327.Count-of-Range-Sum.cpp
+::::::::::::::
+class Solution {
+    int result;
+    long temp[10001];
+public:
+    int countRangeSum(vector<int>& nums, int lower, int upper) 
+    {
+        int n = nums.size();
+        vector<long>presum(n+1);
+        for (int i=0; i<n; i++)
+            presum[i+1] = presum[i]+nums[i];        
+        DivideConque(presum,0,n,lower,upper);
+        return result;
+    }
+    
+    void DivideConque(vector<long>& nums, int a, int b, int lower, int upper)
+    {
+        if (a>=b)  return;
+        int mid = a+(b-a)/2;
+        DivideConque(nums,a,mid,lower,upper);
+        DivideConque(nums,mid+1,b,lower,upper);
+        
+        for (int i=a; i<=mid; i++)
+        {
+            auto p1 = lower_bound(nums.begin()+mid+1,nums.begin()+b+1,nums[i]+lower);
+            auto p2 = upper_bound(nums.begin()+mid+1,nums.begin()+b+1,nums[i]+upper);
+            result+=p2-p1;            
+        }
+        
+        int i=a, j=mid+1, p = 0;        
+        while (i<=mid && j<=b)
+        {
+            if (nums[i]<=nums[j])
+            {
+                temp[p] = nums[i];
+                i++;
+            }                
+            else
+            {
+                temp[p] = nums[j];
+                j++;
+            } 
+            p++;
+        }
+        while (i<=mid)
+        {
+            temp[p] = nums[i];
+            i++;
+            p++;
+        }
+        while (j<=b)
+        {
+            temp[p] = nums[j];
+            j++;
+            p++;
+        }
+        for (int i=0; i<b-a+1; i++)
+            nums[a+i] = temp[i];
+    }
+};
+::::::::::::::
+Divide_Conquer/0327.Count-of-Range-Sum/Readme.md
+::::::::::::::
+### 327.Count-of-Range-Sum
+
+此题初看，立刻想到用累加和数组sums。任意某段区间(i,j)的和，等于sums[j]-sums[i-1]。不过即使这样，这道题仍需要o(n^2)的时间复杂度，因为要分别在sums中遍历符合要求的i,j两个元素。
+
+不过，这道题如果这样思考：确定了首元素i的位置，那么就需要在首元素之后在sums寻找一个尾元素j.如果i之后的sums数组已经是有序的，那么j元素就可以通过二分法o(log(n))的时间复杂度完成寻找。要想做到i之后的元素有序，那么分治/归并排序的组合套路就呼之欲出。这和 315.Count of Smaller Numbers After Self 是一个思路。
+
+我在分析315的时候介绍过：分治法的最常见的应用就是与归并排序相结合。将数组对半划分为左右两部分，两部分各自排序，然后将两部分整体归并，在归并的过程中就可以解决一些问题（利用一侧或者两个序列是有序的这个性质）。
+
+对于本题：在每一轮，序列start~end对半分为两部分，左序列区间从start到mid，右序列区间从mid+1到end。两个部分各自递归调用分治排序的函数后，都变得有序。此时，对于左序列的任意nums[i]，都可以轻易在有序的右序列中用lower_bound找到sums[i]+lower和sums[i]+upper的位置（或者亲自写二分查找的代码），这两者之间的元素都是符合要求的，将其数目加入总和中。
+
+本题的另一个训练点就是对C++的STL里lower_bound的考察。如何写自定义比较函数是关键。我们需要在右序列中找到下限的位置，希望找到的位置在原序列中是大于等于sums[i]+lower的，所以自定义函数里要写a<b。另一方面，我们需要在右序列中找到上限的位置，希望找到的位置在原序列中是大于sums[i]+upper的，所以自定义函数里要写a<=b。最终pos2-pos1表示原序列里处于[sums[i]+lower,sums[i]+upper]闭区间的个数。
+
+
+[Leetcode Link](https://leetcode.com/problems/count-of-range-sum)::::::::::::::
+Divide_Conquer/0493.Reverse-Pairs/493.Reverse-Pairs_v1.cpp
+::::::::::::::
+class Solution {    
+    int temp[50001];
+public:
+    int reversePairs(vector<int>& nums) 
+    {
+        int n = nums.size();
+        vector<int>sorted = nums;        
+        return helper(nums, sorted, 0, n-1);        
+    }
+
+    int helper(vector<int>& nums, vector<int>& sorted, int a, int b)
+    {
+        if (a>=b) return 0;
+        int ret = 0;
+        int mid = a+(b-a)/2;
+        ret += helper(nums, sorted, a, mid);
+        ret += helper(nums, sorted, mid+1, b);
+
+        for (int j=mid+1; j<=b; j++)
+        {
+            auto iter = upper_bound(sorted.begin()+a, sorted.begin()+mid+1, 2*(long)nums[j]);
+            ret += sorted.begin()+mid+1 - iter;
+        }
+        // sort(sorted.begin()+a, sorted.begin()+b+1);
+        int i=a, j=mid+1, p = 0;        
+        while (i<=mid && j<=b)
+        {
+            if (sorted[i]<=sorted[j])
+            {
+                temp[p] = sorted[i];
+                i++;
+            }                
+            else
+            {
+                temp[p] = sorted[j];
+                j++;
+            } 
+            p++;
+        }
+        while (i<=mid)
+        {
+            temp[p] = sorted[i];
+            i++;
+            p++;
+        }
+        while (j<=b)
+        {
+            temp[p] = sorted[j];
+            j++;
+            p++;
+        }
+        for (int i=0; i<b-a+1; i++)
+            sorted[a+i] = temp[i];
+        
+        return ret;
+    }
+};
+::::::::::::::
+Divide_Conquer/0493.Reverse-Pairs/493.Reverse-Pairs_v2.cpp
+::::::::::::::
+#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
+using namespace __gnu_pbds;
+
+typedef tree<
+pair<long,int> ,
+null_type,
+less<pair<long,int>>,
+rb_tree_tag,
+tree_order_statistics_node_update>
+ordered_set;
+
+
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) 
+    {
+        int ret = 0;
+        ordered_set Set;
+        for (int j=0; j<nums.size(); j++)        
+        {
+            int k = Set.order_of_key({(long)nums[j]*2+1,0});
+            ret += j - k;
+            Set.insert({nums[j],j});
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Divide_Conquer/0493.Reverse-Pairs/Readme.md
+::::::::::::::
+### 493.Reverse-Pairs
+
+遇到这种题目，会发现如果这个数组是有序排列的，那么寻找pairs的过程就会方便很多。也就是说确定了i，很容易就能找到满足条件的j；反过来也是。这就强烈提示了需要用分治法（divide and conquer）来做，这是解决这类题型的套路。
+
+分治法的最常见的应用就是与归并排序相结合。将数组对半划分为左右两部分，两部分各自是有序的；然后将两部分整体归并，在归并的过程中可以利用有序的性质解决一些问题。比如LeetCode的 493,315,327
+
+另外，两个有序数组的归并排序操作，代码要熟练掌握。
+
+
+[Leetcode Link](https://leetcode.com/problems/reverse-pairs)::::::::::::::
+Divide_Conquer/1649.Create-Sorted-Array-through-Instructions/1649.Create-Sorted-Array-through-Instructions_BIT.cpp
+::::::::::::::
+const int MAX_N = 100000;
+
+class Solution {
+public:    
+    long long bitArr[MAX_N+1];
+    long long nums[MAX_N+1];
+    long long M = 1e9+7;
+
+    void updateDelta(int i, long long delta) {
+        int idx = i;
+        while (idx <= MAX_N)
+        {
+            bitArr[idx]+=delta;
+            bitArr[idx] %= M;
+            idx+=idx&(-idx);
+        }
+    }
+
+    long long queryPreSum(int idx){
+        long long result = 0;
+        while (idx){
+            result += bitArr[idx];
+            result %= M;
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    long long sumRange(int i, int j) {
+        return queryPreSum(j)-queryPreSum(i-1);
+    }
+    
+    int createSortedArray(vector<int>& instructions) 
+    {        
+        long long ret = 0;
+        
+        for (auto x:instructions)
+        {
+            updateDelta(x, 1);
+            long long a = sumRange(1, x-1);
+            long long b = sumRange(x+1, MAX_N);
+            ret += min(a,b);
+            ret %= M;
+        }
+        return ret;
+        
+    }
+};
+::::::::::::::
+Divide_Conquer/1649.Create-Sorted-Array-through-Instructions/1649.Create-Sorted-Array-through-Instructions_DivideConque.cpp
+::::::::::::::
+class Solution {
+    int numSmaller[100005];
+    int temp[100005];    
+    int count[100005];
+    int sorted[100005];
+    int M = 1e9+7;
+public:
+    int createSortedArray(vector<int>& nums) 
+    {        
+        int n = nums.size();
+        for (int i=0; i<n; i++)
+            sorted[i] = nums[i];                 
+                
+        helper(nums, 0, n-1);        
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            ret += min(numSmaller[i], i-count[nums[i]]-numSmaller[i]);
+            ret %= M;
+            count[nums[i]]++;
+        }            
+        return ret;
+    }
+    
+    void helper(vector<int>& nums, int a, int b)
+    {
+        if (a>=b) return;        
+        int mid = a+(b-a)/2;
+        helper(nums, a, mid);
+        helper(nums, mid+1, b);
+        
+        for (int i=mid+1; i<=b; i++)
+        {
+            auto iter = lower_bound(sorted+a, sorted+mid+1, nums[i]);
+            numSmaller[i] += iter-(sorted+a);
+        }
+           
+        int i=a, j=mid+1, p = 0;        
+        while (i<=mid && j<=b)
+        {
+            if (sorted[i]<=sorted[j])
+            {
+                temp[p] = sorted[i];
+                i++;
+            }                
+            else
+            {
+                temp[p] = sorted[j];
+                j++;
+            } 
+            p++;
+        }
+        while (i<=mid)
+        {
+            temp[p] = sorted[i];
+            i++;
+            p++;
+        }
+        while (j<=b)
+        {
+            temp[p] = sorted[j];
+            j++;
+            p++;
+        }
+        for (int i=0; i<b-a+1; i++)
+            sorted[a+i] = temp[i];
+    }
+};
+
+
+// X X 3 X   3 Y Y Y 
+::::::::::::::
+Divide_Conquer/1649.Create-Sorted-Array-through-Instructions/1649.Create-Sorted-Array-through-Instructions_pbds.cpp
+::::::::::::::
+#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
+using namespace __gnu_pbds;
+
+typedef pair<int,int> PII;
+
+typedef tree<
+PII ,
+null_type,
+less<PII>,
+rb_tree_tag,
+tree_order_statistics_node_update>
+ordered_set;
+
+
+class Solution {
+public:
+    int createSortedArray(vector<int>& instructions) 
+    {
+        ordered_set Set;    
+        unordered_map<int,int>count;
+        long cost = 0;
+        long M = 1e9+7;
+        for (auto x: instructions)
+        {
+            int k1 = Set.order_of_key({x, 1});
+            int k2 = Set.size() - k1 - count[x];
+            cost += min(k1, k2);
+            cost %= M; 
+            count[x]++;
+            Set.insert({x, count[x]});
+        }
+        return cost;
+        
+    }
+};
+::::::::::::::
+Divide_Conquer/1649.Create-Sorted-Array-through-Instructions/1649.Create-Sorted-Array-through-Instructions_SegmentTree.cpp
+::::::::::::::
+class Solution {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = 0;
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    void updateSingleBy(SegTreeNode* node, int id, int val)
+    {        
+        if (id < node->start || id > node->end ) return;
+        if (node->start == node->end)
+        {
+            node->info += val;
+            return;
+        }
+        updateSingleBy(node->left, id, val);
+        updateSingleBy(node->right, id, val);
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    int queryRange(SegTreeNode* node, int a, int b)
+    {
+        if (b < node->start || a > node->end )
+        {
+            return 0;  // write your own logic
+        }
+        if (a <= node->start && b>=node->end)
+        {
+            return node->info;  // write your own logic
+        }        
+        return queryRange(node->left, a, b) + queryRange(node->right, a, b);  // write your own logic
+    }        
+    
+    long M = 1e9+7;
+    
+public:
+    int createSortedArray(vector<int>& instructions) 
+    {
+        set<int>Set(instructions.begin(), instructions.end());
+        unordered_map<int,int>num2idx;
+        int i = 0;
+        for (auto x:Set)
+        {
+            num2idx[x] = i;
+            i++;
+        }
+        int n = num2idx.size();
+                
+        SegTreeNode* root = new SegTreeNode(0, n-1);
+        init(root, 0, n-1);
+        
+        long ret = 0;        
+        for (auto x: instructions)
+        {
+            long a = queryRange(root, 0, num2idx[x]-1);
+            long b = queryRange(root, num2idx[x]+1, n-1);
+            ret += min(a,b);
+            ret %= M;
+            updateSingleBy(root, num2idx[x], 1);
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Divide_Conquer/1649.Create-Sorted-Array-through-Instructions/Readme.md
+::::::::::::::
+### 1649.Create-Sorted-Array-through-Instructions
+
+#### 解法1：分治法（归并排序）
+遍历这个数组里的每个元素，对于nums[i]，其实我们需要求的其实就是数一下[0,i-1]里有多少个元素严格比它小（或者大）。这不就是Count-of-Smaller-Numbers-Before-Self吗？立马联想到```LC315.Count-of-Smaller-Numbers-After-Self```，这是一道标准的分治法+归并排序的题。
+
+所谓的“分治+归并排序”，抽象地说，是对研究原数组的问题，拆分为两个小数组的问题（有点像递归）。但是注意，分别解决完这两个小数组的问题，并不意味着就解决了整个大数组的问题。我们在递归的过程中，将这两个小数组保持有序，然后再归并成一个有序的大数组。这个归并的过程中，可以额外做些操作来彻底解决这个大数组的问题。
+
+就本题而言，数组A按照index的先后拆分为两个小数组B和C。我们递归处理，得到B里面每个元素的Count-of-Smaller-Numbers-Before-Self，另外得到C里面每个元素的Count-of-Smaller-Numbers-Before-Self。然后我们再试图求解A问题。我们发现，A里面的B部分元素已经不需要再做任何更新了（B的所有smaller numbers before self依然在B里面，而B的问题已经解决了）。但是A里面的C部分元素还没有完全求解，因为B里面也有不少元素是C元素的smaller numbers before self。所以如果B是有序的话，那么我们就很容易通过二分法，求得B里面有多少个元素比C[i]小，那么C[i]的最终结果就可以得到进一步的更新。注意，结束之后我们需要将B和C归并起来得到一个有序的A，返回上一层的调用。
+
+本题OJ对于这种方法的C++解法要求很苛刻，必须全部采用数组（而非vector）才有可能AC。
+
+#### 解法2：树状数组
+根据数组元素的范围，我们开辟一个计数数组count[100001].如果我们遇到nums[i]，那么就相应的在计数器count[nums[i]]++。于是，对于nums[i]的Count-of-Smaller-Numbers-Before-Self，本质上就是求count数组在区间[1,nums[i]-1]上的和。对于一个mutable array，动态地求区间和，那么BIT或者线段树是最合适的数据结构。
+
+BIT的模板相对更简单一些。简单的说，我们将1-index的原数组nums，做一些变换映射到1-index的新数组bitArray.我们对于nums的单点更新、区间求和，都可以映射成在bitArray上的一些操作。BIT提供了两个API，分别是update(i,delta)和querySum(i,j)，前者是用来单点更新nums[i]+=delta，后者是用来求区间nums[i:j]的和。
+
+#### 解法3：线段树
+我们构造一棵线段树，线段树中的叶子节点代表着instruction里出现过的ordered distinct number，节点的info表示该数字出现的频次。注意，在初始建树的时候，所有节点的info都是零。
+
+记instruction[i]为x。每一个回合，我们需要分别统计这棵树里小于x的叶子节点个数、大于x的叶子节点个数。但我们不必关心x的数值。我们只需要知道x对应的index，这样我们就是在线段树中查询区间[0,index-1]的叶子节点的总频次（即info的总和）、以及查询区间[index+1,n-1]的叶子节点的info总和。所以我们需要一个方法queryRangeFreq(root,a,b). 
+
+在这个回合结束之后，我们将x加入这棵线段树。注意我们不需要新增节点，我们只是将数值为x的叶子节点的频次加1（事实上就是将第index个元素加1），所以我们需要一个方法updateSingleNode(root, index)。
+
+因为我们不关心instruction里面每个元素x的具体数值，只关心他们在线段树中的位置。所以我们预处理的时候要做“离散化”，建立x和index的映射关系。
+
+#### 解法4：pbds

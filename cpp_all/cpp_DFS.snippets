@@ -1,0 +1,3413 @@
+::::::::::::::
+DFS/0037.Sudoku-Solver/037.Sudoku-Solver.cpp
+::::::::::::::
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) 
+    {
+       bool temp = DFS(board, 0, 0);
+    }
+    
+    bool DFS(vector<vector<char>>& board, int i, int j)
+    {
+        if (i==9) return true;
+        if (j==9) return DFS(board, i+1, 0);
+        if (board[i][j]!='.') return DFS(board, i, j+1);
+        
+        for (int k='1'; k<='9'; k++)
+        {            
+            if (!isValid(board, i, j, k)) continue;
+            board[i][j]=k;
+            if (DFS(board, i, j+1)) return true;                
+            board[i][j]='.';
+        }        
+        return false;
+    }
+    
+    bool isValid(vector<vector<char>>& board, int i, int j, char k)
+    {        
+        for (int row=0; row<9; row++)
+        {
+            if (row!=i && board[row][j] == k)
+                return false;
+        }
+        for (int col=0; col<9; col++)
+        {
+            if (col!=j && board[i][col] == k)
+                return false;
+        }
+        int m=i/3*3;
+        int n=j/3*3;
+        for (int p=m; p<m+3; p++)
+         for (int q=n; q<n+3; q++)
+         {
+             if ((p!=i||q!=j)&&board[p][q]==k)
+                 return false;
+         }
+        return true;
+    }
+};
+::::::::::::::
+DFS/0037.Sudoku-Solver/Readme.md
+::::::::::::::
+### 037.Sudoku-Solver
+
+常规的回溯和深度遍历。在每一个空格上，尝试1-9，每填一个数都需要查验是否和已有数字重复（三个方向）以及进行下一步的递归。
+
+特别注意，如果所有的后续递归都返回失败的话，这个空格还需要重新置空再返回。
+
+
+[Leetcode Link](https://leetcode.com/problems/sudoku-solver)::::::::::::::
+DFS/0040.Combination-Sum-II/040.Combination-Sum-II.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>rets;
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) 
+    {
+        sort(candidates.begin(), candidates.end());
+        vector<int>comb = {};
+        DFS(candidates, target, 0, 0, comb);
+        return rets;
+    }
+    
+    void DFS(vector<int>& candidates, int target, int idx, int sum, vector<int>&comb)
+    {
+        if (target==sum)
+        {
+            rets.push_back(comb);
+            return;
+        }
+        if (sum>target)
+        {
+            return;
+        }
+        
+        for (int i=idx; i<candidates.size(); i++)
+        {
+            if (i>idx && candidates[i]==candidates[i-1])
+                continue;
+            
+            comb.push_back(candidates[i]);
+            DFS(candidates, target, i+1, sum+candidates[i], comb);
+            comb.pop_back();
+        }
+    }
+};
+::::::::::::::
+DFS/0040.Combination-Sum-II/Readme.md
+::::::::::::::
+### 040.Combination-Sum-II
+
+本题和LC 039非常类似。但有一个非常重要的情况需要考虑。假设target=5，candidates={3,1,1}，那么按照传统的DFS方法，会搜索到两个组合{3,1}，这两个组合中的1其实对应着的是candidates里面不同的元素。如何高效地去除这种重复的情况呢？
+
+我们先将candidates排序。然后规定：凡是相同的元素，我们只能按先后次序连续取，而不能跳着取。比如上面的例子，我们如果需要取一个1，那么就取第一个1.如果需要取两个1，那么就取前两个1.以此类推。
+
+那么如何在代码中高效地实现这个过滤呢？非常简单。
+```cpp
+for (int i=idx; i<candidates.size(); i++)
+{
+  if (i>idx && candidates[i]==candidates[i-1])
+    continue;
+  
+  // do you recursion here
+}
+```
+这段代码的语境是，在这一轮中，我们需要在```candidates[idx:end]```中间选取一个数加入comb。如果我们选中了candidates[i]，那么说明candidates[i-1]就没有被选中。此时如果发现```candidates[i]==candidates[i-1]```，则意味着相同的元素我们“跳着”选取了，这是上面指定的规则所不允许的，就可以终止。
+
+当然有一个特例，如果i选中的就是candidates[idx]，那是可以豁免的。这是因为上一轮我们选中的就是candidates[idx-1]。这样即使```candidates[i]==candidates[i-1]```，其实恰好说明我们就是顺着连续选取地这个元素。
+
+这个处理技巧在DFS的题目中会经常遇到，需要能够熟练掌握。
+
+
+[Leetcode Link](https://leetcode.com/problems/combination-sum-ii)::::::::::::::
+DFS/0051.N-Queens/051.N-Queens.cpp
+::::::::::::::
+class Solution {
+    vector<vector<string>>results;
+    vector<string>board;    
+    int n;
+public:
+    vector<vector<string>>solveNQueens(int n) 
+    {     
+        this->n = n;           
+        string s;
+        for (int i=0; i<n; i++)
+            s+=".";
+        for (int i=0; i<n; i++)
+            board.push_back(s);
+                
+        DFS(0);
+        return results;
+    }
+    
+    void DFS(int i)
+    {                        
+        if (i==n)
+        {
+            results.push_back(board);
+            return;
+        }
+        for (int j=0; j<n; j++)
+        {
+            if (isValid(i,j))
+            {
+                board[i][j]='Q';
+                DFS(i+1);
+                board[i][j]='.';
+            }                
+        }        
+    }
+    
+    bool isValid(int row, int col)
+    {
+        for (int i=0; i<row; i++)
+            if (board[i][col]=='Q') return false;
+        for (int j=0; j<col; j++)
+            if (board[row][j]=='Q') return false;
+        int k=1;
+        while (row-k >= 0 && col-k >= 0)
+        {
+            if (board[row-k][col-k]=='Q') return false;
+            k++;
+        }
+        k=1;
+        while (row-k >= 0 && col+k < n)
+        {
+            if (board[row-k][col+k]=='Q') return false;
+            k++;
+        }
+        return true;
+    }
+};
+::::::::::::::
+DFS/0051.N-Queens/Readme.md
+::::::::::::::
+### 051.N-Queens
+
+经典的八皇后问题，用DFS实现的回溯算法。
+
+根据题目的性质，整个棋盘的布局其实可以用一个一维数组就可以表示:
+```
+vector<int>Q_pos(n); // Q_pos[row]的数值表示第row行可以摆放皇后的位置。
+```
+在第row行找到一个可行的摆放位置后，就可以把找第row+1行的任务交给递归函数去做就行了。核心代码如下：
+```
+for (int col=0; col<n; col++)
+{
+    if (isValid(Q_pos,row,col)
+    {
+       Q_pos[row]=col;
+       DFS(Q_pos,row+1,results);
+       Q_pos[row]=-1;
+    }
+}
+```
+之所以称之为回溯算法，是因为对于每一行row，可能有若干个候选位置col，需要平行地探索。所以对每个col进行DFS后，都需要重置Q_pos[row]的数值，顾名思义就是重新来一遍。
+
+
+[Leetcode Link](https://leetcode.com/problems/n-queens)::::::::::::::
+DFS/0090.Subsets-II/090.Subsets-II.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>rets;    
+    vector<int>visited;
+public:
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) 
+    {
+        int n = nums.size();
+        visited.resize(n);
+
+        rets.push_back({});
+        sort(nums.begin(), nums.end());
+        vector<int>temp;
+        dfs(nums, 0, temp);
+        return rets;
+    }
+
+    void dfs(vector<int>&nums, int cur, vector<int>&temp)
+    {
+        if (cur==nums.size())
+            return;
+
+        for (int i=cur; i<nums.size(); i++)
+        {
+            if ((i>=1 && nums[i]==nums[i-1]) && visited[i-1]==0)
+                continue;
+
+            visited[i] = 1;
+            temp.push_back(nums[i]);            
+            rets.push_back(temp);
+            dfs(nums, i+1, temp);
+            temp.pop_back();
+            visited[i] = 0;
+        }
+    }
+};
+::::::::::::::
+DFS/0090.Subsets-II/Readme.md
+::::::::::::::
+### 090.Subsets-II
+
+常规的DFS。本题需要特别注意的是，如何高效地避免重复搜索。比如```1 2 2 2 3```，中间的三个相同的2，如果只取两个，其实有三种取法。这三种取法对应的subset其实都长得一样（.. 2 2 ...）。
+
+去重的技巧就是：对于n个连续的相同元素，如果我们打算取k个，那么永远只取前k个。这样的话，DFS的代码可以写成：
+```cpp
+for (int i=cur; i<nums.size(); i++)
+{
+  if (i>=1 && nums[i]==nums[i-1] && visited[i-1]==true)
+    continue;
+   ...
+}
+```
+这段代码的意思是，如果nums[i]和它前面一个元素相同，但是前面一个元素并没有被选中，那么nums[i]本身也不应该被选中。否则的话，就违背了我们之前的指导方针：对于相同的元素我们不能跳跃着选取。
+::::::::::::::
+DFS/0200.Number-of-Islands/200.Number of Islands_BFS.cpp
+::::::::::::::
+class Solution {
+private:
+    int M;
+    int N;
+public:
+    int numIslands(vector<vector<char>>& grid) 
+    {
+        M=grid.size();
+        if (M==0) return 0;
+        N=grid[0].size();
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+        auto dir=vector<pair<int,int>>{{0,1},{0,-1},{1,0},{-1,0}};
+        
+        int count=0;
+        queue<pair<int,int>>q;
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (grid[i][j]=='0' || visited[i][j]==1) continue;
+             
+             visited[i][j]=1;
+             q.push({i,j});
+             count++;
+             
+             while (!q.empty())
+             {
+                 
+                 for (int k=0; k<4; k++)
+                 {
+                     int m=q.front().first+dir[k].first;
+                     int n=q.front().second+dir[k].second;
+                     if (m>=0 && m<M && n>=0 && n<N && visited[m][n]==0 && grid[m][n]=='1')
+                     {
+                         q.push({m,n});
+                         visited[m][n]=1;
+                     }
+                 }
+                 q.pop();
+             }
+         }
+         
+         return count;
+        
+    }
+};
+::::::::::::::
+DFS/0200.Number-of-Islands/200.Number of Islands_DFS.cpp
+::::::::::::::
+class Solution {
+private:
+    int M;
+    int N;
+    vector<pair<int,int>> dir=vector<pair<int,int>>{{0,1},{0,-1},{1,0},{-1,0}};
+    
+public:
+    int numIslands(vector<vector<char>>& grid) 
+    {
+        M=grid.size();
+        if (M==0) return 0;
+        N=grid[0].size();
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+        
+        int count=0;
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (grid[i][j]=='0' || visited[i][j]==1)  continue;
+             
+             visited[i][j]=1;
+             explore(grid,visited,i,j);
+             count++;
+         }
+         
+         return count;
+        
+    }
+    
+    void explore(vector<vector<char>>& grid, vector<vector<int>>& visited, int i, int j)
+    {
+        for (int k=0; k<4; k++)
+        {
+            int m=i+dir[k].first;
+            int n=j+dir[k].second;
+            
+            if (m>=0 && m<M && n>=0 && n<N && grid[m][n]=='1' && visited[m][n]==0)
+            {
+                visited[m][n]=1;
+                explore(grid,visited,m,n);
+            }
+        }
+        return;
+    }
+};
+::::::::::::::
+DFS/0200.Number-of-Islands/200.Number-of-Islands_UnionFind.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+    int M;
+    int N;
+    public:
+    int numIslands(vector<vector<char>>& grid)
+    {
+        M=grid.size();
+        if (M==0) return 0;
+        N=grid[0].size();
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             Father[i*N+j]=i*N+j;
+         }
+
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (grid[i][j]=='0')
+                 continue;
+             
+             for (int k=0; k<4; k++)
+             {
+                 int x=i+dir[k].first;
+                 int y=j+dir[k].second;
+                 if (x<0||x>=M||y<0||y>=N)
+                     continue;
+                 if (grid[x][y]=='0')
+                     continue;                 
+                 if (FindSet(x*N+y)!=FindSet(i*N+j))
+                     Union(x*N+y,i*N+j);
+             }
+         }    
+        
+        unordered_set<int>Set;
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (grid[i][j]=='0') continue;
+             Set.insert(FindSet(i*N+j));
+         }
+        
+        return Set.size();
+
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        bool flag;
+        if (x/N<y/N)
+            flag=true;
+        else if (x/N==y/N && x%N<=y%N)
+            flag=true;
+        else
+            flag=false;
+
+        if (flag)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+
+::::::::::::::
+DFS/0200.Number-of-Islands/Readme.md
+::::::::::::::
+### 200.Number-of-Islands
+#### BFS的模板
+```cpp
+for (int i=0; i<N; i++)  // 遍历所有元素
+{
+       if (Yes) {q.push(i);}  // 符合条件的话，加入新元素至空队列
+       while (!q.empty()) 
+      {
+            x = q.front();   //队首弹出一个元素
+            q.pop();
+            x1 = adjacent(x); // 每出列一个元素，则入列其相邻元素
+            if (visited(x1)==0) 
+                 q.push(x1);
+      }
+}
+```
+
+#### DFS的模板
+```cpp
+for (int i=0; i<N; i++)  // 遍历所有元素
+{
+      if (No) continue  // 不符合条件的话忽略
+      visited[i]=1;
+      explore(grid, visited, i); 
+}
+
+void explore(grid, visited, i)
+{
+    for (int k=0; k<4; k++)
+    {
+        int m = ... //寻找相邻元素
+        if (Yes)    //满足条件的话，就从m开始递归
+        {
+           visited[m]=1;
+           explore(grid, visited, m);           
+        }
+    }
+}
+```
+
+#### Union Find
+将坐标(i,j)转化为标量值的index=i\*N+j。
+
+每遍历到一个点，查看其邻接的四个点，依次尝试做Union。每个聚类集合，其共有的Father用最小的横纵坐标来表述。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-islands)::::::::::::::
+DFS/0282.Expression-Add-Operators/282.Expression Add Operators.cpp
+::::::::::::::
+class Solution {
+    vector<string>output;
+public:
+    vector<string> addOperators(string num, int target) 
+    {
+        DFS(num,(long long)target,0,0,"");
+        return output;
+    }
+    
+    void DFS(string num, long long target, long long curRes, long long product, string expression)
+    {
+        //cout<<expression<<" "<<curRes<<endl;
+
+        if (num.size()==0 && curRes==target)
+        {
+            output.push_back(expression);
+            return;
+        }
+        
+        for (int i=1; i<=num.size(); i++)
+        {            
+            string curString=num.substr(0,i);
+            string nextString=num.substr(i);
+            if (curString.size()>1 && curString[0]=='0') return;
+            
+            if (expression.size()==0)
+                DFS(nextString,target,stoll(curString),stoll(curString),curString);
+            else
+            {
+                DFS(nextString,target,curRes+stoll(curString),stoll(curString),expression+'+'+curString);
+                DFS(nextString,target,curRes-stoll(curString),-stoll(curString),expression+'-'+curString);
+                DFS(nextString,target,curRes-product+product*stoll(curString),product*stoll(curString),expression+'*'+curString);
+            }
+        }        
+    }
+};
+::::::::::::::
+DFS/0282.Expression-Add-Operators/Readme.md
+::::::::::::::
+### 282.Expression-Add-Operators
+
+这是一道近乎暴力的DFS，没有太多优化剪枝的步骤。除了考虑怎么添加乘号之外，整理构架非常简明。
+
+构造DFS的函数：
+```cpp
+void DFS(string num, long long target, long long curRes, long long product, string expression)
+```
+num表示剩余待处理的字符串，target表示目标数值（题目所给定），curRes是之前所构造字符串的估值，product是之前所以构造字符串里最后几项（疑似）乘法项的乘积。所以主程序最顶端调用 DFS(num,target,0,0,"");
+
+DFS的思想就是在待处理的字符串里遍历第一项的可能性：只要确定了第一项，剩余的字符串就扔给下一个DFS函数来处理。
+
+确定第一项，就需要确定它有多少个数字，以及第一项之前的运算符。
+
+第一项有多少个数字好办，从1到num的长度，逐个循环过来。第一项之前的运算符也就只有三个可能，加减乘。本题的架构就是：逐个考虑，一旦确认了第一项curString，如何设置下一个DSF函数的参数。
+
+添加的curString是加法项：更新后的字符串当前估值就是curRes+stoll(curString)；字符串末尾可以作为(未来的)乘法项的也就是curString，其估值就是stoll(curString)；更新后的字符串 expression+'+'+curString
+
+添加的curString是减法项：更新后的字符串当前估值就是curRes-stoll(curString)；字符串末尾可以作为(未来的)乘法项的也就是curString，其估值就是-stoll(curString)；更新后的字符串 expression+'-'+curString
+
+添加的curString是乘法项：更新后的字符串当前估值就是curRes-product+product\*stoll(curString)；可以看到这里函数参数里的product派上了用场，之前的字符串的末尾几项的估值product需要作为被乘数和curString乘起来。更新后的字符串末尾可以作为(未来的)乘法项的变成product\*stoll(curString)；更新后的字符串 expression+'\*'+curString
+
+C++里字符串变长整形的函数是stoll，很好记 string to long long
+```cpp
+        for (int i=1; i<=num.size(); i++)  //逐个尝试第一项的数字长度
+        {
+            string curString=num.substr(0,i);  //确定了第一项
+            string nextString=num.substr(i);   //剩余的字符串
+            if (curString.size()>1 && curString[0]=='0') return; //第一项不能是有前导0的数字
+            
+            if (expression.size()==0)  //如果该第一项是作为整个字符串的开头，只能是加法项
+                DFS(nextString,target,stoll(curString),stoll(curString),curString);
+            else
+            {
+                DFS(nextString,target,curRes+stoll(curString),stoll(curString),expression+'+'+curString);                
+                DFS(nextString,target,curRes-stoll(curString),-stoll(curString),expression+'-'+curString);
+                DFS(nextString,target,curRes-product+product*stoll(curString),product*stoll(curString),expression+'*'+curString);
+            }
+        }
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/expression-add-operators)::::::::::::::
+DFS/0291.Word-Pattern-II/291.Word-Pattern-II.cpp
+::::::::::::::
+class Solution {
+    unordered_map<char, string>Map1;
+    unordered_map<string, char>Map2;   
+    bool visited[20][20];
+public:
+    bool wordPatternMatch(string pattern, string s) 
+    {
+        return dfs(0,0,pattern,s);        
+    }
+    
+    bool dfs(int x, int y, string& pattern, string& s)
+    {
+        if (x==pattern.size()) return y==s.size();
+        
+        char ch = pattern[x];
+        if (Map1.find(ch)!=Map1.end())
+        {
+            string t = Map1[ch];
+            if (y + t.size() > s.size()) return false;            
+            if (s.substr(y, t.size()) != t) return false;
+            return dfs(x+1, y+t.size(), pattern, s);
+        }
+        else
+        {
+            for (int i=y; i<s.size(); i++)
+            {
+                string t = s.substr(y, i-y+1);
+                if (Map2.find(t)!=Map2.end()) continue;
+                Map1[ch] = t;
+                Map2[t] = ch;
+                if (dfs(x+1, y+t.size(), pattern, s))
+                    return true;
+                Map1.erase(ch);
+                Map2.erase(t);
+            }
+            return false;
+        }
+    }
+};
+::::::::::::::
+DFS/0291.Word-Pattern-II/Readme.md
+::::::::::::::
+### 291.Word-Pattern-II
+
+建立两个映射，Map1从pattern的字符指向str的字符串，Map2建议相反的映射。DFS的每个回合，尝试将pattern的一个字符与str的一个前缀配对起来。校验如果这个配对已经存在，那么就递归处理pattern和str的剩余部分。如果这个配对不存在，就创建这个配对，分别更新Map1和Map2，然后同样递归处理.
+
+注意这题需要回溯，即每次返回前需要清理Map1和Map2最新添加的元素。
+::::::::::::::
+DFS/0301.Remove-Invalid-Parentheses/301.Remove-Invalid-Parentheses.cpp
+::::::::::::::
+class Solution {
+    vector<string>rets;
+    int retLen;
+public:
+    vector<string> removeInvalidParentheses(string s) 
+    {
+        string curStr = "";
+        retLen = -1;
+        
+        dfs(curStr, s, 0, 0);
+        return rets;
+    }
+    
+    void dfs(string curStr, string &s, int i, int count)
+    {
+        if (count<0) return;
+        
+        if (i==s.size())
+        {
+            if (count!=0) return;
+                                    
+            if (curStr.size() == retLen)
+                rets.push_back(curStr);
+            else if ((int)curStr.size() > retLen)
+            {
+                rets.clear();
+                rets.push_back(curStr);
+                retLen = curStr.size();
+            }            
+            return;
+        }
+        
+        if (s[i]!='(' && s[i]!=')')
+        {
+            dfs(curStr+s.substr(i,1), s, i+1, count);
+            return;
+        }
+        
+        dfs(curStr+s.substr(i,1), s, i+1, count+(s[i]=='('?1:-1));
+        
+        if (curStr.size()==0 || curStr.back()!=s[i])
+            dfs(curStr, s, i+1, count);
+    }
+};
+
+::::::::::::::
+DFS/0301.Remove-Invalid-Parentheses/Readme.md
+::::::::::::::
+### 301.Remove-Invalid-Parentheses
+
+本题没有太高明的办法，基本就是靠搜索，数量级应该就是O(2^N).DFS和BFS均可。感觉对于在同一个数组或字符串里面搜若干个元素的话，DFS写起来更舒服一些。基本思想就是对于每一个s[i]都有“选用”（append到当前curStr中去）和“不选用”两种选择，然后依次递归下去。如果遇到curStr不合法的情况，就及时中断这条支路。
+
+但本题最大的考点应该在于如何避免最后大量重复的结果。比如说我们想在“((()”里面最终得到"()"，其实就有好几种DFS的路径。比如说"OOXX", "XOOX", "OXOX"（O表示不选，X表示选）。可见原字符串中的三个“(((”，可以有三种不同的路径得到最后只剩一个"("。如果无脑地对每个字符都尝试“选用”和“不选用”，那么最后势必要依靠字符串类型的集合来去重，效率会很低。
+
+本题的精彩之处，是在于设计一种DFS路径选择机制，能够避开任何可能造成重复的路径。规则如下：
+1. 如果备选字符s[i]与已选字符串的最后一位相同，那么你必须选择使用这个字符，即```curStr.append(s[i])```
+2. 如果备选字符s[i]与已选字符串的最后一位不相同，那么你可以选择使用这个字符，也可以选择不使用，接下来的两条分叉递归处理。
+
+上面规则的本质是，如果最终生成的字符串含有若干个相同的字符，那么这些相同字符在s中的顺序也必须是连续的，并且是最后的若干个连续的字符。
+
+举个例子，如果s中有四个连续的左括号，我们选择保留下来两个左括号，那么我们对这四个左括号的选择一定是```XXOO```的形式，即我们只选择最后两个。而不能是```OOXX,OXOX,OXXO,XOOX,XOXO```这五种其他的形式。这样就避免了六种DFS搜索形式对应同一个最终结果的复杂局面。
+
+[Leetcode Link](https://leetcode.com/problems/remove-invalid-parentheses)
+::::::::::::::
+DFS/0312.Burst-Balloons/312.Burst-Balloons-DP.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) 
+    {
+        int N = nums.size();
+        nums.insert(nums.begin(),1);
+        nums.push_back(1);
+        
+        auto dp = vector<vector<int>>(N+2,vector<int>(N+2,0));
+        
+        for (int len=1; len<=N; len++)
+            for (int i=1; i+len-1<=N; i++)
+            {
+                int j = i+len-1;
+                for (int k=i; k<=j; k++)
+                    dp[i][j] = max(dp[i][j], dp[i][k-1]+dp[k+1][j]+nums[i-1]*nums[k]*nums[j+1]);                
+            }        
+        
+        return dp[1][N];
+    }
+};
+::::::::::::::
+DFS/0312.Burst-Balloons/Readme.md
+::::::::::::::
+### 312.Burst-Balloons
+
+此题的关键是找出递推关系式.从上往下的比较容易理解.
+
+令score[left,right]表示我们想消除[left,right]中所有元素能够得到的分数.消除所有元素的话,肯定有最后一枪:假设最后一枪是k,那么在打灭k之前,一定已经打灭了[left,k-1]和[k+1,right],这两部分的得分可以提前算出来,即score[left,k-1]和score[k+1,right].另外,最后打的K也会得分,分数是什么?注意,应该是nums[left-1]*nums[k]*nums[right+1],即涉及到[left,right]两端外的这两个元素.
+
+所以总的递推关系:
+```cpp
+for (k=left, k<=right; k++)
+  score(left,right) = max(score(left,k-1)+nums[left-1]*nums[k]*nums[right+1]+score(k+1,right));
+```
+这种关系可以由上往下通过递归实现,也可以由下而上写成动态规划的形式. 单纯递归的话可能会有重复的函数调用,采用记忆化存在dp数组的话就和动态规划完全一样了.
+
+
+[Leetcode Link](https://leetcode.com/problems/burst-balloons)::::::::::::::
+DFS/0329.Longest-Increasing-Path-in-a-Matrix/329.Longest-Increasing-Path-in-a-Matrix.cpp
+::::::::::::::
+class Solution {
+    int m,n;
+    int len[200][200];
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) 
+    {
+        m = matrix.size();
+        n = matrix[0].size();
+        
+        int ret = 0;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                ret = max(ret, dfs(matrix,i,j));                    
+            }
+        
+        return ret;
+    }
+    
+    int dfs(vector<vector<int>>& matrix, int i, int j)
+    {
+        if (len[i][j]!=0) return len[i][j];
+        vector<pair<int,int>>dir({{0,1},{0,-1},{1,0},{-1,0}});
+        int ret = 0;
+        for (int k=0; k<4; k++)
+        {
+            int x = i+dir[k].first;
+            int y = j+dir[k].second;
+            if (x<0||x>=m||y<0||y>=n) continue;
+            if (matrix[x][y]<=matrix[i][j]) continue;
+            ret = max(ret, dfs(matrix, x,y));
+        }
+        len[i][j] = 1+ret;
+        return 1+ret;
+    }
+};
+::::::::::::::
+DFS/0329.Longest-Increasing-Path-in-a-Matrix/Readme.md
+::::::::::::::
+### 329.Longest-Increasing-Path-in-a-Matrix
+
+我们从任意点A开始递归寻找各条递增路径，最终返回的时候记录从A为起点时的最长路径长度。将此结果记忆化，这样当对其他点进行DFS的时候，如果递归调用到dfs(A)就直接返回结果。
+::::::::::::::
+DFS/0332.Reconstruct-Itinerary/332.Reconstruct-Itinerary_v1.cpp
+::::::::::::::
+class Solution {
+    unordered_map<string,queue<string>>Map;
+    
+public:
+    vector<string> findItinerary(vector<vector<string>> tickets) 
+    {
+        sort(tickets.begin(),tickets.end());
+        for (auto ticket: tickets)
+            Map[ticket[0]].push(ticket[1]);
+                
+        return DFS("JFK");
+    }
+    
+    vector<string> DFS(string start)
+    {
+        vector<vector<string>>paths;        
+        while (Map[start].size()>0)
+        {
+            string nextStart = Map[start].front();
+            Map[start].pop();
+            paths.push_back(DFS(nextStart));
+        }
+        vector<string>ret({start});
+        for (int i=paths.size()-1; i>=0; i--)
+            for (auto t: paths[i])
+                ret.push_back(t);
+        return ret;
+    }
+};
+::::::::::::::
+DFS/0332.Reconstruct-Itinerary/332.Reconstruct-Itinerary_v2.cpp
+::::::::::::::
+  
+class Solution {
+    unordered_map<string,queue<string>>Map;
+    
+public:
+    vector<string> findItinerary(vector<vector<string>> tickets) 
+    {
+        sort(tickets.begin(),tickets.end());
+        for (auto ticket: tickets)
+            Map[ticket[0]].push(ticket[1]);
+        
+        vector<string> path;
+        DFS("JFK",path);
+        reverse(path.begin(),path.end());
+        return path;
+    }
+    
+    void DFS(string start, vector<string>& path)
+    {
+        while (Map[start].size()>0)
+        {
+            string nextStart = Map[start].front();
+            Map[start].pop();
+            DFS(nextStart, path);
+        }
+        path.push_back(start);
+    }
+};
+::::::::::::::
+DFS/0332.Reconstruct-Itinerary/Readme.md
+::::::::::::::
+### 332.Reconstruct-Itinerary
+
+这是一道典型的DFS的题目。但是有两种不同的思路。
+
+#### 方法一：无脑DFS
+
+相对直观的DFS的思路是：从起点出发，按字典顺序尝试每一个可以抵达的下一节点进行深度搜索，直至走到尽头。如果走到尽头的时候满足终止条件，即所有的机票都已经恰使用一次，那么就说明搜索成功了。否则，需要回溯到上一级搜索其他支线。
+
+这个方法有一个缺点。在本题中，题目保证最后的路径一定会使用到所有的机票。这就说明，如果尝试某一条支路的过程中走到了底没有成功（也就是说走到底的时候并没有用完所有的机票），虽然暂时失败了，但这条支路肯定会在之后的搜索中再走一遍（因为最终走成功路径一定会包括所有的机票）。这样，我们发现，这前一次没有成功的搜索其实被白白浪费了：明知道之后肯定会再走，但却没有带来任何帮助，效率低下。
+
+#### 方法二：利用欧拉路径的性质
+
+本题保证了肯定有一个路径：所有的航程都会用到，并且每个航程只用一次。从有向图的角度来说，就是所给的图是一个欧拉路径。让你将这个路径打印出来。
+
+这题本质就是一个欧拉一笔画的问题。现在来回顾几个概念：
+
+欧拉路径：从一个点出发，到达另外一个点，所有的边都经过且只经过1次。
+
+欧拉回路：欧拉路径中，终点能回到起点。
+
+如果判断是否存在欧拉路径？
+
+1.无向图：(a) 如果只有两个点的度是奇数，其他的点的度都是偶数，则存在从一个奇数度点到另一个奇数度点的欧拉路径（不是回路）。(b) 如果所有的点的度都是偶数，那么就是欧拉回路。
+
+2.有向图：(a) 如果最多有一个点出度大于入度by1，且最多有一个点入度大于出度by1，那么就有一条从前者（如果没有则可以任意）到后者（如果没有则可以任意）的欧拉路径。(b) 如果所有的点的入度等于出度，那么就存在欧拉回路。
+
+因为本题保证了是这张图构成了欧拉路径，于是有一个非常好的性质：每条边都是必须遍历的，而且只需要遍历一次，因为它肯定是最终欧拉路径的一部分。所以对边的遍历，我们都不该浪费（某种意义上可以存着再利用）。探索欧拉路径的过程中，不像无脑DFS那样会有被“废弃”的支路。因此，构造欧拉路径的时间复杂度只需要o(E)。
+
+接下来我们讨论具体构造欧拉路径的算法。首先，我们先摆出这么一个结论。假设我们第一次到达B点，开始往后遍历，保证每条边只走一次。接下来只有两种可能：选择某条支路走遍了所有后续节点并走到了终点，完美地构建了B之后的所有欧拉路径。或者选择某条支路走到了终点，但没有遍历完所有后续节点；我们只好回溯走另外一条支路，一番探索之后最终返回B点（此时B点没有任何未走的出度）停止。
+```
+       -> D -> E
+A -> B <-> F       
+```       
+如上述的例子（注意B->F和F->B是两条不同的边）。最理想的情况是一次遍历走完所有想走的点 B->F->B->D->E. 但是我们在B的支路选择上不可能总是这么幸运，可能会走这样一条路 ->D->E，这样走到了尽头。但是B还有另一条支路->F没有走，此时我们再尝试走那一条支路的话，就是 ->F->B，然后停止（因为此时B没有任何未走过的出度了）。
+
+那我们构造欧拉路径的思想是：B + path2 + path1，其中path1是从B点出发，选择任意支路并能够顺利走到终点的欧拉路径。path2是在path1走完之后，再从B点出发，最终走回B点的路径。注意，如果足够幸运，path1走遍了B后面的所有边，那么path2就不存在了。
+
+因为我们要最小化字典序，所以我们每次的分叉总会优先选择字典序较小的一支。有人会问，这样一定能得到欧拉路径吗？我们看上面的例子，在B点时，我们依据最小字典序会选择走D，即"->D->E"，发现这是一条直通到底的path1；然后回溯到B点，此时再选择走F，得到“->F->B”，这其实是一个path2. 根据规则最终构建的路径是“B + path2 + path1”，可见依然保证是一条欧拉路径，
+
+[Leetcode Link](https://leetcode.com/problems/reconstruct-itinerary)
+::::::::::::::
+DFS/0351.Android-Unlock-Patterns/351.Android-Unlock-Patterns.cpp
+::::::::::::::
+class Solution {
+    int count = 0;
+    int m,n;
+public:
+    int numberOfPatterns(int m, int n) 
+    {
+        this->m = m;
+        this->n = n;        
+        auto visited = vector<vector<int>>(3, vector<int>(3,0));
+        
+        for (int i=0; i<3; i++)
+            for (int j=0; j<3; j++)
+            {
+                visited[i][j] = 1;
+                dfs(i,j,1,visited);
+                visited[i][j] = 0;
+            }
+        return count;        
+    }
+    
+    void dfs(int x, int y, int r, vector<vector<int>>&visited)
+    {        
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1},{1,1},{-1,1},{1,-1},{-1,-1},{-1,2},{1,2},{-2,1},{2,1},{-1,-2},{1,-2},{-2,-1},{2,-1}});
+        if (r>=m && r<=n)
+            count++;
+        if (r>n) return;
+        
+        for (int k=0; k< dir.size(); k++)
+        {
+            int i = x+dir[k].first;
+            int j = y+dir[k].second;
+            if (i<0||i>=3||j<0||j>=3)
+                continue;        
+            if (visited[i][j] == 0)
+            {
+                visited[i][j] = 1;
+                dfs(i,j,r+1,visited);
+                visited[i][j] = 0;
+            }                
+            else
+            {
+                i = i+dir[k].first;
+                j = j+dir[k].second;
+                if (i<0||i>=3||j<0||j>=3)
+                    continue;     
+                if (visited[i][j]==1) continue;
+                visited[i][j] = 1;
+                dfs(i,j,r+1,visited);
+                visited[i][j] = 0;
+            }            
+        }        
+    }
+};
+::::::::::::::
+DFS/0351.Android-Unlock-Patterns/Readme.md
+::::::::::::::
+### 351.Android-Unlock-Patterns
+
+关于题意：如果走L形的move，我们不认为它经过任何其他的格子。
+
+本题是典型的DFS。我们从任意点开始，每个回合有16种移动的选择：上、下、左、右、左上、左下、右上、右下、左上上、右上上、左下下、右下下、左左上、左左下、右右上、右右下。
+
+特别地，对于前8种move而言，如果走一步遇到的格子是已经访问过的，根据规则，可以再朝同方向走一步（算作同一次操作）。如果走一步遇到的格子是没有访问过的，则不能这么做。
+::::::::::::::
+DFS/0399.Evaluate-Division/399.Evaluate Division.cpp
+::::::::::::::
+class Solution {
+    
+    unordered_map<string, vector<pair<string, double>>> graph; //存储图的数据结构
+    
+public:
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) 
+    {
+        vector<double>results;
+        
+        for (int i=0; i<equations.size(); i++)
+        {
+            auto it = equations[i];
+            graph[it.first].push_back({it.second,values[i]});
+            graph[it.second].push_back({it.first,1.0/values[i]});
+        }
+        //构造完整的双向图
+        
+        for (int i=0; i<queries.size(); i++) //遍历所有的query
+        {
+            auto it = queries[i];
+            if (graph.find(it.first)==graph.end() || graph.find(it.second)==graph.end())
+                results.push_back(-1.0);  //提前处理：图中不存在的点
+            else if (it.first==it.second)
+                results.push_back(1.0);   //提前处理：起讫位置相同的情况
+            else
+            {
+                unordered_set<string>visited;
+                double temp = DFS(it.first,it.second,visited); //剩下的都扔给DFS
+                results.push_back(temp);
+            }
+        }
+        return results;
+    }
+    
+    double DFS(string start, string end, unordered_set<string>visited)
+    {
+        if (start==end) return 1.0;
+        
+        visited.insert(start);
+        double temp = -1.0;
+        
+        for (auto a:graph[start]) //遍历start所能通向的所有位置
+        {
+            string mid = a.first;  // 选取一个位置叫mid
+            if (visited.find(mid)!=visited.end()) continue;  //如果这个位置已经访问过了，就不要再考虑
+            double temp2 = DFS(mid,end,visited); //剩下的就交给DFS去算从mid到end的距离。
+            if (temp2!=-1.0)
+            {
+                temp = a.second*temp2;  //只要从mid到end可行的话，就算找到从start到end的解了（因为题目保证没有其他mid能造成冲突）
+                break;
+            }
+        }
+        
+        return temp;
+    }
+};
+::::::::::::::
+DFS/0399.Evaluate-Division/399.Evaluate-Division_v2.cpp
+::::::::::::::
+class Solution {
+    unordered_map<string,vector<string>>next;
+    unordered_map<string,double>value;
+    unordered_map<string,int>visited;
+public:
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) 
+    {
+        for (int i=0; i<equations.size(); i++)
+        {
+            next[equations[i].first].push_back(equations[i].second);
+            value[equations[i].first+":"+equations[i].second]=values[i];
+            next[equations[i].second].push_back(equations[i].first);
+            value[equations[i].second+":"+equations[i].first]=1.0/values[i];
+            visited[equations[i].first]=0;
+            visited[equations[i].second]=0;
+        }
+        
+        vector<double>results;
+        
+        for (int i=0; i<queries.size(); i++)
+        {
+            for (auto a:visited)
+                visited[a.first]=0;            
+            results.push_back(DFS(queries[i].second,queries[i].first));
+        }        
+        
+        return results;
+    }
+    
+    double DFS(string start, string end)
+    {
+        if (next.find(start)==next.end())
+            return -1.0;
+        
+        if (start==end) 
+            return 1.0;
+        
+        for (auto b: next[start])
+        {
+            if (visited[b]==1) continue;
+         
+            visited[b]=1;            
+            double temp = DFS(b, end);
+            if (temp!=-1.0)             
+                return value[b+":"+start] * temp;                            
+            visited[b]=0;
+        }
+        
+        return -1.0;
+    }
+};
+::::::::::::::
+DFS/0399.Evaluate-Division/Readme.md
+::::::::::::::
+### 399.Evaluate-Division
+
+本题网上有很多提示用图和Floyd算法。本人觉得用图的话，会把所有节点之间的路径都算一遍，没有必要。而且似乎本题用C++实现Floyd有些麻烦，网上的图算法都是用的phyton。所以我这里还是用万能的DFS大法。
+
+基本思想很明确。要算两个节点的a/b，没有现成的数据怎么办，就把所有的中间节点走一遍，查看(a/c,c/b),(a/d,d/b),(a/e,e/b)...如果a/c有现成的，就把锅甩给DFS函数去递归考虑 c/b 怎么算，算出来c/b有解的话，a/b就大功告成。因为题目保证不会有冲突，所以那么多第三方节点c,d,e,...只要成功了一个就行。
+
+首选，为了方便DFS的遍历，需要构造一个检索容易的数据结构。因为a,b,c,d这些字符串比较麻烦。所以用字符串的映射就是很自然的想法：
+```cpp
+        unordered_map<string, vector<pair<string, double>>> graph; //存储图的数据结构
+        for (int i=0; i<equations.size(); i++)
+        {
+            auto it = equations[i];
+            graph[it.first].push_back({it.second,values[i]});
+            graph[it.second].push_back({it.first,1.0/values[i]});
+        }
+        //构造完整的双向图
+```
+构造DFS函数，包括起点start，终点end，和经过的节点集合visited
+```cpp
+    double DFS(string start, string end, unordered_set<string>visited)
+```
+根据上述的思想，在graph[start]遍历所有可以从start到达的第三方节点mid。忽略已经走过的那些节点，剩下的调用DFS(mid,end,visited)来查看mid到end是否走得通就行。
+```cpp
+        for (auto a:graph[start]) //遍历start所能通向的所有位置
+        {
+            string mid = a.first;  // 选取一个位置叫mid
+            if (visited.find(mid)!=visited.end()) continue;  //如果这个位置已经访问过了，就不要再考虑
+            double temp2 = DFS(mid,end,visited); //剩下的就交给DFS去算从mid到end的距离。
+            if (temp2!=-1.0)
+            {
+                temp = a.second*temp2;  //只要从mid到end可行的话，就算找到从start到end的解了（因为题目保证没有其他mid能造成冲突）
+                break;
+            }
+        }
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/evaluate-division)::::::::::::::
+DFS/0403.Frog-Jump/403.Frog-Jump_v1.cpp
+::::::::::::::
+class Solution {
+    unordered_set<string>FailureSet;
+    unordered_set<int>StoneSet;
+public:
+    bool canCross(vector<int>& stones) 
+    {        
+        for (auto a:stones)
+            StoneSet.insert(a);
+        return DFS(stones.back(),1,1);
+    }
+    
+    bool DFS(int dest, int pos, int jump)
+    {       
+        if (pos==dest)
+            return true;
+        
+        if (StoneSet.find(pos)==StoneSet.end())
+            return false;        
+        
+        string temp = to_string(pos)+"#"+to_string(jump);
+        if (FailureSet.find(temp)!=FailureSet.end())
+            return false;
+        
+        for (int k=max(1,jump-1); k<=jump+1; k++)
+        {
+            if (DFS(dest, pos+k, k))
+                return true;            
+        }
+        
+        FailureSet.insert(temp);
+        return false;
+    }
+};
+::::::::::::::
+DFS/0403.Frog-Jump/403.Frog-Jump_v2.cpp
+::::::::::::::
+class Solution {
+    unordered_set<int>stoneSet;
+    set<pair<int,int>>failed;
+public:
+    bool canCross(vector<int>& stones) 
+    {
+        for (auto x: stones)
+            stoneSet.insert(x);
+        return dfs(stones, 0, 0);        
+    }
+    
+    bool dfs(vector<int>& stones, int pos, int jump)
+    {
+        if (pos == stones.back()) return true;
+        if (stoneSet.find(pos)==stoneSet.end()) return false;
+        if (failed.find({pos, jump})!=failed.end()) return false;
+        
+        if (jump>1 && dfs(stones, pos+jump-1, jump-1))
+            return true;
+        if (jump>0 && dfs(stones, pos+jump, jump))
+            return true;
+        if (dfs(stones, pos+jump+1, jump+1))
+            return true;
+        
+        failed.insert({pos,jump});
+        return false;        
+    }
+};
+::::::::::::::
+DFS/0403.Frog-Jump/Readme.md
+::::::::::::::
+### 403.Frog-Jump
+
+比较直观的想法就是DFS搜索，层层递归下去。设计递归函数 bool DFS(pos,jump)表示当青蛙以jump的跨度跳到pos的石头上时，它能否跳到最后。显然，如果此刻的pos不是最后一块石头的话，那么就继续考察 DFS(pos+jump-1,jump-1), DFS(pos+jump,jump), DFS(pos+jump+1,jump+1)即可。
+
+需要注意的细节：1. 如果pos不是石头的位置，直接返回false，2. 下一步的跨度不能小于等于0，否则就死循环。
+
+以上的算法会LTE。如果思考进一步优化的算法，那显然就是记忆化，把每次搜索过的失败都记录下来。很容易想到，将已经探索过的{pos,jump}共同作为一个key存在一个集合FailureSet里，表明这个状态是失败的，以后DFS过程遇到这个状态就直接返回false。"
+
+
+[Leetcode Link](https://leetcode.com/problems/frog-jump)
+::::::::::::::
+DFS/0417.Pacific-Atlantic-Water-Flow/417.Pacific-Atlantic-Water-Flow_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& matrix) 
+    {
+        int m = matrix.size();
+        if (m==0) return {};
+        int n = matrix[0].size();
+        auto visited1 = vector<vector<int>>(m, vector<int>(n,0));
+        auto visited2 = vector<vector<int>>(m, vector<int>(n,0));
+        
+        vector<pair<int,int>>starts;
+        for (int i=0; i<m; i++)
+            starts.push_back({i,-1});
+        for (int j=0; j<n; j++)
+            starts.push_back({-1,j});
+        bfs(matrix, starts, visited1);
+        
+        starts.clear();
+        for (int i=0; i<m; i++)
+            starts.push_back({i,n});
+        for (int j=0; j<n; j++)
+            starts.push_back({m,j});
+        bfs(matrix, starts, visited2);
+        
+        vector<vector<int>>rets;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                if (visited1[i][j]&&visited2[i][j])
+                    rets.push_back({i,j});
+        return rets;
+    }
+    
+    void bfs(vector<vector<int>>& matrix, vector<pair<int,int>>&starts, vector<vector<int>>& visited)
+    {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        queue<pair<int,int>>q;
+        for (auto x: starts) q.push(x);
+        while (!q.empty())
+        {
+            auto [x,y] = q.front();
+            q.pop();
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=m||j<0||j>=n) continue;
+                if (visited[i][j]) continue;
+                if (x>=0&&x<m&&y>=0&&y<n && matrix[i][j]<matrix[x][y]) continue;
+                visited[i][j] = 1;
+                q.push({i,j});
+            }
+        }
+    }
+};
+::::::::::::::
+DFS/0417.Pacific-Atlantic-Water-Flow/417.Pacific-Atlantic-Water-Flow_DFS.cpp
+::::::::::::::
+class Solution {
+    int M,N;
+public:
+    vector<pair<int, int>> pacificAtlantic(vector<vector<int>>& matrix) 
+    {
+        M=matrix.size();
+        if (M==0) return {};
+        N=matrix[0].size();
+        
+        auto pac=vector<vector<int>>(M,vector<int>(N,0));
+        auto atl=vector<vector<int>>(M,vector<int>(N,0));
+        
+        for (int j=0; j<N; j++)
+            DFS(0,j,matrix,pac);            
+        for (int i=1; i<M; i++)
+            DFS(i,0,matrix,pac);
+        for (int j=0; j<N; j++)
+            DFS(M-1,j,matrix,atl);
+        for (int i=0; i<M-1; i++)
+            DFS(i,N-1,matrix,atl);
+        
+        vector<pair<int, int>>results;
+        for (int i=0; i<M; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (atl[i][j]==1 && pac[i][j]==1)
+                    results.push_back({i,j});
+            }
+        return results;
+    }
+    
+    void DFS(int i, int j, vector<vector<int>>& matrix, vector<vector<int>>& visited)
+    {
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,-1},{0,1}};
+        
+        for (int k=0; k<4; k++)
+        {
+            visited[i][j]=1;
+            int m=i+dir[k].first;
+            int n=j+dir[k].second;
+
+            if (m<0 || m==M || n<0 || n==N) continue;
+            if (visited[m][n]==1) continue;
+            if (matrix[m][n]<matrix[i][j]) continue;            
+            
+            DFS(m,n,matrix,visited);
+        }
+    }
+};
+::::::::::::::
+DFS/0417.Pacific-Atlantic-Water-Flow/Readme.md
+::::::::::::::
+### 417.Pacific-Atlantic-Water-Flow
+
+此题DFS和BFS都适用，但一般用DFS的递归写起来比BFS更简洁。
+```cpp
+    void DFS(int i, int j, vector<vector<int>>& matrix, vector<vector<int>>& visited)
+    {
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,-1},{0,1}};
+        
+        for (int k=0; k<4; k++)
+        {
+            visited[i][j]=1;
+            int m=i+dir[k].first;
+            int n=j+dir[k].second;
+
+            if (m<0 || m==M || n<0 || n==N) continue;
+            if (visited[m][n]==1) continue;
+            if (matrix[m][n]<matrix[i][j]) continue;            
+            
+            DFS(m,n,matrix,visited);
+        }
+    }
+```    
+
+
+[Leetcode Link](https://leetcode.com/problems/pacific-atlantic-water-flow)::::::::::::::
+DFS/0425.Word-Squares/425.Word-Squares.cpp
+::::::::::::::
+class Solution {
+    vector<vector<string>>rets;
+    unordered_map<string, vector<string>>Map;
+    int n;
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) 
+    {
+        this->n = words[0].size();
+        for (auto& word: words)
+        {
+            for (int i=0; i<n; i++)
+                Map[word.substr(0, i)].push_back(word);
+        }
+        vector<string>ret;
+        dfs(0, ret, words);
+        return rets;
+    }
+    
+    void dfs(int row, vector<string>&ret, vector<string>& words)
+    {
+        if (row==n)
+        {    
+            rets.push_back(ret);
+            return;
+        }
+        
+        string prefix;
+        for (int i=0; i<row; i++)
+            prefix.push_back(ret[i][row]);
+        
+        for (auto& word: Map[prefix])
+        {
+            ret.push_back(word);                                
+            dfs(row+1, ret, words);
+            ret.pop_back();                
+        }
+    }
+};
+::::::::::::::
+DFS/0425.Word-Squares/Readme.md
+::::::::::::::
+### 425.Word-Squares
+
+此题本质是一个DFS，我们试图逐行递归填充单词。假设我们已经合法地填充了前i-1行的单词，那么第i行单词s的选择其实有个约束：s的前i-1个字母必须和方块中第i列的前i-1个字母完全相同。例如：
+```
+a b c d e
+b c f g h
+c f x x x
+d g x
+e h x
+```
+我们已经填充了前两行（即前两列），在填充第三行的时候，发现要求前两个字母的前缀必须固定为cf，故可选择填充的单词范围就很小了。
+
+那么如何高效地列出符合前缀条件的单词，而不用尝试所有的300个单词呢？我们提前建立hash表，将所有单词的所有前缀（最长不超过4）作为key，映射到对应的单词。如上面的例子，我们只需要在hash["cf"]所对应的单词里面寻找一个就可以填充进第三行。如果不存在的话，那么就提前返回。
+
+当dfs深入到所有的行都填充完毕，此时的盘面就是一个答案。
+
+[Leetcode Link](https://leetcode.com/problems/word-squares)
+::::::::::::::
+DFS/0473.Matchsticks-to-Square/473.Matchsticks-to-Square.cpp
+::::::::::::::
+class Solution {
+    bool visited[15];
+    int total;
+public:
+    bool makesquare(vector<int>& nums) 
+    {
+        if (nums.size()==0) return false;
+        total = accumulate(nums.begin(), nums.end(), 0);
+        if (total%4!=0) return false;
+        sort(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.end());
+
+        return dfs(nums, 0, 0, 0);
+    }
+
+    bool dfs(vector<int>& nums, int cur, int group, int sum)
+    {
+        if (group==4) return true;
+        if (sum > total/4) return false;
+        if (sum == total/4)
+            return dfs(nums, 0, group+1, 0);
+        
+        int last = -1;
+        for (int i=cur; i<nums.size(); i++)
+        {
+            if (visited[i]==1) continue;
+            if (nums[i]==last) continue;
+            visited[i] = 1;            
+            last = nums[i];
+            if (dfs(nums, i+1, group, sum+nums[i]))
+                return true;
+            visited[i] = 0;
+        }
+        return false;
+    }
+
+};
+::::::::::::::
+DFS/0473.Matchsticks-to-Square/Readme.md
+::::::::::::::
+### 473.Matchsticks-to-Square
+
+本题是NP-hard的搜索题，基本思想就是无脑的DFS,挨个尝试所有的nums元素的组合,是否能恰好构成四段大小相等的sum(这个sum就是nums总数和的四分之一).
+
+本题设计的递归函数: ```bool DFS(vector<int>& nums, int curIdx, int curEdge, int curSum, vector<int>& visited)```
+
+curEdge表示当前我们在凑第几条边.如果凑满四条边,就说明成功.
+
+curSum表示对于当前的边,我们已经累加了多少数字.如果累加到恰好curSum==sum,那么我们就清零开始DFS下一条边.如果curSum>sum,就可以终止当前搜索.如果curSum<sum,则当前边还需要尝试搜索更多数字加入进去.
+
+visited是标记每个数字是否被访问过.因为是整体就是深度搜索+回溯的算法,所以要记得退出时要恢复标记.
+
+另外，一个常用的节省时间的技巧是将nums按照从大到小排序，这样能更容易遇到不合条件的情况，及早剪枝，避免过深的探索。
+
+LC上有一道几乎一模一样的题目：698. Partition to K Equal Sum Subsets
+
+
+[Leetcode Link](https://leetcode.com/problems/matchsticks-to-square)::::::::::::::
+DFS/0488.Zuma-Game/488.Zuma-Game.cpp
+::::::::::::::
+class Solution {
+    int result;
+public:
+    int findMinStep(string board, string hand) 
+    {
+        result = INT_MAX;
+        unordered_map<char,int>Hand;
+        for (auto x:hand) Hand[x]++;
+        
+        DFS(board,Hand,0);
+        if (result==INT_MAX) return -1;
+        else return result;
+    }
+    
+    void DFS(string board, unordered_map<char,int>&Hand, int curCount)
+    {
+        
+        if (board=="")
+        {
+            result = min(result,curCount);
+            return;
+        }
+        if (curCount>=result) return;
+            
+        for (auto elem: Hand)
+        {
+            
+            if (elem.second==0) continue;
+            char c = elem.first;
+            
+            Hand[c]--;
+                        
+            for (int i=0; i<board.size(); i++)
+            {
+                if (board[i]!=c) continue;
+                if (i>0 && board[i]==board[i-1]) continue;
+                
+                string newBoard = board;
+                newBoard.insert(i,1,c);
+                
+                newBoard = clean(newBoard);
+                DFS(newBoard, Hand, curCount+1);
+            }
+            
+            Hand[c]++;
+            
+        }
+    }
+    
+    string clean(string s)
+    {
+        string t="";
+        while (1)
+        {
+            t = "";
+            for (int i=0; i<s.size(); i++)
+            {
+                int i0=i;
+                while (i<s.size() && s[i]==s[i0]) i++;
+                if (i-i0<3)
+                    t = t+s.substr(i0,i-i0);
+                i--;
+            }
+            if (t==s) return t;
+            s = t;
+        }
+        
+        return s;
+    }
+};
+::::::::::::::
+DFS/0488.Zuma-Game/488.Zuma-Game_v2.cpp
+::::::::::::::
+class Solution {
+    int result;
+public:
+    int findMinStep(string board, string hand) 
+    {
+        result = INT_MAX;
+        unordered_map<char,int>Hand;
+        for (auto x:hand) Hand[x]++;
+        
+        DFS(board,Hand,0);
+        if (result==INT_MAX) return -1;
+        else return result;
+    }
+    
+    void DFS(string board, unordered_map<char,int>&Map, int curCount)
+    {
+        if (board=="")
+        {
+            result = min(result,curCount);
+            return;
+        }
+        if (curCount>=result) return;
+        
+        for (int i=0; i<board.size(); i++)
+        {
+            int i0=i;
+            while (i<board.size() && board[i]==board[i0]) i++;
+            if (3-(i-i0) <= Map[board[i0]])
+            {
+                string newBoard = board.substr(0,i0)+board.substr(i);
+                newBoard = clean(newBoard);
+                Map[board[i0]] -= (3-(i-i0));
+                DFS(newBoard, Map, curCount+(3-(i-i0)));
+                    
+                Map[board[i0]] += (3-(i-i0));    
+            }
+            i--;
+        }   
+    }
+    
+    string clean(string s)
+    {
+        string t="";
+        while (1)
+        {
+            t = "";
+            for (int i=0; i<s.size(); i++)
+            {
+                int i0=i;
+                while (i<s.size() && s[i]==s[i0]) i++;
+                if (i-i0<3)
+                    t = t+s.substr(i0,i-i0);
+                i--;
+            }
+            if (t==s) return t;
+            s = t;
+        }
+        return s;
+    }
+};
+::::::::::::::
+DFS/0488.Zuma-Game/Readme.md
+::::::::::::::
+### 488.Zuma-Game
+
+#### 解法1
+此题并没有太多的技巧，就是暴力的深度搜索，遍历每次取的hand ball、以及它在board中可以插入的位置，更新得到newboard和newhand，然后不停地调用```DFS(newboard,newhand)```即可。
+
+可以剪枝的地方有两处：
+1. 手头的hand里面如果有若干个球是同色的话，那么只需要考察其中一个即可。也就是说，DFS的时候只遍历hand里面不同色的球。
+2. 选定了一个hand ball之后，那么它在board里插入的位置也不是随意的。显然，如果将hand ball插入board里同色的位置肯定是较优的。也就是说对于hand[i]和board的位置j，如果```board[j]!=hand[i]```那么就直接跳过。
+
+#### 解法2
+跟上面的解法不同，有另外一种DFS的写法。基本框架不变，但是在分支的思路上不一样。解法1，是遍历手头的ball，再遍历所有它适合插入的位置，这是一个两层的遍历。但在下面这个更高效的解法中，我们遍历所有可以插入的位置，然后查看是否手头有足够的球能使得这个位置上产生三连消。
+
+这样的思想依据是：对于任何一个ZUMA Game的初始board，在消除的过程中，不管情况多复杂，最后必然会引发第一个引爆点。比如说WBBRRW，第一个引爆点可能是W(WW)BBRRW，条件是你手头有两个W；也可能是WBB(B)RRW，条件是你手头有一个B；又有可能是WBBRR(R)W，条件是你手头有一个R；也有可能是W(WW)BBRRW(WW)，条件还是你手头有两个W。如果相应的条件满足，这些位置都有可能是第一个引爆点。为什么只关心引爆点呢，因为你即使先做了其他操作，使得乱如WXBXXBXRRXW，最终还是会引爆的，而引爆的一个导火索，就是最初WBBRRW中的某个元素。
+
+于是你分支去DFS，进入不同的平行时空，再考察下一个层级下的第一个引爆点...因此类推，依然是一个常规的DFS。但是效率会大大提高。
+
+======================================================
+
+注意下面这个case，OJ给的标准答案是错误的。很不幸，这里的解答也都是错误的。这个case太NB了，我服气，
+
+https://leetcode.com/problems/zuma-game/discuss/254300/Right-answer-for-this-questions
+
+
+
+[Leetcode Link](https://leetcode.com/problems/zuma-game)::::::::::::::
+DFS/0489.Robot-Room-Cleaner/489.Robot-Room-Cleaner.cpp
+::::::::::::::
+/**
+ * // This is the robot's control interface.
+ * // You should not implement it, or speculate about its implementation
+ * class Robot {
+ *   public:
+ *     // Returns true if the cell in front is open and robot moves into the cell.
+ *     // Returns false if the cell in front is blocked and robot stays in the current cell.
+ *     bool move();
+ *
+ *     // Robot will stay in the same cell after calling turnLeft/turnRight.
+ *     // Each turn will be 90 degrees.
+ *     void turnLeft();
+ *     void turnRight();
+ *
+ *     // Clean the current cell.
+ *     void clean();
+ * };
+ */
+class Solution {
+    unordered_set<string>visited;
+    int dir;    
+public:
+    void cleanRoom(Robot& robot) 
+    {
+        string code = to_string(0)+"#"+to_string(0);
+        visited.insert(code);
+        DFS(robot,0,0,0);  //[x,y,dir]
+    }
+    
+    void DFS(Robot& robot, int x, int y, int curDir)
+    {
+        vector<pair<int,int>>dir({{0,1},{1,0},{0,-1},{-1,0}});        
+        robot.clean();
+        for (int k=1; k<=4; k++)
+        {
+            robot.turnRight();
+            int nxtDir = (curDir+k)%4;            
+            int i = x+dir[nxtDir].first;
+            int j = y+dir[nxtDir].second;
+            string code = to_string(i)+"#"+to_string(j);
+                
+            if (visited.find(code)==visited.end() && robot.move())
+            {
+                visited.insert(code);
+                DFS(robot,i,j,nxtDir);
+                robot.turnLeft();
+                robot.turnLeft();
+                robot.move();
+                robot.turnLeft();
+                robot.turnLeft();            
+            }                
+                     
+        }
+    }
+};
+::::::::::::::
+DFS/0489.Robot-Room-Cleaner/Readme.md
+::::::::::::::
+### 489.Robot-Room-Cleaner
+
+本题看上去是一个常规的DFS，但是难点在于机器人的运动是第一视角，DFS的回溯过程必须靠“手工”实现。
+
+假设当前我们访问了dfs(x,y,north)，表示当前位置是(x,y)，朝向是北。如果我们想递归访问它的东边的节点(i,j)，你需要依次做如下的事情：
+```
+1. 向右转，使得朝向东边，
+2. 前进
+3. 递归调用dfs(i,j,east)
+4. 180度转弯
+5. 前进
+6. 180度转弯
+=====
+8. 向右转，使得朝向南边
+9. 前进
+10. 递归调用dfs(i,j,south)
+11. ...
+```
+可见我们完成一次dfs之后，必须手工完成掉头、退回、调整方向，才能进行另一次平行的dfs尝试。
+
+
+[Leetcode Link](https://leetcode.com/problems/robot-room-cleaner)
+::::::::::::::
+DFS/0491.Increasing-Subsequences/491.Increasing Subsequences.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) 
+    {
+        vector<vector<int>>results;
+        vector<int>curRes;
+        DFS(nums,0,curRes,results);
+        return results;
+    }
+    
+    void DFS(vector<int>& nums, int idx, vector<int>&curRes, vector<vector<int>>&results)
+    {
+        if (curRes.size()>1) results.push_back(curRes);                
+        if (idx==nums.size()) return;                
+
+        unordered_set<int>Set;
+        for (int i=idx; i<nums.size(); i++)
+        {            
+            if (curRes.size()!=0 && nums[i]<curRes.back() ) continue;
+            if (Set.find(nums[i])!=Set.end()) continue;            
+            Set.insert(nums[i]);
+            
+            curRes.push_back(nums[i]);
+            DFS(nums,i+1,curRes,results);
+            curRes.pop_back();                        
+        }
+    }
+};
+::::::::::::::
+DFS/0491.Increasing-Subsequences/Readme.md
+::::::::::::::
+### 491.Increasing-Subsequences
+
+典型的DFS的应用。在nums数组中遍历递增序列的第一项的可能值，确定了这个位置start之后，把锅甩给DFS让它从start+1开始找接下来的递增序列。
+
+构造DFS函数：nums是题目给的数组，start表示需要开始探索的位置，curRes存放的是之前已经找到的递增序列。
+```cpp
+void DFS(vector<int>& nums, int start, vector<int>curRes)
+```
+用循环 for (int i=start; i<nums.size; i++) 遍历第一项的可能性。要排除几种情况：
+1. DFS的终止条件：start已经超过了nums.size()，没有元素可以加入队列，就地返回。
+2. 新元素无法接上之前的序列构成新的递增序列，即 nums[i]<curRes.back()
+3. 重复。究竟什么情况会造成重复呢？假设i在遍历过程中先选择了a，加入了队列并以此进行深度搜索，穷尽了之后所有可能的答案；然后回溯到这一轮，i又选择了b，恰好nums[a]==nums[b]，那么以nums[b]为首的所有可能的答案，必然是之前以nums[a]为首的答案的子集，也就是说一定已经被之前探索a进行DFS时穷尽过了，如果再探索b得到的一定都是之前的重复答案。显然，我们应该在这个for循环的轮回里设置一个集合，凡是已经出现过的数字，都不用再基于它进行DFS了。
+
+最后要注意的一个细节就是，不必搜索到nums的结尾再确定一个可行解加入results。只要curRes新增了一个元素，都满足题意，可以立即加入results.
+
+
+[Leetcode Link](https://leetcode.com/problems/increasing-subsequences)::::::::::::::
+DFS/0546.Remove-Boxes/546.Remove-Boxes.cpp
+::::::::::::::
+class Solution {    
+    vector<int>boxes;
+    int dp[100][100][100];
+    
+public:
+    int removeBoxes(vector<int>& boxes) 
+    {                
+        this->boxes = boxes;       
+        return DFS(0, boxes.size()-1, 0);        
+    }
+    
+    int DFS(int l, int r, int k)
+    {
+        if (l>r) return 0;
+        
+        if (dp[l][r][k]!=0)
+            return dp[l][r][k];                
+        
+        int i = r;
+        int count = k;
+        while (i>=l && boxes[i]==boxes[r]) 
+        {
+            i--;
+            count++;
+        }        
+        dp[l][r][k] = DFS(l,i,0) + count*count;
+        
+        for (int j=i; j>=l; j--)
+        {
+            if (boxes[j]!=boxes[r]) continue;
+            if (boxes[j]==boxes[r] && boxes[j+1]==boxes[r]) continue;
+            dp[l][r][k] = max(dp[l][r][k], DFS(l,j,count)+DFS(j+1,i,0));
+        }
+
+        // cout<<l<<" "<<r<<" "<<k<<":"<<dp[l][r][k]<<endl;
+
+        return dp[l][r][k];
+    }
+};
+::::::::::::::
+DFS/0546.Remove-Boxes/Readme.md
+::::::::::::::
+### 546.Remove-Boxes
+
+此题很难。本质上这题用了DP的状态转移的思想，但是bottom-up却并不好写，实际上用的是DFS＋记忆化的方法。当然，依然用到了状态数组，所以仍然可以看做一道DP题。
+
+此题第一眼看上去，很容易让人想尝试区间型DP的解法。毕竟有其他很多题都是类似的意境：比如```312.Burst-Balloons```，```1000.Minimum-Cost-to-Merge-Stones```等等。那我们先来尝试一下。
+
+我们考虑dp[l][r]表示在区间[l,r]内我们消灭所有盒子的最优值。区间型dp的目标是将大区间化成小区间，一个常见的突破口就是从最后一个元素入手，看它能够怎么处理掉。假设我们看到的这个区间长这个样子：
+```
+... OOO  XXX OOO XXX OOO
+...   ^    ^   ^   ^   ^
+...   j1  i1  j0  i0   r
+```
+最后一组OOO表示有若干个（可能只有一个）相同的元素（即boxes[r]）。同时在这个区间里有若干个subarray也有可能与boxes[r]相同，我们也用OOO标记出来。其他任何不包含boxes[r]的subarray都用XXX标记。
+
+最后一组OOO最粗暴的处理方法就是自己单独消去，那么至少有一个解就出来了：```dp[l][i0] + count*count```，其中count就是最后一组OOO的元素个数。
+
+当然，我们还会有其他的处理方式。比如说：先处理i0这组XXX，然后我们发现r这组OOO和j0这组OOO就可以接在了一起。那么这意味着这种方法做下去的最优解就是```dp[l][i1]+(count0+count)*(count0+count)+dp[j0+1][i0]```了吗？并不是，因为j0这组OOO虽然带上了r这组OOO，但并不意味着最优解一定是将```count0+count```这部分消去；有可能j0这组OOO（带着r这组OOO）附着于j1这组OOO一起消去是更优的。具体哪种做法更优，取决于的竟然是count的数目！
+
+举个例子：
+```
+XX O  XX   O ** O
+   ^   ^   ^    ^
+   j1  i0  j0   r 
+```
+我们已经决定将j0和r这组O放在一起。在这个例子里，最优的决策是：先消灭j1，然后将4个X消灭，再消灭j0+r的这两个O. 最后的得分是1+16+4=21。
+
+再看另一个例子，唯一的区别就是r所属的O现在有3个。
+```
+XX O  XX   O ** OOO
+   ^   ^   ^      ^
+   j1  i0  j0     r 
+```
+在这个例子里，最优的决策是：先消灭i0，然后将j1+j0+r这五个O消灭，最后再消灭最前的XX，总得分是4+25+4=32.
+
+所以结论是，当我们决定将r这组OOO跟着j0这组OOO的时候，对于[l,j0]这组区间的最优操作，需要参考r这组OOO的具体数目（也就是count）。因此常规的区间型DP的两个下标并不够，而需要第三个下标：dp[l][r][k]表示，对于区间[l,r]后面还跟着k个与boxes[r]相同的元素。注意这k个元素并不与r直接相连，而是经过其他之前的区间消除后剩下来的。
+
+于是本题的状态转移就是，考虑r这组OOO与它之间的哪组OOO相连。在这个例子里，r可以与j0相连，于是dp[l][r][0]转化为```dp[l][j0][count] + dp[j0+1][i0][0]```。也可以跳过j0这组OOO，与j1相连，于是于是dp[l][r][0]转化为```dp[l][j1][count] + dp[j1+1][i0][0]```。依次类推，取最大值。
+
+最后的结果是输出```dp[0][N-1][0]```
+
+注意，因为我们事前并无法确认第三个下标k对于哪些[l,r]是有意义的，所以dp比较难写。因此这题用top-down的记忆化搜索更方便些。
+
+[Leetcode Link](https://leetcode.com/problems/remove-boxes)
+::::::::::::::
+DFS/0638.Shopping-Offers/638.Shopping-Offers.cpp
+::::::::::::::
+class Solution {
+    unordered_map<string,int>Map;
+    int N;
+public:
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) 
+    {
+        N=price.size();
+        vector<vector<int>>specials;
+        for (int i=0; i<special.size(); i++)
+        {
+            int sum=0;
+            for (int j=0; j<N; j++)
+                sum+=special[i][j]*price[j];
+            if (sum>special[i].back())
+                specials.push_back(special[i]);
+        }
+                
+        string key;
+        for (int i=0; i<N; i++)
+            key+="0";
+        Map[key]=0;
+        
+        return DFS(price,specials,needs);        
+    }
+    
+    string getKey(vector<int>& needs)
+    {
+        string key;
+        for (int i=0; i<needs.size(); i++)
+            key+=to_string(needs[i]);
+        return key;
+    }
+    
+    int DFS(vector<int>& price, vector<vector<int>>& specials, vector<int>& needs)
+    {
+        string key=getKey(needs);
+        if (Map.find(key)!=Map.end())
+            return Map[key];
+        
+        int result=INT_MAX;
+        int special_used=0;
+        for (int i=0; i<specials.size(); i++)
+        {
+            int flag=1;
+            for (int j=0; j<N; j++)
+            {
+                if (specials[i][j]>needs[j])
+                {
+                    flag=0;
+                    break;
+                }
+            }
+            if (flag==1)
+            {
+                special_used=1;
+                vector<int> needs_temp = needs;
+                for (int j=0; j<N; j++)
+                    needs_temp[j]=needs[j]-specials[i][j];                
+                result=min(result,specials[i][N]+DFS(price,specials,needs_temp));
+            }
+        }
+        if (special_used==0)
+        {
+            result=0;
+            for (int i=0; i<N; i++)
+                result+=price[i]*needs[i];
+        }
+        Map[key]=result;   
+        
+        return result;
+    }        
+};
+::::::::::::::
+DFS/0638.Shopping-Offers/638.Shopping-Offers_v2.cpp
+::::::::::::::
+class Solution {
+    int memo[1<<18];
+    int N;    
+public:
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) 
+    {
+        N=price.size();
+        vector<vector<int>>specials;
+        for (int i=0; i<special.size(); i++)
+        {
+            int sum=0;
+            for (int j=0; j<N; j++)
+                sum+=special[i][j]*price[j];
+            if (sum>special[i].back())
+                specials.push_back(special[i]);
+        }
+
+        int state = 0;
+        for (int i=0; i<N; i++)
+            state += needs[i]<<(i*3);
+                
+        return dfs(state, price,specials);
+    }
+    
+    int dfs(int state, vector<int>& price, vector<vector<int>>& specials)
+    {        
+        if (memo[state]!=0) return memo[state];
+
+        int ret = 0;
+        for (int i=0; i<N; i++)
+            ret += (state>>(i*3))%8 * price[i];
+
+        for (auto comb: specials)
+        {
+            int flag = 1;
+            for (int i=0; i<N; i++)
+            {
+                if ((state>>(i*3))%8 < comb[i])
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag==0) continue;
+
+            int state2 = state;
+            for (int i=0; i<N; i++)
+                state2 -= comb[i]*(1<<(i*3));
+            ret = min(ret, comb[N] + dfs(state2, price, specials));
+        }
+
+        memo[state] = ret;
+        return ret;
+    }    
+};
+::::::::::::::
+DFS/0638.Shopping-Offers/638.Shopping-Offers_v3.cpp
+::::::::::::::
+class Solution {
+    int memo[1<<24];
+    int N;    
+public:
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) 
+    {
+        N=price.size();
+        vector<vector<int>>specials;
+        for (int i=0; i<special.size(); i++)
+        {
+            int sum=0;
+            for (int j=0; j<N; j++)
+                sum+=special[i][j]*price[j];
+            if (sum>special[i].back())
+                specials.push_back(special[i]);
+        }
+
+        int state = 0;
+        for (int i=0; i<N; i++)
+            state += needs[i]<<(i*4);
+                
+        return dfs(state, price,specials);
+    }
+    
+    int dfs(int state, vector<int>& price, vector<vector<int>>& specials)
+    {        
+        if (memo[state]!=0) return memo[state];
+
+        int ret = 0;
+        for (int i=0; i<N; i++)
+            ret += (state>>(i*4))%16 * price[i];
+
+        for (auto comb: specials)
+        {
+            int flag = 1;
+            for (int i=0; i<N; i++)
+            {
+                if ((state>>(i*4))%16 < comb[i])
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag==0) continue;
+
+            int state2 = state;
+            for (int i=0; i<N; i++)
+                state2 -= comb[i]*(1<<(i*4));
+            ret = min(ret, comb[N] + dfs(state2, price, specials));
+        }
+
+        memo[state] = ret;
+        return ret;
+    }    
+};
+::::::::::::::
+DFS/0638.Shopping-Offers/Readme.md
+::::::::::::::
+### 638.Shopping-Offers
+
+设计递归函数dfs(state)，其中state表示还有哪些物品没有采购，返回的值表示采购完这些物品的最少代价。
+
+考虑到最多只有6件物品，每个物品最多6个。所以我们用18个bit的二进制数来表示状态。每3个bit可以表示该种物品的数量（从0到7）。
+
+在dfs(state)里，为我们尝试每一种合法的offer，将state更新后递归处理。我们取所有尝试中代价最小的结果，并记录在memo[state]里面。
+
+需要注意的细节：
+1. 有些offer是不合算的，可以提前从special里排除掉；
+2. 在dfs(state)里，除了尝试offer，还可以直接从prices里面按原价采购每一件物品。
+
+PS: 最新的题目里把每种物品的数量放宽到了10件，所以需要```4*6=24```个bit的二进制数来表示状态。
+
+
+[Leetcode Link](https://leetcode.com/problems/shopping-offers)
+::::::::::::::
+DFS/0698.Partition-to-K-Equal-Sum-Subsets/698.Partition-to-K-Equal-Sum-Subsets.cpp
+::::::::::::::
+class Solution {
+    int total;
+    int k;
+    int visited[16];
+public:
+    bool canPartitionKSubsets(vector<int>& nums, int k) 
+    {
+        sort(nums.begin(), nums.end());
+        reverse(nums.begin(),nums.end());
+        total = accumulate(nums.begin(), nums.end(), 0);
+        this->k = k;
+        if (total%k!=0) return false;
+
+        return dfs(nums, 0, 0, 0);
+    }
+
+    bool dfs(vector<int>&nums, int cur, int group, int sum)
+    {
+        if (group==k)
+            return true;
+        
+        if (sum > total/k)
+            return false;
+
+        if (sum == total/k)
+            return dfs(nums, 0, group+1, 0);
+
+        int last = -1;
+        for (int i=cur; i<nums.size(); i++)
+        {
+            if (visited[i]==1) continue;
+            if (nums[i]==last) continue;
+            last = nums[i];
+            visited[i] = 1;
+            if (dfs(nums, i, group, sum+nums[i]))
+                return true;            
+            visited[i] = 0;
+        }
+        return false;
+    }
+};
+::::::::::::::
+DFS/0698.Partition-to-K-Equal-Sum-Subsets/Readme.md
+::::::::::::::
+### 698.Partition-to-K-Equal-Sum-Subsets
+
+此题据说是NP-hard，没有什么特别高明的算法，就是老老实实地DFS，尝试将所有元素挨个尝试放入k个分类里，直至找到满足条件的分类。
+
+设计如下的递归函数：```DFS(nums, curPos, curGroup, curSum)```.
+注意边界条件的转换：
+```cpp        
+        if (curGroup==k) return true;
+        if (curSum>SUM) return false;        
+        if (curSum==SUM) return DFS(nums,0,curGroup+1,0);        
+```        
+
+另外，如果提前将所有元素从大到小排序，则有额外的优化效果：从大元素开始尝试的话，则可以迅速排除一些因为元素过大造成的negative测例。
+
+此外，在for循环里遍历下一个候选元素时，有一个重要的剪枝手段：
+```cpp
+last = -1;
+for (int i=curPos; i<n; i++)
+{
+    //...
+    if (nums[i]==last)
+        continue;
+    last = nums[i];
+    //...
+```
+这是因为若nums[i]=a已经被搜索过并且失败后回溯的话，有着相同数值a的其他nums元素就不需要再次被搜索了，注定是失败的。因为我们已经提前把nums排个序，保证了所有相同数值的元素都是相邻的，故很容易skip掉相同的候选元素。
+
+与本题非常相似的题目有： 473. Matchsticks to Square, 416. Partition Equal Subset Sum, 996. Number of Squareful Arrays    
+
+
+[Leetcode Link](https://leetcode.com/problems/partition-to-k-equal-sum-subsets)
+::::::::::::::
+DFS/0803.Bricks-Falling-When-Hit/803.Bricks-Falling-When-Hit_DFS.cpp
+::::::::::::::
+class Solution {
+    int m,n;
+    vector<pair<int,int>>dir{{0,1},{0,-1},{1,0},{-1,0}};
+public:    
+    vector<int> hitBricks(vector<vector<int>>& grid, vector<vector<int>>& hits) 
+    {
+        m = grid.size();
+        n = grid[0].size();
+        for (auto hit: hits)        
+            grid[hit[0]][hit[1]] *= -1;
+        
+        for (int j=0; j<n; j++)
+            if (grid[0][j]==1)
+                dfs(grid, 0,j);
+        
+        // grid:  0 empty; 1 suspended brick; 2 ceiling brick; -1: hit
+        
+        vector<int>rets;
+        reverse(hits.begin(), hits.end());
+        for (auto hit: hits)
+        {
+            int i = hit[0], j = hit[1];
+            if (grid[i][j]!=-1)
+            {
+                rets.push_back(0);
+                continue;
+            }
+            bool connectCeil = (i==0);
+            for (int k=0; k<4; k++)
+            {
+                int x = i+dir[k].first;
+                int y = j+dir[k].second;
+                if (x<0||x>=m||y<0||y>=n) continue;
+                if (grid[x][y]==2)
+                {
+                    connectCeil = true;
+                    break;
+                }
+            }
+            
+            if (connectCeil)
+            {
+                rets.push_back(dfs(grid, i, j)-1);
+            }
+            else
+            {
+                grid[i][j] = 1;
+                rets.push_back(0);
+            }
+        }
+        reverse(rets.begin(), rets.end());
+        
+        return rets;
+    }
+    
+    int dfs(vector<vector<int>>& grid, int x, int y)
+    {
+        grid[x][y] = 2;
+        int count = 1;
+        for (int k=0; k<4; k++)
+        {
+            int i = x+dir[k].first;
+            int j = y+dir[k].second;
+            if (i<0||i>=m||j<0||j>=n) continue;
+            if (grid[i][j]==1)
+            {
+                count += dfs(grid, i,j);
+            }
+        }
+        return count;
+    }
+};
+::::::::::::::
+DFS/0803.Bricks-Falling-When-Hit/803.Bricks-Falling-When-Hit_UnionFind.cpp
+::::::::::::::
+class Solution {
+    int m,n;
+    int Father[200*200];
+    int Size[200*200];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+        {
+            Father[y] = x;
+            Size[x] += Size[y];
+        }
+        else 
+        {
+            Father[x] = y;
+            Size[y] += Size[x];
+        }
+    }        
+public:
+    vector<int> hitBricks(vector<vector<int>>& grid, vector<vector<int>>& hits) 
+    {
+        auto grid0 = grid;
+
+        m = grid.size();
+        n = grid[0].size();
+        for (int i=0; i<m*n; i++)
+        {
+            Father[i] = i;
+            Size[i] = 1;
+        }
+        for (auto &hit: hits)
+            grid[hit[0]][hit[1]] = 0;
+
+        vector<pair<int,int>>dir({{0,1},{0,-1},{-1,0},{1,0}});
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (grid[i][j]==0) continue;
+                for (int k=0; k<4; k++)
+                {
+                    int x = i+dir[k].first;
+                    int y = j+dir[k].second;                    
+                    if (x<0||x>=m||y<0||y>=n) continue;
+                    if (grid[x][y]==0) continue;                
+                    if (FindFather(i*n+j)!=FindFather(x*n+y))
+                        Union(i*n+j, x*n+y);
+                }
+            }
+        
+        vector<int>rets;
+        for (int t=hits.size()-1; t>=0; t--)
+        {
+            int i = hits[t][0], j = hits[t][1];            
+            if (grid0[i][j]==0) 
+            {
+                rets.push_back(0);
+                continue;
+            }
+            grid[i][j] = 1;
+            int count = 0;
+            int flag = 0;
+            for (int k=0; k<4; k++)
+            {
+                int x = i+dir[k].first;
+                int y = j+dir[k].second;
+                if (x<0||x>=m||y<0||y>=n) continue;
+                if (grid[x][y]==0) continue;                
+                if (FindFather(i*n+j)!=FindFather(x*n+y))                
+                {
+                    if (FindFather(x*n+y)>=n)
+                        count+=Size[FindFather(x*n+y)];
+                    if (FindFather(x*n+y)<n || i==0)
+                        flag = 1;
+                    Union(i*n+j, x*n+y);                    
+                }
+            }            
+            rets.push_back(flag==1? count:0);            
+        }
+        reverse(rets.begin(), rets.end());
+
+        return rets;
+    }
+};
+::::::::::::::
+DFS/0803.Bricks-Falling-When-Hit/Readme.md
+::::::::::::::
+### 803.Bricks-Falling-When-Hit
+
+#### 解法1：DFS
+
+这题咋看上去很难，但实际上用“时光倒流”的想法就很方便。
+
+假想在所有的erasure完成之后，这些砖块有些与top相连（成为大陆）），有些则是孤立的岛屿。我们考察最后一次抽掉的砖块，如果“复原”它能使得一些孤立的岛屿与大陆相连的话，那么这些岛屿的面积S，其实就是最后一次erasure所造成砖块掉落的数量。OK，就算这次“复原”不能使得任何岛屿与大陆相连，但也有可能会使得一部分岛屿之间相连，这样下一次“复原”的时候就有可能使得这一块更大的岛屿与大陆相连。以此方法不停地往回追溯上去。
+
+此题我觉得用DFS来做更直观一点。我的做法是：
+
+1.将所有的要被erasure的砖块都抹去，也就是标记-1（便于与0区别）。
+
+2.用DFS的方法确定所有与上顶端相连的“大陆”，标记为2.
+
+3.“时光倒流”，处理最后一次erasure。如果这个砖块的周围有大陆（标记是2），那么它就可能将一部分岛屿（标记是1）与大陆相连。所以从该点出发进行DFS，找出所有标记是1的格子，就是答案（也就是因为这次erasure造成的砖块掉落的数量），记得将这些已经并入大陆的格子也都标记成2。如果这个砖块的周围没有大陆，那么就简单的将这个位置的的标记恢复为1就行（也就是岛屿）。
+
+4.依次类推处理所有的erasure。
+
+#### 解法2：Union Find
+
+同样是时光倒流的想法。将所有erasure之后的地图通过Union Find得到各个联通区域。特别注意，Union的时候不仅要更新每个格子的Father，还要更新每个格子的Father的Size，也就是该联通块的大小。
+
+逆序处理每一个erasure的时候，查看该格子(i,j)相邻的四个位置。如果(i,j)有一个相邻的位置(x,y)的Father是第一行，或者(i,j)本身就是第一行，那么(i,j)的擦除就一定会导致砖块的掉落。掉落的个数就是与(x,y)相邻的、Father不是第一行的联通块的大小的总和。
+
+[Leetcode Link](https://leetcode.com/problems/bricks-falling-when-hit)
+::::::::::::::
+DFS/0959.Regions-Cut-By-Slashes/959.Regions-Cut-By-Slashes.cpp
+::::::::::::::
+class Solution {
+public:
+    int regionsBySlashes(vector<string>& grid) 
+    {
+        int N = grid.size();
+        auto Grid = vector<vector<int>>(N*3,vector<int>(N*3,0));
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (grid[i][j]=='/')
+                {
+                    Grid[i*3+0][j*3+2] = 1;
+                    Grid[i*3+1][j*3+1] = 1;
+                    Grid[i*3+2][j*3+0] = 1;
+                }
+                else if (grid[i][j]=='\\')
+                {
+                    Grid[i*3+0][j*3+0] = 1;
+                    Grid[i*3+1][j*3+1] = 1;
+                    Grid[i*3+2][j*3+2] = 1;
+                }
+            }
+
+        int count = 0;
+        for (int i=0; i<N*3; i++)
+            for (int j=0; j<N*3; j++)
+            {
+                if (Grid[i][j]==0)
+                {
+                    DFS(Grid,i,j);
+                    count++;
+                }
+            }
+        return count;
+    }
+    
+    void DFS(vector<vector<int>>&Grid, int x, int y)
+    {
+        int M = Grid.size();
+        if (x<0||x>=M||y<0||y>=M) return;
+        if (Grid[x][y]!=0) return;
+        Grid[x][y]=2;
+        
+        vector<pair<int,int>>dir({{0,1},{0,-1},{1,0},{-1,0}});
+        for (int k=0; k<4; k++)
+        {
+            int i = x+dir[k].first;
+            int j = y+dir[k].second;
+            DFS(Grid,i,j);
+        }
+    }
+};
+::::::::::::::
+DFS/0959.Regions-Cut-By-Slashes/959.Regions-Cut-By-Slashes_UF.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int regionsBySlashes(vector<string>& grid) 
+    {
+        int N = grid.size();
+        Father.resize((N+1)*(N+1));
+        for (int i=0; i<=N; i++)
+            for (int j=0; j<=N; j++)
+            {
+                int id = i*(N+1)+j;
+                Father[id] = id;
+                if (i==0 || i==N || j==0 || j==N)
+                    Father[id] = 0;
+            }
+
+        int count = 1;
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                int a,b;
+                if (grid[i][j]==' ')
+                    continue;
+
+                if (grid[i][j]=='/')
+                {
+                    a = i*(N+1)+j+1;
+                    b = (i+1)*(N+1)+j;
+                }
+                else if (grid[i][j]=='\\')
+                {
+                    a = i*(N+1)+j;
+                    b = (i+1)*(N+1)+j+1; 
+                }
+
+                if (FindFather(a)!=FindFather(b))
+                    Union(a,b);
+                else
+                    count++;
+            }
+        return count;
+    }
+
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }    
+};
+::::::::::::::
+DFS/0959.Regions-Cut-By-Slashes/Readme.md
+::::::::::::::
+### 959.Regions-Cut-By-Slashes
+
+#### 解法1：将每个格子倍增9倍
+此题非常巧妙。我们将每一个格子都再细化为3\*3的像素，那么“\”和“/”就各自变成了一条斜对角线。于是我们再看这个细化之后的3N\*3N的矩阵，就会惊奇地发现，题目中定义的Regions此时都变成是像素联通的了。这就转换成了number of islands的题，用DFS,BFS或者Union Find都可以很轻松地解决。
+
+#### 解法2：Union Find
+有一个更高效和巧妙的解法，不需要拆分格子。我们不考虑每个cell，而是考虑每个网点（即经纬线的相交点）。这样的网点有```(N+1)*(N+1)```个。最初始的时候我们将所有外围的点聚为一类，即满足```i==0||i==N||j==0||j==N```的网点聚在一起。其他内陆的网点都自成一类。
+
+然后我们逐个考察cell。如果这个cell包含了斜线，那么会将两个网点a和b相连接（左上和右下，或者左下和右上）。此时如果a和b两点属于不同的类，那么意味着这个斜线不会生成一个新的封闭空间！但是记得我们需要紧接着将a和b聚类在一起。相反，如果a和b两点已经聚属于同一类，那么意味着这个斜线一定会生成一个新的封闭空间！这个时候计数器就要加1.
+
+我们考察完每个cell和所包含斜线的影响，最终返回计数器的值即可。注意，计数器的初始值应该是1.
+
+
+[Leetcode Link](https://leetcode.com/problems/regions-cut-by-slashes)::::::::::::::
+DFS/0996.Number-of-Squareful-Arrays/996.Number-of-Squareful-Arrays.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>next;
+    vector<int>visited;
+    int n;
+    int ret = 0;
+public:
+    int numSquarefulPerms(vector<int>& A) 
+    {
+        n = A.size();
+        next.resize(n);
+        visited.resize(n);
+        sort(A.begin(), A.end());
+        for (int i=0; i<n; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (i==j) continue;
+                if (sqrt(A[i]+A[j])==(int)sqrt(A[i]+A[j]))
+                    next[i].push_back(j);
+            }
+        for (int i=0; i<n; i++)
+        {
+            if (i>0 && A[i]==A[i-1]) continue;
+            visited[i] = 1;
+            dfs(A, i, 1);
+            visited[i] = 0;
+        }
+        return ret;
+    }
+
+    void dfs(vector<int>&A, int cur, int count)
+    {
+        if (count==n)
+        {
+            ret++;
+            return;
+        }
+
+        int last = -1;
+        for (auto i: next[cur])
+        {
+            if (visited[i]==1) continue;
+            if (A[i]==last) continue;
+            visited[i] = 1;
+            last = A[i];
+            dfs(A, i, count+1);
+            visited[i] = 0;
+        }
+    }
+};
+::::::::::::::
+DFS/0996.Number-of-Squareful-Arrays/Readme.md
+::::::::::::::
+### 996.Number-of-Squareful-Arrays
+
+此题可以理解成一张图的路径搜索问题。我们提前处理所有的pair，对于相加是平方数的两个元素，我们就认为它们之间有一条边。我们的任务就是找出所有的路径，能够走遍所有的点。
+
+考虑到题目需要穷举所有的路径，并且数据规模异常得小，大概率这是一个NP问题，可以用暴力的深度搜索，和473，698都很相似。这类题目都需要用visited来记录已经访问过的元素来避免重复。
+
+特别注意的是，本题要求避免“长得一样”的重复路径，需要有剪支的操作。比如对于数列1,2,2,2,3,4,我们想取不重复的permutation。当我们考察完1,2,X,X,X,X之后，需要回溯考虑第二个元素的其他候选。我们发现，如果第二个位置再选其他的“2”，就会又完全重复之前的搜索。尽管是两个不同的“2”，但这样的两条路径被认为是重复。为了剪枝，我们在从cur开始寻找下一层深度的节点时，可以将所有的候选节点事先排个序，如果候选节点B和它之前考察过的候选节点A相同，那么我们就略过对候选节点B的考察。
+
+另外一个细节就是如何判断一个数是否是平方数？正确的做法是```if (sqrt(x)==(int)sqrt(x))```
+
+[Leetcode Link](https://leetcode.com/problems/number-of-squareful-arrays)
+::::::::::::::
+DFS/1192.Critical-Connections-in-a-Network/1192.Critical-Connections-in-a-Network.cpp
+::::::::::::::
+class Solution {
+    vector<vector<int>>rets;
+    vector<vector<int>>next;
+    int time = 0;
+public:
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) 
+    {
+        next.resize(n);
+        for (auto x:connections)
+        {
+            next[x[0]].push_back(x[1]);
+            next[x[1]].push_back(x[0]);
+        }
+            
+        vector<bool>visited(n);
+        vector<int>dfn(n,0);
+        vector<int>low(n,0);
+        vector<int>parent(n,-1);
+        
+        for (int i = 0; i < n; i++) 
+        {            
+            if (visited[i] == false) 
+                DFS(i, visited, dfn, low, parent); 
+        }
+        
+        return rets;
+    }
+    
+    
+    void DFS(int u, vector<bool>&visited, vector<int>&dfn, vector<int>&low, vector<int>&parent) 
+    {  
+        visited[u] = true; 
+    
+        dfn[u] = low[u] = ++time; 
+              
+        for (int v : next[u]) 
+        { 
+            if (v == parent[u])
+                continue;
+            
+            if (!visited[v])
+            { 
+                parent[v] = u; 
+                DFS(v, visited, dfn, low, parent); 
+  
+                if (low[v] > dfn[u]) rets.push_back({v,u}); // critical edge
+                
+                // if(low[v] >= dfn[u]), then u is a critical vertex
+                
+                low[u]  = min(low[u], low[v]); 
+            }   
+            else
+            {                
+                low[u]  = min(low[u], dfn[v]); 
+            }
+        } 
+    } 
+    
+};
+::::::::::::::
+DFS/1192.Critical-Connections-in-a-Network/Readme.md
+::::::::::::::
+### 1192.Critical-Connections-in-a-Network
+
+本题本质就是图论中的经典问题，如何求一个无向图中的割边（critical edge）或者叫做桥（bridge）。
+
+网上的教程中，我觉得这一篇是最容易理解的：https://www.cnblogs.com/nullzx/p/7968110.html
+
+简单地说，我们可以以任意一个未访问过的节点作为根节点，用DFS的顺序来进行搜索，即永远深度优先，然后回溯再搜索其他分支。如果碰到访问过的节点，就停止，保证不行成环。
+
+我们在dfs的过程中维护两个数组，一个是dfs[u]，表示节点u被第一次访问时的顺序（可以理解为时间戳），这个是唯一且不变的量。另一个数组low[u]比较关键，初始的时候```low[u]=dfn[u]```。我们以u为节点的开始dfs（注意抵达u之前可能还有u的父节点，但我们dfs的时候不走回头路），想象它最终形成一棵搜索树，那么u的所有子节点中止的条件不外乎有两个：一个是走进了死胡同；另一个就是遇到了已经访问过的节点，特别的，这个已经访问过的节点有可能是u的祖先节点！所以，有了这样的搜索树之后，low[u]可以有机会更新为它所有的子节点v可以接触到的最小时间戳low[v]。
+
+令v是u的一个子节点，且有```low[v]>dfn[u]```，这说明什么呢？说明从v出发最终无法绕道u的前面去。因此(v,u)就是割边。如果消除了这条边，v及其子树就是一个孤岛，无法与u或u的祖先相通。同理，如果```low[v]>=dfn[u]```，说明u是一个割点，如果消除了这个点，那么v及其子树也是一个孤岛。
+
+本题中我们还设置了一个parent，其实是为了标记dfs过程中的搜索顺序。因为无向图```for auto v: next[u]```的遍历过程中，v可能是u的父节点，这种情况下v其实不能作为从u开始dfs的下一个目的地（否则就是走回头路了），所以得排除。
+
+
+[Leetcode Link](https://leetcode.com/problems/critical-connections-in-a-network)::::::::::::::
+DFS/1306.Jump-Game-III/1306.Jump-Game-III.cpp
+::::::::::::::
+class Solution {
+    int visited[50001];
+public:
+    bool canReach(vector<int>& arr, int start) 
+    {
+        if (start<0 || start>=arr.size()) 
+            return false;
+        if (arr[start]==0)
+            return true;
+        if (visited[start]==1) 
+            return false;
+
+        visited[start] = 1;
+        
+        if (canReach(arr, start-arr[start]))
+            return true;
+        
+        if (canReach(arr, start+arr[start]))
+            return true;
+
+        return false;
+    }
+};
+::::::::::::::
+DFS/1306.Jump-Game-III/Readme.md
+::::::::::::::
+### 1306.Jump-Game-III
+
+基本的搜索，DFS或者BFS均可。在DFS的过程中，任何已经访问过的节点都不需要再访问。因为它们要么是已经证实是通往dead end；要么是当前的探索路径中已经访问过的节点，再访问的话就成环会变死循环。
+::::::::::::::
+DFS/1307.Verbal-Arithmetic-Puzzle/1307.Verbal-Arithmetic-Puzzle.cpp
+::::::::::::::
+class Solution {            
+    int Map[128];
+    int visited[10];
+public:
+    bool isSolvable(vector<string>& words, string result) 
+    {       
+        for (int i=0; i<128; i++)
+            Map[i] = -1;
+        reverse(result.begin(),result.end());
+        for (int i=0; i<words.size(); i++)
+        {
+            reverse(words[i].begin(),words[i].end());
+            if (words[i].size()>result.size())
+                return false;
+        }            
+        
+        return DFS(words,result,0,0,0);
+    }
+    
+    bool DFS(vector<string>& words, string result, int j, int i, int sum)
+    {
+        if (j==result.size())
+        {
+            if (sum!=0)
+                return false;
+            if (result.size()>1 && Map[result.back()]==0)
+                return false;
+            return true;
+        }
+
+        if (i==words.size())
+        {
+            if (Map[result[j]]!=-1)
+            {
+                if (Map[result[j]]!=sum%10)
+                    return false;
+                else
+                    return DFS(words,result,j+1,0,sum/10);
+            }
+            else
+            {
+                if (visited[sum%10]==1)
+                    return false;
+                
+                Map[result[j]] = sum%10;
+                visited[sum%10] = 1;   
+                if  (DFS(words,result,j+1,0,sum/10))
+                    return true;
+                Map[result[j]] = -1;
+                visited[sum%10] = 0;
+                return false;                                
+            }           
+        }             
+                    
+        if (j>=words[i].size())
+        {            
+            return DFS(words,result,j,i+1,sum);        
+        }   
+        
+        char ch = words[i][j];
+        if (Map[ch]!=-1)
+        {
+            if (words[i].size()>1 && j==words[i].size()-1 && Map[ch]==0)
+                return false;
+            return DFS(words,result,j,i+1,sum+Map[ch]);
+        }
+        else
+        {
+            for (int d=0; d<=9; d++)
+            {
+                if (visited[d]==1) 
+                    continue;
+                if (d==0 && words[i].size()>1 && j==words[i].size()-1)
+                    continue;
+                Map[ch] = d;
+                visited[d] = 1;
+                if (DFS(words,result,j,i+1,sum+d))
+                    return true;                
+                Map[ch] = -1;
+                visited[d] = 0;
+            }
+            return false;
+        }
+        
+        return true;
+    }
+};
+::::::::::::::
+DFS/1307.Verbal-Arithmetic-Puzzle/Readme.md
+::::::::::::::
+### 1307.Verbal-Arithmetic-Puzzle
+
+本题就是一个暴力搜索，逐个将字母尝试匹配数字，没有问题的话就处理下一个字母，有问题的话就返回匹配其他数字。为了方便对齐，我们将所有字符串都逆序排列：
+```
+CBA
+ED
+F
+----
+IHG
+```
+我们dfs的顺序就是逐个处理CEFIBDHGA。当每一列的加数字符匹配完之后（比如说CEF），我们需要查验它们的sum是否与result（也就是I）对应的数字一致。我们需要考虑大致需要剪支的情况：
+1. I已经匹配过了，但是与sum不一致。
+2. I没有匹配过，但是sum已经匹配过其他字符了。
+
+所以我们需要两个hash表，一个记录每个字符对应的数字，另一个记录每个数字是否已经被匹配过。
+
+大致的递归函数的形式是：```dfs(int i, int j, int sum)```，其中(i,j)表示我们在处理第i行、第j列的字符，试图给其赋值一个数字；sum表示该列当前的累加和。
+::::::::::::::
+DFS/1340.Jump-Game-V/1340.Jump-Game-V_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxJumps(vector<int>& arr, int d) 
+    {
+        int n = arr.size();
+        vector<int>dp(n,1);
+
+        vector<pair<int,int>>p;
+        for (int i=0; i<n; i++)
+            p.push_back({arr[i],i});
+        sort(p.begin(), p.end());
+        reverse(p.begin(), p.end());
+
+        for (auto [height, idx]: p)
+        {            
+            for (int i=idx+1; i<=min(n-1,idx+d); i++)
+            {
+                if (arr[i] >= arr[idx]) break;                                
+                dp[i] = max(dp[i], dp[idx]+1);
+            }            
+            for (int i=idx-1; i>=max(0, idx-d); i--)
+            {
+                if (arr[i] >= arr[idx]) break;                                
+                dp[i] = max(dp[i], dp[idx]+1);
+            }
+        }
+
+        int ret = 0;
+        for (int i=0; i<n; i++)
+            ret = max(ret, dp[i]);
+        return ret;
+    }
+};
+::::::::::::::
+DFS/1340.Jump-Game-V/1340.Jump-Game-V_v2.cpp
+::::::::::::::
+class Solution {
+    int dp[1001];
+    int d;
+public:
+    int maxJumps(vector<int>& arr, int d) 
+    {
+        this->d = d;
+
+        int ret = 0;
+        for (int i=0; i<arr.size(); i++)
+        {
+            dfs(i, arr);
+            ret = max(ret, dp[i]);            
+        }
+        return ret;
+    }
+
+    int dfs(int i, vector<int>&arr)
+    {        
+        if (dp[i]!=0) return dp[i];
+
+        int ret = 1;
+
+        for (int k=1; k<=d; k++)
+        {
+            if (i+k>=arr.size()) break;
+            if (arr[i+k]>=arr[i]) break;
+            ret = max(ret, dfs(i+k, arr)+1);
+        }
+        for (int k=1; k<=d; k++)
+        {
+            if (i-k<0) break;
+            if (arr[i-k]>=arr[i]) break;
+            ret = max(ret, dfs(i-k, arr)+1);
+        }
+        dp[i] = ret;
+
+        return dp[i];
+    }
+};
+::::::::::::::
+DFS/1340.Jump-Game-V/Readme.md
+::::::::::::::
+### 1340.Jump-Game-V
+
+#### 解法1：DP o(NlogN)
+我们从最高点i开始看，它往左右两边范围d内的柱子j都可以到达。如果我们定义dp[k]为到达位置k所能经过的最多的柱子数目，显然我们有机会更新```dp[j] = max(dp[j], dp[i]+1)```。
+
+我们从高到低顺次处理完所有的柱子，最终答案就是所有dp[i]里面的最大值。
+
+注意，我们在向左（或者向右）遍历j的时候，如果发现arr[j]>=arr[i]，那么这个方向的搜索就可以break了。
+
+#### 解法1：DFS+Memo o(N)
+以上的解法最大的缺点就是需要排序。这也是DP用法的限制：你必须提前计算出所有的前效状态才能进行状态传递。
+
+事实上，我们可以用递归的思想来解决这个问题。我们只需要顺次解决dp(i)。如果发现dp(i)的某个前效状态dp(j)暂时不知道，那么我们就一路追查过去先计算dp(j)然后存储下来，再返回来计算dp(i)就可以了。
+::::::::::::::
+DFS/1593.Split-a-String-Into-the-Max-Number-of-Unique-Substrings/1593.Split-a-String-Into-the-Max-Number-of-Unique-Substrings.cpp
+::::::::::::::
+class Solution {
+    int ret = 0;    
+    unordered_set<string>Set;
+public:
+    int maxUniqueSplit(string s) 
+    {
+        int n = s.size();
+        dfs(s,0,0);
+        return ret;
+    }
+    void dfs(string&s, int cur, int len)
+    {
+        if (cur==s.size())
+        {
+            ret = max(ret, len);
+            return;
+        }
+        if (s.size()-cur + len <= ret)
+            return;
+
+        for (int i=cur; i<s.size(); i++)
+        {
+            if (Set.find(s.substr(cur, i-cur+1))==Set.end())
+            {
+                Set.insert(s.substr(cur, i-cur+1));
+                dfs(s, i+1, len+1);
+                Set.erase(s.substr(cur, i-cur+1));
+            }            
+        }
+    }
+};
+::::::::::::::
+DFS/1593.Split-a-String-Into-the-Max-Number-of-Unique-Substrings/Readme.md
+::::::::::::::
+### 1593.Split-a-String-Into-the-Max-Number-of-Unique-Substrings
+
+本题并没有巧解，只能暴力枚举判断。DFS来搜索分组的方案是比较可行的方法。如果遇到当前分组不满足条件时，就可以终止剩余字符的分组。
+
+注意，不要试图用状态压缩来暴力枚举判断。因为它无法实现DFS的提前剪枝。
+::::::::::::::
+DFS/1718.Construct-the-Lexicographically-Largest-Valid-Sequence/1718.Construct-the-Lexicographically-Largest-Valid-Sequence.cpp
+::::::::::::::
+class Solution {
+    int n;
+    vector<int>ret;
+    int used[21];
+public:
+    vector<int> constructDistancedSequence(int n) 
+    {
+        this->n = n;
+        ret.resize(2*n-1);
+        dfs(0);
+        return ret;
+    }
+
+    bool dfs(int pos)
+    {
+        if (pos==2*n-1)
+            return true;
+        if (ret[pos]>0)
+            return dfs(pos+1);
+        
+        for (int d = n; d>=1; d--)
+        {
+            if (used[d]==1) continue;
+            if (d > 1 && (pos+d >= 2*n-1 || ret[pos+d]>0)) continue;
+            used[d] = 1;
+            ret[pos] = d;
+            if (d>1) ret[pos+d] = d;            
+            
+            if (dfs(pos+1))
+                return true;
+
+            used[d] = 0;
+            ret[pos] = 0;
+            if (d>1) ret[pos+d] = 0;                        
+        }
+        return false;
+    }
+};
+::::::::::::::
+DFS/1718.Construct-the-Lexicographically-Largest-Valid-Sequence/Readme.md
+::::::::::::::
+### 1718.Construct-the-Lexicographically-Largest-Valid-Sequence
+
+本题的原型来自于 https://leetcode-cn.com/leetbook/read/interesting-algorithm-puzzles-for-programmers/9umkfd/
+
+这种题并没有特殊的技巧，就是贪心暴搜。我们希望这个数最大，那么自然希望最高位最大，我们第一步贪心地在ret[0]放置n，根据题意要求在ret[n]也放置n；第二步，我们尝试在ret[1]放置第二大的元素，也就是n-1，那么根据题意ret[n]也必须放置n-1，但发现该位置已经放置了n，所以我们的第二步尝试失败；于是我们重新尝试第二步，在ret[1]放置第三大的元素n-2，发现可以继续推进下去...
+
+就是这样从高位到低位不断地尝试，每次位置优先尝试放置较大的元素。直至我们找到一种方法能把```2*n-1```个位置都填充满，自然就是我们所能构造的最大答案。
+::::::::::::::
+DFS/1766.Tree-of-Coprimes/1766.Tree-of-Coprimes.cpp
+::::::::::::::
+class Solution {
+    vector<int> path; // path[i] is the i-th node idx along the dfs path
+    vector<int> records[51]; // records[i] contains the depths of all the nodes whose num = i
+    vector<int> rets;
+    vector<int> next[100000];
+    int visited[100000];
+    vector<int>nums;
+public:
+    vector<int> getCoprimes(vector<int>& nums, vector<vector<int>>& edges) 
+    {
+        this->nums = nums;
+        int n = nums.size();
+        rets.resize(n);
+        
+        for (auto e:edges)
+        {
+            next[e[0]].push_back(e[1]);
+            next[e[1]].push_back(e[0]);
+        }
+        
+        visited[0] = 1;
+        dfs(0, 0);
+        return rets;
+    }
+    
+    void dfs(int curIdx, int depth)
+    {
+        int i = -1;
+        for (int d=1; d<=50; d++)
+        {
+            if (records[d].size() > 0 && gcd(d, nums[curIdx])==1)
+            {
+                i = max(i, records[d].back());
+            }
+        }
+        rets[curIdx] = (i==-1) ? -1 : path[i];
+        
+        path.push_back(curIdx);
+        records[nums[curIdx]].push_back(depth);                        
+        
+        for (int nextIdx : next[curIdx])
+        {
+            if (visited[nextIdx]) continue;
+            visited[nextIdx] = 1;
+            dfs(nextIdx, depth+1);
+            visited[nextIdx] = 0;
+        }
+        
+        path.pop_back();
+        records[nums[curIdx]].pop_back();                        
+    }
+};
+::::::::::::::
+DFS/1766.Tree-of-Coprimes/Readme.md
+::::::::::::::
+### 1766.Tree-of-Coprimes
+
+本题本质就是DFS。当我们考察某个节点curIdx时，在该DFS路径path上的所有节点都是它的祖先。我们需要从中找一个深度最大的、与nums[curIdx]互质的节点。理论上我们需要逆序遍历一遍path，总体复杂度是o(N^2)。
+
+本题特殊之处在于数据范围限制了所有节点的“数值”不超过50，于是我们可以不遍历节点、转而遍历“数值”来更高效的找到互质的节点。我们只需要在维护path的同时，维护一个哈希表records，其中records[d]存储的就是path里所有数值是d的节点的深度。我们在1到50里面寻找那些与nums[curIdx]互质的d，其中最大的records[d].back()就是离curIdx最近的互质节点的深度。再根据这个深度，直接从path里面读取那个节点的idx。
+::::::::::::::
+DFS/1778.Shortest-Path-in-a-Hidden-Grid/1778.Shortest-Path-in-a-Hidden-Grid.cpp
+::::::::::::::
+/**
+ * // This is the GridMaster's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class GridMaster {
+ *   public:
+ *     bool canMove(char direction);
+ *     void move(char direction);
+ *     boolean isTarget();
+ * };
+ */
+
+typedef pair<int,int> PII;
+
+class Solution {
+    int grid[1000][1000];    
+    int visited[1000][1000];
+    int visited2[1000][1000];
+public:
+    int findShortestPath(GridMaster &master) 
+    {   
+        visited[500][500] = 1;
+        dfs(500, 500, master);
+        
+        auto dir = vector<PII>({{-1,0},{1,0},{0,-1},{0,1}});
+        
+        queue<PII>q;
+        q.push({500,500});
+        visited2[500][500]=1;        
+        
+        int step = 0;
+        while (!q.empty())
+        {
+            int len = q.size();
+            step++;
+            while (len--)
+            {
+                auto [i,j] = q.front();
+                q.pop();
+                
+                for (int k=0; k<4; k++)
+                {                    
+                    int x = i + dir[k].first;
+                    int y = j + dir[k].second;
+                    if (grid[x][y]==2) return step;                        
+                    if (grid[x][y]==0) continue;
+                    if (visited2[x][y]==1) continue;
+                        
+                    visited2[x][y] = 1;
+                    q.push({x,y});                        
+                }
+            }
+        }
+        return -1;
+        
+    }
+    
+    void dfs(int i, int j, GridMaster &master)
+    {
+        auto dir = vector<PII>({{-1,0},{1,0},{0,-1},{0,1}});
+        vector<char> move({'U','D','L','R'});
+        
+        grid[i][j] = 1;
+        
+        if (master.isTarget())
+        {
+            grid[i][j] = 2;
+            return;
+        }
+        
+        for (int k=0; k<4; k++)
+        {
+            int x = i+dir[k].first;
+            int y = j+dir[k].second;
+            if (visited[x][y]) continue;
+            
+            if (master.canMove(move[k])==false)
+                grid[x][y] = 0;
+            else 
+            {
+                visited[x][y] = 1;
+                master.move(move[k]);
+                
+                dfs(x,y,master);                
+                
+                int kk;
+                if (k==0) kk=1;
+                else if (k==1) kk=0;
+                else if (k==2) kk=3;
+                else if (k==3) kk=2;
+                master.move(move[kk]);
+            }                
+        }
+    }
+};
+::::::::::::::
+DFS/1778.Shortest-Path-in-a-Hidden-Grid/Readme.md
+::::::::::::::
+### 1778.Shortest-Path-in-a-Hidden-Grid
+
+本题巧妙地将DFS和BFS结合起来。
+
+因为机器人只能单线程操作，只能到了一个位置再移动到另一个位置，无法像BFS那样并行地让多个机器人朝不同方向扩散。所以本题只能用DFS的方法，指挥机器人一步一步“深度优先+回溯”地探索完整个房间，标记每个格子的状态。DFS结束后将房间的平面图记录在内存，就可以用BFS求到终点的最短路径。
+::::::::::::::
+DFS/1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts/1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts_v1.cpp
+::::::::::::::
+typedef long long LL;
+class Solution {    
+    array<int, 10>count;
+    int b, n;
+public:
+    int maxHappyGroups(int batchSize, vector<int>& groups) 
+    {
+        b = batchSize;                
+        n = groups.size();
+
+        for (int i=0; i<10; i++)
+            count[i] = 0;
+        for (auto x: groups)
+            count[x%batchSize]++;
+                
+        return dfs(count, 0, 0);
+    }
+    
+    int dfs(array<int, 10>&count, int presum, int i)
+    {
+        if (i==n) 
+            return 0;
+
+        int bonus = (presum % b == 0);
+        int ret = 0;
+        for (int j=0; j<b; j++)
+        {
+            if (count[j]==0) continue;
+            count[j]--;
+            ret = max(ret, dfs(count, (presum+j) % b, i+1));
+            count[j]++;
+        }
+
+        return ret + bonus;
+    }
+};
+::::::::::::::
+DFS/1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts/1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts_v2.cpp
+::::::::::::::
+typedef long long LL;
+class Solution {        
+    int b, n;
+    unordered_map<LL, int>memo;
+public:
+    int maxHappyGroups(int batchSize, vector<int>& groups) 
+    {
+        b = batchSize;                
+        n = groups.size();
+
+        vector<int>count(b);
+        for (auto x: groups)
+            count[x%batchSize]++;
+
+        LL state = 0;
+        for (int i=0; i<b; i++)
+        {
+            state += (LL)count[i]<<(i*5);
+        }
+                
+        return dfs(state, 0, 0);
+    }
+    
+    int dfs(LL state, int presum, int i)
+    {
+        if (i==n) return 0;
+        if (memo.find(state)!=memo.end())
+            return memo[state];
+
+        int bonus = (presum % b == 0);
+        int ret = 0;
+        for (int j=0; j<b; j++)
+        {
+            if ((state>>(j*5))%32 == 0) continue;            
+            ret = max(ret, dfs(state-(1ll<<(j*5)), (presum+j) % b, i+1));            
+        }
+        memo[state] = ret + bonus;
+        return ret + bonus;
+    }
+};
+::::::::::::::
+DFS/1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts/Readme.md
+::::::::::::::
+### 1815.Maximum-Number-of-Groups-Getting-Fresh-Donuts
+
+我们从数据的规模上来看，应该猜测这是一个NP问题，解法应该是基于搜索。因为groups的总数最多只有30，暴力搜索也许可行？于是我们可以写出第一个版本：
+```cpp
+    int dfs(vector<int>&count, int presum, int i)
+    {
+        if (i==n) 
+            return 0;
+
+        int bonus = (presum % b == 0);
+        int ret = 0;
+        for (int j=0; j<b; j++)
+        {
+            if (count[j]==0) continue;
+            count[j]--;
+            ret = max(ret, dfs(count, (presum+j) % b, i+1));
+            count[j]++;
+        }
+
+        return ret + bonus;
+    }
+```    
+上面的```dfs(count, presum, i)```表示我们已经选择了i-1个groups（它们的前缀和是presum、已有的得分是prescore），我们从剩下的groups挑选一个安排在第i个。选哪个好呢？我们不知道，必须每种可能都尝试一次，结合相应的```dfs(..., i+1)```来判断。这里需要注意的是，如果此时的presum恰好被batch整除，那么说明无论第i个元素取谁，我们都可以得到1分，所以下次递归的时候perscore可以增加1。
+
+以上的解法自然会TLE，原因是什么呢？显然是没有记忆化。我们可以发现，dfs函数中，其实只要确定了当前的count（即未被安排的groups），其他的参数presum本质上就是确定了的。所以记忆化的key其实就是count。但是count是一个数组，如何将转化为一个方便的key呢？和状态压缩相同的原因。因为count[i]最多30个，用五个bit就能表示（0~32）。batch最多是9，所以总共45位的二进制数就可以表述count数组。这就要求这个key是long long类型。
+
+我们再分析一下这样的记忆化搜索为什么不会超时？因为每次dfs我们都在查询/创建一个key，我们就思考一下我们最多会有多少个key？看上去似乎count的每个bin最多会有30个，总共有9个bin，因此有30^9个。但实际上并没有这么多，因为这30个元素是分布在9个bin里面的，这是一个约束。只有当每个bin的频次均匀分布时，才对应着最复杂的情况，即```(30/9)^9=50805```种。试想一下，如果30个元素属于同一个bin里面，那么其实只有30种key。综上所述，dfs是复杂度可行的算法。
+::::::::::::::
+DFS/2014.Longest-Subsequence-Repeated-k-Times/2014.Longest-Subsequence-Repeated-k-Times.cpp
+::::::::::::::
+class Solution {
+    int k;
+    string s;
+    string ret;
+public:
+    string longestSubsequenceRepeatedK(string s, int k) 
+    {
+        this->k = k;
+        this->s = s;
+        vector<int>count(26);
+        for (auto ch:s)
+            count[ch-'a']++;
+        string t;
+        for (int i=0; i<26; i++)
+        {
+            if (count[i]>=k)
+                t.push_back('a'+i);
+        }
+
+        string temp;
+        dfs(t, temp);
+        
+        return ret;
+    }
+
+    void dfs(string&t, string& temp)
+    {       
+        if (temp!="" && !checkOK(temp))
+            return;
+
+        if (temp.size()>ret.size() || (temp.size()==ret.size() && temp>ret))
+            ret = temp;
+
+        if (temp.size()==7)
+            return;
+
+        for (auto ch: t)
+        {
+            temp.push_back(ch);
+            dfs(t, temp);
+            temp.pop_back();
+        }
+    }
+
+    bool checkOK(string& temp)
+    {
+        int j = 0;
+        int count = 0;
+        for (int i=0; i<s.size(); i++)
+        {
+            if (s[i]!=temp[j]) continue;
+            j++;
+            if (j==temp.size())
+            {
+                j = 0;
+                count++;
+                if (count == k)
+                    return true;
+            }            
+        }
+        return false;        
+    }
+};
+::::::::::::::
+DFS/2014.Longest-Subsequence-Repeated-k-Times/Readme.md
+::::::::::::::
+### 2014.Longest-Subsequence-Repeated-k-Times
+
+本题其实并没有特别高明的算法，就是“暴力”枚举可能的repeated subsequence，然后检验该子序列能否在s中重复k次。显然对于“检验”的操作，复杂度就是o(n)=16000，那么枚举repeated subsequence的复杂度是多少呢？
+
+注意到本题的约束条件```n < k*8```. 这说明了两点：首先，repeated subsequence的长度不超过7，否则重复k次之后会有```n>=len(subsequence)*k>=8*k```推出矛盾。其次，s里面频次大于等于k的字符种类不应该超过7，否则也会有```n>=k*8```推出矛盾。这两个推论告诉我们，repeated subsequence的构造并没有那么复杂，它最长只有7位，并且字符的种类不会超过7种。所以repeated subsequence的可能性最多就是7^7+7^6+7^5...= 7^8 = 5e6。
+
+按照上面的分析，共有5e6种可能的subsequence，每次检验需要1.6e4，总的时间复杂度依然达到了1e10数量级。我们只能寄希望于剪枝，降低subsequence的种类数目。其中一种方法就是，如果我们发现一个较短的subsequence不符合条件（即无法重复k次依然是s的子序列），那么任何在此基础上append任何字符也都不会符合条件。所以这就提醒我们“暴力”枚举repeated subsequence可以采用从短的序列逐渐生成更长序列的方法，一旦检验发现不合条件，就可以终止这个支路。
+::::::::::::::
+DFS/2056.Number-of-Valid-Move-Combinations-On-Chessboard/2056.Number-of-Valid-Move-Combinations-On-Chessboard.cpp
+::::::::::::::
+class Solution {
+    vector<pair<int,int>>dir{{-1,0},{1,0},{0,-1},{0,1},{1,1},{1,-1},{-1,1},{-1,-1}};
+    int n;
+    unordered_set<long long>rets;
+public:
+    int countCombinations(vector<string>& pieces, vector<vector<int>>& positions) 
+    {
+        this->n = pieces.size();
+                
+        for (int state= 0 ; state<(1<<(3*n)); state++)
+        {
+            int flag =1;
+            vector<int>dirs(n);
+            for (int k=0; k<n; k++)
+            {
+                int d = (state>>(3*k))%8;
+                if (pieces[k]=="rook" && d>3) {flag=0; break;}
+                if (pieces[k]=="bishop" && d<4) {flag=0; break;}                
+                dirs[k] = d;
+            }
+            if (flag)            
+                dfs(positions, dirs, (1<<n)-1);
+        }
+        
+        return rets.size()+1;        
+    }
+    
+    void dfs(vector<vector<int>>& positions, vector<int>& dirs, int state)
+    {
+        for (int subset=state; subset>0; subset=(subset-1)&state)
+        {
+            vector<vector<int>>pos2 = positions;            
+            int flag = 1;
+            for (int i=0; i<n; i++)
+            {
+               if ((subset>>i)&1)
+               {
+                   pos2[i][0] += dir[dirs[i]].first;
+                   pos2[i][1] += dir[dirs[i]].second;
+                   if (pos2[i][0]<1 || pos2[i][0]>8) {flag = 0; break;}                   
+                   if (pos2[i][1]<1 || pos2[i][1]>8) {flag = 0; break;}                   
+               }
+            }
+            if (flag==0) continue;
+            if (duplicate(pos2)) continue;
+            
+            long long hash = getHash(pos2);
+            if (rets.find(hash)!=rets.end())
+                continue;
+            rets.insert(hash);  
+            dfs(pos2, dirs, subset);
+        }
+    }
+    
+    bool duplicate(vector<vector<int>>&pos)
+    {
+        for (int i=0; i<n; i++)
+            for (int j=i+1; j<n; j++)
+                if (pos[i]==pos[j])
+                    return true;
+        return false;
+    }
+    
+    long long getHash(vector<vector<int>>&pos)
+    {
+        long long ret = 0;
+        for (int k=0; k<n; k++)
+        {
+            ret = ret*10 + pos[k][0];
+            ret = ret*10 + pos[k][1];
+        }
+        return ret;
+    }
+};
+::::::::::::::
+DFS/2056.Number-of-Valid-Move-Combinations-On-Chessboard/Readme.md
+::::::::::::::
+### 2056.Number-of-Valid-Move-Combinations-On-Chessboard
+
+首先这道题的题意描述比较迷惑。本质上是，确定了每个棋子的移动方向之后，每一个回合，所有的棋子都必须朝各自约定的方向移动一步（除非它决定以后不再移动）。走多少个回合不限，但约束是所有的棋子不能碰撞或者出界。问盘面上有多少种棋子摆放的组合。
+
+此时再看这道题，思路就会清晰很多。因为只有最多四个棋子，里面只有最多一个皇后，所以方向组合的可能性只有```4*4*4*8=512```种，似乎可以枚举考虑。
+
+在固定了所有棋子的各自方向之后，我们就模拟他们共同前进的轨迹。在每一个回合，我们都需要考虑其中某些棋子停止前进的情况。很想然，停止前进（或者继续前进）的棋子必然是上一个回合前进的棋子的子集，所以这就是一个遍历子集的问题。具体的说，我们在刚出发的时候标注1111，表示所有棋子都可以前进。在第一个回合的时候，有些棋子可能就不走了（认为已经到了它的终点），能继续走的就有```2^4-1=15```种情况，即可以写成1111,1110,1101,1011,0111,1100,1001,0011... 有了这个状态变量，我们就可以在推进的时候，时刻知道哪些棋子可以继续走下去。比如说0110，那么我们就只对第2和第3个棋子在它们的方向上加1. 有了棋子们的新位置和新状态，就可以继续递归下去。
+
+递归的终结就是：任意两个棋子相撞了，或者任意一个棋子出界了。
+
+最终的答案是把盘面上所有出现的棋子位置组合都统计。这里需要特别注意，我们需要hash来去重。不是说每次走到一个新的棋子组合都是unique的。这是因为有一类特殊的情况。假设“A向上走0步，B向右走一步”，等同于“A向下走0步，B向右走一步”。这两种前进模式是出现在两个不同的方向组合里面的，我们在某个方向组合的DFS过程中无法避免，必须靠全局的去重。
+
+因为棋子的数目比较少，盘面也不大，Hash的方法可以就是将所有棋子的坐标拼接起来。
+
+另外一个优化的地方，Hash不仅可以去重，而且可以避免重复搜索。还是上面的例子，“A向上走0步，B向右走一步”及其后续都被探访过之后，那么“A向下走0步，B向右走一步”及其后续就是一模一样的路径了。这是因为在两种情况里，A都约定不再移动。
+::::::::::::::
+DFS/2065.Maximum-Path-Quality-of-a-Graph/2065.Maximum-Path-Quality-of-a-Graph.cpp
+::::::::::::::
+class Solution {
+    int ret = 0;
+    int maxTime;
+    vector<pair<int,int>>next[1000];
+    int visited[1000];
+    vector<int>values;
+public:
+    int maximalPathQuality(vector<int>& values, vector<vector<int>>& edges, int maxTime) 
+    {
+        this->maxTime = maxTime;
+        this->values = values;
+
+        int n = values.size();        
+        for (auto edge: edges)
+        {
+            int a = edge[0], b = edge[1], t = edge[2];
+            next[a].push_back({b,t});
+            next[b].push_back({a,t});
+        }
+        
+        visited[0] = 1;        
+        dfs(0, values[0], 0);
+        return ret;        
+    }
+
+    void dfs(int cur, int totalVal, int totalTime)
+    {
+        if (totalTime > maxTime) return;
+        if (cur==0) ret = max(ret, totalVal);
+
+        for (auto x: next[cur])
+        {
+            int nxt = x.first, t = x.second;
+            visited[nxt]++;
+            dfs(nxt, totalVal + (visited[nxt]==1?values[nxt]:0), totalTime+t);
+            visited[nxt]--;
+        }
+    }
+};
+::::::::::::::
+DFS/2065.Maximum-Path-Quality-of-a-Graph/Readme.md
+::::::::::::::
+### 2065.Maximum-Path-Quality-of-a-Graph
+
+题意的约束中给出了```10 <= timej, maxTime <= 100```，这说明最多只能走10步。又因为There are at most four edges connected to each node，每一步出发最多只有四种选择，所以无脑搜索的话最多也只有4^10=1e6种可能。全部本题只要穷举所有的路径选择即可。

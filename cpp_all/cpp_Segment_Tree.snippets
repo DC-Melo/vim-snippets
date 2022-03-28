@@ -1,0 +1,1701 @@
+::::::::::::::
+Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) 
+    {
+        vector<vector<int>>edges;
+        for (int i=0;i<buildings.size(); i++)
+        {
+            edges.push_back({buildings[i][0],-buildings[i][2]});
+            edges.push_back({buildings[i][1],buildings[i][2]});
+        }
+        
+        sort(edges.begin(),edges.end());
+        
+        multiset<int>Set={0};        
+        vector<pair<int, int>>results;
+        int cur=0;
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (edges[i][1]<0) 
+                Set.insert(-edges[i][1]);
+            else
+                Set.erase(Set.lower_bound(edges[i][1]));
+            
+            int H=*Set.rbegin();
+            if (cur!=H)
+                results.push_back({edges[i][0],H});
+            cur=H;
+        }
+        
+        return results;
+    }
+};
+::::::::::::::
+Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem_SegmentTree_lazyTag.cpp
+::::::::::::::
+class Solution {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;       
+        int tag;
+        SegTreeNode(int a, int b):start(a),end(b),info(0),tag(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = 0;
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = 0;  // write your own logic
+    }
+    
+    void updateRange(SegTreeNode* node, int a, int b, int val)
+    {        
+        if (b < node->start || a > node->end ) 
+            return;
+        if (node->start == node->end)
+        {
+            node->info = max(node->info, val);
+            return;
+        }        
+        if (a <= node->start && node->end <=b && val >= node->info)
+        {
+            // write your own logic            
+            node->info = val;    
+            node->tag = 1;   
+            return;
+        }
+        
+        pushDown(node);        
+        node->info = max(node->info, val);
+        
+        updateRange(node->left, a, b, val);
+        updateRange(node->right, a, b, val);                
+    }
+    
+   
+    void pushDown(SegTreeNode* node)
+    {
+        if (node->tag!=0)
+        {
+            node->left->info = node->info;
+            node->right->info = node->info;
+            node->left->tag = 1;
+            node->right->tag = 1;
+            node->tag = 0;
+        }        
+    }    
+    
+    vector<pair<int,int>>height; // {idx, h}
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) 
+    {
+        set<int>Set;
+        for (auto & building: buildings)
+        {
+            Set.insert(building[0]);
+            Set.insert(building[1]);
+        }
+        int id = 0;
+        unordered_map<int,int>pos2idx;
+        unordered_map<int,int>idx2pos;
+        for (auto x:Set)
+        {
+            pos2idx[x] = id;
+            idx2pos[id] = x;
+            id++;
+        }
+        
+        int n = pos2idx.size();
+        SegTreeNode* root = new SegTreeNode(0, n-1);
+        init(root, 0, n-1);
+        
+        sort(buildings.begin(), buildings.end(), [](vector<int>&a, vector<int>&b){return a[2]<b[2];});
+        
+        for (auto & building: buildings)
+        {
+            updateRange(root, pos2idx[building[0]], pos2idx[building[1]]-1, building[2]); 
+        }
+        
+        DFS(root);
+                
+        vector<vector<int>>rets;
+        for (int i=0; i<height.size(); i++)
+        {
+            auto [idx, h] = height[i];
+            rets.push_back({idx2pos[idx], h});
+            while (i+1 < height.size() && height[i+1].second == height[i].second)
+                i++;
+        }
+        return rets;
+    }
+    
+    void DFS(SegTreeNode* node)
+    {
+        if (node->start==node->end || node->tag==1)
+        {
+            height.push_back({node->start, node->info});
+            return;
+        }
+        DFS(node->left);
+        DFS(node->right);
+    }
+    
+};
+::::::::::::::
+Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem_segTree.cpp
+::::::::::::::
+class Solution {
+    class SegTree
+    {
+        public:
+        int start,end,status;
+        SegTree* left;
+        SegTree* right;
+        SegTree(int a, int b, int s):start(a),end(b),status(s),left(NULL),right(NULL){}
+        
+        void remove(SegTree* &node)
+        {
+            if (node==NULL) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node = NULL;
+            return;            
+        }
+        
+        void setStatus(int a, int b, int s)
+        {
+            if (a>=end || b<=start)
+                return;
+            if (a<=start && b>=end && s>=status)
+            {
+                remove(left);
+                remove(right);
+                status = s;
+                return;
+            }
+            if (a<=start && b>=end && s<status && left==NULL)
+                return;
+            if (left==NULL)
+            {
+                int mid = start+(end-start)/2;
+                left = new SegTree(start,mid,status);
+                right = new SegTree(mid,end,status);
+            }
+            left->setStatus(a,b,s);
+            right->setStatus(a,b,s);
+            status = max(left->status,right->status);            
+        }
+    };
+public:
+    vector<pair<int,int>>results;
+    vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) 
+    {
+        if (buildings.size()==0) return {};
+        
+        SegTree* root = new SegTree(0,INT_MAX,0);
+        for (auto q:buildings)
+            root->setStatus(q[0],q[1],q[2]);
+        
+        DFS(root);
+        if (results.back().second!=0) results.push_back({INT_MAX,0});
+        
+        vector<pair<int,int>>filteredResults;
+        for (auto p: results)
+        {
+            if (filteredResults.size()!=0 && p.second==filteredResults.back().second)
+                continue;
+            filteredResults.push_back({p.first,p.second});
+        }
+        if (filteredResults.size()!=0 && filteredResults[0].second==0) filteredResults.erase(filteredResults.begin());
+        return filteredResults;
+    }
+    
+    void DFS(SegTree* node)
+    {        
+        if (node->left==NULL)
+            results.push_back({node->start,node->status});
+        else
+        {
+            DFS(node->left);
+            DFS(node->right);
+        }
+    }
+};
+::::::::::::::
+Segment_Tree/0218.The-Skyline-Problem/Readme.md
+::::::::::::::
+### 218.The-Skyline-Problem
+
+#### 解法1:有序容器
+
+此题需要设置一个multiSet记录所有的当前下降沿的高度，则*prev(Set.end(),1)就是这个Set里的最大值。
+
+首先，将所有的edges放入一个数组，按时间顺序排序，然后顺次遍历考虑：如果是上升沿，则在Set里加入对应高度（即添加一个上升沿）；如果是下降沿，则需要在Set里删除对应的高度（即退出当前的下降沿）。
+
+那何时对results进行更新呢？我们在每次处理edge时，不管是加入上升边沿还是退出下降沿之后，都意味着天际线有可能变动。天际线会变成什么呢？答案是此时Set里的最大值！回想一下，Set里装的是所有当前仍未退出的下降沿，说明他们都在当前可以撑起对应的高度。那么Set里的最大值就是当前天际线的最高值。
+
+所以每次查看一个edges，我们都要比较当前的高度（用cur记录）和Set里的最大值进行比较：一旦不同，就用Set里的最大值去加入results，同时也要更新cur。
+
+有一个细节需要注意，在生成edges数组时，如果某一个位置同时有上升沿也有下降沿，注意要先考察上升沿，再考察下降沿。也就是要先加入一个上升沿，再退出可能的下降沿。否则类似[[0,2,3],[2,5,3]]的测试例子就会有问题。
+
+#### 解法2:线段树
+
+此题的线段树解法，是以```370.Range-Addition```的懒标记版本为基础，稍加改动。
+
+首先，不同于307或者370中已经给出了nums数组。此题中给出的是建筑物高度拐点的pos。这些pos的绝对值对我们而言其实是没有意义的，我们只关心这些pos的相对顺序，也就是idx。所以我们其实需要构造两个映射，pos2idx和idx2pos，方便我们做转换。转换之后，每个builiding相当于一个区间更新。特别注意，如果一个building对应的索引区间是```[i:j]```，那么我们只更新区间```[i:j-1]```。也就是说，线段树中的每个叶子节点的单点info，代表的其实是```[i:i+1)```这段左闭右开的小区间。
+
+然后我们设计一下SegTreeNode的数据结构。除了常规的left,right,start,end之外，此时节点的info表示的是该区间内出现的高度最大值。注意，不一定整个区间都是该恒定的高度。此外，该节点的tag是一个bool量，表示该区间的高度是否都是相同的（也就是等于info）。tag为true时说明我们能断言整个区间的信息是一致的，我们不需要下沉去更新每一块更细的区间。下文会详细说明。
+
+初始化函数```init(root, 0, n-1)```不需要特别的改动。其中n就是离散化之后有多少个数据点。初始化时，每个节点的info设置为0，tag设置为false。
+
+区间更新函数```updateRange(node, a, b, val)```是本题的重点，意思是将区间[a,b]里的所有数据点的最大值更新为val（如果原最大值小于val的话）。我们分几种情况讨论：
+1. 边界条件：[a,b]与该节点区间互斥，直接return。
+2. 边界条件：该节点的区间是单点，那么```node->info = max(node->info, val)```然后return
+3. 边界条件：如果该节点的区间包含在[a,b]内，并且```node->info <= val```，说明该节点区间的数据点可以统一更新为val。并且我们就设置tag标记true，根据之前的分析，我们可以直接返回而不用下沉去更新更细节的区间。
+4. 其他情况下，我们就递归处理```updateRange(node->left, a, b, val) && updateRange(node->right, a, b, val)```。但是递归之前，我们别忘了查看当前的tag是否为true。如果是的话，说明当前节点的区间不再有统一的高度，我们需要去掉tag的标记，并且将其影响传递给两个子区间，即
+```cpp
+        if (node->tag == 1) // if current node tagged lazy, push information down
+        {
+            node->tag = 0;            
+            node->left->info = node->info;
+            node->right->info = node->info;
+            node->left->tag = 1;
+            node->right->tag = 1;            
+        }   
+```
+对于此题，我们其实不需要写区间查询的函数。因为我们最终输出的结果，会要求遍历线段树的每一个节点，写个DFS即可。当然，如果遍历到某个区间的tag依然为true时，其实可以不用继续深入下去，直接输出该区间的信息。最终输出的结果需要整理一下，如果相邻的叶子节点的高度相同，我们再做一下归并。
+
+另外补充一点，我们将所有的building按照高度从小到大排序一遍，会使带有懒标签的线段树代码跑得更快。这是因为在updateRange时有更大的概率触发下面这个条件，使得我们只需要标记lazy tag并立即返回：
+```cpp
+if (a <= node->start && node->end <=b && val >= node->info) 
+{... return; }
+```
+
+[Leetcode Link](https://leetcode.com/problems/the-skyline-problem)
+::::::::::::::
+Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_BIT.cpp
+::::::::::::::
+class NumArray {
+public:
+    vector<int>bitArr;
+    vector<int>nums;
+
+    NumArray(vector<int>& nums) {
+        this->nums = nums;
+        bitArr.resize(nums.size()+1);
+        for (int i=0; i<nums.size(); i++)
+            my_update(i, nums[i]);
+        cout<<"init done"<<endl;
+    }
+
+    void update(int i, int val){
+        my_update(i, val-nums[i]);
+        nums[i] = val;
+    }
+
+    void my_update(int i, int delta) {
+        int idx = i+1;
+        while (idx<bitArr.size())
+        {
+            bitArr[idx]+=delta;
+            idx+=idx&(-idx);
+        }
+    }
+
+    int my_query(int idx){
+        idx+=1;
+        int result = 0;
+        while (idx){
+            result += bitArr[idx];
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    int sumRange(int i, int j) {
+        return my_query(j)-my_query(i-1);
+    }
+};
+::::::::::::::
+Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v1.cpp
+::::::::::::::
+class NumArray {
+    class SegmentTreeNode
+    {
+        public:
+        SegmentTreeNode* left;
+        SegmentTreeNode* right;
+        int start, end, sum;
+        SegmentTreeNode(int a, int b):start(a),end(b),sum(0),left(NULL),right(NULL){}
+    };
+    SegmentTreeNode* root;
+public:
+    NumArray(vector<int> nums) 
+    {
+        int n=nums.size();
+        root = buildTree(nums, 0, n-1);        
+    }
+    
+    void update(int i, int val) 
+    {
+        modifyTree(root, i, val);
+    }
+    
+    int sumRange(int i, int j) 
+    {
+        return queryTree(root, i, j);
+    }
+    
+    SegmentTreeNode* buildTree(vector<int>&nums, int a, int b)
+    {    
+        if (a>b) return NULL; //这个很关键,因为不断地二分过程中会造成这种情况
+        SegmentTreeNode* node = new SegmentTreeNode(a,b);
+        if (a==b)
+        {
+            node->sum = nums[a];
+            return node;
+        }    
+        node->left = buildTree(nums,a,(a+b)/2);
+        node->right = buildTree(nums,(a+b)/2+1,b);
+        node->sum = node->left->sum + node->right->sum;
+        return node;    
+    }
+    
+    void modifyTree(SegmentTreeNode* root, int i, int val)
+    {
+        if (root->start==i && root->end==i)
+        {
+            root->sum = val;
+            return;
+        }
+        int mid = root->start + (root->end-root->start)/2;
+        if (i<=mid)
+            modifyTree(root->left,i,val);
+        else
+            modifyTree(root->right,i,val);
+        root->sum = root->left->sum+root->right->sum;
+    }
+    
+    int queryTree(SegmentTreeNode* root, int a, int b)
+    {
+        if (root->start==a && root->end==b) return root->sum;
+        
+        int mid = root->start+(root->end-root->start)/2;
+        if (b<=mid)
+            return queryTree(root->left, a, b);
+        else if (a>mid)
+            return queryTree(root->right, a, b);
+        else
+            return queryTree(root->left,a,mid)+queryTree(root->right,mid+1,b);
+    }
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(i,val);
+ * int param_2 = obj.sumRange(i,j);
+ */
+::::::::::::::
+Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v2.cpp
+::::::::::::::
+class NumArray {
+    
+    class SegTree
+    {
+        public:
+        int begin,end, status;
+        SegTree* left;
+        SegTree* right;
+        SegTree(int a, int b, int s)
+        {
+            begin = a;
+            end = b;
+            status = s;
+            left = NULL;
+            right = NULL;
+        }
+        
+        void remove(SegTree* &node)
+        {
+            if (!node) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node = NULL;
+        }
+        
+        
+        int setStatus(int a, int b, int s)
+        {
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回原先的状态
+                return status;                        
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，将该区间抹平
+            {
+                remove(left);
+                remove(right);
+                return status = s;
+            }         
+            if (!left)                         // 3. [a,b]与该区间相交，需考虑其子树
+            {
+                int mid = (end-begin)/2+begin;
+                left = new SegTree(begin,mid,status);
+                right = new SegTree(mid,end,status);
+            }            
+            int leftStatus = left->setStatus(a,b,s);
+            int rightStatus = right->setStatus(a,b,s);
+            return status = leftStatus + rightStatus;
+        }
+                
+        int getStatus(int a, int b)
+        {
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回一个不影响结果的状态
+                return 0;            
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，返回该区间的状态
+                return status;                        
+            if (!left)                         // 3. [a,b]与该区间相交，但又没有子树，返回整个区间状态
+                return status;
+            int mid = (end-begin)/2+begin;      // 4. [a,b]与该区间相交，需要考虑其子树
+            int leftStatus = left->getStatus(a,b);
+            int rightStatus = right->getStatus(a,b);
+            return leftStatus + rightStatus;            
+        }
+            
+};
+    
+    
+public:
+    SegTree* root;
+        
+    NumArray(vector<int> nums) 
+    {
+        root = new SegTree(0,nums.size(),0);        
+        for (int i=0; i<nums.size(); i++)
+            root->setStatus(i, i+1, nums[i]);
+    }
+    
+    void update(int i, int val) 
+    {
+        root->setStatus(i,i+1,val);
+    }
+    
+    int sumRange(int i, int j) 
+    {
+        return root->getStatus(i,j+1);
+    }
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(i,val);
+ * int param_2 = obj.sumRange(i,j);
+ */
+::::::::::::::
+Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_SegTree_v3.cpp
+::::::::::::::
+class NumArray {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = nums[a];
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    void updateSingle(SegTreeNode* node, int id, int val)
+    {        
+        if (id < node->start || id > node->end ) return;
+        if (node->start == node->end)
+        {
+            node->info = val;
+            return;
+        }
+        updateSingle(node->left, id, val);
+        updateSingle(node->right, id, val);
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    int queryRange(SegTreeNode* node, int a, int b)
+    {
+        if (b < node->start || a > node->end )
+        {
+            return 0;  // write your own logic
+        }
+        if (a <= node->start && b>=node->end)
+        {
+            return node->info;  // write your own logic
+        }        
+        return queryRange(node->left, a, b) + queryRange(node->right, a, b);  // write your own logic
+    }    
+    
+    vector<int> nums;
+    SegTreeNode* root;
+    
+public:
+    NumArray(vector<int> nums) 
+    {
+        this->nums = nums;
+        root = new SegTreeNode(0, nums.size()-1);
+        init(root, 0, nums.size()-1);
+    }
+    
+    void update(int i, int val) 
+    {
+        updateSingle(root, i, val);        
+    }
+    
+    int sumRange(int i, int j) 
+    {
+        return queryRange(root, i, j);
+    }
+};
+::::::::::::::
+Segment_Tree/0307.Range-Sum-Query-Mutable/Readme.md
+::::::::::::::
+### 307.Range-Sum-Query-Mutable
+
+#### Binary Indexed Tree
+此题用到了一种比较不常见的数据结构 Binary Indexed Tree. 参考(http://www.cnblogs.com/grandyang/p/4985506.html). 总的来说，这种数据结构累加一部分元素，又留着一部分元素，是一种兼顾“查找元素本身”和“查找元素和”的中庸方法。
+
+这种数据结构的特征是：元素的标号（index）从1开始。第i个元素的变化，之后影响到的依次以此是 i+= (i&-i)。举个列子：     
+第1个元素影响到：1,2,4,8,16，...      
+第2个元素影响到：2,4,8,16，...   
+第3个元素影响到：3,4,8,16，...   
+第4个元素影响到：4,8,16，...   
+总的来说，一个元素的变化，影响到整个Binary Indexed Tree的节点变化数目是 log(n)，比传统“累加和数组”牵一发动全身的数据结构而言，会优越很多。
+
+总结一下这种数据结构的初始化方法。nums是原始的数据（数组），tree是Binary Indexed Tree，本质也是一个数组。注意，两者的元素标号都是从1开始，标号为0的元素没有意义。
+```cpp
+for (int i=1; i<nums.size(); i++)
+{
+    for (int j=i; j<nums.size(); j+=(j&-j))
+      tree[i]+=nums[i];
+}
+```
+相应地，如果想更新nums[i]，则对应的tree的变化
+```cpp
+  int update(i,new_val)
+  {
+    int diff = new_val - nums[i];
+    for (int j=i; j<nums.size(); j+=(j&-j))
+      tree[j]+=diff;  
+    nums[i] = new_val;  
+  }
+```
+对于nums前k个元素之和，需要在tree中累加的元素标号依次是 k-=(k&-k)，举个例子：    
+nums的前8个元素之和，需要累加的的tree元素：8   
+nums的前7个元素之和，需要累加的的tree元素：7,6,4   
+nums的前6个元素之和，需要累加的的tree元素：6,4   
+nums的前5个元素之和，需要累加的的tree元素：5,4   
+由此看来，平均需要在tree里累加的元素和的数目也是log(n)，虽然比不上纯的累加数组，但也算很高效。
+```cpp
+    int getSum(int i)
+    {
+        int res = 0;
+        for (int j = i; j > 0; j -= (j&-j)) 
+        {
+            res += tree[j];
+        }
+        return res;        
+    }
+```
+
+#### Segment Tree
+此题是应用线段树的典型例子。线段树的模板有很多种写法，这里来讲一下最基础的版本。
+
+首先定义线段树节点
+```cpp
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
+    };
+```
+其中的info是存储我们想在线段树加载的信息，在这里，存储的是下面所有叶子节点的数值的和。
+
+第一个常用的API就是初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：```init(root, 0, n-1)```.
+
+第二个API就是单点修改：```void updateSingle(SegTreeNode* node, int id, int val)```，其意义是对以node为根节点的线段树时，修改nums[id]所对应的叶子节点的info为val。
+
+第三个API就是区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树时，查询nums[a:b]区间所对应的所有叶子节点的info的和。
+
+[Leetcode Link](https://leetcode.com/problems/range-sum-query-mutable)
+::::::::::::::
+Segment_Tree/0370.Range-Addition/370.Range-Addition.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) 
+    {
+        vector<int>diff(length+1,0);
+        for (auto x:updates)
+        {
+            diff[x[0]]+=x[2];
+            diff[x[1]+1]-=x[2];
+        }
+        vector<int>results;
+        int cur = 0;
+        for (int i=0; i<length; i++)
+        {
+            cur+=diff[i];
+            results.push_back(cur);
+        }
+        return results;
+    }
+};
+::::::::::::::
+Segment_Tree/0370.Range-Addition/370.Range-Addition_SegmentTree_lazyTag.cpp
+::::::::::::::
+class Solution {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;
+        int tag;
+        SegTreeNode(int a, int b):start(a),end(b),info(0),tag(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = 0;
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = 0;  // write your own logic
+    }
+    
+    void updateRange(SegTreeNode* node, int a, int b, int val)
+    {
+        if (b < node->start || a > node->end )
+            return;
+        if (a <= node->start && b>=node->end)
+        {
+            node->info += val * (node->end-node->start+1);
+            node->tag += val;
+            return;
+        }
+        
+        pushdown(node); // erase lazy tag and propagate down
+        updateRange(node->left, a, b, val);
+        updateRange(node->right, a, b, val);
+    }
+    
+    void pushdown(SegTreeNode* node)
+    {
+        if (node->tag != 0)
+        {
+            node->left->tag += node->tag;
+            node->right->tag += node->tag;
+            node->left->info += node->tag * (node->left->end-node->left->start+1);
+            node->right->info += node->tag * (node->right->end-node->right->start+1);
+            node->tag = 0;            
+        }
+    }
+    
+    int querySingle(SegTreeNode* node, int id)
+    {
+        if (id < node->start || id > node->end )
+        {
+            return INT_MAX;  // write your own logic
+        }
+        if (node->start==id && node->end==id)
+        {
+            return node->info;
+        }
+        
+        pushdown(node);
+        int a = querySingle(node->left, id);
+        int b = querySingle(node->right, id);
+        if (a!=INT_MAX) return a;
+        else if (b!=INT_MAX) return b;
+        else return INT_MAX;
+    }
+    
+    
+    
+public:
+    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) 
+    {
+        SegTreeNode* root = new SegTreeNode(0, length-1);
+        init(root, 0, length-1);
+        
+        for (auto update: updates)
+        {
+            updateRange(root, update[0], update[1], update[2]);
+        }
+        
+        vector<int>rets(length);
+        for (int i=0; i<length; i++)
+        {
+            rets[i] = querySingle(root, i);
+        }
+            
+        return rets;
+    }
+};
+
+::::::::::::::
+Segment_Tree/0370.Range-Addition/370.Range-Addition_segTree.cpp
+::::::::::::::
+class Solution {
+    class SegTree
+    {
+        public:
+        int start,end,status;
+        SegTree* left;
+        SegTree* right;
+        SegTree(int a, int b, int s):start(a),end(b),status(s),left(NULL),right(NULL){}
+        
+        void setStatus(int a, int b, int s)
+        {
+            if (a<=start && b>=end && left==NULL)   // bottom node condition 1;
+            {
+                status += s;
+                return;
+            }
+            if (a>=end || b<=start)         // bottom node condition 2;
+                return;
+            int mid = start+(end-start)/2;  
+            if (left==NULL)                 // no children? create them
+            {
+                left = new SegTree(start,mid,status);
+                right = new SegTree(mid,end,status);
+            }                               // recursion
+            left->setStatus(a,b,s);
+            right->setStatus(a,b,s);
+        }
+    };
+public:
+    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) 
+    {
+        SegTree* root = new SegTree(0,length,0);
+        for (auto x:updates)        
+            root->setStatus(x[0],x[1]+1,x[2]);
+        vector<int>results(length);
+        DFS(root,results);
+        return results;
+    }
+    void DFS(SegTree* node, vector<int>&results)
+    {
+        if (node->left!=NULL)
+        {
+            DFS(node->left,results);
+            DFS(node->right,results);
+            return;
+        }
+        for (int i=node->start; i<node->end; i++)
+            results[i] = node->status;
+    }
+};
+::::::::::::::
+Segment_Tree/0370.Range-Addition/Readme.md
+::::::::::::::
+### 370.Range-Addition
+
+#### 解法1：
+此题比较简单的解法是用差分数组```diff```。```diff[i]```表示```nums[i]```比```nums[i-1]```大多少。这样如果已知```nums[i-1]```，那么就有```diff[i]=nums[i-1]+diff[i]```。本题中的三元参数```update(i,j,k)```恰好就是给出了这样的差分数组的信息：```diff[i]+=k, diff[j+1]-=k```.
+
+#### 解法2：
+本题和307很相似，也可以用线段树来实现。最大的区别就是本题中需要实现的是区间更新。在线段树的basic版本中（LC307），我们实现的都是单点更新，用单点更新来实现区间更细，效率肯定很低。
+
+本题实现的是线段树的进阶版本，使用lazy tag来实现区间更新的延迟推广。具体的说，我们想要将区间[a:b]增加1时，不一定需要立即下沉到每个叶子节点将其info增1。如果我们没有对[a:b]中的任何一个叶子节点做查询的话，意味着不需要任何下沉操作。我们只增加[a:b]对应的节点的info，但同时标记该节点的tag为1。如果以后某个时刻，我们需要下沉访问某个下层区间或者叶子节点，那么在下沉的过程中必然会重新经过[a:b]对应的node，此时我们顺便将tag信息读入并在访问下层区间或叶子节点时，将它们的info加上这个“延迟加载”的1就行。
+
+这个版本的线段树有如下API：
+
+初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：init(root, 0, n-1).
+
+区间更新：```void updateRangeBy(SegTreeNode* node, int a, int b, int val)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点，使其info都increase by val.注意，这和LC307基础版本的区别，val是增量。
+
+区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点的info之和。
+
+
+[Leetcode Link](https://leetcode.com/problems/range-addition)
+::::::::::::::
+Segment_Tree/0699.Falling-Squares/699.Falling-Squares.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> fallingSquares(vector<pair<int, int>>& positions) 
+    {
+        map<int,int>Map;
+        
+        Map[0]=0;
+        Map[INT_MAX]=0;
+        
+        vector<int>results;
+        int cur=0;
+        
+        for (auto p:positions)
+        {
+            int left=p.first;
+            int right=p.first+p.second-1;
+            int h=p.second;
+            int maxH=0;
+            
+            auto ptri = Map.lower_bound(left);
+            auto ptrj = Map.upper_bound(right);
+            
+            int temp = prev(ptrj,1)->second;
+            
+            auto ptr = ptri->first==left? ptri:prev(ptri,1);
+            while (ptr!=ptrj)            
+            {
+                maxH=max(maxH, ptr->second);
+                ptr = next(ptr,1);
+            }
+            if (ptri!=ptrj)
+                Map.erase(ptri,ptrj);
+                            
+            Map[left] = maxH+h;
+            Map[right+1] = temp;            
+            cur = max(cur, maxH+h);
+            
+            results.push_back(cur);    
+        }
+        
+        return results;
+        
+    }
+};
+::::::::::::::
+Segment_Tree/0699.Falling-Squares/699.Falling-Squares_SegmentTree_LazyTag.cpp
+::::::::::::::
+class Solution {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;  // the max height of the range
+        bool tag; 
+        SegTreeNode(int a, int b):start(a),end(b),info(0),tag(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = 0;
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = 0;  // write your own logic
+    }
+    
+    void updateRange(SegTreeNode* node, int a, int b, int val)
+    {        
+        if (b < node->start || a > node->end ) // no intersection
+            return;
+        if (a <= node->start && node->end <=b)
+        {
+            node->info = val;
+            node->tag = 1;
+            return;
+        }
+        
+        pushDown(node);        
+        updateRange(node->left, a, b, val);
+        updateRange(node->right, a, b, val);
+        
+        node->info = max(node->left->info, node->right->info);  // write your own logic
+    }
+    
+    int queryRange(SegTreeNode* node, int a, int b)
+    {
+        if (b < node->start || a > node->end )
+        {
+            return 0;  // write your own logic
+        }
+        if (a <= node->start && b>=node->end)
+        {
+            return node->info;  // write your own logic
+        }            
+        pushDown(node);        
+        node->info = max(queryRange(node->left, a, b), queryRange(node->right, a, b));  // write your own logic
+        return node->info;
+    }    
+    
+    void pushDown(SegTreeNode* node)
+    {
+        if (node->tag==true)
+        {
+            node->left->info = node->info;
+            node->right->info = node->info;
+            node->left->tag = 1;
+            node->right->tag = 1;
+            node->tag = 0;
+        }        
+    }  
+    
+    
+public:
+    vector<int> fallingSquares(vector<vector<int>>& positions) 
+    {
+        set<int>Set;
+        for (auto & rect: positions)
+        {
+            Set.insert(rect[0]);
+            Set.insert(rect[0]+rect[1]);
+        }
+        unordered_map<int,int>pos2idx;
+        int idx = 0;
+        for (auto x: Set)
+        {
+            pos2idx[x] = idx;
+            idx++;
+        }
+        int n = pos2idx.size();
+        
+        SegTreeNode* root = new SegTreeNode(0, n-1);
+        init(root, 0, n-1);
+        
+        int maxH = 0;
+        vector<int>rets;
+        for (auto & rect: positions)
+        {
+            int a = pos2idx[rect[0]];
+            int b = pos2idx[rect[0]+rect[1]];
+            int h = queryRange(root, a, b-1);  // [a,b)
+            updateRange(root, a, b-1, h + rect[1]);
+            maxH = max(maxH, h + rect[1]);
+            rets.push_back(maxH);
+        }
+        return rets;        
+    }
+};
+::::::::::::::
+Segment_Tree/0699.Falling-Squares/699.Falling-Squares_segTree.cpp
+::::::::::::::
+class Solution {
+    class SegTree
+    {
+        public:
+        int start,end,status;
+        SegTree* left;
+        SegTree* right;
+        SegTree(int a,int b,int s):start(a),end(b),status(s),left(NULL),right(NULL){}
+        
+        void remove(SegTree* &node)
+        {
+            if (node==NULL) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node=NULL;
+            return;
+        }
+        
+        void setStatus(int a, int b, int s)
+        {
+            if (a<=start && b>=end)
+            {
+                remove(left);
+                remove(right);
+                status = s;
+                return;
+            }
+            if (a>=end || b<=start)
+                return;
+            if (left==NULL)
+            {
+                int mid = (end-start)/2+start;
+                left = new SegTree(start,mid,status);
+                right = new SegTree(mid,end,status);
+            }
+            left->setStatus(a,b,s);
+            right->setStatus(a,b,s);
+            status = max(left->status,right->status);
+            return;
+        }
+        
+        int getStatus(int a, int b)
+        {
+            if (a<=start && b>=end)
+                return status;
+            if (a>=end || b<=start)
+                return 0;
+            if (left==NULL)
+                return status;
+            int L = left->getStatus(a,b);
+            int R = right->getStatus(a,b);
+            return max(L,R);            
+        }        
+    };
+public:
+    vector<int> fallingSquares(vector<pair<int, int>>& positions) 
+    {
+        SegTree root = SegTree(0,1e9,0);
+        vector<int>result;
+        int curMax = 0;
+        for (auto p:positions)
+        {
+            int cur = root.getStatus(p.first,p.first+p.second);
+            curMax = max(curMax, cur+p.second);
+            root.setStatus(p.first,p.first+p.second, cur+p.second);            
+            result.push_back(curMax);                    
+        }
+        return result;
+    }
+};
+::::::::::::::
+Segment_Tree/0699.Falling-Squares/699.Falling-Squares-v2.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> fallingSquares(vector<pair<int, int>>& positions) 
+    {
+        map<int,int>Map;
+        Map[0]=0;
+        Map[INT_MAX]=0;
+        int cur=0;
+        vector<int>results;
+        
+        for (int i=0; i<positions.size(); i++)
+        {
+            int left=positions[i].first;            
+            int len=positions[i].second;
+            int right=left+len-1;
+            
+            auto pos1 = Map.lower_bound(left);
+            
+            int Hmax=0;
+            auto pos=pos1;
+            if (pos->first!=left) pos=prev(pos,1);
+            while (pos->first <= right)            
+            {
+                Hmax = max(Hmax, pos->second);
+                pos = next(pos,1);
+            }
+            int rightHeight = prev(pos,1)->second;
+            
+            Map.erase(pos1,pos);
+            Map[left]=Hmax+len;
+            Map[right+1]=rightHeight;                
+            
+            cur = max(cur, Hmax+len);
+            results.push_back(cur);
+        }
+        
+        return results;
+    }
+};
+::::::::::::::
+Segment_Tree/0699.Falling-Squares/Readme.md
+::::::::::::::
+### 699.Falling-Squares
+
+#### 解法1：使用Hash容器
+
+此题考查了对Hash结构（比如说Map和Set）的迭代器的操作。
+
+设置一个有序hash表，map<int,int>Map，其中的key表示在横轴上某个x的位置，value表示从这个x开始往右直至遇到下一个邻接x位置之间的高度（这个高度在这两个位置之间必须是平整的）。在不断读入positions的过程中，来更新这个Map。
+
+对于一个新引入的square，我们考察它的左右边界left,right在这个hash表中的位置（找最近邻元素的迭代器）
+```cpp
+auto ptri = Map.lower_bound(left);
+auto ptrj = Map.upper_bound(right);
+```
+注意得到的两个边界迭代器的意义。ptri表示处于left或其靠右的第一个迭代器。ptrj表示在right靠右的第一个迭代器。
+
+根据题意，处于[ptri,ptrj)的那些hash元素都将被取代（抹平），换成这个新square的信息。这个新square叠加上去后的高度等于这些hash元素的最大值加上新square自身的高度。但是注意，以上对于 ```ptri->first == left```时成立；但是对```ptri->first > left```时，我们必须把ptri之前的那个元素也考虑上，即 prev(ptri,1)。
+```cpp
+auto ptr= ptri->left==left? ptri:prev(ptri,1);
+int maxH=0;
+while (ptr!=ptrj)
+{
+    maxH=max(maxH,ptr->second);
+    ptr=next(ptr,1);
+}
+```
+以上得到了新高度。但是如何抹平之前的呢？erase命令可以删除一个前闭后开的迭代器区间。特别强调，不能用for等循环名一边通过迭代器遍历hash、一边删改迭代器。这是会出错的。
+```cpp
+Map.erase(ptri,ptrj)
+```
+接下来要跟新，即在Map里新加入一个区间。显然对于新sqaure的左边界，会引入：
+```cpp
+Map[left]= maxH+h;
+```
+特别注意：对于新sqaure的右边界，同样也可能会引入新生成的边界。比如，当新square比较小，那么Map[right+1]应该是之前 prev(ptrj,1)对应的数值。这个数值必须在对Map做迭代器删改之前保留下来。
+
+#### 解法2：使用线段树
+
+本题的线段树解法和```218.The Skyline Problem```类似，都要用到离散化+懒标记。
+
+数据结构：和218类似，我们定义SegTreeNode.info表示该节点所对应的区间的最大高度。tag表示该区间的高度是否都是一致的。如果是的话，tag标记为true，我们就可以省去对下层更细区间的查询。
+
+离散化：和218类似。同样，对于底边范围是[i:j]的正方形，我们实际查询和更新的区间是[i:j-1]。也就是说，对于线段树中的每个子节点，info代表的是```[i:i+1)```这段左闭右开的区间的高度。
+
+区间查询：我们需要在某个线段树子树内查询指定区间[a,b]的最大高度。同样分为几种情况讨论：
+1. 如果节点区间与[a,b]互斥，那么返回0（无限小）
+2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，不论是否有懒标记，都无需再查询更下层的区间，直接返回node->info。（这是因为从上往下走的过程中，无论query还是update，我们都不会越过懒标记的节点。如果越过懒标记的节点，必然伴随着pushdown将懒标记下移，并把下层的节点准确地更新了。）
+3. 其他情况下，需要递归处理两个区间，返回```max(queryRange(node->left, a,b), queryRange(node->right, a,b))```.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
+
+区间更新：我们需要在某个线段树子树内将指定区间[a,b]的高度统一设置val。同样分为几种情况讨论：
+1. 如果节点区间与[a,b]互斥，那么直接返回。
+2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，说明整个区间的info一定都是要更新的。那么无需再更新下层的区间，直接更新node->info后返回。注意保持懒标记。
+3. 其他情况下，需要递归处理两个区间，```queryRange(node->left, a,b) && queryRange(node->right, a,b)```，然后更新node->info.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
+
+主程序：
+```cpp
+        for (auto& rect: positions)
+        {
+            int a = pos2idx[rect[0]], b = pos2idx[rect[0]+rect[1]];
+            int h = queryRange(root, a, b-1);
+            updateRange(root, a, b-1, h+rect[1]);
+            cur = max(cur, h+rect[1]);
+            rets.push_back(cur);
+        }
+```        
+
+[Leetcode Link](https://leetcode.com/problems/falling-squares)
+::::::::::::::
+Segment_Tree/0715.Range-Module/715.Range-Module.cpp
+::::::::::::::
+class RangeModule {
+    map<int,int>Map;
+public:
+    RangeModule() 
+    {
+        Map.clear();
+    }
+    
+    void addRange(int left, int right) 
+    {       
+        auto pos1 = Map.lower_bound(left);
+        int leftboundary=left;
+        if (pos1!=Map.begin() && prev(pos1,1)->second>=left)
+            leftboundary = prev(pos1,1)->first;
+                            
+        auto pos2 = Map.upper_bound(right);
+        int rightboundary = right;
+        if (pos2!=Map.begin())
+            rightboundary = max(right, prev(pos2,1)->second);
+        
+        Map.erase(pos1,pos2);
+        Map[leftboundary]=rightboundary;        
+        
+        /*
+        for (auto a:Map)
+            cout<<a.first<<":"<<a.second<<endl;
+        cout<<"added"<<endl;
+        */
+    }
+    
+    bool queryRange(int left, int right) 
+    {
+        auto pos = Map.upper_bound(left);
+        if (pos==Map.begin())
+            return false;
+        pos = prev(pos,1);
+        return (pos->second>=right);
+    }
+    
+    void removeRange(int left, int right) 
+    {
+        auto pos1 = Map.lower_bound(left);
+        bool flag1=0;
+        int temp1;
+        if (pos1!=Map.begin() && prev(pos1,1)->second > left)
+        {
+            temp1 = prev(pos1,1)->first;
+            flag1=1;
+        }
+        
+        auto pos2 = Map.lower_bound(right);
+        int temp2;
+        bool flag2=0;        
+        if (pos2!=Map.begin() && prev(pos2,1)->second > right)
+        {
+            temp2 = prev(pos2,1)->second;
+            flag2=1;
+        }
+        
+        Map.erase(pos1,pos2);
+        if (flag1) Map[temp1]=left;
+        if (flag2) Map[right]=temp2;
+        
+        /*
+        for (auto a:Map)
+            cout<<a.first<<":"<<a.second<<endl;
+        cout<<"removed"<<endl;    
+        */
+    }
+};
+
+/**
+ * Your RangeModule object will be instantiated and called as such:
+ * RangeModule obj = new RangeModule();
+ * obj.addRange(left,right);
+ * bool param_2 = obj.queryRange(left,right);
+ * obj.removeRange(left,right);
+ */
+::::::::::::::
+Segment_Tree/0715.Range-Module/715.Range-Module_segTree.cpp
+::::::::::::::
+class RangeModule {
+    class SegTree
+    {
+        public:
+        int start, end;
+        bool status;
+        SegTree* left;
+        SegTree* right;
+        SegTree(int a, int b, bool T):start(a),end(b),status(T),left(NULL),right(NULL){}
+        
+        void remove(SegTree* &node)
+        {
+            if (node==NULL) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node = NULL;
+            return;
+        }
+        
+        void setStatus(int a, int b, bool T)
+        {
+            if (a<=start && b>=end) // bottom condition 1: [a,b)>[start,end)
+            {
+                remove(left);
+                remove(right);
+                status = T;
+                return;
+            }
+            if (a>=end || b<=start) // bottom condition 2: [a,b) do not intersect with [start,end)
+                return;
+            int mid = start+(end-start)/2;
+            if (left==NULL)         // no children? create them!
+            {
+                left = new SegTree(start,mid,status);
+                right = new SegTree(mid,end,status);
+            }
+            left->setStatus(a,b,T);
+            right->setStatus(a,b,T);
+            status =left->status && right->status;
+        }        
+        
+        bool getStatus(int a, int b)
+        {            
+            if (a<=start && b>=end)   // bottom condition 1: [a,b)>[start,end)
+                return status;
+            if (a>=end || b<=start)     // bottom condition 2: [a,b) do not intersect with [start,end)
+                return true;
+            if (left==NULL)
+                return status;
+            int mid = start+(end-start)/2;
+            bool L = left->getStatus(a,b);
+            bool R = right->getStatus(a,b);
+            return L&&R;
+        }        
+    };
+    
+public:
+    
+    SegTree root = SegTree(0,1e9,false);
+    
+    RangeModule() 
+    {
+    }
+    
+    void addRange(int left, int right) 
+    {
+        root.setStatus(left,right,true);
+    }
+    
+    bool queryRange(int left, int right) 
+    {        
+        return root.getStatus(left,right);
+    }
+    
+    void removeRange(int left, int right) 
+    {
+        root.setStatus(left,right,false);
+    }
+};
+
+/**
+ * Your RangeModule object will be instantiated and called as such:
+ * RangeModule obj = new RangeModule();
+ * obj.addRange(left,right);
+ * bool param_2 = obj.queryRange(left,right);
+ * obj.removeRange(left,right);
+ */
+::::::::::::::
+Segment_Tree/0715.Range-Module/Readme.md
+::::::::::::::
+### 715.Range-Module
+
+#### 解法1：使用有序map
+
+对于这种interval类型的题目，我们选用ordered_map，将左边界作为key，右边界作为val，则所有的interval都按左边界从小到大排序。
+
+加入一个interval时，要考虑这么几点：
+
+1. 新加入的区间是否和左边的某个区间部分重合？是的话，那么左边的那个区间就要拉长、重新赋值其右边界；如果不是，那么left就是一个新的左边界。
+2. 新加入的区间是否和右边的某个区间部分重合？是的话，那么右边的那个区间就要删除它的key，其右边界将作为一个新区间的右边界。
+3. 新加入的区间范围内的任何key都是需要抹去的。
+4. 新建立一个区间。
+
+代码如下：
+```cpp
+int leftBound = left;
+auto pos1=Map.lower_bound(left);
+if (pos1!=Map.begin() && prev(pos1,1)->second >= left)  //左边界部分重合
+    leftBound = prev(pos1,1)->first;
+    
+int rightBound = right;
+auto pos2=Map.upper_bound(right);
+if (pos2!=Map.begin() && prev(pos2,1)->first <= right)  //右边界部分重合
+    rightBound = max(right, prev(pos2,1)->second);
+    
+Map.erase(pos1,pos2) // 删除一个前闭后开的迭代器区间
+Map[leftBound]=rightBound;
+```
+
+删除一个interval时，要考虑这么几点：
+
+1. 要删除的区间是否和左边的某个区间部分重合？是的话，那么左边的那个区间就要缩短，重新赋值其右边界。
+2. 要删除的区间是否和右边的某个区间部分重合？是的话，那么右边的那个区间就要缩短，重新定义其左边界。
+3. 要删除的区间范围内的任何key都是需要抹去的。
+
+代码如下：
+```cpp
+auto pos1=Map.lower_bound(left);
+bool flag1=0;
+if (pos1!=Map.begin() && prev(pos1,1)->second >= left)
+{
+    flag1=1;
+    temp1=prev(pos1,1)->second;
+}
+
+auto pos2=Map.lower_bound(right);
+bool flag=0;
+int temp2;
+if (pos2!=Map.begin() && prev(pos2,1)->second > right)
+{
+    flag2=1;
+    temp2=prev(pos2,1)->second;
+}
+
+Map.erase(pos1,pos2);
+if (flag1) Map[temp1]=left;
+if (flag2) Map[right]=temp2;
+```
+特别注意，对于迭代器的修改操作，得安排在删除操作之后进行。
+
+
+#### 解法2：使用线段树
+
+此题适合标准的线段树模型和数据结构。从难度上将，本题是基于307和370基础上的更进一步，因为我们需要再设计一个remove的操作。
+
+在segTree类中，按照常规的操作，需要有如下成员变量
+```
+int begin, end;
+bool status;
+segTree* left;
+setTree* right;
+```
+这个类需要定义三个方法，除了之前我们已经学习实践过的setStatus和getStatus之外，需要一个remove.这个是用来保证线段树在空间上高效的重要操作。
+```
+1. void remove(setTree* & node)
+2. bool setStatus(int a, int b, bool tracking)
+3. bool getStatus(int a, int b)
+```
+首先我们特别关注一下remove。它是用来干什么的呢？我们设想，当我们在一个很大的范围内```[a,b)```做setStatus操作（比如设置为true)的时候，如果这个这个区间内已经有很多的子树（即说明其中有些区域是true，有些区域是false，这些子区间们可能犬牙交错），那么这些分支其实在这个操作之后都是完全可以“抹平”的。所以我们试图把这些子节点都删除，并把当前节点范围```[start,end)```内的status整体比标记为true。
+```cpp
+        void remove(SegTree* &node)
+        {
+            if (!node) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node = NULL;
+        }
+```   
+接下来再看setStatus。线段树模板写熟了之后，就能知道我们总是根据三种情况讨论：1.[a,b]与这个区间完全不相交（一般就是返回） 2.[a,b]包括了整个区间（一般就是整体赋值），3. [a,b]与该区间相交，这种情况下基本都是要再递归处理。
+
+在这里，第二种情况下，我们需要添加一个remove操作，以保证线段树的空间高效。因为整体抹平的区间后，我们是不需要再有任何子区间的。另外，需要提醒的是，递归操作后，我们还需要及时更新当前区间的status。和之前的线段树的题目不同，我们这里，即使是非底层节点的status也是有意义的，true表示该区间都是tracked，反之就说明没有全部被tracked。这个对于getStatus函数是很有用的信息，这样我们就不用总是递归到最低层节点即可返回结果。
+```cpp        
+        void setStatus(int a, int b, int s)
+        {
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回原先的状态
+                return;                        
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，将该区间抹平
+            {
+                remove(left);
+                remove(right);
+                status = s;
+                return;
+            }         
+                                                // 3. 其他情况，[a,b]与该区间相交，需考虑其子树。
+            if (!left)                          // 没有子树？那就自己建立子树，子树的status从当前节点继承。
+            {
+                int mid = (end-begin)/2+begin;
+                left = new SegTree(begin,mid,status);
+                right = new SegTree(mid,end,status);
+            }            
+            leftStatus = left->setStatus(a,b,s);
+            rightStatus = right->setStatus(a,b,s);
+            status = left->status && right->status;     //记得更新当前节点的status
+            return;
+        }
+```
+第三个方法就是getStatus。依然是套路，分三类讨论：1.完全不相交（这里就返回一个无关紧要的true），2.完全包含（这里就返回该节点区间的status），3.部分相交，基本上需要用到递归。当然，这里有个额外的小trick，也就是，如果当前节点已经没有子树了，也可以直接返回它的status。
+```cpp
+        int getStatus(int a, int b)
+        {
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回一个不影响结果的状态
+                return true;            
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，返回该区间的状态
+                return status;                        
+            if (!left)                         // 3. [a,b]与该区间相交，但又没有子树，返回整个区间状态
+                return status;
+            int mid = (end-begin)/2+begin;      // 4. [a,b]与该区间相交，需要考虑其子树
+            int leftStatus = left->getStatus(a,b);
+            int rightStatus = right->getStatus(a,b);
+            return leftStatus && rightStatus;            
+        }
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/range-module)::::::::::::::
+Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/2031.Count-Subarrays-With-More-Ones-Than-Zeros.cpp
+::::::::::::::
+const int MAX_N = 200003;
+using LL = long long;
+
+class Solution {        
+    int OFFSET = 100001;
+    long long bitArr[MAX_N];
+    long long nums[MAX_N];  // Note: nums is 1-index
+    long long M = 1e9+7;
+
+    // increase nums[i] by delta  (1-index)
+    void updateDelta(int i, long long delta) {
+        int idx = i;
+        while (idx <= MAX_N)
+        {
+            bitArr[idx]+=delta;
+            bitArr[idx] %= M;
+            idx+=idx&(-idx);
+        }
+    }
+
+    // sum of a range nums[1:j] inclusively, 1-index
+    long long queryPreSum(int idx){
+        long long result = 0;
+        while (idx){
+            result += bitArr[idx];
+            result %= M;
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    // sum of a range nums[i:j] inclusively
+    long long sumRange(int i, int j) {    
+        return queryPreSum(j)-queryPreSum(i-1);
+    }
+    
+public:
+    int subarraysWithMoreZerosThanOnes(vector<int>& nums) 
+    {
+        cout<<nums.size()<<endl;
+        int diff = 0;
+        LL ret = 0;
+        updateDelta(0+OFFSET, 1);
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (nums[i]==1) diff++;
+            else diff--;
+            
+            ret = (ret + queryPreSum(diff-1+OFFSET)) % M;                    
+            updateDelta(diff+OFFSET, 1);
+        }        
+        return ret;        
+    }
+};
+::::::::::::::
+Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/Readme.md
+::::::::::::::
+### 2031.Count-Subarrays-With-More-Ones-Than-Zeros
+
+对于区间的问题，我们很容想到尝试前缀和。我们令diff[i]表示前i个数字里元素1与元素0个数之差。那么对于以i为右边界的合法区间，我们希望它对应的左边界位置j有什么性质呢？显然，我们希望```diff[j] < diff[i]```即可。这样从[j+1:i]这个区间里的元素1一定比0多。有多少个这样的j，就有多少个以i为右边界的合法区间。
+
+那么有多少个j满足这个条件呢？我们显然需要在i之前，记录下所有diff[j]的值并且统计频次，并且累加那些差值小于diff[i]的频次。
+
+比如，我们令nums[k]表示diff为k出现的频次，即有多少个j，满足长度为j的前缀区间里元素1与元素0个数之差为k。对于每一个右边界为i的合法区间，我们需要累加```nums[0]+nums[1]+..+nums[diff[i]-1]```，这个数目就是左边界的数目。计算出这个答案之后，我们还需要更新```nums[diff[i]]+=1```，因为下一个回合的diff[i+1]会再次用到更新后的nums数组。
+
+由此可见，我们需要一个数据结构，能够快速求出nums数组里的指定区间和（更确切地说是前缀和），同时也要支持对nums任意单点的高效修改。显然这样的数据结果，binary index tree是再合适不过了。
+
+此题需要额外处理的一个问题的是：diff的数值范围可以是-10000到+10000，即我们需要记录从nums[-100000]到nums[+100000]。但是树状数组的index必须都是正数。所以我们需要一个```offset=1e5+1```，将差值[-1e5,1e5]映射到正数[1, 2e5+2]上。注意在这里的模板中，树状数组里有意义的元素下标从1开始。
+::::::::::::::
+Segment_Tree/2179.Count-Good-Triplets-in-an-Array/2179.Count-Good-Triplets-in-an-Array.cpp
+::::::::::::::
+class BIT{
+    public:
+    int N;    
+    vector<long long>bitArr; // Note: all arrays are 1-index
+    vector<long long>nums;
+    long long M = 1e9+7;
+    
+    BIT(int N)
+    {
+        this->N = N;
+        bitArr.resize(N+1);
+        nums.resize(N+1);        
+    }
+
+    // increase nums[i] by delta
+    void updateDelta(int i, long long delta) {
+        int idx = i;
+        while (idx <= N)
+        {
+            bitArr[idx]+=delta;
+            bitArr[idx] %= M;
+            idx+=idx&(-idx);
+        }
+    }
+
+    // sum of a range nums[1:j] inclusively
+    long long queryPreSum(int idx){
+        long long result = 0;
+        while (idx){
+            result += bitArr[idx];
+            result %= M;
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    // sum of a range nums[i:j] inclusively
+    long long sumRange(int i, int j) {    
+        return queryPreSum(j)-queryPreSum(i-1);
+    } 
+};
+
+class Solution {
+public:    
+    long long goodTriplets(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int n = nums1.size();
+        unordered_map<int,int>Map;
+        for (int i=0; i<n; i++)
+            Map[nums1[i]] = i;
+        
+        for (int i=0; i<n; i++)
+            nums2[i] = Map[nums2[i]]+1;
+        
+        vector<int>smallerBefore(n,0);
+        BIT bit1(100005);
+        for (int i=0; i<n; i++)
+        {
+            smallerBefore[i] = bit1.sumRange(1,nums2[i]);
+            bit1.updateDelta(nums2[i], 1);
+        }
+        
+        vector<int>largerAfter(n,0);
+        BIT bit2(100005);
+        for (int i=n-1; i>=0; i--)
+        {
+            largerAfter[i] = bit2.sumRange(nums2[i], 100000);
+            bit2.updateDelta(nums2[i], 1);
+        }
+        
+        long long ret = 0;
+        for (int i=0; i<n; i++)
+            ret += (long long)smallerBefore[i] * (long long)largerAfter[i];
+        return ret;
+    }    
+};
+::::::::::::::
+Segment_Tree/2179.Count-Good-Triplets-in-an-Array/Readme.md
+::::::::::::::
+### 2179.Count-Good-Triplets-in-an-Array
+
+本题的入手思路如下。我们容易确定相同数字在两个数组中的位置，类似nums1[i]==nums2[j]
+```
+X X X i X X X X X X X 
+X X X X X X j X X X X
+```
+自然地，我们希望知道有多少```x>i```和```y>j```，使得nums1[x]==nums2[y]. 比较暴力的方法是遍历大于i的所有位置x，查看nums[j+1:n-1]区间内是否有与nums1[x]相同的数。但从这个算法来看并没有优化的空间，因为能有多少配对完全是随机事件。如何更高效地去做呢？
+
+考虑到所有的元素都互不相同，这里有一个技巧：因为我们对nums1里面的元素大小并不关心，我们其实可以只看编号不看数值，这样nums1在我们眼里可以就只是```0,1,2,3...,```，这样就构建了一个映射。将nums1所做的映射也应用在nums2里面，则nums2重新变换成了一个新的乱序排列。这里就发现了规律，变换后nums1里面在i后面的元素，意味着在nums2里面必然都比nums[j]的数值大。反过来说，nums2里那些比nums2[j]大的数，意味着在nums1里时一定排在i后面。所以我们需要根据nums2[j]计算一个新数组largerAfterSelf[j]，表示nums2[j]后面有多少元素比自己大，那么这些元素必然也存在于nums1[i]的后面。
+
+同理，我们可以构造smallerBeforeSelf[j]，表示nums2[j]前面有多少元素比自己小，那么这些元素必然也存在于nums1[i]的后面。
+
+最终的答案就是```sum{smallerBeforeSelf[j] * largerAfterSelf[j]}, for i=0,1,2,..,n-1```. 这个思路在```1713.Minimum-Operations-to-Make-a-Subsequence```里也有应用。
+
+计算largerAfterSelf的方法同```315.Count-of-Smaller-Numbers-After-Self```，可以用分治+归并排序，也可以套用树状数组。
+
+对于BIT的解法，我们注意到所有数值的大小不超过1e5，所以开辟长度为1e5的树状数组作为篮子，每考察nums[i]，就需要在树状数组的[nums[i]+1: INT_MAX]区间内累加所有的数据之和，这个就是largerAfterSelf[i]. 之后记得在idex = nums[i]的位置自增1. 

@@ -1,0 +1,138 @@
+::::::::::::::
+Simulation/2061.Number-of-Spaces-Cleaning-Robot-Cleaned/2061.Number-of-Spaces-Cleaning-Robot-Cleaned.cpp
+::::::::::::::
+class Solution {        
+    int visited[300][300][4];
+    int cleaned[300][300];
+public:
+    int numberOfCleanRooms(vector<vector<int>>& room) 
+    {
+        int m = room.size(), n = room[0].size();        
+        vector<pair<int,int>>dir = {{0,1},{1,0},{0,-1},{-1,0}};
+        int x = 0, y = 0, d = 0;
+        int ret = 0;
+        while (visited[x][y][d]==0)
+        {
+            if (cleaned[x][y]==0)
+            {
+                ret++;
+                cleaned[x][y] = 1;                
+            }
+            
+            visited[x][y][d]=1;
+            
+            int i = x+dir[d].first;
+            int j = y+dir[d].second;
+            if (i>=m||i<0||j>=n||j<0||room[i][j]==1)
+            {
+                d = (d+1)%4;                
+            }
+            else
+            {
+                x = i;
+                y = j;
+            }
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Simulation/2061.Number-of-Spaces-Cleaning-Robot-Cleaned/Readme.md
+::::::::::::::
+### 2061.Number-of-Spaces-Cleaning-Robot-Cleaned
+
+本题就是完全模拟机器人的轨迹，统计哪些格子被第一次访问。
+
+我们还需要记录每一步的{x坐标、y坐标、朝向}这个三元对。当某个三元对重复出现时，说明之后的轨迹将会进入一个循环，就可以终止模拟了。
+::::::::::::::
+Simulation/2069.Walking-Robot-Simulation-II/2069.Walking-Robot-Simulation-II.cpp
+::::::::::::::
+class Robot {
+    int width, height;
+    int d,x,y;
+    vector<pair<int,int>>dir = {{1,0},{0,1},{-1,0},{0,-1}};
+    int total;
+public:
+    Robot(int width, int height) 
+    {
+        this->width = width;
+        this->height = height;
+        d=0, x=0, y=0;
+        total = width*2+(height-2)*2;
+    }
+    
+    void move(int num) 
+    {
+        int flag = 0;
+        
+        while (num > 0)
+        {
+            int remain;
+            if (d==0) remain = width-1-x;
+            else if (d==1) remain = height-1-y;
+            else if (d==2) remain = x;
+            else remain = y;
+
+            if (remain >= num)
+            {
+                x += dir[d].first * num;
+                y += dir[d].second * num;
+                num  = 0;
+            }
+            else
+            {
+                x += dir[d].first * remain;
+                y += dir[d].second * remain;
+                d = (d+1)%4;
+                num -= remain;      
+                
+                num %= total;                 
+                if (num == 0 && atCorner(x,y))
+                {
+                    d = (d-1+4)%4;
+                }                
+            }
+        }
+    }
+    
+    bool atCorner(int x, int y)
+    {
+        if (x==0 && y==0) return true;
+        if (x==0 && y==height-1) return true;
+        if (x==width-1 && y==0) return true;
+        if (x==width-1 && y==height-1) return true;
+        return false;
+    }
+    
+    vector<int> getPos() 
+    {
+        return {x,y};
+    }
+    
+    string getDir() 
+    {
+        if (d==0) return "East";
+        else if (d==1) return "North";
+        else if (d==2) return "West";
+        else return "South";
+    }
+};
+
+/**
+ * Your Robot object will be instantiated and called as such:
+ * Robot* obj = new Robot(width, height);
+ * obj->move(num);
+ * vector<int> param_2 = obj->getPos();
+ * string param_3 = obj->getDir();
+ */
+::::::::::::::
+Simulation/2069.Walking-Robot-Simulation-II/Readme.md
+::::::::::::::
+### 2069.Walking-Robot-Simulation-II
+
+本题就是一道模拟题。大致需要考虑这么几点。
+
+1. 首先在判断在给定方向上，判断还能最多走几步碰到边界。如果走不到边界，那么就走指定的步数。
+2. 其次如果碰到边界还没有走完，那么就需要逆时针转向，然后根据1的方法再走剩余的步数。
+3. 如果已经在边缘绕着走的话，尝试用对```steps % total```来化简套圈的周期过程，其中total就是边缘一圈所需要的步数。通常，一个周期之后会回到原来的地方，方向不变。
+4. 特别注意的一个特例，如果起点本身是在“角落”，而需要走的步数又恰好是total，那么走完一圈之后回到起点时，并不需要变向。也就是说，方向还要倒退90度。

@@ -1,0 +1,3065 @@
+::::::::::::::
+Union_Find/0128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence.cpp
+::::::::::::::
+class Solution {
+	unordered_map<int,int>Father;
+public:
+    int longestConsecutive(vector<int>& nums) 
+	{
+        if (nums.size()==0) return 0;
+
+		for (int i=0; i<nums.size(); i++)
+		{
+			Father[nums[i]]=nums[i];
+			if (Father.find(nums[i]-1)!=Father.end() && FindSet(nums[i]-1)!=FindSet(nums[i]))			
+				Union(nums[i]-1,nums[i]);						
+			if (Father.find(nums[i]+1)!=Father.end() && FindSet(nums[i]+1)!=FindSet(nums[i]))
+				Union(nums[i]+1,nums[i]);			
+		}
+        
+   		for (int i=0; i<nums.size(); i++)
+        {
+            Father[nums[i]]=FindSet(nums[i]);
+        }
+        
+		unordered_map<int,unordered_set<int>>Map;
+		for (auto a:Father)
+			Map[a.second].insert(a.first);
+		
+		int result=0;
+		for (auto a:Map)
+		{
+			int n=a.second.size();
+            result=max(result,n);
+		}
+		return result;
+    }
+
+	int FindSet(int x)
+	{
+		if (Father[x]!=x)
+			Father[x]=FindSet(Father[x]);
+		return Father[x];
+	}
+
+	void Union(int x, int y)
+	{
+		x=Father[x];
+		y=Father[y];
+		if (x<=y)
+			Father[y]=x;
+		else
+			Father[x]=y;
+	}
+
+};
+::::::::::::::
+Union_Find/0128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) 
+    {
+        unordered_set<int>Set;
+        for (auto a:nums)
+            Set.insert(a);
+        
+        int result = 0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (Set.find(nums[i]-1)!=Set.end())
+                continue;
+            int j = nums[i]+1;
+            while (Set.find(j)!=Set.end())
+                j++;
+            
+            result = max(result, j-nums[i]);
+        }
+        return result;
+    }
+};
+::::::::::::::
+Union_Find/0128.Longest-Consecutive-Sequence/Readme.md
+::::::::::::::
+### 128.Longest-Consecutive-Sequence
+
+#### 解法１：　Union Find
+遍历nums，每读入一个数a，分别查看a+1和a-1是否已经收录。是的话就对这两个数尝试进行Union。
+
+最后用一个哈希表unordered_map<int,unordered_set<int>>Map，把所有具有相同Father的数都收集在一个集合里。查看每个集合，找出元素最多的那个。
+  
+#### 解法2：　Set
+此题更加简洁，巧妙和高效的算法是如下．
+
+将所有的元素放入一个集合中．然后我们再遍历一下这个数组nums[i]，如果nums[i]-1不在这个集合中，说明nums[i]可能是一个连续序列的下限，那么我们就从这个下限顺着递增去查验，找到一个完整的递增序列．如果nums[i]-1在这个集合中，说明它有更小的下限，那么我们就不去查验这个递增序列，因为我们规定，只有遇到了下限才会去查验整个序列．于是遍历完整个数组后，对于集合的查验也就仅仅是o(n)次．
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-consecutive-sequence)::::::::::::::
+Union_Find/0130.Surrounded-Regions/130.Surrounded-Regions_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) 
+    {
+        int M=board.size();
+        if (M==0) return;
+        int N=board[0].size();
+        
+        for (int i=0; i<M; i++)
+        {
+            if (board[i][0]=='O') BFS(i,0,board);
+            if (board[i][N-1]=='O') BFS(i,N-1,board);
+        }
+        
+        for (int j=0; j<N; j++)
+        {
+            if (board[0][j]=='O') BFS(0,j,board);
+            if (board[M-1][j]=='O') BFS(M-1,j,board);
+        }
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='#') 
+                 board[i][j]='O';
+             else if (board[i][j]=='O') 
+                 board[i][j]='X';
+         }        
+            
+    }
+    
+    void BFS(int i, int j, vector<vector<char>>& board)
+    {
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        queue<pair<int,int>>q;
+        q.push({i,j});
+        board[i][j]='#';
+        int M=board.size();
+        int N=board[0].size();
+        
+        while (!q.empty())
+        {
+            int x=q.front().first;
+            int y=q.front().second;            
+            q.pop();
+            
+            for (int k=0; k<4; k++)
+            {
+                int m=x+dir[k].first;
+                int n=y+dir[k].second;
+                if (m<0||m>=M||n<0||n>=N)
+                    continue;
+                if (board[m][n]!='O')
+                    continue;
+                board[m][n]='#';
+                q.push({m,n});
+            }
+        }
+    }    
+    
+};
+::::::::::::::
+Union_Find/0130.Surrounded-Regions/130.Surrounded-Regions.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+    int M;
+    int N;
+    public:
+    void solve(vector<vector<char>>& board)
+    {
+        M=board.size();
+        if (M==0) return;
+        N=board[0].size();
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             if (i==0 || i==M-1 || j==0 || j==N-1)
+                 Father[i*N+j]=-1;
+             else
+                 Father[i*N+j]=i*N+j;
+         }
+
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             for (int k=0; k<4; k++)
+             {
+                 int x=i+dir[k].first;
+                 int y=j+dir[k].second;
+                 if (x<0||x>=M||y<0||y>=N) continue;
+                 if (board[x][y]=='X') continue;
+                 if (FindSet(x*N+y)!=FindSet(i*N+j))
+                     Union(x*N+y,i*N+j);
+             }
+         }
+
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             if (FindSet(i*N+j)!=-1)
+                 board[i][j]='X';
+         }
+    }
+
+    int FindSet(int x)
+    {
+        if (Father[x]==-1)
+            return -1;
+        if (Father[x]!=x)
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+
+    void Union(int x,int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        
+        bool flag;
+        if (x/N<y/N)
+            flag=1;
+        else if (x%N==y%N)
+            flag=1;
+        else
+            flag=0;
+        
+        if (flag)        
+            Father[y]=x;        
+        else    
+            Father[x]=y;        
+    }
+};
+::::::::::::::
+Union_Find/0130.Surrounded-Regions/Readme.md
+::::::::::::::
+### 130.Surrounded-Regions
+
+#### BFS
+此题用BFS的想法会更直接。找到所有在边界上的O点，以其为基础做BFS的扩散，标记为#。最后，所有剩余的O都转化为X。
+
+注意，在BFS队列的处理中，进队列的时候就标记#，而不是在出队列的时候。这样能够避免很多各自的重复入列。
+
+#### Union Find
+遍历时忽略所有的X，仅对所有的O进行集合编组。注意，在初始编组中，我们对所有在边界上的O点统一编组为-1，非边界上的O点编组序号为其本身的index。
+
+在第二遍遍历的过程中，我们对所有想邻接的O点进行Union。Union的规则其实不需要改动，因为-1永远比任何index而言都是最小的，按照最小编号进行Union的法则，所有与边界相通的O点都可以最终归为-1. 但要注意的是，在FindSet的操作中需要特殊的操作，需要判断```if (Father[x]==-1) return -1;```因为对于与边界相邻的O点，其递归的终点不是```x==Father[x]```而是-1.
+
+
+[Leetcode Link](https://leetcode.com/problems/surrounded-regions)::::::::::::::
+Union_Find/0305.Number-of-Islands-II/305.Number-of-Islands-II.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) 
+    {
+        Father.resize(m*n);
+        for (int i=0; i<m*n; i++)         
+             Father[i]=-1;
+        
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        int count=0;
+        vector<int>result;
+        
+        for (int i=0; i<positions.size(); i++)
+        {
+            int x=positions[i][0];
+            int y=positions[i][1];
+            if (Father[x*n+y]!=-1)
+            {
+                result.push_back(result.back());
+                continue;
+            }
+            
+            Father[x*n+y]=x*n+y;
+            count+=1;
+            
+            for (int k=0; k<4; k++)
+            {
+                int a=x+dir[k].first;
+                int b=y+dir[k].second;
+                if (a<0||a>=m||b<0||b>=n)
+                    continue;
+                if (Father[a*n+b]==-1)
+                    continue;
+                if (FindSet(a*n+b)!=FindSet(x*n+y))
+                {
+                    count--;
+                    Union(a*n+b,x*n+y);                    
+                }                    
+            }
+            result.push_back(count);
+        }
+        
+        return result;
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        
+        if (x<y)
+            Father[y]=x;
+        else
+            Father[x]=y;        
+    }
+};
+::::::::::::::
+Union_Find/0305.Number-of-Islands-II/Readme.md
+::::::::::::::
+### 305.Number-of-Islands-II
+
+设置所有点的初始Father为-1，表示海洋。
+
+然后依次遍历每一块新陆地，最开始标记它的Root为自身，然后count++。依次考察这个新陆地相邻的四块：如果相邻的是陆地，并且新陆地和老陆地的Root不同，那么说明这是需要合并的两个集合，于是count--，并且将新陆地与旧陆地进行Union。最终实时输出count。
+
+有一个corner case是，positions里面可能会包含重复的同一块陆地。所以每遍历一块新陆地的时候，得先看看是否已经访问过了，已经访问过了就不要再重新标记Root，否则会出错。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-islands-ii)::::::::::::::
+Union_Find/0547.Friend-Circles/547.Friend-Circles.cpp
+::::::::::::::
+
+class Solution {
+    vector<int>Father;
+public:
+    int findCircleNum(vector<vector<int>>& M) 
+    {
+        int N=M.size();
+        
+        for (int i=0; i<N; i++)
+            Father.push_back(i);
+        
+        for (int i=0; i<N; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (M[i][j]==0) continue;
+             
+             if (FindSet(i)!=FindSet(j))
+                 Union(i,j);             
+         }
+        
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            Father[i] = FindSet(i);
+            Set.insert(Father[i]);
+        }
+            
+        return Set.size();
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+    
+    void Union (int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        if (x<=y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/0547.Friend-Circles/Readme.md
+::::::::::::::
+### 547.Friend-Circles
+
+注意，最后需要重新遍历一遍所有节点，通过FindSet来更新所有的父节点。
+```cpp
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            Father[i] = FindSet(i);
+            Set.insert(Father[i]);
+        }
+        return Set.size();
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/friend-circles)::::::::::::::
+Union_Find/0684.Redundant-Connection/684.Redundant-Connection.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) 
+    {        
+        for (int i=0; i<edges.size(); i++)
+        {
+            Father[edges[i][0]]=edges[i][0];
+            Father[edges[i][1]]=edges[i][1];
+        }
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (FindSet(edges[i][0])==FindSet(edges[i][1]))
+                return edges[i];
+            else
+                Union(edges[i][0],edges[i][1]);
+        }
+        return edges[0];
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=FindSet(x);
+        y=FindSet(y);
+        if (x<=y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/0684.Redundant-Connection/Readme.md
+::::::::::::::
+### 684.Redundant-Connection
+
+考虑这些edges所组成的网络是个无向图。那么这个图是tree的充要条件是：所有节点到另外一个节点的通路有且仅有一条。
+
+所以从前往后遍历edges，一旦发现某个edge的两个点，已经在之前的遍历中是联通的了，那么这个edge的加入就会导致“树”定义的不成立，故必须除去。根据题意，保证了只有唯一的答案，故就不用继续往后查下去了。
+
+于是本题就是一个考察union find的基本题。两个基本操作要熟练：
+```cpp
+int FindSet(int x)
+{
+   if (x!=Father[x])
+   {
+      Father[x]=FindSet(Father[x]);
+   }
+   return Father[x];
+}
+```
+```cpp
+void Union (int x, int y)
+{
+   x=Father[x];
+   y=Father[y];
+   if (x<y)
+      Father[y]=x;
+   else
+      Father[x]=y;
+}
+```
+在遍历edges的过程中
+```cpp
+   int x=edges[i][0];
+   int y=edges[i][1];
+   if (FindSet[x]==FindSet[y])  //注意，不是 if (Father[x]==Father[y])，因为Father[x]可能还没更新到这个集合的根。
+      return edges[i];
+   else 
+      Union(x,y);
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/redundant-connection)::::::::::::::
+Union_Find/0685.Redundant-Connection-II/685.Redundant-Connection-II.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) 
+    {
+        vector<int>candA,candB;
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            int u=edges[i][0];
+            int v=edges[i][1];
+            if (Father.find(v)==Father.end())
+                Father[v]=u;
+            else
+            {
+                candA={Father[v],v};
+                candB=edges[i];
+                break;
+            }
+        }
+        
+        for (int i=1; i<=edges.size(); i++)        
+            Father[i]=i;    
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (edges[i]==candB) continue;
+            
+            int u=edges[i][0];
+            int v=edges[i][1];
+            
+            if (findSet(v)==findSet(u))
+            {
+                if (candA.size()==0)
+                    return edges[i];
+                else
+                    return candA;
+            }
+            else
+                Father[v]=u;                
+        }
+        
+        return candB;        
+    }
+    
+	int	findSet(int x)
+	{
+		if (x!=Father[x])
+			Father[x]=findSet(Father[x]);
+		return Father[x];
+	}    
+};
+::::::::::::::
+Union_Find/0685.Redundant-Connection-II/Readme.md
+::::::::::::::
+### 685.Redundant-Connection-II
+
+题意说了，只有一个edge有问题，要把它找出来。这多余的一个edge究竟会如何影响一个valid的tree呢？
+
+首先，它可能造成某个节点会有两个parent。如果我们发现一个节点A（并且只可能有一个）的parent有两个，那么我们就可以把目标迅速缩小到A和它的这两个“父节点”之间的edges，称之为candA和candB。最终的答案必然是二选一。我们的策略是断开candB，根据剩馀的edges来尝试构造这棵树。
+
+如果在重构的过程中（即遍历edges的过程），我们没有遇到“成环”的情况，说明什么？说明我们断开candB的决策是对的，答案就是candB。如果遇到成环的情况，那么说明决策错误，答案应该是candA。重构的过程仍然可以用union find，这和68４.Redundant-Connection-I没有太大区别，只不过union两个节点的时候已经知道明确的指向关系了．
+
+当然，以上前提是candA和candB非空。如果candA和candB是空的，即这些节点中并没有dual parent的情况，那么本题其实就退化成了684.Redundant-Connection-I，只需要检验这些edges是否成环就行了，也就是说，答案只要输出当前使成环的那个edge就行。
+
+补充：
+
+1.为什么不能任意断开一条边就行？考察这个例子：　0->1, 1->2, 2->1. 对于1而言有两个parent,但是如果断开0->1的话，0就成了孤悬的节点．事实上，0应该是根节点．分析可知，如果一个节点有两个parent，这两个入度线路可能有一个不是从根节点方向过来的，必须断开这个；如果两个入度线路都是从根方向来的，那么任意断开一个都是可以的．
+
+２．有一道类似的题，给出一个二叉树的root，并且告诉你这个树里面从某个节点多飞出了一条edge连接到了其他节点上，求修复这棵树．对于这道题，因为已经告知了root，所以当你发现有两个parent的时候，删掉任意一个edge都是可以的．
+
+但是有一个corner case，那就是如果这个多余的edge指向了root，那么整棵树里不会有任何节点拥有两个parent，这需要额外处理．
+
+
+[Leetcode Link](https://leetcode.com/problems/redundant-connection-ii)::::::::::::::
+Union_Find/0721.Accounts-Merge/721.Accounts-Merge.cpp
+::::::::::::::
+class Solution {
+    unordered_map<string,string>Father;
+    unordered_map<string,string>Owner;
+    unordered_map<string,set<string>>Group;
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) 
+    {
+        for (int i=0; i<accounts.size(); i++)
+         for (int j=1; j<accounts[i].size(); j++)
+         {
+             Father[accounts[i][j]]=accounts[i][j];
+             Owner[accounts[i][j]]=accounts[i][0];
+         }
+             
+        
+        for (int i=0; i<accounts.size(); i++)
+        {
+            for (int j=2; j<accounts[i].size(); j++)
+            {
+                if (FindSet(accounts[i][j])!=FindSet(accounts[i][j-1]))
+                    Union(accounts[i][j],accounts[i][j-1]);
+            }
+        }
+        
+        for (int i=0; i<accounts.size(); i++)
+         for (int j=1; j<accounts[i].size(); j++)
+         {
+             string parent = FindSet(accounts[i][j]);
+             Group[parent].insert(accounts[i][j]);
+         }
+        
+        vector<vector<string>>result;
+        for (auto a:Group)
+        {
+            vector<string> temp;
+            temp.push_back(Owner[a.first]);
+            for (auto b:a.second)
+                temp.push_back(b);
+            result.push_back(temp);
+        }
+        return result;
+    }
+    
+    string FindSet(string x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(string x, string y)
+    {
+        x=Father[x];
+        y=Father[y];
+        if (x<y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/0721.Accounts-Merge/Readme.md
+::::::::::::::
+### 721.Accounts-Merge
+
+此题是accounts的聚类，本质就是Union Find，不要被owner的名字所干扰。
+
+初始化时，每个account的Father都是本身。对于一组account里的所有邮箱怎么做归并：完全等价于线性地处理每两个相邻邮箱的归并。每个group的Father可以定义为字典序最小的那个。
+
+归并完之后，再遍历一次所有的邮箱，按照其Father分类就是答案所要求的分类。每个分类对应的人名，就是Father account对应的人名。
+
+
+[Leetcode Link](https://leetcode.com/problems/accounts-merge)::::::::::::::
+Union_Find/0765.Couples-Holding-Hands/765.Couples-Holding-Hands.cpp
+::::::::::::::
+class Solution {
+public:
+    int minSwapsCouples(vector<int>& row) 
+    {        
+        if (row.size()==0) return 0;
+        
+        int N = row.size();
+        unordered_map<int,int>Pos;
+        unordered_map<int,int>coupleID;
+        
+        for (int i=0; i<N; i++)
+        {
+            Pos[row[i]] = i;
+            coupleID[i] = i/2;
+        }
+            
+        int count = 0;
+        
+        for (int k=0; k<N; k+=2)
+        {           
+            if (coupleID[row[k]]==coupleID[row[k+1]])
+                continue;
+
+            int flag=0;       
+            
+            int holder = row[k];
+            int partner = coupleID[holder]*2==holder? holder+1:holder-1;
+            int curPos = k+1;
+            
+            while (flag==0)
+            {                
+                swap(row[Pos[partner]],row[curPos]);                
+                count++;
+                
+                holder = row[Pos[partner]];
+                int holder_pos = Pos[partner];
+                
+                curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;
+                partner = coupleID[holder]*2==holder? holder+1:holder-1;
+                                
+                flag = row[curPos]==partner;
+            }
+            
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Union_Find/0765.Couples-Holding-Hands/765.Couples-Holding-Hands_v2.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int minSwapsCouples(vector<int>& row) 
+    {
+        int N = row.size();
+        Father.resize(N);
+        
+        for (int i=0; i<N; i+=2)
+        {
+            Father[i] = i;
+            Father[i+1] = i;
+        }
+        
+        for (int i=0; i<N; i+=2)
+        {
+            int a = row[i];
+            int b = row[i+1];
+            if (FindFather(a)!=FindFather(b))
+                Union(a,b);
+        }
+        
+        unordered_map<int,int>count;
+        for (int i=0; i<N; i++)
+            count[FindFather(i)] += 1;
+        
+        int ret = 0;
+        for (auto x: count)
+           ret += x.second/2-1;
+        
+        return ret;
+    }
+    
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+};
+
+::::::::::::::
+Union_Find/0765.Couples-Holding-Hands/Readme.md
+::::::::::::::
+### 765.Couples-Holding-Hands
+
+#### 解法1：此题可以人工找到最优的策略,所以属于贪心法.
+
+考虑这么一个字串```03....61....42....```.我们试图想把前两个数字变为```01```使得配成一对,那么最高效的方法就只有把3和1进行交换.于是得到```01....63....42....```接下来,为了充分利用刚才的这次交换,我们可以假定3已经处于了最终位置,那么我们需要把6换掉变成2,使得```23```配成一对.于是得到```01....23....46....```接下来,同理,为了充分利用刚才的这次交换,我们固定4的位置,需要把6换走,换来5,...以此类推,直到某次交换结束后恰好配成了一对不需要再做这样的换走/换来的swap.这其实说明这M次swap形成了一个闭环,共配成了M+1对,是最高效的方法.
+
+接下来,我们可以继续在这个数列里寻找下一个没配对的位置,重复上述的过程,在一个闭环中完成若干次匹配.这种算法可以成为```cyclic swapping```
+
+以上述例子的第二次swap为例,核心的代码如下:
+```cpp
+while (flag==0)
+{
+  // 此时序列是```03....61....42....```,partner是1,curPos是1
+  
+  swap(row[curPos],row[Pos[partner]]);  // 交换3和1,得到```01....63....42....```
+  
+  holder = row[Pos[partner]]; // holder是在当前配对中已经固定好的那个数,即3
+  int holder_pos = Pos[partner];  // holder所在的idx,即此时3的那个位置
+  
+  partner = coupleID[holder]*2==holder? holder+1:holder-1;  //根据holder,确定它的partner,即2
+  curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;   //根据holder_pos,确定下次需要交换的两个数的其中一个位置,即此时3前面的那个位置
+  
+  flag = row[curPos]==partner; //判断此时holder和partner是否已经配对,否则需要继续循环
+}
+```
+
+#### 解法2：Union Find
+
+我们根据如下的规则将所有的人分组：1.同属于一对couple的聚为一组；2.被安排在相邻位置的聚为一组（指的是01，23，45这样的位置）。
+
+这样我们就得到了若干个union。这些union有如下性质：1.每个union之间是没有关系的，即没有任何couple被拆在不同的union里。2.在每个union内部，都可以通过若干次的swap使得内部的couple得到配对。3.每个union不可能再拆分为若干个更小的union。
+
+因为每个union是这样一个“最小”的社区单位，所以他们其实形成了一个闭环。如果一个union内部有k对couple，则最多只需要k-1次swap就可以让所有couple配对。（这是因为每次swap至少能保证一对couple配对，而使得k-1对couple配对后，最后一对couple自然也就配对了。）那么有没有可能用更少次数的swap使其配对呢？其实不可能。
+
+给一个比较粗糙的类比。Union A有k个couple，Union B有m个couple，Union C有n个couple，且k=m+n。要是的B和C理顺关系，只需要m-1+n-1=m+n-2=k-2次swap。如果理顺A也只需要k-2此的话，其意味着A可能分为B+C？但事实上A不可再分，其拓扑结构必然复杂于B+C，所以不可能也用k-2次swap就实现目标，只能用k-1次。
+
+
+[Leetcode Link](https://leetcode.com/problems/couples-holding-hands)::::::::::::::
+Union_Find/0924.Minimize-Malware-Spread/924.Minimize-Malware-Spread.cpp
+::::::::::::::
+
+::::::::::::::
+Union_Find/0924.Minimize-Malware-Spread/Readme.md
+::::::::::::::
+### 924.Minimize-Malware-Spread
+
+本题依然是根据提供的edg的关系，构建图中的若干连通分量。
+
+如果一个连通分量里面有两或两个以上的点是初始感染点，那么无论我们隔离哪一个，最终整个连通图还是会全部感染。这种连通图是我们不想要的。
+
+如果一个连通分量里面只有一个点是初始感染点，那么只要我们隔离了这个点，就能最终拯救整个连通图。显然，我们希望找到最大的这样的连通图，意味着我们可以拯救更多的点，也就是题意里面的minimize M(initial)。
+
+特别注意，如果所有的连通分量都包含>=2个初始感染点，根据要求我们仍要返回一个点作为最终结果（显然应该是initial里面的最小值）。这意味着尽管我们隔离了这样一个点，但也仅能拯救这一个点而已。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimize-malware-spread)::::::::::::::
+Union_Find/0947.Most-Stones-Removed-with-Same-Row-or-Column/947.Most-Stones-Removed-with-Same-Row-or-Column.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+    unordered_map<int,vector<int>>MapX;
+    unordered_map<int,vector<int>>MapY;
+    int N = 10000;
+public:
+    int removeStones(vector<vector<int>>& stones) 
+    {
+        for (auto x:stones)
+        {
+            int i = x[0];
+            int j = x[1];
+            int id = i*N+j;
+            Father[id] = id;
+            MapX[i].push_back(id);
+            MapY[j].push_back(id);
+        }
+        
+        for (auto a: MapX)
+        {
+            int id0 = a.second[0];
+            for (int i=1; i<a.second.size(); i++)
+            {
+                int id = a.second[i];
+                if (FindFather(id0)!=FindFather(id))
+                    Union(id0, id);                
+            }
+        }
+        
+        for (auto a: MapY)
+        {
+            int id0 = a.second[0];
+            for (int i=1; i<a.second.size(); i++)
+            {
+                int id = a.second[i];
+                if (FindFather(id0)!=FindFather(id))
+                    Union(id0, id);                
+            }
+        }
+        
+        unordered_set<int>Set;
+        for (auto x: stones)
+        {
+            int id = x[0]*N+x[1];
+            int id0 = FindFather(id);
+            Set.insert(id0);
+        }
+        
+        return stones.size() - Set.size();
+    }
+    
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<=y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+     }
+};
+::::::::::::::
+Union_Find/0947.Most-Stones-Removed-with-Same-Row-or-Column/Readme.md
+::::::::::::::
+### 947.Most-Stones-Removed-with-Same-Row-or-Column
+
+本题的核心就是找出这样的规律：将所有同行或者同列关系的石头两两归并，最终都融为一个group。在这一个group里面，依次取度为1的石头（即同行或同列还有剩余的石头），按照规则可以一直取到整个组只剩下一个为止。
+
+因为每个group都只剩一个石头，所以可以移走的石头数目，就等于总共的石头数目减去group的数目。
+
+
+[Leetcode Link](https://leetcode.com/problems/most-stones-removed-with-same-row-or-column)::::::::::::::
+Union_Find/0952.Largest-Component-Size-by-Common-Factor/952.Largest-Component-Size-by-Common-Factor.cpp
+::::::::::::::
+class Solution {
+    int L = 1e5;
+    int Father[100005];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }         
+public:
+    vector<int>Eratosthenes(int n)
+    {
+        auto q=vector<int>(n+1,0);
+        for (int i=2; i<=sqrt(n); i++)
+        {
+            if (q[i]==0)
+            {
+                int j=i*2;
+                while (j<n)
+                {
+                    q[j]=1;
+                    j+=i;
+                }
+            }
+        }
+        vector<int>primes;
+        for (int i=2; i<=n; i++)
+        {
+            if (q[i]==0)
+                primes.push_back(i);                
+        }
+        return primes;
+    }
+
+    int largestComponentSize(vector<int>& nums) 
+    {        
+        for (int i=0; i<=L; i++)
+            Father[i] = i;
+
+        vector<int>primes = Eratosthenes(sqrt(L));
+
+        for (int i=0; i<nums.size(); i++)
+        {
+            int x = nums[i];
+            for (int p: primes)
+            {
+                if (x % p == 0)
+                {
+                    if (FindFather(nums[i])!=FindFather(p))
+                        Union(nums[i], p);
+                    while (x%p==0) x/=p;
+                }
+            }
+            if (x > 1)
+            {
+                if (FindFather(nums[i])!=FindFather(x))
+                    Union(nums[i], x);                
+            }
+        }
+
+        unordered_map<int,int>count;
+        for (int i=0; i<nums.size(); i++)
+        {
+            count[FindFather(nums[i])] += 1;
+        }
+        int ret = 0;
+        for (auto x: count)
+            ret = max(ret, x.second);
+        return ret;
+    }
+};
+::::::::::::::
+Union_Find/0952.Largest-Component-Size-by-Common-Factor/Readme.md
+::::::::::::::
+### 952.Largest-Component-Size-by-Common-Factor
+
+此题一眼就能看出是Union Find的解法．任意两个数，只要有质因数相同，就能建立起联系．所以我们将所有的数a,都分解成一系列质因数Pi，将a和Pi都Union起来．最后看所有的数字经过聚类之后，最大的群的数量．
+
+第一个版本，我们可以将100000以内的所有的质数Pi都找出来，挨个查看是否是a的因数．这比直接求a的所有质因数要快．
+```cpp
+        vector<int>primes = makePrimes(100000);
+        for (auto p:primes) Root[p] = p;
+        for (auto a:A) Root[a] = a;
+        
+        for (auto a:A)
+        {
+            for (int p:primes)
+            {
+                if (a%p==0 && findRoot(a)!=findRoot(p))
+                    Union(a,p);                            
+                if (p>a/2) break;
+            }
+        }
+        
+        unordered_map<int,int>Groups;
+        for (auto a:A)              
+            Groups[findRoot(a)]+=1;
+            
+        int result = 0;
+        for (auto x:Groups)
+            result = max(result,x.second);
+        return result;
+```
+这个解法能够AC，但是比其他答案要慢得多．原因是100000以内的质数筛检非常费事．怎么改进呢？
+
+第二个版本，我们只需要求出sqrt(100000)以内的所有质数Pi，这样预处理的规模就小了很多．但是如果继续按照上面的算法，如何保证得到a的所有质因数Pi并建立联系呢？其实我们只要将a不断除以它在sqrt(100000)以内的所有质因数，如果仍然大于1，那么剩下的必然是它唯一的一个大于sqrt(100000)的质因数．因为任何数不可能含有两个大于sqrt(100000)的质因数的．
+```cpp
+        vector<int>primes = makePrimes(sqrt(100000));        
+        for (auto p:primes) Root[p] = p;
+        for (auto a:A) Root[a] = a;
+        
+        for (auto a:A)
+        {
+            int x = a;
+            for (int p:primes)
+            {
+                if (x%p==0)
+                {
+                    if (findRoot(p)!=findRoot(a))
+                        Union(p,a);
+                    while (x%p==0) x = x/p;                    
+                }                
+                if (p>x) break;
+            }
+            
+            if (x>1)
+            {
+                if (Root.find(x)==Root.end()) Root[x] = x;
+                Union(x,a);
+            }
+        }
+        
+        unordered_map<int,int>Groups;
+        for (auto a:A)      
+            Groups[findRoot(a)]+=1;
+            
+        int result = 0;
+        for (auto x:Groups)
+            result = max(result,x.second);
+        return result;
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/largest-component-size-by-common-factor)::::::::::::::
+Union_Find/0990.Satisfiability-of-Equality-Equations/990.Satisfiability-of-Equality-Equations.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    bool equationsPossible(vector<string>& equations) 
+    {
+        Father.resize(26);
+        for (int i=0; i<26; i++)
+            Father[i] = i;
+
+        for (auto & eq: equations)
+        {            
+            if (eq[1]=='=')
+            {
+                int a = eq[0]-'a';
+                int b = eq[3]-'a';
+                if (FindFather(a)!=FindFather(b))
+                    Union(a,b);
+            }
+        }
+
+        for (auto & eq: equations)
+        {            
+            if (eq[1]=='!')
+            {
+                int a = eq[0]-'a';
+                int b = eq[3]-'a';
+                if (FindFather(a)==FindFather(b))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }    
+};
+::::::::::::::
+Union_Find/0990.Satisfiability-of-Equality-Equations/Readme.md
+::::::::::::::
+### 990.Satisfiability-of-Equality-Equations
+
+容易想到如果遇到```a==b```，那么a和b可以通过Union Find聚为一类。
+
+如果遇到```a!=b```，那么我们会检查a和b是否已经聚成了一类，是的话就说明引入了矛盾，返回false；如果不是的话，目前但前暂时没有导出矛盾。但问题是，我们如何保证之后再遇到```a==b```时能记住之前的```a!=b```呢？
+
+解决方法很简单，就是先考察所有的等式，将所有的能聚类的元素都聚起来。然后再考察所有的不等式，考察是否有与之前那些等式相矛盾的地方。没有任何矛盾的话就返回true。
+
+
+[Leetcode Link](https://leetcode.com/problems/satisfiability-of-equality-equations)::::::::::::::
+Union_Find/1061.Lexicographically-Smallest-Equivalent-String/1061.Lexicographically-Smallest-Equivalent-String.cpp
+::::::::::::::
+class Solution {
+    int Father[26];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+public:
+    string smallestEquivalentString(string A, string B, string S) 
+    {
+        for (int i=0; i<26; i++)
+            Father[i] = i;
+        
+        for (int i=0; i<A.size(); i++)
+        {
+            if (FindFather(A[i]-'a')!=FindFather(B[i]-'a'))
+                Union(A[i]-'a', B[i]-'a');
+        }
+        
+        
+        string ret;
+        for (auto ch: S)
+            ret.push_back('a'+FindFather(ch-'a'));
+        
+        return ret;
+    }
+};
+::::::::::::::
+Union_Find/1061.Lexicographically-Smallest-Equivalent-String/Readme.md
+::::::::::::::
+### 1061.Lexicographically-Smallest-Equivalent-String
+
+最基本的UF的模板题。我们根据A[i]和B[i]的"等效"关系进行Union，得到所有联通集合。对于每个集合，我们推选最小的字母作为代表。
+
+然后遍历S，对于每个字母，我们替换为它所在Union的代表字母。得到的就是字典序最小的“等效字符串”
+::::::::::::::
+Union_Find/1101.The-Earliest-Moment-When-Everyone-Become-Friends/1101.The-Earliest-Moment-When-Everyone-Become-Friends.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    int earliestAcq(vector<vector<int>>& logs, int N) 
+    {
+        sort(logs.begin(),logs.end());
+        for (int i=0; i<N; i++)
+            Father[i] = i;
+        int groups = N;
+            
+        for (auto log:logs)
+        {
+            int A = log[1];
+            int B = log[2];
+            if (findFather(A)!=findFather(B))
+            {
+                Union(A,B);
+                groups--;
+            }
+            if (groups==1)
+                return log[0];
+        }
+        return -1;
+        
+    }
+    
+    int findFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = findFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int  y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y]=x;
+        else Father[x] = y;
+    }
+};
+::::::::::::::
+Union_Find/1101.The-Earliest-Moment-When-Everyone-Become-Friends/Readme.md
+::::::::::::::
+### 1101.The-Earliest-Moment-When-Everyone-Become-Friends
+
+本题考察的是常规的Union Find的操作．但是一个比较有意思的知识点是，如果快速判定我们已经聚了几个类呢？
+
+方法是，如果一开始有Ｎ个元素，那就是Ｎ类．每两个不属于同一个类的元素进行union操作，就会少一个类．我们不断聚类的过程中，如果这个类计数器变为了１，那么就说明所有的元素都已经聚为了一类了．这个和 305. Number of Islands II 非常相似．
+
+
+[Leetcode Link](https://leetcode.com/problems/the-earliest-moment-when-everyone-become-friends)::::::::::::::
+Union_Find/1135.Connecting-Cities-With-Minimum-Cost/1135.Connecting-Cities-With-Minimum-Cost.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[2]<b[2];
+    }
+    vector<int>Father;
+        
+public:
+    int findFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = findFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }
+    
+    int minimumCost(int N, vector<vector<int>>& connections) 
+    {
+        Father.resize(N+1);
+        for (int i=1; i<=N; i++)
+            Father[i] = i;
+        
+        sort(connections.begin(), connections.end(), cmp);
+        
+        int result = 0;
+        for (auto edge: connections)
+        {
+            int a = edge[0];
+            int b = edge[1];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                result+=edge[2];
+            }
+        }
+                
+        for (int i=1; i<=N; i++)
+        {
+            if (findFather(i)!=Father[1])
+                return -1;
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Union_Find/1135.Connecting-Cities-With-Minimum-Cost/Readme.md
+::::::::::::::
+### 1135.Connecting-Cities-With-Minimum-Cost
+
+本题的本质是构造一个最小生成树．一个比较简单的算法就是Kruskal算法，本质就是贪心＋Union Find．
+
+按照边的权重顺序（从小到大）将边加入生成树中，但是若加入该边会与生成树形成环则不加入该边。直到树中含有V-1条边为止。这些边组成的就是该图的最小生成树。
+
+Kruskal算法的时间复杂度为 ElogE。 
+
+
+[Leetcode Link](https://leetcode.com/problems/connecting-cities-with-minimum-cost)::::::::::::::
+Union_Find/1168.Optimize-Water-Distribution-in-a-Village/1168.Optimize-Water-Distribution-in-a-Village.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[2]<b[2];
+    }
+    unordered_map<int,int>Father;
+public:
+    int minCostToSupplyWater(int n, vector<int>& wells, vector<vector<int>>& pipes) 
+    {
+        for (int i=0; i<wells.size(); i++)
+        {
+            pipes.push_back({i+1,0,wells[i]});
+        }
+        
+        sort(pipes.begin(),pipes.end(),cmp);
+        
+        for (int i=0; i<=wells.size(); i++)
+            Father[i] = i;
+        int ret  = 0;
+        
+        for (auto p:pipes)
+        {
+            int a = p[0];
+            int b = p[1];
+            if (FindSet(a)!=FindSet(b))
+            {
+                Union(a,b);
+                ret+=p[2];
+            }
+        }
+        
+        return ret;
+    }
+    
+    int FindSet(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+};
+::::::::::::::
+Union_Find/1168.Optimize-Water-Distribution-in-a-Village/Readme.md
+::::::::::::::
+### 1168.Optimize-Water-Distribution-in-a-Village
+
+此题的解法非常巧妙。你增加一个隐藏的0号节点，把每个节点自建井的费用wells[i]想象成连接[0,i]的边的费用。这样，这道题就变成了求最少的费用将所有的节点（包括隐藏的0号）连接起来。这就是最基本的最小生成树问题（MST），和```1135.Connecting-Cities-With-Minimum-Cost```一模一样。
+
+
+[Leetcode Link](https://leetcode.com/problems/optimize-water-distribution-in-a-village)::::::::::::::
+Union_Find/1202.Smallest-String-With-Swaps/1202.Smallest-String-With-Swaps.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    string smallestStringWithSwaps(string s, vector<vector<int>>& pairs) {
+        int N = s.size();
+        Father.resize(N);
+        for (int i=0; i<N; i++)
+            Father[i] = i;
+        
+        for (auto& p :pairs)
+        {
+            int a = p[0];
+            int b = p[1];
+            if (FindFather(a)!=FindFather(b))
+                Union(a,b);
+        }
+        
+        unordered_map<int, vector<int>>Map; // root idx -> all indexes
+        for (int i=0; i<N; i++)
+        {
+            Map[FindFather(i)].push_back(i);
+        }
+        
+        for (auto x: Map)
+        {
+            string temp;
+            for (auto idx : x.second)
+                temp.push_back(s[idx]);
+            sort(temp.begin(),temp.end());
+            int k = 0;
+            for (auto idx : x.second)
+            {
+                s[idx] = temp[k];
+                k++;
+            }
+        }
+        
+        return s;
+    }
+    
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+};
+::::::::::::::
+Union_Find/1202.Smallest-String-With-Swaps/Readme.md
+::::::::::::::
+### 1202.Smallest-String-With-Swaps
+
+很显然，将所有有联通关系的index都union成一个连通图，那么这些index对应的字符其实就可以任意调换顺序，想像成“冒泡法”就不难理解了。
+
+将一个连通分量内的字符串抽取出来按照字典序重新排列，然后再依次放回这些index的位置，就是答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/smallest-string-with-swaps)::::::::::::::
+Union_Find/1319.Number-of-Operations-to-Make-Network-Connected/1319.Number-of-Operations-to-Make-Network-Connected.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int makeConnected(int n, vector<vector<int>>& connections) 
+    {
+        Father.resize(n);
+        vector<int>edges(n,0);
+        unordered_map<int,int>cables;
+        unordered_map<int,int>elements;
+
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+
+        for (auto& edge: connections)
+        {
+            if (FindFather(edge[0])!=FindFather(edge[1]))
+                Union(edge[0],edge[1]);
+            edges[edge[0]]+=1;
+            edges[edge[1]]+=1;
+        }
+
+        for (int i=0; i<n; i++)
+        {
+            Father[i] = FindFather(i);
+            cables[Father[i]] += edges[i];
+            elements[Father[i]] += 1;
+        }
+
+        int redundant = 0;
+        int islands = cables.size();
+        for (auto x: cables)
+        {
+            int root = x.first;
+            redundant += cables[root]/2+1-elements[root];
+        }
+
+        if (redundant>=islands-1)
+            return islands-1;
+        else 
+            return -1;        
+    }
+
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+};
+::::::::::::::
+Union_Find/1319.Number-of-Operations-to-Make-Network-Connected/Readme.md
+::::::::::::::
+### 1319.Number-of-Operations-to-Make-Network-Connected
+
+首先想到的是，属于同一组互联的多个计算机可能会有一些冗余的连接线。那么冗余多少呢？很简单，有N个计算机已经互联的话，那么只需要N-1条线就可以保证它们互联，多余的线其实都是可以拔掉的，我们可以改用它来连接不同局域网。
+
+接下来，我们知道，如果将M个不相连的局域网都互通，那么需要M-1条线。
+
+所以总体的算法是：用Union Find的方法来数一下有M个局域网；再计算每个局域网里有多少冗余的传输线并相加。如果所有冗余的传输线数目K>=M-1的话，那么就可以把所有的计算机都连接起来。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-operations-to-make-network-connected)::::::::::::::
+Union_Find/1489.Find-Critical-and-Pseudo-Critical-Edges-in-Minimum-Spanning-Tree/1489.Find-Critical-and-Pseudo-Critical-Edges-in-Minimum-Spanning-Tree.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[2]<b[2];
+    }
+    vector<int>Father;
+    
+public:
+    int findFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = findFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }
+    
+    int mst(int n, vector<vector<int>>& edges, int idx)
+    {
+        Father.resize(n);
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+        
+        unordered_set<int>temp;
+        
+        int result = 0;
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (i==idx) continue;
+            
+            auto edge = edges[i];
+            int a = edge[0];
+            int b = edge[1];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                result+=edge[2];
+            }            
+        }
+        
+        for (int i=0; i<n; i++)
+        {
+            if (findFather(i)!=Father[1])
+                return INT_MAX;
+        }
+                
+        return result;
+    }
+    
+    
+    vector<vector<int>> findCriticalAndPseudoCriticalEdges(int n, vector<vector<int>>& edges) 
+    {
+        unordered_set<int>Set1;
+        unordered_set<int>Set2;
+
+        for (int i=0; i<edges.size(); i++)
+            edges[i].push_back(i);
+        
+        sort(edges.begin(), edges.end(), cmp);
+        
+        int minWt = mst(n, edges, -1);
+                
+        for (int i=0; i<edges.size(); i++)
+        {            
+            int wt = mst(n, edges, i);
+            if (wt > minWt) Set1.insert(edges[i][3]);
+        }
+        
+        for (int i=0; i<edges.size(); i++)
+        {                        
+            auto edge = edges[i];
+            
+            edges.insert(edges.begin(), edge);
+                        
+            int wt = mst(n, edges, -1);
+            if (wt == minWt) Set2.insert(edge[3]);            
+
+            edges.erase(edges.begin());
+        }
+
+        vector<int>rets1(Set1.begin(), Set1.end());
+
+        vector<int>rets2;           
+        for (int x:Set2)
+        {
+            if (Set1.find(x)==Set1.end())
+                rets2.push_back(x);
+        }
+        
+        return {rets1, rets2};
+        
+    }
+};
+::::::::::::::
+Union_Find/1489.Find-Critical-and-Pseudo-Critical-Edges-in-Minimum-Spanning-Tree/Readme.md
+::::::::::::::
+### 1489.Find-Critical-and-Pseudo-Critical-Edges-in-Minimum-Spanning-Tree
+
+此题在基本的MST建树的操作上套了一层有意思的壳。
+
+根据关键边的定义，如果删除了它，那么无法生成最初数值的MST。所以我们挨个试每条边，满足这个条件的就是关键边。我们将他们放入Set1.
+
+伪关键边的定义是，如果删除了它，那么依然可以生成一棵最小数值的MST；但是如果如果用了它，也能生成一棵最小数值的MST。前者很好验证，就是Set1的补集。后者怎么验证呢？我们可以强迫在构建MST的时候使用这条边。如何最小程度地改动原来的MST生成代码来实现这个功能呢？考虑到排序后的edges数组的第一条边总是会被用到的，我们就把待考察的这条边放在edges数组的第一个，那么就可以保证在构建MST的时候用上它。如果生成的MST与之前的最小输出的相同，那么就符合后者的条件，放入Set2. 因此，Set2中那些不属于Set1的边，就是所求的第二类边。
+
+::::::::::::::
+Union_Find/1579.Remove-Max-Number-of-Edges-to-Keep-Graph-Fully-Traversable/1579.Remove-Max-Number-of-Edges-to-Keep-Graph-Fully-Traversable.cpp
+::::::::::::::
+class Solution {    
+    int N;
+    int Father[100001];
+    int Father0[100001];
+public:
+    int findFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = findFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }
+    
+    int maxNumEdgesToRemove(int n, vector<vector<int>>& edges) 
+    {
+        N = n;
+        
+        vector<vector<int>>edge0;
+        vector<vector<int>>edge1;
+        vector<vector<int>>edge2;
+        for (auto edge: edges)
+        {
+            if (edge[0]==3)
+                edge0.push_back({edge[1],edge[2]});
+            else if (edge[0]==1) 
+                edge1.push_back({edge[1],edge[2]});
+            else if (edge[0]==2) 
+                edge2.push_back({edge[1],edge[2]});                
+        }
+        
+        int count0 = 1, count1=0, count2=0;
+                
+        for (int i=0; i<N; i++)
+            Father[i] = i;
+        
+        for (auto edge: edge0)
+        {
+            int a = edge[0];
+            int b = edge[1];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                count0++;
+            }
+        }
+        
+        memcpy(Father0, Father, sizeof(Father));
+        
+        for (auto edge: edge1)
+        {
+            int a = edge[0];
+            int b = edge[1];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                count1++;
+            }
+        }
+        if (count0+count1!=n) return -1;
+        
+        memcpy(Father, Father0, sizeof(Father));
+        
+        for (auto edge: edge2)
+        {
+            int a = edge[0];
+            int b = edge[1];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                count2++;
+            }
+        }
+        if (count0+count2!=n) return -1;
+        
+        return edge0.size()-(count0-1) + edge1.size()-count1 + edge2.size()-count2;
+    }
+};
+::::::::::::::
+Union_Find/1579.Remove-Max-Number-of-Edges-to-Keep-Graph-Fully-Traversable/Readme.md
+::::::::::::::
+### 1579.Remove-Max-Number-of-Edges-to-Keep-Graph-Fully-Traversable
+
+我们先考虑这样一个问题：给一个包含N个点的联通图，这个图里面有M条边（M最多可以是N*(N-1)/2个），问如何找出N-1条边，恰好将这N个点都联通。
+
+针对这题的解法是：我们任意给一个M条边的排列（也就是说顺序无所谓），依次check这些边。如果这条边连接两个未联通的点，那我们就采用这条边，同时意味着这两个点以及与这两个点已经联通的那些点，就被联通在了一起。如果这条边连接了两个已经联通的点，显然这条边就是冗余的，我们就不采用。这样我们找到N-1条可以采用的边之后，任务就完成了。
+
+思考一下上面的方法，如果我们找到了N-1条边，是否一定意味着N个点都联通了，是否会有某个点还没被联通？假设某个点X未被选中的这N-1条边联通，那么必然有一条连接X和另一点（比如说Y）的边e没有被选中。但是我们当初在查验e边的时候，没有选中它是因为认为它连接的两个点已经联通了，这就引发了矛盾。所以上述的方案是完备的，我们找到的这N-1条一定能联通这N个点。
+
+然后我们回到这个问题。现在有三种类型的边。我们势必会优先使用第三种类型的边，希望第三种类型的边能够联通尽量多的点。可以想象，操作之后整个图变成了若干个割裂的联通块，但是每个联通块内部是最优联通的（也就是用了最少的边）。每个联通块内部，是可以让两个人都自由访问到的。
+
+然后我们在此联通状态的基础上，逐步添加第一类的边直至让N个点都联通。这样满足了Alice能访问所有的点。
+
+并行的，我们在之前的联通状态的基础上，逐步添加第二类的边直至让N个点都联通。这样满足了Bob能访问所有的点。
+
+这三个步骤所选中的所有的边的数目，就是需要最少的、可让两个人都联通所有点的边。剩余的都是可以删除的冗余边。
+::::::::::::::
+Union_Find/1584.Min-Cost-to-Connect-All-Points/1584.Min-Cost-to-Connect-All-Points_Kruskal.cpp
+::::::::::::::
+class Solution {
+    int Father[1000];
+    
+    int findFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = findFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }    
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) 
+    {
+        int n = points.size();
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+        
+        priority_queue<array<int,3>, vector<array<int,3>>, greater<array<int,3>>>edges;
+        for (int i=0; i<n; i++)
+            for (int j=i+1; j<n; j++)
+            {
+                int dis = abs(points[i][0]-points[j][0])+abs(points[i][1]-points[j][1]);
+                edges.push({dis, i, j});
+            }
+               
+        int result = 0;
+        int count = 1;
+        while (count < n)
+        {       
+            auto edge = edges.top();
+            edges.pop();
+            int a = edge[1];
+            int b = edge[2];
+            int dis = edge[0];
+            if (findFather(a)!=findFather(b))
+            {
+                Union(a,b);
+                count++;
+                result+=dis;
+                if (count==n) break;
+            }
+        }
+        
+        return result;        
+    }
+};
+::::::::::::::
+Union_Find/1584.Min-Cost-to-Connect-All-Points/1584.Min-Cost-to-Connect-All-Points_Prim.cpp
+::::::::::::::
+class Solution {
+    int visited[1000];
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) 
+    {
+        int n = points.size();
+        
+        vector<vector<pair<int,int>>>edges(n);
+        for (int i=0; i<n; i++)
+            for (int j=i+1; j<n; j++)
+            {
+                int dis = abs(points[i][0]-points[j][0])+abs(points[i][1]-points[j][1]);
+                edges[i].push_back({dis, j});
+                edges[j].push_back({dis, i});
+            }
+        
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq(edges[0].begin(), edges[0].end());
+        visited[0] = 1;
+        int result = 0;
+                
+        for (int k=0; k<n-1; k++)
+        {
+            while (!pq.empty() && visited[pq.top().second]==1)
+                pq.pop();            
+            int next = pq.top().second;
+            visited[next] = 1;
+            result += pq.top().first;
+            pq.pop();                       
+            
+            for (auto edge: edges[next])
+                pq.push(edge);
+        }                
+        
+        return result;        
+    }
+};
+::::::::::::::
+Union_Find/1584.Min-Cost-to-Connect-All-Points/1584.Min-Cost-to-Connect-All-Points_Prim_v2.cpp
+::::::::::::::
+class Solution {   
+    int visited[1000];
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) 
+    {
+        int n = points.size();
+        if (n==1) return 0;
+        
+        vector<int>minDist(n,INT_MAX);  // the min dist from point i to the current MST                
+        minDist[0] = 0;
+                
+        int ret = 0;
+        int cur = 0;
+        for (int k=0; k<n; k++)
+        {
+            int next;
+            int gmin = INT_MAX;
+            for (int j = 0; j < n; ++j) {
+                if (visited[j]==0 && minDist[j] <= gmin) 
+                {
+                    gmin = minDist[j];
+                    next = j;
+                }
+            }
+            visited[next] = 1;
+            ret += gmin;
+            
+            for (int j = 0; j < n; ++j) 
+                if (visited[j] == 0) 
+                {
+                    int new_dist = abs(points[j][0] - points[next][0]) + abs(points[j][1] - points[next][1]);
+                    minDist[j] = min(minDist[j], new_dist);
+                }
+        }                
+        return ret;        
+    }
+};
+::::::::::::::
+Union_Find/1584.Min-Cost-to-Connect-All-Points/Readme.md
+::::::::::::::
+### 1584.Min-Cost-to-Connect-All-Points
+
+#### 解法1：Kruskal
+本题依然是MST的基本题，但是时间要求非常严格。对于Krusal算法而言，需要将所有的边进行排序。时间复杂度ElogE。本题中，任意两点之间都可能有路径，所以复杂度是N^2logN，对于不开o2优化的C++而言极有可能TLE。
+
+降低TLE的方法有两个：
+1. 使用priority_queue而不是直接排序整个边长数组。原因是pq不会将所有装入其中的元素马上排序（建堆过程是o(E)），而是只有访问顶堆元素的时候才将最小值推出来。因为我们只需要找到N条边，数量级比N^2的总边数要少的多，所以可以省去不需要的排序过程。
+2. 避免使用vector（时空非常坑爹），改用定长数组array<int,N>这个数据结构。
+
+#### 解法2：Prim
+Prim算法通常的复杂度也是ElogV，本题就是o(N^2logN)。
+
+Prim的基本思想是，MST从节点0开始生长。MST里面只有节点0时，从所有节点0出发的边里面挑一个最短的，这时MST里就有两个点。第二步是从这两个点所出发的所有边里面挑一个最短的，如果对应的第三点是已经访问过的，那就换下一个最短边，直到能确定第三个点。依次继续，直至确定N个点，则MST构建完成。
+
+同理，priority_queue的模板类尽量避免用vector。
+
+#### 解法3：Prim, o(N^2)
+在特殊情况下，Prim有o(N^2)的实现，那就是可以用邻接表来表示任意的边。这样对于稠密图而言，Prim的这种实现在时间上会有优势。
+
+本题是个完全图，任意两点之间都有边，所以是可以有o(N^2)的实现，具体方法是：我们在构建MST的过程中收入了一个新点k，此时收录的点集是{q}. 查看所有未被收入的点pi到k点的距离，用来更新di，其中di就是pi到距离点集{q}最小的长度。这样我们就可以在{di}找到最小的那个，对应的点就是下一次要收入的新点k'. 因此这样的算法就不要使用priority_queue.
+
+
+::::::::::::::
+Union_Find/1627.Graph-Connectivity-With-Threshold/1627.Graph-Connectivity-With-Threshold.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+    
+    vector<bool> areConnected(int n, int threshold, vector<vector<int>>& queries) 
+    {
+        Father.resize(n+1);
+        for (int i=1; i<=n; i++)
+            Father[i] = i;
+        
+        for (int k = threshold + 1; k <= n; k++) 
+        {
+            for (int x = 2 * k; x <= n; x += k) 
+            {
+                if (FindFather(x)!=FindFather(k))
+                    Union(x, k);
+            }
+        }
+        
+        vector<bool>rets;
+        for (auto query: queries)
+            rets.push_back(FindFather(query[0])==FindFather(query[1]));
+        return rets;
+        
+    }
+};
+::::::::::::::
+Union_Find/1627.Graph-Connectivity-With-Threshold/1627.Graph-Connectivity-With-Threshold_v2.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+    
+    vector<bool> areConnected(int n, int threshold, vector<vector<int>>& queries) 
+    {
+        Father.resize(n+1);
+        for (int i=1; i<=n; i++)
+            Father[i] = i;
+        
+        vector<int>visited(n+1,0);
+        for (int k = threshold + 1; k <= n; k++) 
+        {
+            if (visited[k]==1) continue;
+            for (int x = 2 * k; x <= n; x += k) 
+            {
+                visited[x] = 1;
+                if (FindFather(x)!=FindFather(k))
+                    Union(x, k);
+            }
+        }
+        
+        vector<bool>rets;
+        for (auto query: queries)
+            rets.push_back(FindFather(query[0])==FindFather(query[1]));
+        return rets;
+        
+    }
+};
+::::::::::::::
+Union_Find/1627.Graph-Connectivity-With-Threshold/Readme.md
+::::::::::::::
+### 1627.Graph-Connectivity-With-Threshold
+
+本题考查的是如何高效地选择两个数进行Union.如果是遍历数字A、遍历数字B，再判断是否有大于threshold的公约数，时间复杂度会非常高。
+
+一个自然的想法是，遍历大于threshold的公约数x，然后查看x的倍数有哪些。所有关于x的倍数必然都是应该Union的。时间复杂度大概是```1*n+2*n/2+3*n/3+...+n*n/n = n*(1/1+1/2+1/3+...+1/n)```，后者是一个调和级数，增长的趋势近似于logN。所以总的时间复杂度是O(NlogN)。当然关于Union的操作我们得另算，我们可以近似认为均摊后是o(1)，本质上是一个关于n的常数。
+
+再进一步的改进是，我们不用遍历所有大于threshold的数作为公约数。我们如果已经考察过x作为公约数之后，所有的x的倍数都不用再考察作为公约数了。这等价于埃拉托斯特尼筛法。时间复杂度是O(NloglogN).
+::::::::::::::
+Union_Find/1631.Path-With-Minimum-Effort/1631.Path-With-Minimum-Effort_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int minimumEffortPath(vector<vector<int>>& heights) 
+    {
+        int left = 0, right = 1000000;
+        while (left < right)
+        {
+            int mid = left+(right-left)/2;
+            if (isOK(heights, mid))
+                right = mid;
+            else
+                left = mid+1;           
+            
+        }
+        return left;
+    }
+
+    bool isOK(vector<vector<int>>& heights, int a)
+    {
+        int m = heights.size();
+        int n = heights[0].size();
+        auto visited = vector<vector<int>>(m, vector<int>(n,0));
+        visited[0][0] = 1;
+        queue<pair<int,int>>q;
+        q.push({0,0});
+        auto dir = vector<pair<int,int>>({{1,0},{-1,0},{0,1},{0,-1}});
+        while (!q.empty())
+        {
+            int x = q.front().first;
+            int y = q.front().second;
+            q.pop();
+            for (int k=0; k<4; k++)
+            {
+                int i = x+dir[k].first;
+                int j = y+dir[k].second;
+                if (i<0||i>=m||j<0||j>=n)
+                    continue;
+                if (visited[i][j]==1)
+                    continue;
+                if (abs(heights[i][j]-heights[x][y])>a)
+                    continue;
+                q.push({i,j});
+                visited[i][j]=1;
+            }
+        }
+        return visited[m-1][n-1]==true;
+    }
+};
+::::::::::::::
+Union_Find/1631.Path-With-Minimum-Effort/1631.Path-With-Minimum-Effort_v2.cpp
+::::::::::::::
+class Solution {
+    int Father[10001];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }    
+public:
+    int minimumEffortPath(vector<vector<int>>& heights) 
+    {
+        int m = heights.size();
+        int n = heights[0].size();
+        for (int i=0; i<m*n; i++)
+            Father[i] = i;
+        
+        vector<vector<int>>q;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (i!=m-1) q.push_back({abs(heights[i][j]-heights[i+1][j]),i*n+j,(i+1)*n+j});
+                if (j!=n-1) q.push_back({abs(heights[i][j]-heights[i][j+1]),i*n+j,i*n+j+1});
+            }
+        sort(q.begin(), q.end());
+        
+        for (auto x:q)
+        {
+            if (FindFather(x[1])!=FindFather(x[2]))
+                Union(x[1],x[2]);
+            if (FindFather(0)==FindFather((m-1)*n+n-1))
+                return x[0];
+        }
+        return 0;
+    }
+};
+::::::::::::::
+Union_Find/1631.Path-With-Minimum-Effort/Readme.md
+::::::::::::::
+### 1631.Path-With-Minimum-Effort
+
+此题的道路可以上下左右行走，显然不是动态规划。用DFS搜索路径的话也是一个天文数字。所以此题必有巧解。
+
+#### 解法1：二分搜索
+假设minimum effort是a，那么意味着路径上不能有超过diff大于a的边。怎么验证有没有呢？BFS走一遍就行。从左上角向外扩展，遇到diff大于a的边就绕行，看看最终能否到达右下角。成功的话，就尝试减小a；不成功的话，就尝试增大a。这个时间复杂度是```o(M*N*logH)```，H是矩阵元素的最大值。
+
+#### 解法2：Union Find
+我们将所有的边按照diff从小到大排个序。优先选最小的边，看能联通哪些点；再选次小的边，看能联通哪些点。直至选中某条边之后，发现起点和终点恰好联通，那么这条边的diff就是答案。
+::::::::::::::
+Union_Find/1632.Rank-Transform-of-a-Matrix/1632.Rank-Transform-of-a-Matrix_v1.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+public:
+    vector<vector<int>> matrixRankTransform(vector<vector<int>>& matrix) 
+    {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        Father.resize(m*n);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                Father[i*n+j] = i*n+j;
+                
+        vector<vector<int>>next(m*n);        
+        vector<int>inDegree(m*n,0);        
+        
+        for (int i=0; i<m; i++)
+        {
+            vector<pair<int,int>>temp;
+            for (int j=0; j<n; j++)
+                temp.push_back({matrix[i][j], i*n+j});
+            sort(temp.begin(), temp.end());
+            for (int j=1; j<n; j++)
+            {
+                if (temp[j].first>temp[j-1].first)
+                {
+                    next[temp[j-1].second].push_back(temp[j].second);
+                    inDegree[temp[j].second]++;
+                }                    
+                else
+                {
+                    if (FindFather(temp[j-1].second)!=FindFather(temp[j].second))
+                        Union(temp[j-1].second, temp[j].second);
+                }                    
+            }
+        }
+        
+        for (int j=0; j<n; j++)
+        {
+            vector<pair<int,int>>temp;
+            for (int i=0; i<m; i++)
+                temp.push_back({matrix[i][j], i*n+j});
+            sort(temp.begin(), temp.end());
+            for (int i=1; i<m; i++)
+            {
+                if (temp[i].first>temp[i-1].first)
+                {
+                    next[temp[i-1].second].push_back(temp[i].second);
+                    inDegree[temp[i].second]++;
+                }                    
+                else
+                {
+                    if (FindFather(temp[i-1].second)!=FindFather(temp[i].second))
+                        Union(temp[i-1].second, temp[i].second);
+                }                    
+            }
+        }
+                        
+        vector<vector<int>>group(m*n);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int root = FindFather(i*n+j);
+                group[root].push_back(i*n+j);
+                if (root!=i*n+j)
+                    inDegree[root]+=inDegree[i*n+j];
+            }
+        
+        queue<int>q;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (Father[i*n+j]==i*n+j && inDegree[i*n+j]==0)
+                    q.push(i*n+j);
+            }
+        
+        int idx = 1;
+        auto rets = vector<vector<int>>(m,vector<int>(n,-1));
+        while (!q.empty())
+        {
+            int len = q.size();
+            while (len--)
+            {
+                int cur = q.front();
+                q.pop();
+                
+                for (auto connect: group[cur])
+                    rets[connect/n][connect%n] = idx;
+                                        
+                for (auto connect: group[cur])
+                    for (auto nxt: next[connect])
+                    {
+                        inDegree[Father[nxt]]--;
+                        if (inDegree[Father[nxt]]==0)
+                            q.push(Father[nxt]);
+                    }                        
+            }
+            idx++;            
+        }        
+        return rets;        
+    }
+};
+::::::::::::::
+Union_Find/1632.Rank-Transform-of-a-Matrix/1632.Rank-Transform-of-a-Matrix_v2.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+public:
+    vector<vector<int>> matrixRankTransform(vector<vector<int>>& matrix) 
+    {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        Father.resize(m*n);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                Father[i*n+j] = i*n+j;
+                        
+        for (int i=0; i<m; i++)
+        {
+            vector<pair<int,int>>temp;
+            for (int j=0; j<n; j++)
+                temp.push_back({matrix[i][j], i*n+j});
+            sort(temp.begin(), temp.end());
+            for (int j=1; j<n; j++)
+            {
+                if (temp[j].first == temp[j-1].first)
+                {
+                    if (FindFather(temp[j-1].second)!=FindFather(temp[j].second))
+                        Union(temp[j-1].second, temp[j].second);
+                }                    
+            }
+        }
+        
+        for (int j=0; j<n; j++)
+        {
+            vector<pair<int,int>>temp;
+            for (int i=0; i<m; i++)
+                temp.push_back({matrix[i][j], i*n+j});
+            sort(temp.begin(), temp.end());
+            for (int i=1; i<m; i++)
+            {  
+                if (temp[i].first==temp[i-1].first)
+                {
+                    if (FindFather(temp[i-1].second)!=FindFather(temp[i].second))
+                        Union(temp[i-1].second, temp[i].second);
+                }                    
+            }
+        }
+
+        vector<pair<int,int>>nums;                
+        vector<vector<int>>group(m*n);
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int root = FindFather(i*n+j);
+                group[root].push_back(i*n+j);
+                nums.push_back({matrix[i][j], i*n+j});
+            }
+        sort(nums.begin(), nums.end());
+
+        vector<int>rowRank(m,0);
+        vector<int>colRank(m,0);
+        auto rets = vector<vector<int>>(m, vector<int>(n));
+
+        for (auto p: nums)
+        {
+            int val = p.first;
+            int x = p.second/n;
+            int y = p.second%n;
+            if (rets[x][y]!=0) continue; 
+            
+            int r = 0;            
+            for (auto p: group[Father[x*n+y]])
+            {
+                r = max(r, rowRank[p/n]);
+                r = max(r, colRank[p%n]);
+            }
+            for (auto p: group[Father[x*n+y]])
+            {
+                rowRank[p/n] = r+1;
+                colRank[p%n] = r+1;
+                rets[p/n][p%n] = r+1;
+            }
+        }
+        return rets;        
+    }
+};
+::::::::::::::
+Union_Find/1632.Rank-Transform-of-a-Matrix/Readme.md
+::::::::::::::
+### 1632.Rank-Transform-of-a-Matrix
+
+#### 解法1：拓扑排序
+拓扑排序是比较容易想到的方法。对于同一行（列）而言，如果把所有数字从小到大排列，那么较大的数字num[i]应该比它前面的数字num[i-1]的rank大，所以我们可以将构造一条从num[i-1]指向num[i]的路径。得到所有路径之后，我们就得到一张图。此时所有入度为0的这批点（即最外围的点）没有任何约束关系（意思是没有rank必须必它们小的其他点），故他们的rank就可以赋值为1. 将这批点剥离之后，剩下的所有入度为0的点，他们的rank可以赋值为2，以此类推。
+
+但是有一种情况，就是同一行（列）中，如果有相同的数字，那么他们必须有相同的rank，因此在拓扑排序中需要把它们当做同一个点来处理。事实上，需要当做同一个点来处理的点可能有多个（而且会分布在不同的row或col里）。这就需要用union find来将这些点归并到同一个group里。同一个group的点在拓扑排序中只被处理一次，赋值相同的rank。
+
+如果用拓扑排序来做，此题比较棘手的地方就是在于处理indegree。我们知道，拓扑排序的每个回合，我们剥离入度为0的点。在这里，我们需要将所有属于同一个group的点的入度要累加在一块儿计算。当整个group的入度为0的时候，我们才将其加入队列；当它弹出队列的时候，该group的所有点都赋予相同的rank。然后这些点的剥离会给各自next的点减少一个入度，但注意，这些入度的自减也必须都统计在整个group上。
+
+#### 解法2：贪心
+我们将所有的点从到大排个序。全局最小点自然rank是1，并且对于该点所在行和列的其他数字，它们的rank必然要从2开始。
+
+更general地，我们从小到大依次处理每个数字的时候，应该如何给它定rank呢？其实只要查看它所在的行、列各自已经赋值的rank。比如说，该行已经有其他数字被rank为3，该列已经有其他数字被rank为4，那么显然这个数字只能被rank为5.接下来，记得要把这个数字所在的行和列，都更新标记，因为它们已经赋值的rank变成了5. 根据这个规则我们就可以把所有数字都rank一遍。
+
+同样，有一种情况需要处理，就是前面所说的，可能有一批数字必须有相同的rank。所以如果想要rank某个数，必须考察所有同属一个group的数（的行与列），才能确定这个rank。然后给它们赋值相同的rank，然后更新它们的行/列的已rank信息。
+
+
+::::::::::::::
+Union_Find/1697.Checking-Existence-of-Edge-Length-Limited-Paths/1697.Checking-Existence-of-Edge-Length-Limited-Paths.cpp
+::::::::::::::
+class Solution {
+    int Father[100005];
+    
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[2]<b[2];
+    }
+public:
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }
+    
+    vector<bool> distanceLimitedPathsExist(int n, vector<vector<int>>& edgeList, vector<vector<int>>& queries) 
+    {
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+        
+        for (int i=0; i<queries.size(); i++)
+            queries[i].push_back(i);
+        
+        sort(queries.begin(), queries.end(), cmp);        
+        sort(edgeList.begin(), edgeList.end(), cmp);
+        
+        int i = 0;
+        vector<bool>ret(queries.size(),0);
+        for (auto& q: queries)
+        {
+            while (i<edgeList.size() && edgeList[i][2] < q[2])
+            {
+                int a = edgeList[i][0];
+                int b = edgeList[i][1];
+                if (FindFather(a)!=FindFather(b))
+                    Union(a,b);
+                i++;
+            }
+            int idx = q[3];
+            ret[idx] = (FindFather(q[0])==FindFather(q[1]));
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Union_Find/1697.Checking-Existence-of-Edge-Length-Limited-Paths/Readme.md
+::::::::::::::
+### 1697.Checking-Existence-of-Edge-Length-Limited-Paths
+
+我们考虑一下如果只有一个query的话我们会怎么做？显然，我们只要考虑所有权重小于limit的那些edges，看看这些edges能否把query的两个node连接在一起。这是一个典型的Union Find的解法，时间复杂度近似为o(E).
+
+但是本题有多个queries，如果对于每个query都独立解决的话，时间复杂度大致是o(QE)，这样来看是会TLE的。
+
+解决方案很简单。我们优先解决limit低的query，因为它所能用到的edge数目更少，我们只需要查看少量的edges看它是否能够成query两点的连通图。然后我们再解决limit较高的query，此时只需要在已经构建的图里面再添加若干个新edge即可（因为放宽了对权重的要求），再判断query的两点是否联通...可见，如果我们将所有的queries按照limit从小到大排列进行处理，那么相应地我们只需要按照权重从小到大地添加边就行了。在构建联通图的过程中，每条边只需要处理一遍。
+
+所以本题的时间复杂度可以近似认为是o(ElogE)，瓶颈在于对所有edges的排序。
+::::::::::::::
+Union_Find/1722.Minimize-Hamming-Distance-After-Swap-Operations/1722.Minimize-Hamming-Distance-After-Swap-Operations.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }    
+
+public:
+    int minimumHammingDistance(vector<int>& source, vector<int>& target, vector<vector<int>>& allowedSwaps) 
+    {
+        int n = source.size();
+        Father.resize(n);
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+        
+        for (auto pair: allowedSwaps)
+        {
+            int a = pair[0];
+            int b = pair[1];
+            if (FindFather(a)!=FindFather(b))
+                Union(a,b);
+        }
+        
+        unordered_map<int,vector<int>>Map;
+        for (int i=0; i<n; i++)
+            Map[FindFather(i)].push_back(i);
+        
+        int count = 0;
+        for (auto x: Map)
+        {
+            multiset<int>Set;
+            for (auto i: x.second)
+                Set.insert(source[i]);
+            for (auto i: x.second)
+            {
+                if (Set.find(target[i])!=Set.end())
+                    Set.erase(Set.lower_bound(target[i]));
+            }
+            count += Set.size();
+        }
+        return count;                
+    }
+};
+::::::::::::::
+Union_Find/1722.Minimize-Hamming-Distance-After-Swap-Operations/Readme.md
+::::::::::::::
+### 1722.Minimize-Hamming-Distance-After-Swap-Operations
+
+我们将所有互相连接的allowedSwap的位置都union起来，这些位置上的数字其实都是可以任意重新排列的。我们只需要将source里这些位置上的元素集合，与target里这些位置上的元素集合进行比较，数一下有多少不同元素，就是Hamming distances.
+::::::::::::::
+Union_Find/1724.Checking-Existence-of-Edge-Length-Limited-Paths-II/1724.Checking-Existence-of-Edge-Length-Limited-Paths-II.cpp
+::::::::::::::
+class DistanceLimitedPathsExist {
+    vector<pair<int,int>> snaps[10000];
+    int father[10000];
+    int rank[10000];
+    vector<int>dist;
+    unordered_set<int>changed;
+    int snapId = 0;
+public:
+    DistanceLimitedPathsExist(int n, vector<vector<int>>& edgeList) 
+    {
+        for (int i=0; i<n; i++)
+        {
+            snaps[i].push_back({-1, i});
+            father[i] = i;
+        }            
+                
+        sort(edgeList.begin(),edgeList.end(), [](auto const &a,auto const &b) { return a[2] < b[2]; });
+        
+        int cur_dist = 0;
+        for (auto e: edgeList)
+        {
+            if (e[2] > cur_dist) 
+            {
+                dist.push_back(cur_dist);
+                cur_dist = e[2];
+                for (auto node: changed)
+                {
+                    snaps[node].push_back({snapId, father[node]});
+                }
+                changed.clear();
+                snapId++;
+            }
+            int a = e[0], b = e[1];
+            Union(a,b);            
+        }
+    }
+    
+    int findFather(int node)
+    {
+        while (father[node]!=node)
+            node = father[node];
+        return node;
+    }
+    
+    void Union(int a, int b)
+    {
+        a = findFather(a);
+        b = findFather(b);
+        if (findFather(a)!=findFather(b))
+        {
+            if (rank[a]<rank[b])
+            {
+                father[a] = b;
+                rank[b] = max(rank[b], rank[a]+1);
+                changed.insert(a);
+            }
+            else
+            {
+                father[b] = a;
+                rank[a] = max(rank[a], rank[b]+1);
+                changed.insert(b);
+            }
+        }            
+    }
+    
+    int findSnapFather(int node, int snap_id)
+    {
+        auto iter = upper_bound(snaps[node].begin(), snaps[node].end(), make_pair(snap_id, INT_MAX));
+        iter = prev(iter,1);
+        int f = iter->second;
+        if (f==node)
+            return f;
+        else
+            return findSnapFather(f, snap_id);        
+    }
+    
+    bool query(int p, int q, int limit) 
+    {
+        int snap_id = lower_bound(dist.begin(), dist.end(), limit) - dist.begin() - 1;
+        return findSnapFather(p, snap_id)==findSnapFather(q, snap_id);
+    }
+};
+
+/**
+ * Your DistanceLimitedPathsExist object will be instantiated and called as such:
+ * DistanceLimitedPathsExist* obj = new DistanceLimitedPathsExist(n, edgeList);
+ * bool param_1 = obj->query(p,q,limit);
+ */
+::::::::::::::
+Union_Find/1724.Checking-Existence-of-Edge-Length-Limited-Paths-II/1724.Checking-Existence-of-Edge-Length-Limited-Paths-II_v2.cpp
+::::::::::::::
+class DistanceLimitedPathsExist {
+    vector<pair<int,int>> snaps[10000];
+    int father[10000];
+    int rank[10000];
+    unordered_set<int>changed; // the nodes whose father has been modified since last snapshot    
+public:
+    DistanceLimitedPathsExist(int n, vector<vector<int>>& edgeList) 
+    {
+        for (int i=0; i<n; i++)
+        {
+            father[i] = i;
+            snaps[i].push_back({0, i});
+        }
+        
+        sort(edgeList.begin(), edgeList.end(), [](auto const&a, auto const&b){return a[2]<b[2];});
+        int curLen = 0;
+        for (auto e: edgeList)
+        {
+            if (e[2] > curLen)
+            {                
+                for (auto node: changed)
+                {
+                    snaps[node].push_back({curLen, father[node]});
+                }
+                changed.clear();                
+                curLen = e[2];
+            }
+            Union(e[0], e[1]);
+        }        
+    }
+    
+    int findFather(int a)
+    {
+        while (father[a]!=a)
+            a = father[a];
+        return a;
+    }
+        
+    void Union(int a, int b)
+    {
+        int fa = findFather(a);
+        int fb = findFather(b);
+        if (fa!=fb)
+        {
+            if (rank[fa] < rank[fb])
+            {
+                father[fa] = fb;
+                rank[fb] = max(rank[fb], rank[fa]+1);
+                changed.insert(fa);
+            }
+            else
+            {
+                father[fb] = fa;
+                rank[fa] = max(rank[fa], rank[fb]+1);
+                changed.insert(fb);
+            }
+        }
+    }
+    
+    int findSnapRoot(int node, int limit)
+    {
+        auto iter = lower_bound(snaps[node].begin(), snaps[node].end(), make_pair(limit, 0));
+        iter = prev(iter,1);
+        int f = iter->second;
+        if (f==node)
+            return f;
+        else
+            return findSnapRoot(f, limit);
+    }
+    
+    bool query(int p, int q, int limit) 
+    {
+        return findSnapRoot(p, limit) == findSnapRoot(q, limit);
+    }
+};
+::::::::::::::
+Union_Find/1724.Checking-Existence-of-Edge-Length-Limited-Paths-II/Readme.md
+::::::::::::::
+### 1724.Checking-Existence-of-Edge-Length-Limited-Paths-II
+
+#### 解法1
+本题看上去和```1697	Checking Existence of Edge Length Limited Paths```很像，但是做法却有很大的差别。本题要提供online的查询，每次查询时刻所对应的union tree都是不一样的形状。如果是Limit较大的query，那么图里面就有更多的联通点；反之，图里面就有更少的联通点。
+
+所以本题的关键，就是将不同limit所对应的连通图都要记录下来。这里对“连通图”的记录其实并不复杂，本质就是记录各个点的father即可。Limit较大时，有更多节点的father被聚合到了一起；反之，就有更多节点的father只是自己。如何记录每个node在不同limit时对应的father呢？这其实是采用了与```1146	Snapshot Array```相同的技巧：给每个节点创建father的时间序列快照。
+
+我们定义```snaps[node]={{snapId1, father1}, {snapId2, father2}, ...}```来记录node在不同快照时刻的父节点。所谓的快照时刻snapId，就是对应limit增长的过程。我们想象，随着limit的提升，会有越来越多的节点被联通，相应地那些被联通的node的father就会有变化。事实上，我们所关心的limit的提升是离散的，limit只在变化到某些特定的阶跃值时才会对连通图产生影响，这一系列阶跃值其实就是所有edges（排序后）的长度。比如，当limit=edge[0]时，并没有任何点被联通；当limt = edge[1]时，至少有两个点（也可能更多）被联通...
+
+我们将edges排序之后，就可以知道哪些阶跃值会影响连通图，我们依次标记快照时刻为0,1,2,3...比如说，快照时刻0表示Limit=edge[0]的时刻。注意，edges可能有重复值，所以我们关注的快照时刻的数量很可能会比edges的数目要少。我们只对应edges里面unique的长度来拍快照。
+
+具体的预处理如下：
+1. 我们逐个考察每个快照时刻snapId对应的limit，将小于limit的边收入连通图中，这样会导致一些节点被union。
+2. 假设节点a和b要被union，那么我们就将各自的祖宗节点fa和fb找出来（通过findFather的递归）。此时为了将两大家族合并，我们要么将fa的父亲指向fb，或者将fb的父亲指向fa。那么哪个更好呢？这就用到了Union Find里与“路径压缩”不同另外一个处理方法：按秩排序。所谓某个节点的“秩”，就是它与离自己最远的叶子的距离。我们会将fa和fb中秩更大的那个节点，选为两大家族合并后的代表（假设是fa）。这样的好处是，union之后```rank[fa] = max(rank[fa], rank[fb]+1)```有可能并不会继续增大，这意味着以fa为根节点的树会更“平衡”一些。这样在这棵树里的任何节点做findRoot（找根节点）所需要的递归次数就会相对少一些。注意，本题中我们不会做任何“路径压缩”，我们要原原本本的保留每个节点的原始父节点（因为需要存储快照）。
+3. 当节点a和b被union之后，意味着fb的father就要更新为fa.这个变动要存储在snaps[fb]相应的快照记录中，即```snaps[fb].push_back({snapId, fa}```.
+
+处理query时我们需要：找出limit所对应的snap_id，然后寻找节点p在snap_id时刻的根节点、节点q在snap_id时刻的根节点，查看是否相等。同样，查找特定快照时刻的根节点，需要递归调用```findSnapFather(node, snap_id)```。
+
+#### 解法2
+针对解法1可以有一点小改进。我们在构造snaps[node]的时候，可以用当前所用边的长度的作为snapId，不需要另行维护一个自增1的snapId变量。在query()中，我们直接用limit在snaps[node]里面二分搜寻合适的snapId，注意这里定位iter的方法应该是```lower_bound({limit,0})-1```.
+::::::::::::::
+Union_Find/1970.Last-Day-Where-You-Can-Still-Cross/1970.Last-Day-Where-You-Can-Still-Cross.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    } 
+    int m,n;
+    
+public:
+    bool checkOK()
+    {
+        return FindFather(m*n)==FindFather(m*n+1);      
+    }    
+    
+    int latestDayToCross(int row, int col, vector<vector<int>>& cells) 
+    {
+        m = row, n = col;
+        Father.resize(m*n+2);
+        for (int i=0; i<m*n+2; i++)
+            Father[i] = i;
+        
+        vector<vector<int>>mat(m, vector<int>(n,1));
+        for (auto cell: cells)
+            mat[cell[0]-1][cell[1]-1] = 0;
+        
+        vector<pair<int,int>>dir({{1,0},{-1,0},{0,1},{0,-1}});
+        
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                if (mat[i][j]==0) continue;
+                
+                for (int k=0; k<4; k++)
+                {
+                    int x = i+dir[k].first;
+                    int y = j+dir[k].second;
+                    if (x<0||x>=m||y<0||y>=n) continue;
+                    if (mat[x][y]==0) continue;
+                    
+                    if (FindFather(i*n+j)!=FindFather(x*n+y))
+                    {
+                        Union(i*n+j, x*n+y);
+                    }
+                }                
+            }
+        
+        for (int j=0; j<n; j++) Union(m*n, 0*n+j);
+        
+        for (int j=0; j<n; j++) Union(m*n+1, (m-1)*n+j);
+        
+        for (int t=cells.size()-1; t>=0; t--)
+        {
+            if (checkOK()) return t+1;
+            
+            int i = cells[t][0]-1;
+            int j = cells[t][1]-1;
+            mat[i][j] = 1;
+            
+            for (int k=0; k<4; k++)
+            {
+                int x = i+dir[k].first;
+                int y = j+dir[k].second;
+                if (x<0||x>=m||y<0||y>=n) continue;
+                if (mat[x][y]==0) continue;
+
+                if (FindFather(i*n+j)!=FindFather(x*n+y))
+                {
+                    Union(i*n+j, x*n+y);
+                }
+            }
+        }
+        
+        return 0;
+    }
+};
+::::::::::::::
+Union_Find/1970.Last-Day-Where-You-Can-Still-Cross/Readme.md
+::::::::::::::
+### 1970.Last-Day-Where-You-Can-Still-Cross
+
+此题和```LC 803.Bricks-Falling-When-Hit```的做法很相似，就是“时光倒流”+并查集。
+
+我们首先考察最终的状态，将所有是陆地、且互相邻接的格子进行Union。再一步步地往前倒推，每一步都会有一个新格子从水变成陆地，它与邻接的陆地就可以进行Union。此时查看是否有任意两个第一行与最后一行的格子被Union起来了，是的话就意味着有一条从top到bottom的通路。
+
+我们发现，每一个回合里都要检查任意两个top和bottom格子是否已经union，这个二层循环效率很低。解决的方法是，我们预先将所有的第一行的格子与一个虚拟的“top”进行union，将所有的最后一行的格子与一个虚拟的“bottom”进行union。这样每个回合的check，只要看top和bottom这两个格子是否被union起来了。
+::::::::::::::
+Union_Find/1998.GCD-Sort-of-an-Array/1998.GCD-Sort-of-an-Array.cpp
+::::::::::::::
+class Solution {
+    int L = 100005;
+    int Father[100005];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }     
+public:
+    vector<int>Eratosthenes(int n)
+    {
+        auto q=vector<int>(n+1,0);
+        
+        for (int i=2; i<=sqrt(n); i++)
+        {
+            if (q[i]==0)
+            {
+                int j=i*2;
+                while (j<n)
+                {
+                    q[j]=1;
+                    j+=i;
+                }
+            }
+        }
+        vector<int>primes;
+        for (int i=2; i<=n; i++)
+        {
+            if (q[i]==0)
+                primes.push_back(i);                
+        }
+        return primes;
+    }
+
+    bool gcdSort(vector<int>& nums) 
+    {
+        for (int i=0; i<100005; i++) Father[i] = i;
+        
+        vector<int>primes = Eratosthenes(sqrt(L));
+                
+        for (int i=0; i<nums.size(); i++)
+        {
+            int x = nums[i];
+            for (auto p: primes)
+            {                
+                // if (p > x) break;        // 28.79%, 921ms
+                if (p * p > x) break;       // 86.30%, 315ms only iterate primes no greater than sqrt(x)
+                if (x%p==0)
+                {                    
+                    if (FindFather(nums[i])!=FindFather(p))                        
+                        Union(nums[i],p);                        
+                    while (x%p==0) x/=p;
+                }
+            }
+            if (x > 1)  // x must be a prime factor
+            {
+                if (FindFather(nums[i])!=FindFather(x))                        
+                    Union(nums[i],x);                        
+            }            
+        }
+        
+        auto nums1 = nums;
+        sort(nums1.begin(), nums1.end());
+                                
+        for (int i=1; i<nums.size(); i++)
+        {
+            if (FindFather(nums[i]) != FindFather(nums1[i]))
+                return false;
+        }
+        return true;
+    }
+};
+::::::::::::::
+Union_Find/1998.GCD-Sort-of-an-Array/Readme.md
+::::::::::::::
+### 1998.GCD-Sort-of-an-Array
+
+如果a与b可以互换，b与c可以互换，那么意味着a,b,c三个数的位置可以任意流动。我们很容易想到，应该将所有gcd不为1的“数对”都union在一起组成一个group，这些数彼此之间的顺序我们就可以任意调整。
+
+我们将原数组nums排序后得到一个期望的nums1，那么对于任意位置i，我们要判断nums[i]和nums1[i]这两个数是否在同一个group。如果是的话，说明我们可以在原数组里，将nums1[i]这个数字调动到i这个位置上来。例如:
+```
+nums:  4 3 2 8
+       -   - -
+nums1: 2 3 4 8
+```
+对于Index=0的位置，原来的值是4，我们希望排序的值是2. 而我们通过union find处理数组后，可以知道4,2,8就是同一组的。所以必然可以把2移到index=0的位置。同理，我们逐位检查```FindFather(nums[i])==FindFather(nums1[i])```，都成立的话就可以返回true。
+
+对于Union Find的策略，我们显然不会比较每一对数字查看gcd，那样是o(N^2)的时间消耗。比较合理的方法是对每个数因式分解，将含有相同质因数的元素都union到一起。这样就等价于把所有gcd不为1的“数对”都union在一起。
+
+因式分解的方法，可以提前将所有小于100000的质因数都计算出来（用埃氏筛，时间复杂度是NloglogN），这样再用所有质因数去除每个nums[i]，看该元素能与哪些质因数组Union在一起。
+
+Update: 本题的因式分解部分可以进一步优化。我们可以只提前计算所有小于sqrt(100000)的质因数。当我们用所有的质因数都除完nums[i]之后，如果剩下的元素依然大于1，说明剩下的数值必然就是一个质因数。
+::::::::::::::
+Union_Find/2076.Process-Restricted-Friend-Requests/2076.Process-Restricted-Friend-Requests.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    } 
+public:
+    vector<bool> friendRequests(int n, vector<vector<int>>& restrictions, vector<vector<int>>& requests) 
+    {
+        Father.resize(n);
+        for (int i=0; i<n; i++) Father[i] = i;
+
+        vector<bool>rets;
+        for (auto& req: requests)
+        {
+            int x = req[0], y = req[1];
+            int f_x = FindFather(x), f_y = FindFather(y);
+            if (f_x == f_y)
+            {
+                rets.push_back(true);
+                continue;
+            }
+            int flag = 1;
+            for (auto& res: restrictions)
+            {
+                int a = res[0], b = res[1];
+                int f_a = FindFather(a), f_b = FindFather(b);
+                if ((f_a==f_x && f_b==f_y) || (f_a==f_y && f_b==f_x))
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            rets.push_back(flag==1);
+            if (flag==1) Union(x,y);
+        }
+        return rets;        
+    }
+};
+::::::::::::::
+Union_Find/2076.Process-Restricted-Friend-Requests/Readme.md
+::::::::::::::
+### 2076.Process-Restricted-Friend-Requests
+
+我们想判断x和y是否能成为朋友，取决于x所在的家族X、y所在的家族Y，不能有任何一对是敌人。换句话说，如果家族X、家族Y中有存在任何一对是restriction，那么x和y就不能归并到一起。
+
+显然，我们不可能穷举X家族、Y家族的配对。但是翻过来，我们可以穷举所有的restriction，查看每对敌人的双方是否分别存在这两个家族之中。这样，时间复杂度就是request的数目乘以restriction的数目，恰好符合题意。
+::::::::::::::
+Union_Find/2092.Find-All-People-With-Secret/2092.Find-All-People-With-Secret.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    } 
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[2]<b[2];
+    }
+public:
+    vector<int> findAllPeople(int n, vector<vector<int>>& meetings, int firstPerson) 
+    {
+        Father.resize(n);
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+        
+        sort(meetings.begin(), meetings.end(), cmp);
+        
+        unordered_set<int>Set;
+        Set.insert(0);
+        Set.insert(firstPerson);
+        Father[firstPerson] = 0;
+        for (int i=0; i<meetings.size(); i++)
+        {            
+            unordered_set<int>temp;
+
+            int j;            
+            for (j=i; j<meetings.size() && meetings[j][2]==meetings[i][2]; j++)
+            {
+                int a = meetings[j][0], b = meetings[j][1], t = meetings[j][2];
+                temp.insert(a);
+                temp.insert(b);
+                if (FindFather(a)!=FindFather(b))
+                    Union(a,b);
+            }
+                        
+            for (auto x: temp)
+            {
+                if (FindFather(x)!=0) Father[x] = x;
+                else Set.insert(x); 
+            }
+
+            i = j-1;
+        }
+        
+        vector<int>rets(Set.begin(), Set.end());
+        return rets;
+        
+    }
+};
+::::::::::::::
+Union_Find/2092.Find-All-People-With-Secret/Readme.md
+::::::::::::::
+### 2092.Find-All-People-With-Secret
+
+很直观的想法是将所有的meeting按照时间先后顺序排列。同时为一个集合来记录哪些人已经知道秘密。对于任何一个新meeting，如果有一方已经在这个集合里，那么另一方也就可以加入集合。
+
+本题的难点在于如果有若干个会议的时间相同怎么办？对于一批同时间的会议，可能第一个会议的A和B都不知道，但是在第二个会议里B从C知道了这个秘密，那么根据规则A也会在此时刻知道这个秘密。加入第三个会议是A与D，那么D也应该知道秘密。
+
+可见，对于同一时刻的会议，我们很难有个比较合适的处理顺序。当然，你可以用类似拓扑排序的思想：先处理有知情者的会议，然后扩大知情者的集合；再查看剩下的会议里还有哪些知情者，再处理掉这些会议，扩大知情者集合... 不过这样的代码，想要满足线性的时间，不见得好写。
+
+考虑到在同一个时间的会议，知情人有着明显的传递性，用并查集是再适合不过的算法了。我们将凡是有会议的双方都union起来。最后查看这些新处理的人，是否有被union到了0（即所有知情人的祖先）。如果有，就加入集合；如果没有，记得撤销这个人的任何union操作，即```Father[i] = i```，因为在这个时刻两个人的union状态，不能带入下一个时刻。举个例子，四点钟A与B会面了。五点钟A知情了，但不意味着五点钟B就会知情。
+::::::::::::::
+Union_Find/2157.Groups-of-Strings/2157.Groups-of-Strings.cpp
+::::::::::::::
+class Solution {
+    int Father[20000];
+    int states[20000];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }     
+public:
+    vector<int> groupStrings(vector<string>& words) 
+    {
+        int n = words.size();        
+        for (int i=0; i<n; i++)
+            Father[i] = i;
+                
+        unordered_map<int, int>Map;    // num -> idx    
+        for (int i=0; i<n; i++)
+        {
+            string& word = words[i];
+            int state = 0;
+            for (int i=0; i<word.size(); i++)
+            {
+                int k = word[i]-'a';
+                state |= (1<<k);
+            }
+            states[i] = state;
+            if (Map.find(state)==Map.end())
+                Map[state] = i;        
+            else
+            {
+                int k = Map[state];
+                if (FindFather(i)!=FindFather(k))
+                    Union(i,k);
+            }         
+        }
+         
+        for (int i=0; i<n; i++)
+        {
+            for (int j=0; j<26; j++)
+            {
+                if (((states[i]>>j)&1)==0) continue;
+                int newState = states[i] - (1<<j);
+                if (Map.find(newState)==Map.end())
+                    Map[newState] = i;
+                else
+                {
+                    int k = Map[newState];
+                    if (FindFather(i)!=FindFather(k))
+                        Union(i,k);
+                }
+            }
+        }        
+        
+        unordered_map<int, int>group;
+        for (int i=0; i<n; i++)
+            group[FindFather(i)]+=1;
+        
+        int maxGroup = 0;
+        for (auto x: group)
+            maxGroup = max(maxGroup, x.second);
+        
+        return {(int)group.size(), maxGroup};
+        
+    }
+};
+::::::::::::::
+Union_Find/2157.Groups-of-Strings/Readme.md
+::::::::::::::
+### 2157.Groups-of-Strings
+
+本题明显是Union Find。暴力的方法就是将每个单词两两进行比较，如果满足三个条件之一，就可以将它们Union。判定的时候可以将字母集合用bit mask来表示，这样更方便。比如集合A添加一个字母等于B，就可以写成判断是否存在j，使得```A+(1<<j)==B```; 集合A删除一个字母等于B，就可以写成判断是否存在j，使得```A-(1<<j)==B```; 集合A替换一个字母等于B，就可以写成判断是否存在j和k，使得```A-(1<<j)+(1<<k)==B```.
+
+比o(N^2)更高明的算法就是```o(N*256)```.将所有的编码都存入一个集合。然后遍历每一个单词word[i]的编码A，查看以上三种操作的后果B是否存在于这个集合之中，是的话，就和编码B所对应的单词j给Union起来。注意，编码B可能对应着多个单词，但只需要将i与其中的一个单词（即家族代表）进行Union（因为编码相同的单词肯定已经Union起来了），否则这个方法本质等同于o(N^2).
+
+但是本题有还有更好的```o(N*26)```的算法。事实上，本题中三个条件，其中第一个条件和第二个条件显然是等价的。我们依然可以用上述的方法，循环26次将每个单词的编码A扣掉一个1 bit得到B，将i与家族B的代表进行Union即可。
+
+而第三个条件，本质也是如此。假设任意单词word[i]的编码A任意去掉一个字母，等于单词word[j]的编码C任意去掉一个字母，那么根据题意，i和j必须Union。那么这就意味着，我们将编码A的家族与它任意去掉一个字母后的编码B家族进行Union，其他单词也做类似的操作，就可以将满足条件三的任意一对单词必然会被Union起来。
+
+所以本题的算法如下：
+1. 将每个单词i翻译成编码A，将i与编码A的家族进行Union。
+2. 将每个单词i的编码A，任意去掉一个字母变成编码B，将编码A的家族与B家族进行Union
+
+满足以上操作之后，所有需要Union的单词一定已经做了归并。我们根据每个家族的族长进行分组统计，得到家族的数量和最大的家族。

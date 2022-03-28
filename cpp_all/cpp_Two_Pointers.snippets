@@ -1,0 +1,2764 @@
+::::::::::::::
+Two_Pointers/0003.Longest Substring Without Repeating Characters/003.Longest-Substring-Without-Repeating-Characters.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) 
+    {
+        unordered_map<int,int>Map;
+        int i=0;
+        int result = 0;
+        for (int j=0; j<s.size(); j++)
+        {
+            if (Map.find(s[j])!=Map.end())
+                i = max(i,Map[s[j]]+1);
+            Map[s[j]] = j;            
+            result = max(result,j-i+1);
+        }
+        return result;
+    }
+};
+::::::::::::::
+Two_Pointers/0003.Longest Substring Without Repeating Characters/3. Longest Substring Without Repeating Characters.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) 
+    {
+        vector<int>Map(256,0);
+        int i=0;
+        int j=0;
+        int result=0;
+        
+        while (j<s.size())
+        {
+            if (Map[s[j]]==0)
+            {
+                Map[s[j]]=1;
+                j++;
+            }
+            else if (Map[s[j]]==1)
+            {
+                Map[s[i]]=0;
+                i++;
+            }
+            
+            result = max(result,j-i);
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0003.Longest Substring Without Repeating Characters/Readme.md
+::::::::::::::
+### 003.Longest Substring Without Repeating Characters
+
+#### 解法1：
+双指针的基础题。用```vector<int>Map(256,0)```来模拟字符的Hash表。
+
+如果Map[s[j]]==0，移动右指针将Map[s[j]]=1； 否则移动左指针，将Map[s[i]]=0。
+
+#### 解法2：
+对于上述的方法，左指针的前移其实可以跳跃，以加快效率。
+
+对于Map[s[j]]已经有记录的情况，此时左指针可以调到Map[s[j]]+1的地方。但是注意，这个地方可能还不及i本身，所以最终左指针的跳跃应该是```max(i,Map[s[j]]+1)```
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-substring-without-repeating-characters)::::::::::::::
+Two_Pointers/0011.Container-With-Most-Water/11-Container-With-Most-Water.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxArea(vector<int>& height) 
+    {
+        int left=0;
+        int right=height.size()-1;
+        
+        int temp=0;
+        int result=0;
+        
+        while (left<right)
+        {
+            int temp = (right-left)*min(height[left],height[right]);
+            if (temp>result) result=temp;
+            
+            if (height[left]>=height[right])
+                right--;
+            else
+                left++;
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0011.Container-With-Most-Water/Readme.md
+::::::::::::::
+### 11. Container With Most Water 
+#### 算法：双指针。  
+让左指针指向0，右指针指向height.size()-1。每次考虑如果减少横向距离1，判断应该选择移左指针还是右指针，还是考察both？  
+
+事实上，只需要移动height[left]和height[right]中较矮的一个板子即可，这样才有使总面积增大的可能。否则移动较高的板子，不会使结果变得更好，因为面积受限于较矮的那块板子。
+```cpp
+if (height[left]>=height[right])
+   right--;
+else
+   left++;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/container-with-most-water)
+::::::::::::::
+Two_Pointers/0015.3Sum/15-3Sum.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) 
+    {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>>result;
+        
+        for (int i=0; i<nums.size(); i++)
+            cout<<nums[i]<<" ";
+        cout<<endl;
+        
+        for (int a=0; a<nums.size(); a++)
+        {
+
+            int sum=-nums[a];
+            
+            int left=a+1;
+            int right=nums.size()-1;
+            
+            while (left<right)
+            {
+                if (nums[left]+nums[right]==sum)
+                {
+                    vector<int>temp{nums[a],nums[left],nums[right]};
+                    result.push_back(temp);
+                    left++;
+                    right--;
+                    while (left<right && nums[left]==nums[left-1]) left++;
+                    while (left<right && nums[right]==nums[right+1]) right--; 
+                }
+                else if (nums[left]+nums[right]<sum)
+                    left++;
+                else if (nums[left]+nums[right]>sum)
+                    right--;
+                
+                
+               // cout<<a<<" "<<left<<" "<<right<<endl;
+            }
+            
+            while (a+1<nums.size() && nums[a]==nums[a+1])
+                a++;
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Two_Pointers/0015.3Sum/Readme.md
+::::::::::::::
+### 15.3Sum
+这是双指针算法的基本题，必须熟练掌握，快速准确地实现。
+
+#### 需要注意的细节：
+0. 一定要先排序。
+1. 为了避免重复，仅在确认发现了一组解之后再移动left和right指针略过重复项。不要先略过重复项再判断是否解成立。
+```cpp
+  if (nums[left]+nums[right]==sum)
+  {
+     记录结果;
+     left++;
+     right--;
+     while (left<right && nums[left]==nums[left-1]) left++;
+     while (left<right && nums[right]==nums[right+1]) right--;
+  }
+  ```
+2. 对于最外层的循环，也是确定一个，先展开内层循环，再略过最外层的重复项。
+```cpp
+ for (int a=0; a<nums.size(); a++)
+ {
+    inner loop;
+    while (nums[a]==nums[a+1]) a++;
+ }
+
+
+[Leetcode Link](https://leetcode.com/problems/3sum)::::::::::::::
+Two_Pointers/0016.3Sum-Closest/16.3Sum_Closest.cpp
+::::::::::::::
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) 
+    {
+        sort(nums.begin(),nums.end());
+        
+        int temp = INT_MAX;
+        int result;
+        
+        for (int a=0; a<nums.size(); a++)
+        {
+            int left = a+1;
+            int right = nums.size()-1;
+            int sum = target - nums[a];
+            
+            while (left<right)
+            {
+                if (temp > abs(nums[left]+nums[right]-sum))
+                {
+                    temp = abs(nums[left]+nums[right]-sum);
+                    result = nums[a]+nums[left]+nums[right];
+                }
+                if (nums[left]+nums[right]==sum)
+                    return target;
+                else if (nums[left]+nums[right]>sum)
+                    right--;
+                else if (nums[left]+nums[right]<sum)    
+                    left++;
+            }
+            
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0016.3Sum-Closest/Readme.md
+::::::::::::::
+### 016. 3Sum-Closet  
+一定记得要先排序！
+
+在确定了第一个元素之后，第2、3个元素的指针该如何设计变动呢？
+```cpp
+while (left<right)
+{
+  if (abs(nums[left]+nums[right]-sum)<CurSum)
+    更新最小结果;
+  if (nums[left]+nums[right]<sum)
+     left++;
+  else
+     right--;
+}
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/3sum-closest)::::::::::::::
+Two_Pointers/0018.4Sum/18. 4Sum_s1.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) 
+    {
+        vector<vector<int>>results;
+        if (nums.size()<4) return results;
+        
+        sort(nums.begin(),nums.end());
+        
+        for (int a=0; a<nums.size(); a++)
+        {
+            if (nums[a]*4>target) break;
+            if (nums[a]+nums.back()*3<target) continue;
+            
+            if (a>0 && nums[a]==nums[a-1]) continue;
+            
+            for (int b=a+1; b<nums.size(); b++)
+            {
+                if (nums[a]+nums[b]*3>target) break;
+                if (nums[a]+nums[b]+nums.back()*2<target) continue;
+                
+                if (b>a+1 && nums[b]==nums[b-1]) continue;
+                
+                int left = b+1;
+                int right = nums.size()-1;
+                if (nums[a]+nums[b]+nums[left]*2>target) break;
+                                
+                while (left<right)
+                {
+                    if (nums[a]+nums[b]+nums[left]+nums[right]==target)
+                    {
+                        vector<int>temp = {nums[a],nums[b],nums[left],nums[right]};
+                        results.push_back(temp);
+                        left++;
+                        right--;
+                        while (nums[left]==nums[left-1]) left++;
+                        while (nums[right]==nums[right+1]) right--;
+                        
+                    }
+                    else if (nums[a]+nums[b]+nums[left]+nums[right]>target)
+                        right--;
+                    else if (nums[a]+nums[b]+nums[left]+nums[right]<target)
+                        left++;
+                }
+                
+            }
+            
+        }
+        return results;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0018.4Sum/Readme.md
+::::::::::::::
+### 18. 4Sum  
+按照3sum的思路来做4sum，需要n*n*n*log(n)的时间复杂度。  
+需要注意必要的剪枝来减少计算量。比如第一层循环
+```cpp
+for (int h1=0; h1<nums.size(); h1++)
+{
+   if (nums[h1]*4>target) break;
+   if (nums[h1]+nums.back()*3<target) continue;
+}
+```  
+类似的第二层循环
+```cpp
+for (int h2=0; h2<nums.size(); h2++)
+{
+   if (nums[h1]+3*nums[h2]>target) break;
+   if (nums[h1]+nums[h2]+nums.back()*2<target) continue;
+}
+```    
+对于第三层循环
+```cpp
+int left=h2+1;
+int right=nums.size()-1;
+if (nums[h1]+nums[h2]+2*nums[left]>target) break;
+if (nums[h1]+nums[h2]+2*nums[right]<target) continue;
+```    
+对于h1(h2)避免重复元素的操作
+```cpp
+if (h1>0 && nums[h1]==nums[h1-1]) continue;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/4sum)::::::::::::::
+Two_Pointers/0026.Remove-Duplicates-from-Sorted-Array/026.Remove-Duplicates-from-Sorted-Array_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) 
+    {
+        int i=0;
+        int j=1;
+        
+        while (j<nums.size())
+        {
+            if (nums[j]==nums[j-1])
+            {
+                j++;
+            }
+            else
+            {
+                i++;
+                swap(nums[i],nums[j]);
+                j++;
+            }
+        }
+        return i+1;
+    }
+};
+::::::::::::::
+Two_Pointers/0026.Remove-Duplicates-from-Sorted-Array/026.Remove-Duplicates-from-Sorted-Array_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) 
+    {
+        if (nums.size()==0) return 0;
+        
+        int i=0;
+        for (int j=0; j<nums.size(); j++)
+        {
+            if (j==0)
+                continue;
+            else if (nums[j]==nums[i])
+                continue;
+            else
+            {
+                i++;
+                nums[i]=nums[j];
+            }
+        }
+        
+        return i+1;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0026.Remove-Duplicates-from-Sorted-Array/Readme.md
+::::::::::::::
+### 26. Remove Duplicates from Sorted Array
+
+注意去除重复元素后仍然要求保持原始顺序，必须in-place实现，故考虑快慢双指针。
+
+遍历快指针，将快指针所指向的所有有效元素都移动到左指针的位置上。
+
+对于快指针经过的所有重复元素则continue。重复元素的判定方法是比较nums[right]==nums[left]（或者nums[right]==nums[right-1]，取决于left和right的初始状态）。
+
+最后输出左指针的位置，因为如前所述，所有的有效元素都已经在左指针上了。
+
+
+[Leetcode Link](https://leetcode.com/problems/remove-duplicates-from-sorted-array)::::::::::::::
+Two_Pointers/0030.Substring-with-Concatenation-of-All-Words/30. Substring with Concatenation of All Words.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) 
+    {
+        int N=words[0].size();
+        int COUNT=words.size();
+        unordered_map<string,int>Table;
+        for (int i=0; i<words.size(); i++)
+            Table[words[i]]++;
+                
+        vector<int>results;
+        for (int start=0; start<N; start++)
+        {
+            int i=start;
+            int j=i;
+            int count=0;
+            unordered_map<string,int>Map;
+
+            while (j<s.size())
+            {
+                if (Table.find(s.substr(j,N))==Table.end())
+                {
+                    Map.clear();
+                    count=0;
+                    j+=N;
+                    i=j;
+                }
+                else if (Map[s.substr(j,N)]<Table[s.substr(j,N)])
+                {
+                    Map[s.substr(j,N)]++;
+                    count++;
+                    j+=N;
+                }
+                else if (Map[s.substr(j,N)]==Table[s.substr(j,N)])
+                {
+                    Map[s.substr(i,N)]--;
+                    i+=N;
+                    count--;
+                }
+                
+                if (count==COUNT)
+                {
+                    results.push_back(i);
+                    Map[s.substr(i,N)]--;
+                    i+=N;
+                    count--;                    
+                }                                     
+            }
+        }
+        
+        return results;
+    }
+};
+::::::::::::::
+Two_Pointers/0030.Substring-with-Concatenation-of-All-Words/Readme.md
+::::::::::::::
+### 30. Substring-with-Concatenation-of-All-Words  
+典型的双指针算法题，常规思路：右指针一路前进，遇到不符合条件的情况就移动左指针直至消除负面条件，再接着移动右指针。  
+具体的实现比较复杂，需要注意这么几点：  
+1.增加一个外层循环，双指针的起始点可以从0~M, M是每个词的长度. 注意count和showTime在每个start都要清零，故设置为循环内变量。 
+```cpp
+        for (int start=0; start<M; start++ )
+        {
+            int i=start;
+            int j=start;
+            int count=0;
+            unordered_map<string,int> showTime;
+            
+            while (j<s.size() && i<=j)
+            {
+                ...
+            }
+        }
+```
+2.每次考察右指针对应的待加入的子串，
+```cpp
+                string ss = s.substr(j,M);
+```
+但不要着急移动右指针，进入如下的判断：
+
+(a).待加入的新元素不在字典中，则count和showTime全部都清零！移动两个指针：都移到右指针的下一个位置
+```cpp
+                if (Map.find(ss)==Map.end())
+                {
+                    j+=M;
+                    i=j;
+                    count=0;
+                    showTime.clear();
+                }
+```
+(b).待加入的新元素在字典中，且没有溢出，则加入并更新统计。移动右指针。  
+    注意，加入之后如果已经满足条件，则记录并处理。
+```cpp
+                else if (Map_temp[ss]<Map[ss])
+                {
+                    j+=M;
+                    showTime[ss]++;
+                    if (showTime[ss]==Map[ss])
+                        count++;
+                    
+                    if (count==N)
+                    {
+                        results.push_back(i);
+                        string tt = s.substr(i,M);
+                        showTime[tt]--;
+                        count--;
+                        i+=M;
+                    }
+                }
+```
+  (c) 待加入的新元素虽然在字典中，但会造成溢出，则不加入统计。移动左指针，退出最左边的元素。
+```cpp
+                else
+                {
+                    string tt = s.substr(i,M);
+                    showTime[tt]--;
+                    if (showTime[tt]==Map[tt]-1)
+                        count--;
+                    i+=M;
+                }
+```
+5.重复循环。
+
+
+[Leetcode Link](https://leetcode.com/problems/substring-with-concatenation-of-all-words)::::::::::::::
+Two_Pointers/0075.Sort-Colors/75. Sort Colors.cpp
+::::::::::::::
+class Solution {
+public:
+    void sortColors(vector<int>& nums) 
+    {
+        int left=0;
+        int right=nums.size()-1;
+        int mid=0;
+        
+        while (mid<=right)
+        {
+            if (nums[mid]==2)
+            {
+                swap(nums[mid],nums[right]);
+                right--;
+            }
+            else if (nums[mid]==0)
+            {
+                swap(nums[mid],nums[left]);
+                left++;
+                mid++;
+            }
+            else
+            {
+                mid++;
+            }
+        }
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0075.Sort-Colors/Readme.md
+::::::::::::::
+### 075.Sort-Colors
+难点在于如何in-palce实现。基本思想是设置三个指针：
+```cpp
+int left=0;
+int mid=0;
+int right=nums.size()-1;
+```  
+遍历mid指针，当遇到2号球时，便和right指针进行交换；遇到1号球时，继续前进；与到0号球时，便和left指针进行交换。
+理解的难点在于：
+```cpp
+if (nums[mid]==0)
+{
+  swap(nums[left],nums[mid]);
+  left++;
+  mid++;
+}
+```
+因为left和mid初始位置相同，他们之间出现异步只是因为1号球的出现。所以这两个指针之间间隔的永远只会是1号球，所以当left和mid交换时，left指针传给mid的一定会是1号球而不是0号球。
+
+
+[Leetcode Link](https://leetcode.com/problems/sort-colors)::::::::::::::
+Two_Pointers/0076.Minimum-Window-Substring/076.Minimum-Window-Substring.cpp
+::::::::::::::
+class Solution {
+public:
+    string minWindow(string s, string t) 
+    {
+        unordered_map<char,int>Table;
+        for (int i=0; i<t.size(); i++)
+            Table[t[i]]++;
+        int M = Table.size();
+        
+        unordered_map<char,int>Map;
+        int i=0;
+        int Len = INT_MAX;
+        string result;
+        int count = 0;
+        for (int j=0; j<s.size(); j++)
+        {
+            Map[s[j]]++;
+            if (Map[s[j]]==Table[s[j]])
+                count++;
+            while (count==M)
+            {
+                if (Len>j-i+1)
+                {
+                    Len = j-i+1;
+                    result = s.substr(i,Len);
+                }
+                Map[s[i]]--;
+                if (Map[s[i]]==Table[s[i]]-1)
+                    count--;
+                i++;
+            }
+        }
+        return result;
+    }
+};
+::::::::::::::
+Two_Pointers/0076.Minimum-Window-Substring/Readme.md
+::::::::::::::
+### 76. Minimum-Window-Substring  
+
+典型的双指针题型。
+
+对于每个新加入的元素s[j]，首先更新该字符出现次数的Map[s[i]]++。如果更新后，Map[s[i]]等于需要出现的次数Table[s[i]]，则计数器count++，说明有一个字符满足了出现次数的要求．
+
+当count等于t中的字符类型数COUNT时，说明任务已经实现。此时，让左指针不断右移，相应的Map[s[i]]就要自减，一旦Map[s[i] < Table[s[i]]，则count需要自减1从而不再满足COUNT，说明需要继续加入新元素才能满足任务. 从而j才可以右移继续遍历。
+
+在这个过程中如果满足条件count==COUNT，都需要不断更新和记录结果。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-window-substring)::::::::::::::
+Two_Pointers/0080.Remove-Duplicates-from-Sorted-Array-II/80.Remove Duplicates from Sorted Array II.cpp
+::::::::::::::
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) 
+    {
+        if (nums.size()==0) return 0;
+        if (nums.size()==1) return 1;
+        
+        int i=1;
+        for (int j=0; j<nums.size(); j++)
+        {
+            if (j==0 || j==1) 
+                continue;
+            else if (nums[j]==nums[i] && nums[j]==nums[i-1])
+                continue;
+            else
+            {
+                i++;
+                nums[i]=nums[j];
+            }
+        }
+        
+        return i+1;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0080.Remove-Duplicates-from-Sorted-Array-II/Readme.md
+::::::::::::::
+### 080.Remove-Duplicates-from-Sorted-Array-II
+要实现in-place的功能，利用快慢指针。right指针判定合格的，就拷贝到left指针上去。
+
+注意：初始值left=1，right=2。保证有不超过两个重复的判断条件是
+```cpp
+if (nums[right]==nums[left] && nums[right]==nums[left-1])
+  right++;
+else
+{
+  left++;
+  nums[left]=nums[right];
+  right++;
+}
+```
+分析：因为所有合格的元素都已经移到了左指针上，所以每次考察右指针的新元素时，需要和左指针进行比较。
+
+
+[Leetcode Link](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii)::::::::::::::
+Two_Pointers/0088.Merge-Sorted-Array/88 Merge Sorted Array.cpp
+::::::::::::::
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) 
+    {
+        int p1=m-1;
+        int p2=n-1;
+        
+        for (int i=m+n-1; i>=0; i--)
+        {
+            if (p1<0)
+            {
+                nums1[i]=nums2[p2];
+                p2--;
+            }
+            else if (p2<0)
+            {
+                nums1[i]=nums1[p1];
+                p1--;
+            }
+            else if (nums1[p1]>nums2[p2])
+            {
+                nums1[i]=nums1[p1];
+                p1--;
+            }
+            else
+            {
+                nums1[i]=nums2[p2];
+                p2--;
+            }                
+        }
+    }
+};
+::::::::::::::
+Two_Pointers/0088.Merge-Sorted-Array/Readme.md
+::::::::::::::
+### 88. Merge Sorted Array
+#### 算法：双指针
+
+从nums1的第m+n-1的位置开始降序填充，进行归并排序。
+
+
+[Leetcode Link](https://leetcode.com/problems/merge-sorted-array)::::::::::::::
+Two_Pointers/0141.Linked-List-Cycle/141-Linked-List-Cycle.cpp
+::::::::::::::
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) 
+    {
+        if (head==NULL) return false;
+        
+        ListNode* slow=head;
+        ListNode* fast=head;
+        
+        while (fast->next!=NULL && fast->next->next!=NULL)
+        {
+            fast=fast->next->next;
+            slow=slow->next;
+            
+            if (fast==slow) return true;
+        }
+        
+        return false;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0141.Linked-List-Cycle/Readme.md
+::::::::::::::
+### 141. Linked List Cycle 
+#### 算法：快慢指针。  
+使用快慢指针的典型用途。成环的链表一定会让快指针追上慢指针.
+
+
+[Leetcode Link](https://leetcode.com/problems/linked-list-cycle)::::::::::::::
+Two_Pointers/0159.Longest-Substring-with-At-Most-Two-Distinct-Characters/159. Longest Substring with At Most Two Distinct Characters.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstringTwoDistinct(string s) 
+    {
+        vector<int>Map(256,0);
+        int count=0;
+        int result=0;
+        int i=0;
+        int j=0;
+        
+        for (int j=0; j<s.size(); j++)
+        {
+            if (Map[s[j]]>0)
+            {
+                Map[s[j]]++;
+            }                
+            else if (Map[s[j]]==0 && count<2)
+            {
+                Map[s[j]]++;
+                count++;
+            }
+            else if (Map[s[j]]==0 && count==2)
+            {
+                while (count==2)
+                {
+                    Map[s[i]]--;
+                    if (Map[s[i]]==0)
+                        count--;
+                    i++;
+                }                    
+                Map[s[j]]++;
+                count++;
+            }
+            
+            result=max(result,j-i+1);            
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Two_Pointers/0159.Longest-Substring-with-At-Most-Two-Distinct-Characters/Readme.md
+::::::::::::::
+### 159. Longest-Substring-with-At-Most-Two-Distinct Characters  
+
+需要一个记录每种字符出现次数的映射，这里为了加快效率，我们不用Map，而是直接用一个数组 vector<int>Map(128,0)，用字符的ascii码作为index，注意需要开辟至少256个空间才能装下所有字母字符。  
+
+另外还需要一个计数器count还记载目前指针范围内有几种字符。  
+
+按照个人的习惯，最外层用for循环来遍历j。然后分情况讨论：
+1. Map[s[j]]>0，说明s[j]已经被合法收录，故可继续往后遍历j。
+2. Map[s[j]]==0 && count<2，说明s[j]可以被合法收录，故可继续往后遍历j。
+3. Map[s[j]]==0 && count==2，说明i\~j已经包含两种字符了，故需要不断退s[i]直至count<2。注意此时仍要收录s[j]。
+在每种情况下，i~j都是包含两种字符的合法子串，故都要update一下result。
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters)::::::::::::::
+Two_Pointers/0209.Minimum-Size-Subarray-Sum/209.Minimum Size Subarray Sum.cpp
+::::::::::::::
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) 
+    {
+        int i=0;
+        int j=0;
+        int sum=0;
+        int len=INT_MAX;
+        
+        for (int j=0; j<nums.size(); j++)
+        {
+            sum+=nums[j];
+            
+            if (sum<s)
+                continue;
+            else
+            {
+                while (sum>=s)
+                {
+                    len=min(len,j-i+1);
+                    sum-=nums[i];
+                    i++;
+                }
+            }
+        }
+        
+        if (len==INT_MAX)
+            len=0;
+        
+        return len;
+    }
+};
+::::::::::::::
+Two_Pointers/0209.Minimum-Size-Subarray-Sum/Readme.md
+::::::::::::::
+### 209.Minimum-Size-Subarray-Sum
+
+基本思路：因为题意保证所有数组元素都是正数，可以用双指针定界。当双指针之间子数组和大于sum时，记录Len并left++；否则right++。
+
+实际编程中，用for循环来控制右指针的思路比较清晰，左指针仅当固定了一个右指针的前提下进行移动；相对而言，用while来控制双指针比较容易出错。
+
+细节：注意在什么条件下更新len。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-size-subarray-sum)::::::::::::::
+Two_Pointers/0259.3Sum-Smaller/259. 3Sum Smaller.cpp
+::::::::::::::
+class Solution {
+public:
+    int threeSumSmaller(vector<int>& nums, int target) 
+    {
+        int count=0;
+        sort(nums.begin(),nums.end());
+        
+        for (int a=0; a<nums.size(); a++)
+        {
+            int sum=target-nums[a];
+            int left=a+1;
+            int right=nums.size()-1;
+            
+            while (left<right)
+            {
+                if (nums[left]+nums[right]<sum)
+                {
+                    count+=right-left;
+                    left++;
+                }
+                else
+                {
+                    right--;
+                }
+            }
+            
+            //cout<<count<<endl;
+        }
+        
+        return count;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0259.3Sum-Smaller/Readme.md
+::::::::::::::
+###259.3Sum-Smaller  
+注意计数的方法
+```cpp
+  if (nums[left]+nums[right]<sum)
+     count+=right-left;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/3sum-smaller)::::::::::::::
+Two_Pointers/0283.Move-Zeroes/ 283.Move Zeroes.cpp
+::::::::::::::
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) 
+    {
+        int left=0;
+        int right=0;
+        
+        while (right<nums.size())
+        {
+            if (nums[right]==0)
+            {
+                right++;
+            }
+            else
+            {
+                swap(nums[left],nums[right]);
+                left++;
+                right++;
+            }
+                
+        }
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0283.Move-Zeroes/Readme.md
+::::::::::::::
+### 283.Move-Zeroes
+
+思考如何用in-place实现。  
+基本思想是用双指针。方案1：让右指针遇到非零的数就扔到左边；方案2：让右指针遇到0就扔到右边。
+
+#### 方案1：
+```cpp
+int left=0;
+int right=0;
+```
+a 当遇到 nums[right]==0时应该如何操作呢? 既然非0的都已经扔到了左边，那么右指针遇到0就继续前进。
+
+b 当遇到 nums[right]!=0时应该如何操作呢?     
+首先，把这个数扔到左边去:
+```cpp
+swap(nums[left],nums[right])
+```
+然后，nums[left]已经是非0数，故可以放心 left++.    
+那么右指针呢？关键点来了，如果left!=right的话，左指针一定指向的是0，因为左右指针之间拉开的差距的原因，就是因为有0的存在。右指针是踏着0才能前进的，所以左指针原先指向的必定是0，交换之后右指针也是0，故可以继续right++
+
+综上：
+```cpp
+        while (right<nums.size())
+        {
+            if (nums[right]==0)
+            {
+                right++;
+            }
+            else
+            {
+                swap(nums[left],nums[right]);
+                left++;
+                right++;
+            }
+                
+        }
+```
+
+类似的题目：
+ 75.Sort-Colors
+
+
+[Leetcode Link](https://leetcode.com/problems/move-zeroes)::::::::::::::
+Two_Pointers/0340.Longest-Substring-with-At-Most-K-Distinct-Characters/340.Longest-Substring-with-At-Most-K-Distinct-Characters_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) 
+    {
+        vector<int>freq(256,0);
+        int n = s.size();
+        int j = 0;
+        int ret = 0;
+        int count = 0;
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && count + (freq[s[j]]+1 == 1) <= k)
+            {
+                freq[s[j]]++;
+                count += (freq[s[j]] == 1);
+                j++;
+            }
+            ret = max(ret, j-i);
+            
+            freq[s[i]]--;
+            count -= (freq[s[i]] == 0);
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Two_Pointers/0340.Longest-Substring-with-At-Most-K-Distinct-Characters/340.Longest-Substring-with-At-Most-K-Distinct-Characters_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) 
+    {
+        vector<int>freq(256,0);
+        int count = 0;
+        int i = 0;
+        int ret = 0;
+        for (int j=0; j<s.size(); j++)
+        {                        
+            freq[s[j]]++;
+            if (freq[s[j]]==1) count++;
+            
+            while (count>k)
+            {
+                freq[s[i]]--;
+                if (freq[s[i]]==0)
+                    count--;
+                i++;
+            }
+            ret = max(ret, j-i+1);            
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Two_Pointers/0340.Longest-Substring-with-At-Most-K-Distinct-Characters/Readme.md
+::::::::::::::
+### 340.Longest-Substring-with-At-Most-K-Distinct-Characters.cpp
+
+#### 解法1：固定左边界，探索右边界(开区间)
+```cpp
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && count + (freq[s[j]]+1 == 1) <= k)
+            {
+                freq[s[j]]++;
+                count += (freq[s[j]] == 1);
+                j++;
+            }
+            ret = max(ret, j-i);
+            
+            freq[s[i]]--;
+            count -= (freq[s[i]] == 0);
+        }
+```        
+
+#### 解法1：固定右边界，探索左边界(闭区间)
+```cpp
+        for (int j=0; j<s.size(); j++)
+        {                        
+            freq[s[j]]++;
+            if (freq[s[j]]==1) count++;
+            
+            while (count>k)
+            {
+                freq[s[i]]--;
+                if (freq[s[i]]==0)
+                    count--;
+                i++;
+            }
+            ret = max(ret, j-i+1);            
+        }
+```
+
+[Leetcode Link](https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters)
+::::::::::::::
+Two_Pointers/0360.Sort-Transformed-Array/360.Sort Transformed Array.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) 
+    {
+        vector<int>result;
+        
+        if (a==0)
+        {
+            for (int i=0; i<nums.size(); i++)
+                result.push_back(b*nums[i]+c);
+            if (b<0)
+                reverse(result.begin(),result.end());
+        }
+        else 
+        {
+            int flag = (a>0);
+            float mid=-b/2.0/a;
+            
+            int left=0;
+            int right=nums.size()-1;
+            while (left<=right)
+            {
+                if (abs(mid-nums[left])>abs(mid-nums[right]))
+                {
+                    result.push_back(a*nums[left]*nums[left]+b*nums[left]+c);
+                    left++;
+                }
+                else
+                {
+                    result.push_back(a*nums[right]*nums[right]+b*nums[right]+c);
+                    right--;
+                }                
+            }            
+            if (flag==1) reverse(result.begin(),result.end());            
+        }        
+        return result;        
+    }
+};
+::::::::::::::
+Two_Pointers/0360.Sort-Transformed-Array/Readme.md
+::::::::::::::
+### 360.Sort-Transformed-Array
+
+注意a等于零和正负情况，会影响结果。如果a==0时，函数结果本身就是单调的，但要根据b是否大于0来改变顺序。
+
+当a不等于零时，设置左右两个指针，可以根据nums[left]、num[right]离中轴线(-b/2a)的距离来移动较远的那个指针，特别注意细节，不是比较left/right和中轴线的距离。令两个指针不断靠近，直至left==right.
+
+也可以直接用比较两个指针对应的func[i]的大小来移动指针。当a>0时，优先移动二者之间较大的，最后结果反序；当a<0时，优先移动二者之间较小的。
+
+
+[Leetcode Link](https://leetcode.com/problems/sort-transformed-array)::::::::::::::
+Two_Pointers/0424.Longest-Repeating-Character-Replacement/424.Longest-Repeating-Character-Replacement_v1.cpp
+::::::::::::::
+class Solution {
+    vector<int>count;
+public:
+    int characterReplacement(string s, int k) 
+    {        
+        int ret = 0;
+        int j = 0;
+        count.resize(26);
+        for (int i=0; i<s.size(); i++)
+        {
+            while (j<s.size() && checkOK(s, j, j-i+1, k))
+                j++;
+            ret = max(ret, j-i);
+            count[s[i]-'A']--;
+        }
+        return ret;
+    }
+
+    bool checkOK(string&s, int j, int total, int k)
+    {
+        count[s[j]-'A']++;
+        int maxCount = *max_element(count.begin(), count.end());
+        if (total - maxCount <= k)
+            return true;
+        else
+        {
+            count[s[j]-'A']--;
+            return false;
+        }
+    }
+};
+::::::::::::::
+Two_Pointers/0424.Longest-Repeating-Character-Replacement/424.Longest-Repeating-Character-Replacement_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int characterReplacement(string s, int k) 
+    {
+        vector<int>count(26,0);
+        
+        int i = 0;        
+        int result = 0;
+        
+        for (int j=0; j<s.size(); j++)
+        {
+            count[s[j]-'A']++;
+            
+            while (j-i+1 - *max_element(count.begin(),count.end()) > k)
+            {
+                count[s[i]-'A']--;
+                i++;                       
+            }
+            result = max(result, j-i+1);                                    
+        }
+        return result;
+    }
+};
+::::::::::::::
+Two_Pointers/0424.Longest-Repeating-Character-Replacement/Readme.md
+::::::::::::::
+### 424.Longest-Repeating-Character-Replacement
+本题的本质就是用一个滑动窗口，查找最长的subarray，使得其最多含有ｋ个与majority不相同的字符．这里majority指的是窗口中出现最多的那个字符．
+
+很显然，我们需要一个hash map或者字典来存放每个字符出现的次数．在不断拓宽窗口的过程中保持
+```
+窗口长度数L - majority元素的个数M <= K
+```
+如果不满足这个条件，那么就需要移动左指针一位，以缩短窗口．然后再尝试拓展右边界j。
+
+细节分析：
+
+１．为什么左指针移动之后不用更新结果？
+
+这是因为，我们移动左指针的起因是之前s[j]的引入，它必然是一个非majority的字符（否则整个窗口应该会继续保持合法），而无论左指针弹出的是否majority元素，都不会得到更好的结果，最多持平，所以我们不需要更新结果。
+
+２．为什么左指针移动只需要一步？
+
+因为我们求最长的窗口，左指针的移动不用太大．事实上，只要移动左指针一步，那么整个窗口还是有机会通过移动右指针找到下一个可能的窗口．参看上面的那个公式．
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-repeating-character-replacement)
+::::::::::::::
+Two_Pointers/0532.K-diff-Pairs-in-an-Array/532.K-diff Pairs in an Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int findPairs(vector<int>& nums, int k) 
+    {
+        if (nums.size()<2) return 0;
+        
+        sort(nums.begin(),nums.end());
+        
+        int i=0;
+        int j=1;
+        int count=0;
+        
+        while (j<nums.size())
+        {
+            j=i+1;
+            while (j<nums.size() && nums[j]<nums[i]+k) j++;
+            if (j<nums.size() && nums[j]==nums[i]+k)
+                count++;
+            i++;
+            while (i<nums.size() && nums[i]==nums[i-1]) i++;
+        }
+        
+        return count;
+
+    }
+};
+::::::::::::::
+Two_Pointers/0532.K-diff-Pairs-in-an-Array/532.K-diff-Pairs-in-an-Array_s2.cpp
+::::::::::::::
+class Solution {
+public:
+    int findPairs(vector<int>& nums, int k) 
+    {
+        sort(nums.begin(),nums.end());
+        
+        int i=0;
+        int j=0;
+        int count=0;
+        
+        while (j<nums.size())
+        {
+            if (nums[i]+k==nums[j] && i<j)
+            {
+                count++;
+                while (nums[i]==nums[i+1])
+                    i++;
+                i++;    
+            }
+            else if (nums[i]+k>=nums[j])
+                j++;
+            else
+                i++;
+        }
+        return count;       
+    }
+};
+::::::::::::::
+Two_Pointers/0532.K-diff-Pairs-in-an-Array/Readme.md
+::::::::::::::
+### 532.K-diff-Pairs-in-an-Array
+
+最简单的思路应该就是用双指针来做。
+
+将nums排序后，对应一个前指针i，移动后指针j查看是否有 nums[i]+k==nums[j]。如果有，则计数器加1.
+
+为了避免重复，保证前指针i跳过重复的元素。
+
+另外注意的一个细节就是，每确定一个指针i，都要重新定位j=i+1.
+
+
+[Leetcode Link](https://leetcode.com/problems/k-diff-pairs-in-an-array)::::::::::::::
+Two_Pointers/0611.Valid-Triangle-Number/611.Valid-Triangle-Number.cpp
+::::::::::::::
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) 
+    {
+        sort(nums.begin(),nums.end());
+        int count=0;
+
+        for (int k=nums.size()-1; k>=0; k--)
+        {
+            int i=0;
+            int j=k-1;
+            while (i<j)
+            {
+                if (nums[i]+nums[j]>nums[k])
+                {
+                    count+=j-i;
+                    j--;
+                }
+                else
+                    i++;
+            }                   
+        }
+        return count;
+    }
+};
+::::::::::::::
+Two_Pointers/0611.Valid-Triangle-Number/Readme.md
+::::::::::::::
+### 611.Valid-Triangle-Number
+
+最佳的解法是用双指针。
+
+将nums排序后，固定最大的位置k，则前两个元素的位置i,j需要满足其nums[i]+nums[j]>nums[k]，等效于一道“2sum larger”的题目，于是双指针的移动规则就非常清楚了。
+
+
+[Leetcode Link](https://leetcode.com/problems/valid-triangle-number)::::::::::::::
+Two_Pointers/0713.Subarray-Product-Less-Than-K/713.Subarray-Product-Less-Than-K.cpp
+::::::::::::::
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) 
+    {
+        if (k<=1) return 0;
+        int j=0;
+        int prod = 1;
+        int count = 0;
+        for (int i=0; i<nums.size(); i++)
+        {            
+            if (j<i)
+            {
+                j = i;
+                prod = 1;
+            }
+            
+            while (j<nums.size() && prod*nums[j]<k)
+            {
+                prod = prod*nums[j];
+                j++;
+            }
+            count += j-i;
+            prod = prod/nums[i];
+        }
+        return count;
+    }
+};
+::::::::::::::
+Two_Pointers/0713.Subarray-Product-Less-Than-K/Readme.md
+::::::::::::::
+### 713.Subarray-Product-Less-Than-K
+
+本题有很明显的滑窗的特征，所以基本思路是用双指针。保证一个乘积小于k的最大窗口，这个窗口内可以构成subarray的数目就是j-i+1;
+
+本题需要注意的一点是，当nums[i]>k时，右指针动不了，而左指针依然会顺移，所以可能会出现j<i的情况，此时只需要重置这两个指针即可：
+```cpp
+if (j<i)
+{
+    j = i;
+    product = 1;
+}
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/subarray-product-less-than-k)::::::::::::::
+Two_Pointers/0923.3Sum-With-Multiplicity/923.3Sum-With-Multiplicity.cpp
+::::::::::::::
+class Solution {
+public:
+    int threeSumMulti(vector<int>& arr, int target) 
+    {
+        int n = arr.size();
+        sort(arr.begin(), arr.end());
+        long count = 0;
+        long M = 1e9+7;
+        for (int k=1; k<n-1; k++)
+        {
+            int j = n-1;
+            for (int i = 0; i<k; i++)
+            {
+                int count1 = 1;
+                int count2 = 0;
+                while (i+1<k && arr[i+1]==arr[i])
+                {
+                    count1++;
+                    i++;
+                }
+                
+                while (j>k && arr[i]+arr[k]+arr[j]>target)
+                    j--;                
+                while (j>k && arr[i]+arr[k]+arr[j]==target)
+                {
+                    count2++;                    
+                    j--;
+                }            
+                count += count1*count2;
+                count %= M;                
+            }
+        }
+        return count;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/0923.3Sum-With-Multiplicity/Readme.md
+::::::::::::::
+### 923.3Sum-With-Multiplicity
+
+我们可以在第一层循环中枚举中间的元素k，再用双指针的思想来遍历{i,j}配对。第二层循环里枚举元素i，然后从右往左移动指针j来寻找```arr[i]+arr[k]+arr[j]==target```.
+
+这里需要注意的是，两个指针移动时需要考虑与arr[i]相同的元素个数count1，与arr[j]相同的元素个数count2。统计时需要加上```count1*count2```.
+::::::::::::::
+Two_Pointers/0986.Interval-List-Intersections/986.Interval-List-Intersections.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> intervalIntersection(vector<vector<int>>& firstList, vector<vector<int>>& secondList) 
+    {
+        int m = firstList.size();
+        int n = secondList.size();
+        int i = 0, j = 0;
+        vector<vector<int>>rets;
+        while (i<m && j<n)
+        {
+            if (firstList[i][1]<secondList[j][0])
+                i++;
+            else if (firstList[i][0]>secondList[j][1])
+                j++;
+            else
+            {
+                int start = max(firstList[i][0], secondList[j][0]);
+                int end = min(firstList[i][1], secondList[j][1]); 
+                rets.push_back({start, end});
+                if (firstList[i][1]<secondList[j][1])
+                    i++;
+                else
+                    j++;
+            }
+        }
+        return rets;
+
+    }
+};
+::::::::::::::
+Two_Pointers/0986.Interval-List-Intersections/Readme.md
+::::::::::::::
+### 986.Interval-List-Intersections
+
+本题中的两个区间序列都已经有序了，所以不需要扫描线算法，可以直接双指针。
+
+用i和j分别指向当前两个序列的第一个区间。如果这两个区间完全不相交，那么将区间更早的那个序列指针增1。如果这两个区间有相交的部分，那么就收录相交的部分```{max(s1,s2), min(e1,e2)}```，然后依然将区间更早的那个序列指针增1。直至某个序列的指针越界。
+::::::::::::::
+Two_Pointers/0992.Subarrays-with-K-Different-Integers/992.Subarrays-with-K-Different-Integers_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int subarraysWithKDistinct(vector<int>& A, int K) 
+    {
+        return atMostK(A,K) - atMostK(A,K-1);
+    }
+    
+    int atMostK(vector<int>& A, int K)
+    {
+        unordered_map<int,int>Map;
+        int count=0;
+        int i = 0;
+        
+        for (int j=0; j<A.size(); j++)
+        {
+            Map[A[j]]++;
+            
+            while (Map.size()>K)
+            {
+                Map[A[i]]--;
+                if (Map[A[i]]==0)
+                    Map.erase(A[i]);
+                i++;
+            }            
+            count+= j-i+1;
+        }        
+        return count;            
+    }    
+};
+
+::::::::::::::
+Two_Pointers/0992.Subarrays-with-K-Different-Integers/992.Subarrays-with-K-Different-Integers_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) 
+    {
+        vector<int>freq(256,0);
+        int count = 0;
+        int i = 0;
+        int ret = 0;
+        for (int j=0; j<s.size(); j++)
+        {                        
+            freq[s[j]]++;
+            if (freq[s[j]]==1) count++;
+            
+            while (count>k)
+            {
+                freq[s[i]]--;
+                if (freq[s[i]]==0)
+                    count--;
+                i++;
+            }
+            ret = max(ret, j-i+1);            
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Two_Pointers/0992.Subarrays-with-K-Different-Integers/Readme.md
+::::::::::::::
+### 992.Subarrays-with-K-Different-Integers
+
+此题的解法非常巧妙.它代表了一类思想:求关于K的解,是否可以化成求at most K的解减去求at most K-1的解.本题恰好就是用到这个方法.我们需要写一个helper函数,计算数组A里面最多含有K个不同数字的subarray的个数.于是最终答案就是```helper(K)-helper(K-1)```.
+
+对于这个helper函数,标准答案很显然就是用双指针和滑动窗口的方法.遍历右指针,考察对应的最大的滑窗是多少.于是在该右边界固定的条件下,满足题意的subarray的个数就是```count+=右指针-左指针+1```
+
+
+[Leetcode Link](https://leetcode.com/problems/subarrays-with-k-different-integers)::::::::::::::
+Two_Pointers/1004.Max-Consecutive-Ones-III/1004.Max-Consecutive-Ones-III.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestOnes(vector<int>& A, int K) 
+    {
+        int n = A.size();
+        int count = 0;
+        int i = 0;
+        int ret = 0;
+        for (int j=0; j<n; j++)
+        {
+            if (A[j]==1)
+            {
+                ret = max(ret, j-i+1);
+                continue;
+            }
+                
+            count++;
+            while (count>K)
+            {
+                if (A[i]==0)
+                    count--;
+                i++;
+            }
+            ret = max(ret, j-i+1);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1004.Max-Consecutive-Ones-III/1004.Max-Consecutive-Ones-III_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestOnes(vector<int>& A, int K) 
+    {
+        int n = A.size();
+        int j = 0;
+        int ret = 0;
+        int count = 0;
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && (A[j]==1 || (A[j]==0 && count<K)))
+            {
+                if (A[j]==0) count++;                
+                j++;                
+            }
+            ret = max(ret, j-i);
+            if (A[i]==0) count--;
+        }
+        return ret;
+        
+    }
+};
+::::::::::::::
+Two_Pointers/1004.Max-Consecutive-Ones-III/Readme.md
+::::::::::::::
+### 1004.Max-Consecutive-Ones-III
+
+#### 解法1：DP
+令dp[i][k]表示截止到第i个元素位置，我们行使了k次翻转权利的话，最长的连续1区间的长度。突破口就是第i个元素我们是否进行翻转：
+1. 如果A[i]==1，那么我们不需要翻转，即dp[i][k] = dp[i-1][k]+1
+2. 如果A[i]==0，那么我们需要翻转，即dp[i][k] = dp[i-1][k-1]+1，注意k不能超过题目规定的行使反转权利的上限K。
+答案就是dp[x][K]中的最大值。
+
+以上方法的两层循环的时间复杂度是o(NK)，显然会超时。
+
+#### 解法2：双指针
+对于任何求subarray的问题，我们通常的做法就是固定左边界，探索右边界。假设我们固定左边界是i，那么要使右边界j最远，需要满足[i,j]最多有K个0。
+
+此时我们考虑左边界是i+1的情况。如果A[i+1]==1，那么此时[i+1,j]内的需要翻转元素的个数count依然是K，然而右边界j依然不能往右突破。我们只有不停地移动i，直到A[i]==0的时候，意味着第i个元素的不被允许翻转，所以区间内的翻转次数count-=1，因此右边界就又可以移动，直到找到下一个A[j]==0为止（此时count再次变为K）。
+
+所以两个指针都只会朝一个方向移动。这是快慢类型的双指针，时间复杂度就是o(N).
+::::::::::::::
+Two_Pointers/1052.Grumpy-Bookstore-Owner/1052.Grumpy-Bookstore-Owner.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int X) 
+    {
+        int sum = 0;
+        int n = grumpy.size();
+        for (int i=0; i<n; i++)
+            if (grumpy[i]==0)
+                sum+=customers[i];
+
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            if (grumpy[i]==1)
+                sum += customers[i];
+            if (i>=X && grumpy[i-X]==1)
+                sum -= customers[i-X];
+            ret = max(ret, sum);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1052.Grumpy-Bookstore-Owner/Readme.md
+::::::::::::::
+### 1052.Grumpy-Bookstore-Owner
+
+本题的意思是可以给你一个固定长度的滑窗，滑窗内的满意度可以累加（不管是否grumpy）。求某个滑窗位置时，整体满意度的最大值。
+
+首先算出sum的基本盘，就是在没有滑窗覆盖的情况下，可以得到的满意度之和。
+
+然后考虑一个长度为X的滑窗内，我们可能可以额外增加一些满意度。滑动窗口每一次移动，会加入一个元素customers[i]，考察它对应的grumpy[i]是否是1，是的话那就是额外增加的满意度，需要加入sum。同时也会有一个元素customers[i-X]离开滑窗，同样考察它对应的grumpy[i+X]是否是1，是的话我们就要退回额外的满意度，从sum中扣除。
+
+整个滑动过程中出现的最大sum，就是答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/grumpy-bookstore-owner)
+::::::::::::::
+Two_Pointers/1229.Meeting-Scheduler/1229.Meeting-Scheduler_2_pointers.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> minAvailableDuration(vector<vector<int>>& slots1, vector<vector<int>>& slots2, int duration) 
+    {
+        sort(slots1.begin(), slots1.end());
+        sort(slots2.begin(), slots2.end());
+        int i=0, j=0;
+        while (i<slots1.size() && j<slots2.size())
+        {
+            int start = max(slots1[i][0], slots2[j][0]);
+            int end = min(slots1[i][1], slots2[j][1]);
+            if (end-start >= duration)
+                return {start, start+duration};
+            
+            if (slots1[i][1] < slots2[j][1])
+                i++;
+            else
+                j++;
+        }
+        return {};
+    }
+};
+::::::::::::::
+Two_Pointers/1229.Meeting-Scheduler/1229.Meeting-Scheduler_diff_array.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(pair<int,int>a, pair<int,int>b)
+    {
+        if (a.first==b.first)
+            return a.second > b.second;
+        else
+            return a.first<b.first;
+    }
+public:
+    vector<int> minAvailableDuration(vector<vector<int>>& slots1, vector<vector<int>>& slots2, int duration) 
+    {
+        vector<pair<int,int>>p;
+        for (auto x: slots1)
+        {
+            p.push_back({x[0],1});
+            p.push_back({x[1],-1});
+        }
+        for (auto x: slots2)
+        {
+            p.push_back({x[0],1});
+            p.push_back({x[1],-1});
+        }
+        sort(p.begin(),p.end(),cmp);
+        
+        int count = 0;
+        int start;
+        vector<int>ret;
+        for (int i=0; i<p.size(); i++)
+        {
+            count += p[i].second;
+            if (p[i].second==1 && count==2)
+            {
+                start = p[i].first;
+            }
+            else if (p[i].second==-1 && count==1 && p[i].first-start>=duration)
+            {
+                ret={start,start+duration};
+                return ret;
+            }
+        }
+        return {};
+            
+    }
+};
+::::::::::::::
+Two_Pointers/1229.Meeting-Scheduler/Readme.md
+::::::::::::::
+### 1229.Meeting-Scheduler
+
+#### 解法1：
+常规的扫描线方法。当某个时刻的计数器由1变成2时，说明是两人都有空的起点；当某个时候的计数器有2变成1时，说明是两人都有空的终点。查看这两个时刻的差是否大于duration。
+
+#### 解法2：
+因为每个人的slots都是互不相交的，所以将两个人的slots先预排序。然后用双指针来逐个考察两个人的队首window。如果两个人的window相交，就判断相交长度是否大于等于duration。其他情况（不相交，或者相交时间不够）就舍弃较早结束的window，并移动那个人的指针。
+::::::::::::::
+Two_Pointers/1234.Replace-the-Substring-for-Balanced-String/1234.Replace-the-Substring-for-Balanced-String_BinarySearch.cpp
+::::::::::::::
+class Solution {
+    int n;
+    unordered_map<char,int>count;
+public:
+    int balancedString(string s) 
+    {
+        n = s.size();        
+        for (auto ch:s)
+            count[ch] += 1;
+        int flag = 1;
+        for (auto x: count)
+            if (x.second!=n/4)
+                flag = 0;
+        if (flag==1) return 0;
+
+        int left = 1, right = n;
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            if (isOK(mid, s))
+                right = mid;
+            else
+                left = mid+1;
+        }
+        return left;
+    }
+
+    bool isOK(int k, string& s)
+    {
+        unordered_map<char,int>sum;
+        for (int i=0; i<n; i++)
+        {
+            sum[s[i]]+=1;
+            if (i>=k)
+                sum[s[i-k]]-=1;
+
+            int flag = 1;
+            for (auto x: count)
+            {
+                char ch = x.first;
+                if (count[ch]-sum[ch] > n/4)
+                {
+                    flag  = 0;
+                    break;
+                }
+            }
+            if (flag) return true;                    
+        }
+        return false;
+    }
+};
+::::::::::::::
+Two_Pointers/1234.Replace-the-Substring-for-Balanced-String/1234.Replace-the-Substring-for-Balanced-String_TwoPointers.cpp
+::::::::::::::
+class Solution {
+    int n;
+    unordered_map<char,int>count;
+public:
+    int balancedString(string s) 
+    {
+        n = s.size();        
+        for (auto ch:s)
+            count[ch] += 1;
+        int flag = 1;
+        for (auto x: count)
+            if (x.second!=n/4)
+                flag = 0;
+        if (flag==1) return 0;
+
+        int j = 0;
+        unordered_map<char,int>sum;
+        int ret = INT_MAX;
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && !isOK(sum))
+            {
+                sum[s[j]]+=1;
+                j++;
+            }
+            if (isOK(sum))
+                ret = min(ret, j-i);
+            sum[s[i]] -= 1;
+        }
+        return ret;
+    }
+
+    bool isOK(unordered_map<char,int>&sum)
+    {        
+        for (auto x: count)
+        {
+            char ch = x.first;
+            if (count[ch]-sum[ch] > n/4)
+                return false;
+        }
+        return true;
+    }
+};
+::::::::::::::
+Two_Pointers/1234.Replace-the-Substring-for-Balanced-String/Readme.md
+::::::::::::::
+### 1234.Replace-the-Substring-for-Balanced-String
+
+#### 解法１：
+比赛的时候我用的是二分法，尝试我们需要移除的substring的宽度ｋ，它的范围是[0,n]．二分的过程中，每次确定一个ｋ，就在s上滑过一个固定长度ｋ的窗口，查看滑窗是否在哪个位置的时候满足题意．
+
+那么如何判断满足题意呢？令s里的字符总数是n，那么我们期望最终每种字符的个数恰好是n/4. 我们只要保证滑窗外的每种字符的个数不超过n/4，那么即说明这样的滑窗可以满足题意。为什么呢？显然，如果滑窗外的某种字符的个数超过了n/4，那么无论滑窗里面怎么搞，最终无法使得该字符的总数符合期望的n/4。相反，只要滑窗外的每种字符的个数都不超过n/4，那么滑窗内就可以自由安排，总能使得最终每种字符的总数恰好是n/4.
+
+这个复杂度其实是nlog(n).
+
+#### 解法２：
+本题其实用双指针来做更简单，时间复杂度为o(n). 根据解法1的分析，我们其实只要找到一段窗口，使得窗口外的词频统计满足每种字母的频率都不超过n/4.
+
+基于这种算法，滑窗的两个指针是可以交替移动的．比如说当慢指针为i,快指针移动到j，满足条件．那么下一步慢指针移动到i+1,而快指针则不用动．为什么快指针不需要考察小于ｊ的位置呢？其实如果窗口```[i+1,k]```满足条件的话```（k<j)```，那么一定有```[i,k]```也满足条件，所以快指针根本就不会走到j的位置了．所以我们可以保证，并没有一个```k<j```使得```[i+1,k]```满足条件．所以快指针不需要回调．
+
+所以我们只要遍历左边界i，相应地单向朝右移动右边界j，使得[i:j]是一个满足条件的区间。探索所有的这样的区间，找一个最短的。
+
+[Leetcode Link](https://leetcode.com/problems/replace-the-substring-for-balanced-string)
+::::::::::::::
+Two_Pointers/1498.Number-of-Subsequences-That-Satisfy-the-Given-Sum-Condition/1498.Number-of-Subsequences-That-Satisfy-the-Given-Sum-Condition.cpp
+::::::::::::::
+class Solution {
+public:
+    int numSubseq(vector<int>& nums, int target) 
+    {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        long M = 1e9+7;
+        long ret = 0;
+        vector<long>power(n+1);
+            power[0] = 1;
+        for (int i=1; i<=n; i++)
+            power[i] = power[i-1] * 2 % M;
+
+        int j = n-1;    
+        for (int i=0; i<n; i++)
+        {            
+            while (j>=0 && nums[i]+nums[j] > target)
+                j--;
+            if (j<i) break;                        
+            ret = (ret + power[j-i]) % M;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1498.Number-of-Subsequences-That-Satisfy-the-Given-Sum-Condition/Readme.md
+::::::::::::::
+### 1498.Number-of-Subsequences-That-Satisfy-the-Given-Sum-Condition
+
+因为这题考察的是subsequence，我们选取的元素其实和顺序无关，所以我们可以将nums排个序。好处是任何subsquece的最小值都在前面，最大值在后面。
+
+我们遍历每个元素nums[i]，假想它是subsequence的最小值，那么我们可以容易确定可选的最大值nums[j]：只要从j=n-1往左移，找到第一个满足```nums[i]+nums[j]<=target```的元素j。确定了最大值和最小值，此时区间[i+1:j]内部的所有元素都可选可不选。所以我们的结论是：如果最小值是nums[i]，那么合法的子序列数目是```2^(j-i)```.
+
+我们考察下一个i的时候，j必然只能在之前的位置继续往左移。所以这是一个双指针模式，用o(N)时间就可以搜寻所有的{i,j}配对。对于每对{i,j}我们都将子序列的数目累加起来。
+
+此外，我们还预处理得到一个数组power[k]来存储所有```2^k % M```的值供使用。
+::::::::::::::
+Two_Pointers/1537.Get-the-Maximum-Score/1537.Get-the-Maximum-Score.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxSum(vector<int>& nums1, vector<int>& nums2) 
+    {
+        long m = nums1.size();
+        long n = nums2.size();
+        long long x = 0, y = 0;
+        long long i = 0, j = 0;
+        long long M = 1e9+7;
+        
+        while (i<m || j<n)
+        {
+            if (i==m)
+            {
+                y+=nums2[j];
+                j++;
+            }
+            else if (j==n)
+            {
+                x+=nums1[i];
+                i++;
+            }            
+            else if (nums1[i]<nums2[j])
+            {
+                x += nums1[i];
+                i++;
+            }
+            else if (nums1[i]>nums2[j])
+            {
+                y += nums2[j];
+                j++;
+            }
+            else if (nums1[i]==nums2[j])
+            {
+                x = max(x, y)+nums1[i];
+                y = x;
+                i++;
+                j++;
+            }
+        }
+        return max(x,y)%M;
+    }
+};
+::::::::::::::
+Two_Pointers/1537.Get-the-Maximum-Score/Readme.md
+::::::::::::::
+### 1537.Get-the-Maximum-Score
+
+本题是一个另类的双指针题。
+
+我们可以认为上路和下路有若干个传送门。当你在某条支路非传送门的位置时，你别无选择，只能继续前进，并将该点的数值加入该支路的score。假设你从上路走到传送门的位置时累计的分数是score1，从下路走到同一个传送门的位置时累计的分数是score2，那么你无论之后选择走哪一条路，你都会以max(score1,score2)作为新的base。也就是说，如果score1更大，那么意味着在来到传送门之前，你应该选择的是上路；反之你应该选择的是下路。在传送门之前选择上路或者下路，完全不影响你之后的选择，因为传送门的转移是没有代价的。
+
+于是我们为上下两路设计两个双指针。当到达传送门之前时，指针各自前进，但都会在同一个传送门的位置停下来。然后综合两者分数的取较大值。然后继续分别走上下两路。
+
+那么如何让两个指针都恰好在传送门的位置停下来呢？简单的比较两个指针对应的数值大小就行了。如果nums1[i]更小就移动i指针，反之就移动j指针。最终i和j会在同一个传送门停下来。
+
+注意，指针移动的过程中不能对M取模。必须上下两路都走完了，再在两个score里面取最大值后再取模。
+::::::::::::::
+Two_Pointers/1574.Shortest-Subarray-to-be-Removed-to-Make-Array-Sorted/1574.Shortest-Subarray-to-be-Removed-to-Make-Array-Sorted.cpp
+::::::::::::::
+class Solution {
+public:
+    int findLengthOfShortestSubarray(vector<int>& arr) 
+    {
+        int n = arr.size();
+        int ret = n-1;
+        
+        int j = n-1;
+        while (j-1>=0 && arr[j-1]<=arr[j])
+            j--;
+        ret = min(ret, j);        
+        if (ret==0) return 0;
+        
+        for (int i=0; i<n; i++)
+        {
+            if (i>=1 && arr[i]<arr[i-1]) break;
+            while (j<n && arr[j]<arr[i])
+                j++;
+            ret = min(ret, j-i-1);
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1574.Shortest-Subarray-to-be-Removed-to-Make-Array-Sorted/Readme.md
+::::::::::::::
+### 1574.Shortest-Subarray-to-be-Removed-to-Make-Array-Sorted
+
+我们对于探索subarray的题目，归根结底就是确定它的两个边界。我们将整个数组可以分为三段[0,i],[i+1,j-1],[j,n-1]，中间的那段就是我们尝试删除的subarray。我们需要满足三个条件：[0:i]是单调增的，[j:n-1]是单调增的，并且arr[j]>=arr[i].
+
+让我们尝试从头到尾遍历i可能的位置。条件1是比较容易判断的。一旦发现arr[i]<arr[i-1]的时候，条件1不能满足，注定就没有解了，整个搜索过程就可以终止了。
+
+条件3也是容易实现的。就是从后往前遍历，可以找到最前的一个j使得满足[j:n-1]是单调的。
+
+那么条件2怎么满足呢？如果此时arr[j]<arr[i]怎么办？显然因为[j:n-1]是单调增的，我们可以尝试往右移动j找到满足arr[j]>=arr[i]的第一个位置。此时我们就找到了一组{i,j}对应的是一个合法的拆分原数组的解（不见得是最优解）。
+
+接下来我们遍历i的下一个位置。此时j怎么移动呢？我们发现，因为i的移动必须保证[0:i]单调增，所以arr[i]会变大，所以arr[j]必然也要增大以保证arr[j]>=arr[i]。我们还发现[j:n-1]也是单调增的区间，所以我们必然会将j右移。这样我们会找到下一个合适的j，使得此时的{i,j}成为一组合适的解。
+
+同理的分析，我们每向右移动一次i指针，必然也必须向右移动j指针以寻找合适的{i,j}。这就是一个双指针的模式。所以我们用o(n)的时间复杂度就可以探索到所有合适的{i,j}.
+::::::::::::::
+Two_Pointers/1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers/1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers_Hash.cpp
+::::::::::::::
+class Solution {
+public:
+    int numTriplets(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int ret = 0;
+        ret += helper(nums1, nums2);
+        ret += helper(nums2, nums1);
+        return ret;
+    }
+
+    int helper(vector<int>& nums1, vector<int>& nums2)
+    {
+        int ret = 0;                
+        for (long x: nums1)
+        {
+            unordered_map<int,int>Map;
+            for (int i=0; i<nums2.size(); i++)
+            {
+                if (x*x%nums2[i]==0)
+                {
+                    ret += Map[x*x/nums2[i]];
+                }
+                Map[nums2[i]]+=1;
+            }
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers/1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers_TwoPointer.cpp
+::::::::::::::
+class Solution {
+public:
+    int numTriplets(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int ret = 0;
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        ret += helper(nums1,nums2);
+        ret += helper(nums2,nums1);
+        return ret;        
+    }
+    
+    int helper(vector<int>& nums1, vector<int>& nums2)
+    {
+        int ret = 0;
+        int n = nums2.size();
+        for (long x: nums1)
+        {
+            int i = 0, j = n-1;
+            while (i<j)
+            {                
+                if (x*x==(long)nums2[i]*(long)nums2[j])
+                {
+                    if (nums2[i]==nums2[j])
+                    {
+                        int t = j-i+1;
+                        ret += t*(t-1)/2;
+                        break;
+                    }
+                    else
+                    {
+                        int i0 = i; int j0=j;
+                        while (i+1<n && nums2[i+1]==nums2[i])
+                            i++;
+                        while (j-1<n && nums2[j-1]==nums2[j])
+                            j--;
+                        ret += abs(i-i0+1)*abs(j0-j+1);
+                        i++;
+                        j--;                        
+                    }
+                }                    
+                else if (x*x<(long)nums2[i]*(long)nums2[j])
+                    j--;
+                else
+                    i++;
+            }
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers/Readme.md
+::::::::::::::
+### 1577.Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers
+
+#### 解法1：Hash
+这个方法更容易实现。我们查看数组A中的每个元素a。然后遍历数组B中的元素i，同时维护一个hash表来统计B[i]之前的B数组元素的频率。
+
+如果```a*a/B[i]```存在hash表中存在并且有k个，这就意味着有k组triplet满足条件```{a, B[i], a*a/B[i]}```，加入ret的统计中。注意每查看完B[i]，要把B[i]也加入hash表中。
+
+#### 解法1：Two Pointer
+如果这两个数组都排过序，那么有不需要额外空间的双指针方法。看似和two sum基本一致，但是实现起来更为麻烦。
+
+我们知道，如果```a*a < B[i]*B[j]```，那么下一步是i++；如果```a*a > B[i]*B[j]```，那么下一步是j--；但如果```a*a==B[i]*B[j]```，下一步该指针移动？不应该是```i++, j--```。正解是：
+1. 如果```B[i]==B[j]```，那么[i:j]区间内的k个相同的数，任意取两个都可以放入triplet，所以```ret+=k*(k-1)/2```，然后就可以退出了。
+2. 否则的话，我们需要检查有x个与B[i]相同的数，y个与B[j]相同的数，所以```ret+=x*y```。然后需要把i指针右移到下一个不同的数（移动x个位置），j指针左移到下一个不同的数（移动y个位置）。
+::::::::::::::
+Two_Pointers/1580.Put-Boxes-Into-the-Warehouse-II/1580.Put-Boxes-Into-the-Warehouse-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxBoxesInWarehouse(vector<int>& boxes, vector<int>& warehouse) 
+    {
+        int n = warehouse.size();        
+        sort(boxes.begin(), boxes.end());
+        reverse(boxes.begin(), boxes.end());
+        
+        int count = 0;
+        int i = 0, j = warehouse.size()-1;
+        for (auto box: boxes)
+        {
+            if (i>j) break;
+            if (box > max(warehouse[i], warehouse[j])) continue;
+            if (warehouse[j] < box || (warehouse[i] >=box && warehouse[i] < warehouse[j]))
+                i++;
+            else
+                j--;
+            count++;  
+        }
+                
+        return count;        
+    }
+};
+::::::::::::::
+Two_Pointers/1580.Put-Boxes-Into-the-Warehouse-II/Readme.md
+::::::::::::::
+### 1580.Put-Boxes-Into-the-Warehouse-II
+
+此题的本质是贪心法。我们首先需要有这样一个概念，在最终的排列中，高的箱子会摆放在靠两边的位置。越高的箱子会摆得越靠边。
+
+于是我们从高到低遍历每一个箱子，查看是否能fit仓库的第一个或者最后一个。如果两个都fit，那我们挑一个较矮的仓库。于是我们就把这个箱子安置好了。于是我们将指向仓库两头的指针做必要的移动，将其中一个挪开已经放置箱子的位置朝中间进发。
+
+然后我们考察下一个箱子。因为这个箱子比刚才的矮，所以必然可以穿越之前那个箱子所在的仓库，等价于忽略掉warehouse的一个边缘元素。于是我们又面对一样的问题，此时的箱子能否fit仓库的第一个或者最后一个？如果两个都fit，那么我们再挑一个较矮的仓库。于是双指针中的一个又可以往中间移动。每移动一次就代表安置了一个箱子。
+
+当箱子都遍历结束，或者双指针i>j的时候，就完成了探索。
+::::::::::::::
+Two_Pointers/1687.Delivering-Boxes-from-Storage-to-Ports/1687.Delivering-Boxes-from-Storage-to-Ports.cpp
+::::::::::::::
+class Solution {
+public:
+    int boxDelivering(vector<vector<int>>& boxes, int portsCount, int maxBoxes, int maxWeight) 
+    {
+        int n = boxes.size();
+        boxes.insert(boxes.begin(), {-1,0});
+        vector<int>dp(n+1, INT_MAX/2);
+        dp[0] = 0;
+
+        int j = 0;
+        int weightSum = 0;
+        int tripSum = 0;
+        int lastPort = -1; 
+        int lastj;
+        for (int i=1; i<=n; i++)
+        {         
+            // find the longest valid window [i:j]
+            while (j+1<=n && j+1-i+1 <= maxBoxes && weightSum + boxes[j+1][1] <= maxWeight)
+            {
+                j+=1;
+                weightSum += boxes[j][1];
+                if (boxes[j][0]!=boxes[j-1][0])
+                    tripSum += 1;                
+                if (boxes[j][0]!=lastPort)
+                {
+                    lastPort = boxes[j][0];
+                    lastj = j;
+                }                
+            }
+            // update dp[j]
+            dp[j] = min(dp[j], dp[i-1] + tripSum + 1);
+            // in some cases, update dp[lastj-1], where [lastj:j] share the same port.
+            if (j+1<=n && boxes[j][0]==boxes[j+1][0])
+            {
+                dp[lastj-1] = min(dp[lastj-1], dp[i-1] + tripSum);
+            }
+            weightSum -= boxes[i][1];
+            tripSum -= (i+1<=n && boxes[i][0]!=boxes[i+1][0]);
+                
+        }
+        return dp[n];
+    }
+};
+
+::::::::::::::
+Two_Pointers/1687.Delivering-Boxes-from-Storage-to-Ports/Readme.md
+::::::::::::::
+### 1687.Delivering-Boxes-from-Storage-to-Ports
+
+我们先来考察一下贪心的解法为什么会有局限性。我们考察从第一个盒子开始，假设到第5个盒子为止，区间[1:5]是用一次船载的极限（考虑了盒子总数、盒子总重的约束）。
+```
+idx   1 2 3 4 5
+port: 1 2 3 4 5 
+```
+在上面的例子中总共需要6段航程（包括回港）。那么为什么我们充分利用了船载极限，不见得是最优解呢？其实是和之后的行程有关系。看下面的例子：
+```
+idx   1 2 3 4 5 6
+port: 1 2 3 4 5 5
+```
+如果按照之前的方案，我们需要两次船载，分别是运载[1:5]，需要6段trip，然后运载[6]，需要2段trip。总共需要8段trip。但是更优的方案是，第一次运载[1:4]，需要5段trip；第二次运载[5:6]需要2段trip，总共就是7段trip。
+
+我们发现了什么？第一种贪心方案，会使得port 5的两个箱子被拆分成了两次船载来运输，中间白白浪费了一次回港的trip。而更优的方案是，我们不使用船载的极限，而是把盒子5的机会留到下一次船载，使得第二次出船的时候，一次就把两个箱子都运走。这就是为什么极限贪心的方法不是最优解的原因。
+
+于是我们拓展一下，考虑当前这船的货物，从第i个箱子开始，船载极限允许最多装到第j个箱子。令dp[x]表示运送前i个盒子最少需要的trip数目。
+```
+idx    i .....   j j+1
+port   X X X X X X  X
+```
+第一种方案，就是极限贪心。如下图，我们可以知道dp[j] = dp[i-1] + tripNums[i:j] + 1，其中tripNums[i:j]就是从仓库出发依次走完i~j所在港口数目，最后一个1是回港的trip。
+```
+idx    i .....   j j+1
+port  [X X X X X X] X
+```
+第二种方案，就是当返现j+1和j的盒子属于同一个港口的时候，退让一部分容量，将与j+1相同港口的盒子都留到下一次去。假设箱子j-1、j都是与j+1同港口的，那么我们就有```dp[j-2] = dp[i-1] + tripNums[i:j-2] + 1```
+```
+idx    i ..... j-1 j j+1
+port  [X X X X] Y  Y Y
+```
+注意，我们为什么不把断点设置在j-1和j之间呢？原因是，那样做的话并没有起到预期的节省trip的作用，到达Y港口的次数依然被割裂为两次出海。与其这样没有起到节省trip的效果，那还不如第一种方案，把船载容量用到极限。
+
+所以总结一下，如果我们从i个箱子开始装船，那么其实就两种方案。第一种方案就是用来船载的极限，装到箱子j为止，这样我们就可以更新dp[j]。第二种方案，就是发现如果箱子j和箱子j+1在同一个港口，那么我们往前回溯同一个港口的连续的箱子直至j'，于是我们更新dp[j'-1]。
+
+这里我们有一个疑问，那么处于i和j之间的这些dp，我们并没有更新到，这有问题吗？其实没有问题，对于我们没有更新到的dp[x]，意味着以x为船载最后一箱的方案并不是optimal的。事实上，我们只依据之前的两种方案去做装载分配的话，永远不会产生这样的情况。
+
+此外，还有一个问题。我们永远按照这两种方案去做，那么一定能更新到最后一个箱子的dp[n]吗？答案是的。第一种极限贪心可以保证装到最后一个箱子（即使没有到船载极限），并在遍历到最后一个箱子时更新dp[n]。
+
+
+
+
+::::::::::::::
+Two_Pointers/1763.Longest-Nice-Substring/1763.Longest-Nice-Substring.cpp
+::::::::::::::
+class Solution {
+public:
+    string longestNiceSubstring(string s) 
+    {
+        int retLen = -1, retStart = -1;
+        for (int k=26; k>=1; k--)
+        {
+            auto [len, start] = helper(s, k);
+            if (len > retLen)
+            {
+                retLen = len;
+                retStart = start;
+            } else if (len==retLen && start < retStart)
+            {
+                retStart = start;
+            }                                
+        }
+        if (retLen!=-1)
+            return s.substr(retStart, retLen);
+        else
+            return "";        
+    }
+    
+    pair<int,int> helper(string&s, int k)
+    {
+        int j=0;
+        unordered_map<char,int>Map1;
+        unordered_map<char,int>Map2;
+        int len = -1, start = -1;
+                
+        for (int i=0; i<s.size(); i++)
+        {
+            while (j<s.size() && (Map1.size()<k || Map1.size()==k && Map1.find(tolower(s[j]))!=Map1.end()))
+            {
+                Map1[tolower(s[j])]++;                
+                Map2[s[j]]++; 
+                j++;
+            }
+            if (Map1.size() < k) break;                
+            
+            int flag = 1;
+            for (auto x: Map1)
+            {
+                if (Map2[tolower(x.first)]==0 || Map2[toupper(x.first)]==0)
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag==1)
+            {
+                if (j-i > len)
+                {
+                    len = j-i;
+                    start = i;
+                }                
+            }       
+            
+            Map1[tolower(s[i])]--;
+            if (Map1[tolower(s[i])]==0)
+                Map1.erase(tolower(s[i]));
+            Map2[s[i]]--;
+                        
+        }
+        
+        return {len, start};
+    }
+};
+::::::::::::::
+Two_Pointers/1763.Longest-Nice-Substring/Readme.md
+::::::::::::::
+### 1763.Longest-Nice-Substring
+
+本题和```LC 395.Longest-Substring-with-At-Least-K-Repeating-Characters```的风格非常类似。传统的双指针非常难做，无法设计能让左右指针都单向移动的策略。而二分搜值也没有单调性的依据（并不是滑窗长度越长越容易满足条件）。
+
+本题的滑窗法的关键设计，在于要保证“滑窗内不同字符的种类数目固定为k”。k是可以从1到26遍历一遍。当固定某个k时，我们一旦逐个遍历左指针i，相应地一定能找到一个最远的右指针j，使得[i:j]里面的字符种类是k，然后只需要检查这个滑窗里面每个字符是否都存在大小写两个版本即可。然后我们左指针i右移一位，那么右指针j也一定只需要相应地单调右移即可，以继续满足“字符种类恰为k”的要求。可以，我们用线性的时间就可以遍历所有这样的滑窗，找到其中最长的、且合法的滑窗即可。
+
+总的时间复杂度就是o(26N).
+::::::::::::::
+Two_Pointers/1775.Equal-Sum-Arrays-With-Minimum-Number-of-Operations/1775.Equal-Sum-Arrays-With-Minimum-Number-of-Operations.cpp
+::::::::::::::
+class Solution {
+public:
+    int minOperations(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int sum1 = accumulate(nums1.begin(), nums1.end(), 0);
+        int sum2 = accumulate(nums2.begin(), nums2.end(), 0);
+        if (sum1 < sum2)
+            return minOperations(nums2, nums1);
+        
+        int diff = sum1 - sum2;
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        
+        int i = nums1.size()-1, j = 0;
+        int count = 0;
+        while (diff > 0)
+        {
+            if (i<0 && j==nums2.size())
+                return -1;
+            if (i<0)
+            {
+                diff -= (6 - nums2[j]);
+                j++;
+            }
+            else if (j==nums2.size())
+            {
+                diff -= (nums1[i] - 1);
+                i--;
+            }
+            else if (nums1[i] - 1> 6-nums2[j])
+            {
+                diff -= (nums1[i] - 1);
+                i--;
+            }
+            else
+            {
+                diff -= (6 - nums2[j]);
+                j++;
+            }
+            count++;            
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Two_Pointers/1775.Equal-Sum-Arrays-With-Minimum-Number-of-Operations/Readme.md
+::::::::::::::
+### 1775.Equal-Sum-Arrays-With-Minimum-Number-of-Operations
+
+假设nums1比num2的sum要大，那么我们要将这两个sum更靠近，无非就是两种思路：要么将nums1里面的元素改小，要么将num2里面的元素改大。为了减少操作次数，我们必须最大化改动的效率。也就是说，如果选择将nums1里面的元素改小，那么我们一定会将最大的元素改成1；反之，我们也可以将nums2里面最小的元素改成6。至于这两种方案里面怎么选，自然是查看它们的变动幅度，看哪个更大一些。一旦改动幅度能够cover当前的diff，就说明可以将这两个sum变成一致的。
+
+所以我们将两个数组都排个序。对于nums1，我们从后往前改动；对于nums2，我们从前往后改动。于是本题本质就是一个双指针，每改动一次，就移动相应的一个指针。直至diff小于等于零（实现目标），或者两个指针都到了尽头（无法实现目标）。
+::::::::::::::
+Two_Pointers/1793.Maximum-Score-of-a-Good-Subarray/1793.Maximum-Score-of-a-Good-Subarray.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximumScore(vector<int>& nums, int k) 
+    {
+        int n = nums.size();
+        int l = k, r = k;
+        int minVal = nums[k];
+        int ret = 0;
+        while (l>=0 || r < n)
+        {
+            while (l>=0 && nums[l]>=minVal) l--;
+            while (r<n && nums[r]>=minVal) r++;
+            ret = max(ret, (r-l-1)*minVal);            
+            minVal = max(l>=0?nums[l]:INT_MIN, r<n?nums[r]:INT_MIN);            
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/1793.Maximum-Score-of-a-Good-Subarray/Readme.md
+::::::::::::::
+### 1793.Maximum-Score-of-a-Good-Subarray
+
+注意到这个区间内的所有元素都是正数，那么在固定了minVal的情况下，自然是希望区间越大越好。既然这个区间必须包括k，那么我们首先考虑k为minVal的最大区间范围，往左右分别推至[l,r]，得到一个初始答案```nums[k]*(r-l+1)```.
+
+此时区间如果还想外扩，那么minVal必然会进一步降低。此时有两个选择，分别是nums[l]和nums[r]：此时我们应该选较大的那一个，目的是保证能够遍历到minVal每一个可能的取值。类似地，我们每个回合都取下一个次小的minVal，然后将区间往两边扩大一点，计算和更新objective。直至两边的指针都越界为止。
+::::::::::::::
+Two_Pointers/1838.Frequency-of-the-Most-Frequent-Element/1838.Frequency-of-the-Most-Frequent-Element.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxFrequency(vector<int>& nums, int k) 
+    {
+        sort(nums.begin(), nums.end());
+
+        long count = 0;
+        int j = 0;
+        int ret = 1;
+        for (int i=1; i<nums.size(); i++)
+        {
+            count += (long)(i-j)*(long)(nums[i]-nums[i-1]);
+            while (count > k)
+            {
+                count-= nums[i]-nums[j];
+                j++;
+            }
+            ret = max(ret, i-j+1);
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Two_Pointers/1838.Frequency-of-the-Most-Frequent-Element/Readme.md
+::::::::::::::
+### 1838.Frequency-of-the-Most-Frequent-Element
+
+首先需要明确，我们操作后最终得到的最高频率元素一定是数组中既有的元素。为什么？假设你可以通过操作，得到一个最高频率的元素是x，且x在原数组中没有出现过；那么你必然可以通过更少的一些操作，使得原数组里恰好比x小的元素y，也构造出相同的频次。因此我们不妨将nums按从小到大排序。
+
+那么这个最高频次的元素是什么呢？显然不一定是数组里既有的最高频次元素。我们必须逐个尝试一遍。假设我们通过不超过k次的操作，使nums[i]的频次最高，那么这些操作必然是作用在紧邻i前面的若干元素，使它们变成nums[i]。我们假设操作的范围是[j:i-1]，需要的实际操作数就是```count = sum{nums[i]-nums[k]}, k=j,j+1, ... i-1```
+
+接下来我们考虑如果最终最高频次的元素是nums[i+1]，那么我们如何高效地转移？假设需要操作的数的范围起点不变，即[j:i]，那么总操作数的增量就是```count += (nums[i+1]-nums[i])*(i+1-j)```，也就是我们将nums[j:i-1]都变成nums[i]的基础上，再将这(i+1-j)个数都提升一个gap，变成nums[i+1]。此时如果count>k了，那么我们就要优先舍弃最前面的元素j，那么节省的操作数就是nums[i+1]-nums[j]。我们可能会舍弃若干个老元素并右移j，直至是的count<=k，那么此时我们就在题目的限制条件下，可以将nums[j:i]都变成了nums[i+1]，即频次就是```i+1-j+1```.
+
+所以本题的实质就是维护一个最大滑窗[j:i]，使得滑窗内所有元素到nums[i]的距离之和小于等于k，具体实现时，用for循环控制i一步一步推进，再灵活调整j右移，使得总操作数count<=k。
+::::::::::::::
+Two_Pointers/1868.Product-of-Two-Run-Length-Encoded-Arrays/1868.Product-of-Two-Run-Length-Encoded-Arrays.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> findRLEArray(vector<vector<int>>& encoded1, vector<vector<int>>& encoded2) 
+    {
+        int m = encoded1.size(), n = encoded2.size();
+        int i = 0, j = 0;        
+        int ret = 0;
+        
+        vector<vector<int>>rets;
+        while (i<m && j<n)
+        {
+            int k = min(encoded1[i][1], encoded2[j][1]);            
+            rets.push_back({encoded1[i][0]*encoded2[j][0], k});
+            encoded1[i][1]-=k;
+            encoded2[j][1]-=k;
+            if (encoded1[i][1]==0)
+                i++;
+            if (encoded2[j][1]==0)
+                j++;
+        }
+        
+        vector<vector<int>>ans;
+        for (int i=0; i<rets.size(); i++)
+        {
+            int j = i;
+            int count = 0;
+            while (j<rets.size() && rets[j][0]==rets[i][0])
+            {
+                count+=rets[j][1];
+                j++;
+            }
+            ans.push_back({rets[i][0], count});
+            i = j-1;                
+        }
+        
+        return ans;
+    }
+};
+::::::::::::::
+Two_Pointers/1868.Product-of-Two-Run-Length-Encoded-Arrays/Readme.md
+::::::::::::::
+### 1868.Product-of-Two-Run-Length-Encoded-Arrays
+
+一个比较容易的写法是in-place修改freq。比如数组一的指针位于i，数组二的指针位于j，那么我们可以找到的彼此有相同val的频次就是```k=min(encoded1[i][1],encoded2[j][1])```，将```{val,k}```收入答案。然后将encoded1[i][1]和encoded2[j][1]分别减去k。再根据更新后的频次是否减到了0来判断是否需要移动指针i或者j。
+
+注意最后需要将答案进一步压缩，因为可能有相邻元素的val是相同的。
+::::::::::::::
+Two_Pointers/1989.Maximum-Number-of-People-That-Can-Be-Caught-in-Tag/1989.Maximum-Number-of-People-That-Can-Be-Caught-in-Tag.cpp
+::::::::::::::
+class Solution {
+public:
+    int catchMaximumAmountofPeople(vector<int>& team, int dist) 
+    {
+        int n = team.size();        
+        int j = 0;
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            if (team[i]!=0) continue;
+            j = max(j, i-dist);
+            while (j<n && team[j]!=1)
+                j++;
+            if (j<n && abs(j-i)<=dist)
+            {
+                ret++;
+                j++;
+            }
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Two_Pointers/1989.Maximum-Number-of-People-That-Can-Be-Caught-in-Tag/Readme.md
+::::::::::::::
+### 1989.Maximum-Number-of-People-That-Can-Be-Caught-in-Tag
+
+贪心的思想。我们用一个指针i从小到大依次遍历每一个0。对于第一个0而言，我们只要找离它最近（即最靠左边）的、满足距离条件的那个1与之配对即可。这一定是最优策略。因为这个0如果与其他更远的1配对的话，距离条件可能更难满足，并且也可能会浪费掉这个最近的1. 同理，对于每个0而言，必然贪心地与最左边的1配对最合算。
+
+本题有趣的地方是，指向1的指针j虽然是单向右移的，但不一定永远在i的右边，也有可能在i的左边。所以每当考察一个新的i时，j指针需要调整到```max(j, i-dist)```处开始寻找1.因为此时比该点更左边的1不会给匹配带来任何帮助了。
+::::::::::::::
+Two_Pointers/2009.Minimum-Number-of-Operations-to-Make-Array-Continuous/2009.Minimum-Number-of-Operations-to-Make-Array-Continuous.cpp
+::::::::::::::
+class Solution {
+public:
+    int minOperations(vector<int>& nums) 
+    {
+        int N = nums.size();
+        unordered_set<int>st(nums.begin(), nums.end());
+        vector<int>arr(st.begin(), st.end());
+        sort(arr.begin(), arr.end());
+                    
+        int j = 0;
+        int ret = INT_MAX;
+        for (int i=0; i<arr.size(); i++)
+        {
+            while (j<arr.size() && arr[j]-arr[i]+1<=N)
+            {
+                ret = min(ret, N-(j-i+1));                  
+                j++;                
+            }
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/2009.Minimum-Number-of-Operations-to-Make-Array-Continuous/Readme.md
+::::::::::::::
+### 2009.Minimum-Number-of-Operations-to-Make-Array-Continuous
+
+我们只需要枚举这个连续区间的左端点即可。对于最优解而言，连续区间的左端点一定是落在nums的某一个数值上。假设存在某一个是最优解的连续区间，它的左端点不在nums里，那么我们可以将这个区间整体右移，直至左端点落在nums的某个数值上。这样，移动的过程中，区间的左边没有排除任何一个已经包含的nums的数值，而区间的右边还可能纳入新的nums的数值，肯定不会亏。
+
+我们令nums的初始元素总个数是N。然后将nums去重、从小到大排序。
+
+如果我们令这个连续区间的左端点在nums[i]，那么我们会单调地增大j，往右探索区间的右端点nums[j]。假设我们希望构造的数值区间就是nums[i]到nums[j]，那么其中已经包含的nums元素就有j-i+1个，剩余的“空隙”需要把数值区间外的nums挪过来填充。此时我们只需要简单地检查一下nums[j]-nums[i]+1的个数是否小于等于N即可。是的话，那么这个数值区间一定能填满，也有可能还有多余的元素，我们就将它们继续拼接在区间的右边即可。这样，对于固定的i，我们能找到最大的j，使得这个区间尽量地大，那么需要从外面拿进来填充的nums自然就会尽量的少了。
+
+然后我们将i右移一位，发现与之匹配的最大的j肯定也是会往右边移动的。所以这就是一个双指针的问题。
+::::::::::::::
+Two_Pointers/2024.Maximize-the-Confusion-of-an-Exam/2024.Maximize-the-Confusion-of-an-Exam.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxConsecutiveAnswers(string answerKey, int k) 
+    {
+        int ret = 0;
+        int n = answerKey.size();
+        
+        int flip = 0;        
+        int j = 0;
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && (answerKey[j]=='T' || flip<k))
+            {
+                if (answerKey[j]!='T')
+                    flip++;
+                j++;                    
+            }
+            ret = max(ret, j-i);
+            if (answerKey[i]=='F')
+                flip--;
+        }
+        
+        flip = 0;        
+        j = 0;
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && (answerKey[j]=='F' || flip<k))
+            {
+                if (answerKey[j]!='F')
+                    flip++;
+                j++;                    
+            }
+            ret = max(ret, j-i);
+            if (answerKey[i]=='T')
+                flip--;
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/2024.Maximize-the-Confusion-of-an-Exam/Readme.md
+::::::::::::::
+### 2024.Maximize-the-Confusion-of-an-Exam
+
+本题和```LC 1004. Max Consecutive Ones III```非常相似。本质就是找一段最长的subarray，使得滑窗满足：除了0之外只有最多k个1，或者除了1之外只有最多k个0. 
+
+比较简单的写法就是将上面两种情况分为两次pass来做。比如考虑“若干个0 + k个1”的情况。固定左边界i，探索右边界j的最远位置，一路统计需要flip的次数（即1的个数）直至flip达到上限k。此时```j-i+1```就是一个合法的解区间。然后移动左边界```i+=1```，再次调整右边界j。同理，对于“若干个1 + k个0”的情况，类似的代码。
+
+本题其实还有参考```LC 424. Longest Repeating Character Replacement```，有one pass的实现方法。
+::::::::::::::
+Two_Pointers/2098.Subsequence-of-Size-K-With-the-Largest-Even-Sum/2098.Subsequence-of-Size-K-With-the-Largest-Even-Sum.cpp
+::::::::::::::
+using LL = long long;
+class Solution {
+public:
+    long long largestEvenSum(vector<int>& nums, int k) 
+    {
+        vector<int>odd;
+        vector<int>even;
+        for (int x: nums)
+        {
+            if (x%2==0) even.push_back(x);
+            if (x%2==1) odd.push_back(x);
+        }
+        sort(odd.rbegin(), odd.rend());
+        sort(even.rbegin(), even.rend());
+        
+        int m = odd.size();        
+        vector<LL>prefix1(m+1);        
+        for (int i=1; i<=m; i++)
+            prefix1[i] = prefix1[i-1] + odd[i-1];
+        
+        int n = even.size();
+        vector<LL>prefix2(n+1);        
+        for (int i=1; i<=n; i++)
+            prefix2[i] = prefix2[i-1] + even[i-1];
+        
+        LL ret = -1;
+        int j = even.size();
+        for (int i=0; i<=min(k, (int)odd.size()); i++)
+        {
+            while (i+j>k) j--;
+            if (j<0) break;
+            if (i+j==k && (prefix1[i]+prefix2[j])%2==0)
+                ret = max(ret, prefix1[i]+prefix2[j]);            
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/2098.Subsequence-of-Size-K-With-the-Largest-Even-Sum/Readme.md
+::::::::::::::
+### 2098.Subsequence-of-Size-K-With-the-Largest-Even-Sum
+
+本题的解法有很多。但想写得简洁不容易。比较优秀的切入角度是将nums分成奇数组和偶数组，各自从大到小排序。显然，如果奇数取0个，那么偶数就取前k个；如果奇数取前1个，那么偶数就取前k-1个...于是只要两个指针(i,j)，i在奇数组从前往后移动，j在偶数组从后往前移动，用k次找出最大的presum1+presum2.
+
+需要注意的有两点。首先，不是每一种(i,j)组合得到的presum1+presum2都是偶数，我们肯定会舍弃掉不合条件的组合。其次，偶数组不见得有k个元素，指针移动的过程中需要时刻检查i+j是否等于k。
+::::::::::::::
+Two_Pointers/2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps/2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxTotalFruits(vector<vector<int>>& fruits, int startPos, int k) 
+    {
+        int n = fruits.size();
+        vector<int>pos(n);
+        vector<int>presum(n);
+        for (int i=0; i<n; i++)
+        {
+            pos[i] = fruits[i][0];
+            presum[i] = (i==0?0:presum[i-1]) + fruits[i][1];
+        }
+        
+        int ret = 0;
+        
+        int mid = lower_bound(pos.begin(), pos.end(), startPos) - pos.begin();
+        j = 0;        
+        for (int i=mid; i<n; i++)
+        {
+            while (pos[j]<=startPos && pos[i]-startPos+(startPos-pos[j])*2 > k)
+                j++;
+            if (pos[j]<=startPos) ret = max(ret, presum[i] - (j==0?0:presum[j-1]));
+            else if (pos[i]-startPos <= k) ret = max(ret, presum[i] - (j==0?0:presum[j-1]));
+        }
+        
+        mid = upper_bound(pos.begin(), pos.end(), startPos) - pos.begin();        
+        int j = n-1;
+        for (int i=mid-1; i>=0; i--)
+        {            
+            while (pos[j]>=startPos && startPos-pos[i]+(pos[j]-startPos)*2 > k)
+                j--;            
+            if (pos[j]>=startPos) ret = max(ret, presum[j] - (i==0?0:presum[i-1]));
+            else if (startPos-pos[i] <= k) ret = max(ret, presum[j] - (i==0?0:presum[i-1]));
+        }
+        
+        
+
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps/2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxTotalFruits(vector<vector<int>>& fruits, int startPos, int k) 
+    {
+        int n = fruits.size();
+        vector<int>pos(n);
+        vector<int>presum(n);
+        for (int i=0; i<n; i++)
+        {
+            pos[i] = fruits[i][0];
+            presum[i] = (i==0?0:presum[i-1]) + fruits[i][1];
+        }
+        
+        int ret = 0;
+        int mid = lower_bound(pos.begin(), pos.end(), startPos) - pos.begin();
+        for (int i=mid; i<n; i++)
+        {
+            if (pos[i] - startPos > k) break;
+            double d = (k-(pos[i]-startPos))/2;
+            int j = lower_bound(pos.begin(), pos.end(), startPos-d) - pos.begin();
+            if (j>=0 && j<n) ret = max(ret, presum[i] - (j==0?0:presum[j-1]));
+        }
+
+        mid = upper_bound(pos.begin(), pos.end(), startPos) - pos.begin()-1;
+        for (int i=mid; i>=0; i--)
+        {     
+            if (startPos - pos[i] > k) break;
+            double d = (k-(startPos-pos[i]))/2;
+            int j = upper_bound(pos.begin(), pos.end(), startPos+d) - pos.begin() - 1;
+            if (j>=0 && j<n) ret = max(ret, presum[j] - (i==0?0:presum[i-1]));
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Two_Pointers/2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps/Readme.md
+::::::::::::::
+### 2106.Maximum-Fruits-Harvested-After-at-Most-K-Steps
+
+#### 解法1：双指针
+首先我们要明确最优解的pattern，一定是往一个方向走x步到A，再返回起点（必然同样走了x步），再往另一个方向走y步到B。需要满足的约束是2x+y<=k. 注意，其中x不是必须的，可以为0.
+
+我们不妨假设A和B分别在startPos的左边和右边。我们可以有这么一个发现：因为约束关系的存在，如果B点朝右变动，则A也不得不朝右变动。于是我们就有了滑动窗口的思想。我们从左往右尝试所有大于等于startPos的水果位置作为B，相应地为了满足约束，必然单调地从左往右单调移动A的位置，当使得恰好满足约束时AB的距离必然最远，能够得到的收获区间[A,B]也是最大的（在B点固定的情况下）。
+
+注意这里有一个特殊的情况。当A点跨过了startPos时，A点的意义已经失效。这个时候我们需要检查x=0情况下，B点本身是否是一个可行解。即如果```pos[B]-startPos<=k```，那么此时双闭区间[A,B]内的val都是有效答案。
+
+同理，我们在假设A和B分别在startPos的右边和左边。此时我们从右往左尝试所有小于等于startPos的水果位置作为B，相应地我们要把A从右往左单调地移动直至满足约束条件。此时[B,A]也是在固定B的情况下的最大收获区间。
+
+这个解法是o(n)。
+
+#### 解法2：二分搜值
+将以上的解法稍微改动一下，确定了B点之后，我们对于A点的期望也就有了，可以直接在pos里二分。
+
+假如B是在startPos的右边，那么我们就希望A是大于等于```startPos - (k-y)/2```的第一个位置。这样双闭区间[A,B]就是我们的最大收获。注意我们需要判定A是否合法。
+
+同理假如B是在startPos的左边，那么我们就希望A是小于等于```startPos + (k-y)/2```的最后一个位置。这样双闭区间[B,A]就是我们的最大收获。同样我们需要判定A是否合法。
