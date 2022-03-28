@@ -289,8 +289,11 @@ text2="乱扫秋星落晓霜。"
 text3="工作了工作作了，"
 text4="测试本文文文文。"
 text5="--作者"
-font=~/.local/share/fonts/印品抹茶体.ttf
-font=~/Library/Fonts/印品抹茶体.ttf
+if [  -n "$(uname -a | grep -i darwin)" ]; then
+	font=~/Library/Fonts/印品抹茶体.ttf
+else
+	font=~/.local/share/fonts/印品抹茶体.ttf
+fi
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
@@ -451,8 +454,11 @@ $0
 endsnippet
 
 snippet imGif4Image "Generates gif from " b
-font=~/.local/share/fonts/印品抹茶体.ttf
-font=~/Library/Fonts/印品抹茶体.ttf
+if [  -n "$(uname -a | grep -i darwin)" ]; then
+	font=~/Library/Fonts/印品抹茶体.ttf
+else
+	font=~/.local/share/fonts/印品抹茶体.ttf
+fi
 convert \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"This is 200 point text." \
     -fill black -stroke red   -strokewidth 4 -draw "line 10,125 500,80" \
@@ -477,11 +483,11 @@ convert \
 		outfile1.png
 
 # 滚动文字
-im_image_effects_scalescroll.sh -D left output1.png output1.gif
+im_image_effects_scalescroll.sh -D left outfile1.png outfile.gif
 # 两副画旋转转换
-im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png output1.gif
+im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png outfile1.gif
 # 对称水动
-im_image_effects_shimmer.sh -r 3 infile.png outfile.gif
+im_image_effects_shimmer.sh -r 3 outfile1.png outfile.gif
 # 正弦波动文字
 im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b skyblue -a 0.5 -r 0.5 -m constant outfile.gif
 # 两幅画渐变

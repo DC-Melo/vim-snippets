@@ -1,5 +1,5 @@
 # 001
-snippet findTwoSum "(vector<int>)index=find two sum target(vector<int> &numbers, int target) "
+snippet twoSum "(vector<int>)index=find two sum target(vector<int> &numbers, int target) "
 /* code by 王江 DC-Melo */
 vector<int> findTwoSum(vector<int> &numbers, int target) {
     unordered_map<int, int> hash;
@@ -180,7 +180,7 @@ $0
 endsnippet
 
 
-snippet findLongestPalindromeSubstringDynamicPlanON2 "(string)DP=find longest palindrome(string s)" b
+snippet longestPalindromeSubstringDynamicPlanON2 "(string)DP=find longest palindrome(string s)" b
 string longestPalindrome(string s) {
     string ans=s.substr(0,1);
     int len = s.size();
@@ -209,7 +209,7 @@ string longestPalindrome(string s) {
 $0
 endsnippet
 
-snippet findLongestPalindromeSubstringManacher "(string)subStr=find longest palindrome(string s)" b
+snippet longestPalindromeSubstringManacher "(string)subStr=find longest palindrome(string s)" b
 string longestPalindrome(string s) {
     string manaStr = "$#";
     for (int i=0;i<s.size();i++){
@@ -294,7 +294,7 @@ $0
 endsnippet
 
 # 008
-snippet convertString2Int "(int)val=convert String to Int(string str)" b
+snippet string2Int "(int)val=convert String to Int(string str)" b
 /* code by 王江 DC-Melo */
 int ${1:fuction}(string str) {
 	int tempResult,result=0;
@@ -353,7 +353,7 @@ $0
 endsnippet
 
 # 011
-snippet findMaxWaterAreaON2 "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
+snippet maxWaterAreaON2 "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
 /* code by 王江 DC-Melo */
 // Return the maximum water that can be stored
 int maxWater(int height[], int n) {
@@ -372,7 +372,7 @@ $0
 endsnippet
 
 # 011
-snippet findMaxWaterAreaONLN "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
+snippet maxWaterAreaONLN "(int)store=find Maximum water that can be stored between two buildings(int height[], int n)" b
 /* code by 王江 DC-Melo */
 bool compareTo(pair<int, int> p1, pair<int, int> p2) {
     return p1.second < p2.second;
@@ -417,7 +417,7 @@ $0
 endsnippet
 
 # 011
-snippet findMaxWaterArea "(int)store=find Maximum water that can be stored between two buildings(vector<int> &height)" b
+snippet maxWaterArea "(int)store=find Maximum water that can be stored between two buildings(vector<int> &height)" b
 /* code by 王江 DC-Melo */
     int ${1:function}(vector<int> &height) 
     {
@@ -436,7 +436,7 @@ $0
 endsnippet
 
 # 012
-snippet convertInt2Roman "(string)roman=convert Int to Roman(int num)" b
+snippet int2Roman "(string)roman=convert Int to Roman(int num)" b
 /* code by 王江 DC-Melo */
     string ${1:function1}(int num) {
         char symbol[9] = {'I','V','X','L','C','D','M'};
@@ -473,7 +473,7 @@ $0
 endsnippet
 
 # 013
-snippet convertRoman2Int "(int)ival=convert Roman to Int(string s)" b
+snippet roman2Int "(int)ival=convert Roman to Int(string s)" b
 /* code by 王江 DC-Melo */
 int ${1:function}(string s) {
 	int map[26];
@@ -496,7 +496,7 @@ $0
 endsnippet
 
 # 014
-snippet findCommonPrefix "(string)prefix=find common prefix(vector<string> &strs)" b
+snippet commonPrefix "(string)prefix=find common prefix(vector<string> &strs)" b
 /* code by 王江 DC-Melo */
 string ${1:function}(vector<string> &strs) {
     if( strs.size() == 0) return "";
@@ -513,7 +513,7 @@ $0
 endsnippet
 
 # 015
-snippet findThreeSumON2O1 "(int)val=find three sum(vector<int>& arr, int x)" b
+snippet threeSumON2O1 "(int)val=find three sum(vector<int>& arr, int x)" b
 /* code by 王江 DC-Melo */
 // Function to return the sum of a
 // triplet which is closest to x
@@ -556,7 +556,7 @@ $0
 endsnippet
 
 # 015
-snippet findThreeSum "(vector<vector<int>>)index=find three sum(vector<int> &num)" b
+snippet threeSum "(vector<vector<int>>)index=find three sum(vector<int> &num)" b
 /* code by 王江 DC-Melo */
 vector<vector<int> > ${1:function}(vector<int> &num) {
 	vector<vector<int> > result;
@@ -587,7 +587,7 @@ $0
 endsnippet
 
 # 016
-snippet findThreeSumClosest "(int)val=find three sum(vector<int> &num, int target)" b
+snippet threeSumClosest "(int)val=find three sum(vector<int> &num, int target)" b
 /* code by 王江 DC-Melo */
     int findThreeSumClosest(vector<int> &num, int target) {
         int closestSum = num[0]+num[1]+num[2];
@@ -609,7 +609,7 @@ endsnippet
 
 
 # 003
-snippet findLongestSubstringWithoutRepeatingCharacters "(int)maxlen=Longest Substring Without Repeating Characters(string s)" b
+snippet longestSubstringWithoutRepeatingCharacters "(int)maxlen=Longest Substring Without Repeating Characters(string s)" b
 /* code by 王江 DC-Melo */
 int lengthOfLongestSubstring(string s) {
 	int left=0, right=0;
@@ -634,7 +634,7 @@ $0
 endsnippet
 
 # 004
-snippet findMedianOfTwoSortedArrays "(double)val=Median of Two Sorted Arrays(vector<int>& nums1, vector<int>& nums2)" b
+snippet midTwoSortedArrays "(double)val=Median of Two Sorted Arrays(vector<int>& nums1, vector<int>& nums2)" b
 /* code by 王江 DC-Melo */
 double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 	vector<int> res;
@@ -659,7 +659,7 @@ $0
 endsnippet
 
 # 005
-snippet findLongestPalindromicSubstring "(string)subStr=Longest Palindromic Substring(string s)" b
+snippet longestPalindromicSubstring "(string)subStr=Longest Palindromic Substring(string s)" b
 /* code by 王江 DC-Melo */
 string longestPalindrome(string s) {
 	int position, maxLength=0, length=0;
@@ -746,7 +746,7 @@ $0
 endsnippet
 
 # 008
-snippet convertStringtoIntegerAtoi "(int)String to Integer atoi(string str)" b
+snippet string2IntegerAtoi "(int)String to Integer atoi(string str)" b
 /* code by 王江 DC-Melo */
 #include <limits.h>
 int myAtoi(string str) {
@@ -802,7 +802,7 @@ $0
 endsnippet
 
 # 011
-snippet findContainerWithMostWater "(int)area=Container With Most Water (vector<int> &height)" b
+snippet maxWaterContainer "(int)area=Container With Most Water (vector<int> &height)" b
 /* code by 王江 DC-Melo */
 int maxArea(vector<int> &height) {
 	int left = 0;
@@ -820,7 +820,7 @@ $0
 endsnippet
 
 # 012
-snippet convertIntegertoRoman "(string)str=Integer to Roman(int num)" b
+snippet int2Roman "(string)str=Integer to Roman(int num)" b
 /* code by 王江 DC-Melo */
 void romanstr(string& roman, int num, char* symbol) {
 	if(num == 0)return;
@@ -854,7 +854,7 @@ $0
 endsnippet
 
 # 013
-snippet convertRomanToInteger "(int)ival=Roman-to-Integer(string s)" b
+snippet roman2Integer "(int)ival=Roman-to-Integer(string s)" b
 /* code by 王江 DC-Melo */
 int romanToInt(string s) {
 	int map[26];
@@ -877,7 +877,7 @@ $0
 endsnippet
 
 # 014
-snippet findLongestCommonPrefix "(string)str=Longest Common Prefix(vector<string> &strs)" b
+snippet longestCommonPrefix "(string)str=Longest Common Prefix(vector<string> &strs)" b
 /* code by 王江 DC-Melo */
 string longestCommonPrefix(vector<string> &strs) {
 	if( strs.size() == 0) return "";
@@ -894,7 +894,7 @@ $0
 endsnippet
 
 # 015
-snippet findThreeSum2 "(vector<vector<int>>)res=find three sum(vector<int> &num)" b
+snippet threeSum2 "(vector<vector<int>>)res=find three sum(vector<int> &num)" b
 /* code by 王江 DC-Melo */
 vector<vector<int>> threeSum(vector<int> &num) {
 	vector<vector<int> > result;
@@ -925,7 +925,7 @@ $0
 endsnippet
 
 # 016
-snippet find3SumClosest "(int)closest=find3SumClosest(vector<int> &num, int target)" b
+snippet threeSumClosest "(int)closest=find3SumClosest(vector<int> &num, int target)" b
 /* code by 王江 DC-Melo */
 int threeSumClosest(vector<int> &num, int target) {
 	int closestSum = num[0]+num[1]+num[2];
@@ -945,7 +945,7 @@ $0
 endsnippet
 
 # 017
-snippet findLetterCombinationsOfAPhoneNumber "(vector<string>)combination=Letter Combinations of a Phone Number(string digits)" b
+snippet combinationPhoneNumberLetter "(vector<string>)combination=Letter Combinations of a Phone Number(string digits)" b
 /* code by 王江 DC-Melo */
 vector<string> letterCombinations(string digits) {
 	vector<string> result;
@@ -974,7 +974,7 @@ $0
 endsnippet
 
 # 018
-snippet findFourSum "(vector<vector<int>>)sum=find Four Sum (vector<int>& nums, int target)" b
+snippet fourSum "(vector<vector<int>>)sum=find Four Sum (vector<int>& nums, int target)" b
 /* code by 王江 DC-Melo */
 vector<vector<int>> fourSum(vector<int>& nums, int target) {
 	vector<vector<int> > result;
@@ -1128,7 +1128,7 @@ $0
 endsnippet
 
 # 024
-snippet swap2NodesInPairs "(ListNode *)mem=swap every two adjacent nodes(ListNode* head)" b
+snippet swapEach2NodesInPairs "(ListNode *)mem=swap every two adjacent nodes(ListNode* head)" b
 /* code by 王江 DC-Melo */
 ListNode *swapPairs(ListNode* head) {
 	/* ListNode **pp = &head, *a, *b; */
@@ -1207,7 +1207,7 @@ $0
 endsnippet
 
 # 028
-snippet findTheFirstPositionSubstr1 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
+snippet firstPositionSubstr1 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
 /* code by 王江 DC-Melo */
 int strStr(string haystack, string needle) {
     if(needle.size() == 0) return 0;
@@ -1224,7 +1224,7 @@ $0
 endsnippet
 
 # 028
-snippet findTheFirstPositionSubstr2 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
+snippet firstPositionSubstr2 "(int)pos=find the first position of substring Implement strStr(string haystack, string needle)" b
 /* code by 王江 DC-Melo */
 int strStr(string haystack, string needle) {
 	int m = haystack.length(), n = needle.length();
@@ -1267,7 +1267,7 @@ $0
 endsnippet
 
 # 030
-snippet findSubstringsfirstOcurence "(vector<int>)Substring with Concatenation of All Words(string s, vector<string>& words)" b
+snippet firstOcurenceSubstrings "(vector<int>)Substring with Concatenation of All Words(string s, vector<string>& words)" b
 /* code by 王江 DC-Melo */
 #include <map>
 vector<int> findSubstring(string s, vector<string>& words) {
@@ -1449,7 +1449,7 @@ $0
 endsnippet
 
 # 034
-snippet findFirstAndLastPositionOfElementInSortedArray "(vector<int>)index=find First Last Position Of Element In Sorted Array(int A[], int n, int target)" b
+snippet firstLastPositionOfElementInSortedArray "(vector<int>)index=find First Last Position Of Element In Sorted Array(int A[], int n, int target)" b
 /* code by 王江 DC-Melo */
 public:
     vector<int> searchRange(int A[], int n, int target) {
@@ -1516,7 +1516,7 @@ $0
 endsnippet
 
 # 037
-snippet findSudokuSolver "comment " b
+snippet sudokuSolver "comment " b
 /* code by 王江 DC-Melo */
 bool isValid(vector<vector<char> > &board, int a, int b) {
 	for (int i = 0; i < 9; ++i) { if (i != a && board[i][b] == board[a][b]) return false; }
@@ -1646,7 +1646,7 @@ private:
 $0
 endsnippet
 # 041
-snippet findFirstMissingPositiveNumber "find the first missing positive integer" b
+snippet firstMissingPositiveNumber "find the first missing positive integer" b
 /* code by 王江 DC-Melo */
 void swap(int &a,int &b) {
 	int temp = a;
@@ -1667,7 +1667,7 @@ $0
 endsnippet
 
 # 042
-snippet findMaxWaterArea1 "(int)area=Trapping Rain Water(int A[], int n)" b
+snippet maxWaterArea1 "(int)area=Trapping Rain Water(int A[], int n)" b
 /* code by 王江 DC-Melo */
 int trap(int A[], int n) {
 	int leftMax = 0;
@@ -1694,7 +1694,7 @@ $0
 endsnippet
 
 # 042
-snippet findMaxWaterArea2 "(int)area=Trapping Rain Water(vector<int>& height)" b
+snippet maxWaterArea2 "(int)area=Trapping Rain Water(vector<int>& height)" b
 /* code by 王江 DC-Melo */
     int trap(vector<int>& height) {
         int res = 0, mx = 0, n = height.size();
@@ -1715,7 +1715,7 @@ $0
 endsnippet
 
 # 042
-snippet findMaxWaterArea3 "(int)area=Trapping Rain Water(vector<int>& height)" b
+snippet maxWaterArea3 "(int)area=Trapping Rain Water(vector<int>& height)" b
 /* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	int res = 0, l = 0, r = height.size() - 1;
@@ -1739,7 +1739,7 @@ $0
 endsnippet
 
 # 042
-snippet findMaxWaterArea4 "(int)area=Trapping Rain Water(vector<int>& height)" b
+snippet maxWaterArea4 "(int)area=Trapping Rain Water(vector<int>& height)" b
 /* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	int l = 0, r = height.size() - 1, level = 0, res = 0;
@@ -1754,7 +1754,7 @@ $0
 endsnippet
 
 # 042
-snippet findMaxWaterArea5 "(int)area=Trapping Rain Water(vector<int>& height)" b
+snippet maxWaterArea5 "(int)area=Trapping Rain Water(vector<int>& height)" b
 /* code by 王江 DC-Melo */
 int trap(vector<int>& height) {
 	stack<int> st;
@@ -1801,22 +1801,7 @@ endsnippet
 
 # 044
 snippet isWildcardMatching "is Wildcard regex Matching " b
-/* code by 王江 DC-Melo */
-#include <iostream>
-#include <string>
-#include <vector>
-#include <string.h>
-#include <strings.h>
-#include <stdio.h>
-
-using namespace std;
-class Solution 
-{
-public:
-    bool isMatch(const char *s, const char *p) 
-    {
-        //greedy
-        bool pre,next;
+/* code by 王pre,next;
         const char *start,*end,*mid;
         const char *ss,*se,*sm;
         start = p;
@@ -2010,7 +1995,7 @@ $0
 endsnippet
 
 # 045
-snippet findMinStepToEndJumpGameII "(int)step=The minimum number of jumps to reach the last index(int A[], int n)" b
+snippet minStepToEndJumpGameII "(int)step=The minimum number of jumps to reach the last index(int A[], int n)" b
 /* code by 王江 DC-Melo */
 int jump(int A[], int n) {
 	int ret = 0;
