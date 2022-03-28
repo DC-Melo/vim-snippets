@@ -190,7 +190,7 @@ nmap ySs <Plug>YSsurround
 nmap yss <Plug>Yssurround
 nmap yS <Plug>YSurround
 nmap ys <Plug>Ysurround
-nnoremap <SNR>147_: :=v:count ? v:count : ''
+nnoremap <SNR>141_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(netrw#GX(),netrw#CheckIfRemote(netrw#GX()))
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
@@ -935,15 +935,15 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
-cd ~/.vim/plugged/vim-snippets/cpp_all
+cd ~/.vim/plugged/vim-snippets/cppsnip
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
 argglobal
 %argdel
-$argadd cpp.snippets
-edit cpp_leetcode.snippets
+$argadd addsnip.sh
+edit addsnip.sh
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
@@ -953,7 +953,6 @@ set winheight=1
 set winminwidth=0
 set winwidth=1
 argglobal
-balt cpp.snippets
 let s:cpo_save=&cpo
 set cpo&vim
 inoremap <buffer> <silent> <M-n> :call AutoPairsJump()a
@@ -1010,7 +1009,7 @@ setlocal breakindentopt=
 setlocal bufhidden=
 setlocal buflisted
 setlocal buftype=
-setlocal nocindent
+setlocal cindent
 setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
 setlocal cinoptions=g0,:0,N-s,(0
 setlocal cinwords=if,else,while,do,for,switch
@@ -1033,9 +1032,9 @@ setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
-setlocal noexpandtab
-if &filetype != 'snippets'
-setlocal filetype=snippets
+setlocal expandtab
+if &filetype != 'sh'
+setlocal filetype=sh
 endif
 setlocal fixendofline
 setlocal foldcolumn=0
@@ -1043,9 +1042,9 @@ set nofoldenable
 setlocal nofoldenable
 setlocal foldexpr=0
 setlocal foldignore=#
-setlocal foldlevel=99
+setlocal foldlevel=0
 setlocal foldmarker={{{,}}}
-setlocal foldmethod=syntax
+setlocal foldmethod=manual
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
@@ -1058,8 +1057,8 @@ setlocal iminsert=0
 setlocal imsearch=-1
 setlocal include=
 setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal indentexpr=GetShIndent()
+setlocal indentkeys=0{,0},0),0],!^F,o,O,e,0=then,0=do,0=else,0=elif,0=fi,0=esac,0=done,0=end,),0=;;,0=;&,0=fin,0=fil,0=fip,0=fir,0=fix
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
@@ -1105,8 +1104,8 @@ setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=
 setlocal noswapfile
 setlocal synmaxcol=3000
-if &syntax != 'snippets'
-setlocal syntax=snippets
+if &syntax != 'sh'
+setlocal syntax=sh
 endif
 setlocal tabstop=4
 setlocal tagcase=
@@ -1127,15 +1126,16 @@ setlocal nowinfixwidth
 set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
-let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 31 - ((30 * winheight(0) + 22) / 44)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
+keepjumps 31
 normal! 0
 tabnext 1
-badd +177 cpp.snippets
-badd +1 cpp_leetcode.snippets
+badd +0 addsnip.sh
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif

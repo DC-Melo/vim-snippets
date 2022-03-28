@@ -50,10 +50,18 @@ noremap <silent>  :call smooth_scroll#up(&scroll, 0, 2)
 omap <silent> % <Plug>(MatchitOperationForward)
 xmap <silent> % <Plug>(MatchitVisualForward)
 nmap <silent> % <Plug>(MatchitNormalForward)
-map ,rwp <Plug>RestoreWinPosn
-map ,swp <Plug>SaveWinPosn
-map ,ds <Plug>DrawItStop
-map ,di <Plug>DrawItStart
+nmap ,rwp <Plug>RestoreWinPosn
+xmap ,rwp <Plug>RestoreWinPosn
+omap ,rwp <Plug>RestoreWinPosn
+nmap ,swp <Plug>SaveWinPosn
+xmap ,swp <Plug>SaveWinPosn
+omap ,swp <Plug>SaveWinPosn
+nmap ,ds <Plug>DrawItStop
+xmap ,ds <Plug>DrawItStop
+omap ,ds <Plug>DrawItStop
+nmap ,di <Plug>DrawItStart
+xmap ,di <Plug>DrawItStart
+omap ,di <Plug>DrawItStart
 nnoremap ,sm :GSessionListLocal
 nnoremap ,sE :GSessionEliminateAll
 nnoremap ,se :GSessionEliminateCurrent
@@ -63,12 +71,14 @@ nnoremap ,sN :NamedSessionMake
 nnoremap ,sn :NamedSessionMakeCwd
 nnoremap ,sS :GSessionMake
 nnoremap ,ss :GSessionMakeLocal
-map ,, <Plug>(easymotion-prefix)
+nmap ,, <Plug>(easymotion-prefix)
+xmap ,, <Plug>(easymotion-prefix)
+omap ,, <Plug>(easymotion-prefix)
 nnoremap <silent> ,b :LeaderfBuffer
-vnoremap ,d "_d
+xnoremap ,d "_d
 nnoremap ,P ikpkJ
-vnoremap ,P "_dikpkJ
-vnoremap ,p "_dikpkJJ
+xnoremap ,P "_dikpkJ
+xnoremap ,p "_dikpkJJ
 nnoremap ,O O
 nnoremap ,gg :GV?
 nnoremap ,G :GV!
@@ -78,7 +88,7 @@ nnoremap ,l :Tab /|
 nnoremap ,F :Ack! 
 nnoremap ,f :LeaderfFile .
 nmap ,w <Plug>(easymotion-overwin-w)
-vmap ,w <Plug>(easymotion-bd-w)
+xmap ,w <Plug>(easymotion-bd-w)
 omap ,w <Plug>(easymotion-bd-w)
 nnoremap <silent> ,t :TagbarToggle
 nnoremap ,ff :YcmCompleter FixIt
@@ -97,7 +107,7 @@ nnoremap ,U :GoToFunImpl
 nnoremap ,p ikpkJJ
 nnoremap ,y :CopyCode
 nnoremap ,,p "+p
-vmap ,,y "+y
+xmap ,,y "+y
 nnoremap ,,c :PlugClean
 nnoremap ,,u :PlugUpdate
 nnoremap ,,i :PlugInstall
@@ -107,8 +117,12 @@ nnoremap ,h :view +let\ &l:modifiable=0 ~/.vimplus/help.md
 nnoremap ,vp :edit ~/.vimrc.custom.plugins
 nnoremap ,vc :edit ~/.vimrc.custom.config
 nnoremap ,e :edit $MYVIMRC
-map / <Plug>(incsearch-forward)
-map ? <Plug>(incsearch-backward)
+nmap / <Plug>(incsearch-forward)
+xmap / <Plug>(incsearch-forward)
+omap / <Plug>(incsearch-forward)
+nmap ? <Plug>(incsearch-backward)
+xmap ? <Plug>(incsearch-backward)
+omap ? <Plug>(incsearch-backward)
 nnoremap C :ChangeText
 nnoremap D :DeleteText
 omap F <Plug>(clever-f-F)
@@ -144,7 +158,7 @@ nmap ds <Plug>Dsurround
 omap f <Plug>(clever-f-f)
 xmap f <Plug>(clever-f-f)
 nmap f <Plug>(clever-f-f)
-vmap gx <Plug>NetrwBrowseXVis
+xmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
 xnoremap <silent> g<M-n> :call multiple_cursors#select_all("v", 0)
 xnoremap <silent> gî :call multiple_cursors#select_all("v", 0)
@@ -160,7 +174,9 @@ omap gc <Plug>Commentary
 nmap gc <Plug>Commentary
 xmap gc <Plug>Commentary
 xmap gS <Plug>VgSurround
-map g/ <Plug>(incsearch-stay)
+nmap g/ <Plug>(incsearch-stay)
+xmap g/ <Plug>(incsearch-stay)
+omap g/ <Plug>(incsearch-stay)
 omap <silent> g% <Plug>(MatchitOperationBackward)
 xmap <silent> g% <Plug>(MatchitVisualBackward)
 nmap <silent> g% <Plug>(MatchitNormalBackward)
@@ -190,7 +206,6 @@ nmap ySs <Plug>YSsurround
 nmap yss <Plug>Yssurround
 nmap yS <Plug>YSurround
 nmap ys <Plug>Ysurround
-nnoremap <SNR>149_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(netrw#GX(),netrw#CheckIfRemote(netrw#GX()))
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
@@ -942,13 +957,9 @@ endif
 set shortmess=aoO
 argglobal
 %argdel
-$argadd tests.cpp
-edit tests.cpp
+$argadd /tmp/bash-fc.dYktoG
+edit /tmp/bash-fc.dYktoG
 set splitbelow splitright
-wincmd _ | wincmd |
-split
-1wincmd k
-wincmd w
 set nosplitbelow
 set nosplitright
 wincmd t
@@ -956,8 +967,6 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe '1resize ' . ((&lines * 16 + 19) / 38)
-exe '2resize ' . ((&lines * 17 + 19) / 38)
 argglobal
 let s:cpo_save=&cpo
 set cpo&vim
@@ -1020,193 +1029,8 @@ setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
 setlocal cinoptions=g0,:0,N-s,(0
 setlocal cinwords=if,else,while,do,for,switch
 setlocal colorcolumn=
-setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=youcompleteme#CompleteFunc
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-set cursorline
-setlocal cursorline
-setlocal cursorlineopt=both
-setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal expandtab
-if &filetype != 'cpp'
-setlocal filetype=cpp
-endif
-setlocal fixendofline
-setlocal foldcolumn=0
-set nofoldenable
-setlocal nofoldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=croql
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal formatprg=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,octal,hex
-set number
-setlocal number
-setlocal numberwidth=4
-setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-set relativenumber
-setlocal relativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal shiftwidth=4
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal smartindent
-setlocal softtabstop=4
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=%!airline#statusline(1)
-setlocal suffixesadd=
-setlocal noswapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-setlocal syntax=cpp
-endif
-setlocal tabstop=4
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal undofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal wincolor=
-setlocal nowinfixheight
-setlocal nowinfixwidth
-set nowrap
-setlocal nowrap
-setlocal wrapmargin=0
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 18 - ((8 * winheight(0) + 8) / 16)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 18
-normal! 0
-wincmd w
-argglobal
-enew
-balt tests.cpp
-let s:cpo_save=&cpo
-set cpo&vim
-inoremap <buffer> <silent> <M-n> :call AutoPairsJump()a
-inoremap <buffer> <silent> <expr> <M-p> AutoPairsToggle()
-inoremap <buffer> <silent> <M-b> =AutoPairsBackInsert()
-inoremap <buffer> <silent> <M-e> =AutoPairsFastWrap()
-inoremap <buffer> <silent> <C-H> =AutoPairsDelete()
-inoremap <buffer> <silent> <BS> =AutoPairsDelete()
-inoremap <buffer> <silent> <M-'> =AutoPairsMoveCharacter('''')
-inoremap <buffer> <silent> <M-"> =AutoPairsMoveCharacter('"')
-inoremap <buffer> <silent> <M-}> =AutoPairsMoveCharacter('}')
-inoremap <buffer> <silent> <M-{> =AutoPairsMoveCharacter('{')
-inoremap <buffer> <silent> <M-]> =AutoPairsMoveCharacter(']')
-inoremap <buffer> <silent> <M-[> =AutoPairsMoveCharacter('[')
-inoremap <buffer> <silent> <M-)> =AutoPairsMoveCharacter(')')
-inoremap <buffer> <silent> <M-(> =AutoPairsMoveCharacter('(')
-inoremap <buffer> <silent> § =AutoPairsMoveCharacter('''')
-inoremap <buffer> <silent> ¢ =AutoPairsMoveCharacter('"')
-inoremap <buffer> <silent> © =AutoPairsMoveCharacter(')')
-inoremap <buffer> <silent> ¨ =AutoPairsMoveCharacter('(')
-inoremap <buffer> <silent> î :call AutoPairsJump()a
-inoremap <buffer> <silent> <expr> ð AutoPairsToggle()
-inoremap <buffer> <silent> â =AutoPairsBackInsert()
-inoremap <buffer> <silent> å =AutoPairsFastWrap()
-inoremap <buffer> <silent> ý =AutoPairsMoveCharacter('}')
-inoremap <buffer> <silent> û =AutoPairsMoveCharacter('{')
-inoremap <buffer> <silent> Ý =AutoPairsMoveCharacter(']')
-inoremap <buffer> <silent> Û =AutoPairsMoveCharacter('[')
-noremap <buffer> <silent> <M-n> :call AutoPairsJump()
-noremap <buffer> <silent> <M-p> :call AutoPairsToggle()
-inoremap <buffer> <silent>  =AutoPairsDelete()
-inoremap <buffer> <silent>   =AutoPairsSpace()
-inoremap <buffer> <silent> " =AutoPairsInsert('"')
-inoremap <buffer> <silent> ' =AutoPairsInsert('''')
-inoremap <buffer> <silent> ( =AutoPairsInsert('(')
-inoremap <buffer> <silent> ) =AutoPairsInsert(')')
-noremap <buffer> <silent> î :call AutoPairsJump()
-noremap <buffer> <silent> ð :call AutoPairsToggle()
-inoremap <buffer> <silent> [ =AutoPairsInsert('[')
-inoremap <buffer> <silent> ] =AutoPairsInsert(']')
-inoremap <buffer> <silent> ` =AutoPairsInsert('`')
-inoremap <buffer> <silent> { =AutoPairsInsert('{')
-inoremap <buffer> <silent> } =AutoPairsInsert('}')
-let &cpo=s:cpo_save
-unlet s:cpo_save
-setlocal keymap=
-setlocal noarabic
-setlocal autoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=nofile
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=g0,:0,N-s,(0
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
 setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
-setlocal commentstring=/*%s*/
+setlocal commentstring=#%s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=0
@@ -1224,8 +1048,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal expandtab
-if &filetype != ''
-setlocal filetype=
+if &filetype != 'sh'
+setlocal filetype=sh
 endif
 setlocal fixendofline
 setlocal foldcolumn=0
@@ -1248,8 +1072,8 @@ setlocal iminsert=0
 setlocal imsearch=-1
 setlocal include=
 setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal indentexpr=GetShIndent()
+setlocal indentkeys=0{,0},0),0],!^F,o,O,e,0=then,0=do,0=else,0=elif,0=fi,0=esac,0=done,0=end,),0=;;,0=;&,0=fin,0=fil,0=fip,0=fir,0=fix
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
@@ -1284,19 +1108,19 @@ setlocal noshortname
 setlocal showbreak=
 setlocal sidescrolloff=-1
 setlocal signcolumn=auto
-setlocal smartindent
+setlocal nosmartindent
 setlocal softtabstop=4
 setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
 setlocal spelloptions=
-setlocal statusline=%!airline#statusline(2)
+setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=
 setlocal noswapfile
 setlocal synmaxcol=3000
-if &syntax != ''
-setlocal syntax=
+if &syntax != 'sh'
+setlocal syntax=sh
 endif
 setlocal tabstop=4
 setlocal tagcase=
@@ -1317,12 +1141,16 @@ setlocal nowinfixwidth
 set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
-wincmd w
-2wincmd w
-exe '1resize ' . ((&lines * 16 + 19) / 38)
-exe '2resize ' . ((&lines * 17 + 19) / 38)
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 2 - ((1 * winheight(0) + 22) / 44)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 2
+normal! 08|
 tabnext 1
-badd +0 tests.cpp
+badd +0 /tmp/bash-fc.dYktoG
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif

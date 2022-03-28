@@ -358,9 +358,11 @@ text4="共同提高"
 size1=120
 size2=100
 size3=120
-size4=200
-font=~/.local/share/fonts/印品抹茶体.ttf
-font=~/Library/Fonts/印品抹茶体.ttf
+if [  -n "$(uname -a | grep -i darwin)" ]; then
+	font=~/Library/Fonts/印品抹茶体.ttf
+else
+	font=~/.local/share/fonts/印品抹茶体.ttf
+fi
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
