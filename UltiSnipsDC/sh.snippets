@@ -374,7 +374,7 @@ convert \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile0.png
+    outfile00.png
 convert \
     -font "${font}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -382,7 +382,7 @@ convert \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile1.png
+    outfile10.png
 convert \
     -font "${font}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -390,7 +390,7 @@ convert \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile2.png
+    outfile20.png
 convert \
     -font "${font}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -400,7 +400,7 @@ convert \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile3.png
+    outfile21.png
 convert \
     -font "${font}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -410,7 +410,7 @@ convert \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile4.png
+    outfile30.png
 convert \
     -font "${font}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
@@ -420,21 +420,21 @@ convert \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
     -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
     -append \
-    outfile5.png
+    outfile40.png
 # convert outfile0.png -fuzz 20% -transparent white outfile0.png
 # convert outfile1.png -fuzz 20% -transparent white outfile1.png
 # convert outfile2.png -fuzz 20% -transparent white outfile2.png
 # convert outfile3.png -fuzz 20% -transparent white outfile3.png
 # convert outfile4.png -fuzz 20% -transparent white outfile4.png
 # convert outfile5.png -fuzz 20% -transparent white outfile5.png
-convert outfile0.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile0.png
-convert outfile1.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile1.png
-convert outfile2.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile2.png
-convert outfile3.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile3.png
-convert outfile4.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile4.png
-convert outfile5.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile5.png
+convert outfile00.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile00.png
+convert outfile10.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile10.png
+convert outfile20.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile20.png
+convert outfile21.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile21.png
+convert outfile30.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile30.png
+convert outfile40.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile40.png
 
-strSize="`file outfile0.png`"
+strSize="\`file outfile00.png\`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
@@ -498,9 +498,23 @@ im_image_effects_typewriter.sh -f CourierNewB -p 24 -t black -b white textfile o
 # 水波纹
 im_image_effects_wiggle.sh -w 0.5 outfile1.png outfile.gif
 # 旋转文字
-im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f STXingkai -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
+im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f "${font}" -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
 # 通道选择
 im_miscellaneous_utilities_flickerchannel.sh -f -i infile
+
+strSize="\`file outfile00.png\`"
+echo $strSize
+pat='([0-9]+) x ([0-9]+)'
+[[ $strSize =~ $pat ]] # $pat must be unquoted
+echo "${BASH_REMATCH[0]}"
+echo "${BASH_REMATCH[1]}"
+echo "${BASH_REMATCH[2]}"
+if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
+    convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
+else
+    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 outfile.gif
+fi
 $0
 endsnippet
 
