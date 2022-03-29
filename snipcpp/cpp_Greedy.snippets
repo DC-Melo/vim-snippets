@@ -1,5 +1,5 @@
 ::::::::::::::
-Greedy/0041.First-Missing-Positive/041.First-Missing-Positive.cpp
+Greedy/041.First-Missing-Positive/041.First-Missing-Positive.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -18,7 +18,7 @@ public:
     }
 };
 ::::::::::::::
-Greedy/0041.First-Missing-Positive/Readme.md
+Greedy/041.First-Missing-Positive/Readme.md
 ::::::::::::::
 ### 041.First-Missing-Positive
 
@@ -41,7 +41,7 @@ Greedy/0041.First-Missing-Positive/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/first-missing-positive)::::::::::::::
-Greedy/0045.Jump-Game-II/045.Jump-Game-II.cpp
+Greedy/045.Jump-Game-II/045.Jump-Game-II.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -68,7 +68,7 @@ public:
     }
 };
 ::::::::::::::
-Greedy/0045.Jump-Game-II/Readme.md
+Greedy/045.Jump-Game-II/Readme.md
 ::::::::::::::
 ### 45.Jump-Game-II
 
@@ -85,7 +85,7 @@ end_new = max{i+nums[i]} for i=[start,end]
 
 [Leetcode Link](https://leetcode.com/problems/jump-game-ii)
 ::::::::::::::
-Greedy/0055.Jump-Game/055.Jump-Game.cpp
+Greedy/055.Jump-Game/055.Jump-Game.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -102,2839 +102,11 @@ public:
     }
 };
 ::::::::::::::
-Greedy/0055.Jump-Game/Readme.md
+Greedy/055.Jump-Game/Readme.md
 ::::::::::::::
 ### 055.Jump-Game
 
 比较简单的贪心法。我们从做往右每遍历一个元素，都可以动态地更新未来的右边界。直到我们遍历到右边界位置无法前进的时候，仍然没有走到数组的最后一个位置，就返回false。
-::::::::::::::
-Greedy/0134.Gas-Station/134.Gas-Station.cpp
-::::::::::::::
-class Solution {
-public:
-    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) 
-    {
-        int sum = 0;
-        for (int i=0; i<gas.size(); i++)
-            sum+= gas[i]-cost[i];
-        if (sum<0) return -1;
-        
-        sum = 0;
-        int result=0;
-        for (int i=0; i<gas.size(); i++)
-        {
-            sum+= gas[i]-cost[i];
-            if (sum<0)
-            {
-                sum = 0;
-                result = i+1;
-            }                
-        }
-        return result;
-    }
-};
-::::::::::::::
-Greedy/0134.Gas-Station/Readme.md
-::::::::::::::
-### 134.Gas-Station
-
-此题和 135.Candy 等都是LC比较经典的贪心法的题目，没有固定的套路可以用在其他题目上，但是这两题各自经典的解法值得深刻地记住。
-
-这里，先考虑是否能够成功绕行一圈的问题。这个比较好理解，将所有的gas之和减去所有的cost之和，如果是负数，那么就说明无法绕行成功。
-
-那么可以绕行成功，那么该如何选择起点呢？这里有个先行的结论需要先理解一下：如果从A点出发，走到B点就走不下去了，那么从A点到B点之间的任意一点出发，都不可能走过B点（甚至可能在B点之前就走不下去）。这个还是比较好理解的。因为假设能从A点走到B点，说明在走到A+1这个点的时候，肯定是有一部分A点的汽油还富余着的。那么说明如果直接从A+1点作为起点出发，肯定相比于从A点作为起点出发，资源更为紧缺，肯定更不可能超越B点。
-
-所以我们从0点开始出发，假设到了B点走不下去了，那么说明从0点到B点都不可能是作为起点。那么起点从哪里开始呢？我们可以从B+1点作为起点开始尝试。如果从B+1点作为起点走到C点就走不下去了，说明B+1点到C点也都不可能作为起点。所以我们可以从C+1点开始尝试...如此下来，我们只要转一圈，就能最终确定从哪里作为起点可以到达0点，即成功环绕一周。
-
-
-[Leetcode Link](https://leetcode.com/problems/gas-station)::::::::::::::
-Greedy/0135.Candy/135.Candy.cpp
-::::::::::::::
-class Solution {
-public:
-    int candy(vector<int>& ratings) 
-    {
-        int n = ratings.size();
-        vector<int>rets(n, 1);
-        for (int i=1; i<n; i++)
-        {
-            if (ratings[i]>ratings[i-1])
-                rets[i] = max(rets[i], rets[i-1]+1);
-        }
-        for (int i=n-2; i>=0; i--)
-        {
-            if (ratings[i]>ratings[i+1])
-                rets[i] = max(rets[i], rets[i+1]+1);
-        }
-        int sum = accumulate(rets.begin(), rets.end(), 0);
-        return sum;
-    }
-};
-::::::::::::::
-Greedy/0135.Candy/Readme.md
-::::::::::::::
-### 135.Candy
-
-这是一道经典的贪心法。
-
-我们令f[0]=1，然后从左往右扫一遍，保证f[i]与f[i-1]比较时符合要求，即```f[i]=max(1, f[i-1]+1 if rating[i]>rating[i-1])```. 这个操作更新了f[i]的下限，是f[i]合法的一个必要条件。言下之意就是说，f[i]不保证是一个合法的分配，但f[i]不能更小了。
-
-然后从右往左扫一遍，保证f[i]与f[i+1]比较时符合要求，即```f[i]=max(f[i], f[i+1]+1 if rating[i]>rating[i+1])```. 这个操作同样进一步更新了f[i]的下限，即f[i]不能更小了。
-
-以上两步操作都是必要条件，找到了f[i]的一个下限。但是这个下限本身是否就是符合要求的方案呢？事实上就是如此。上面两轮two pass保证了每个小朋友与相邻两个人做比较时都是公平的。换句话说，任意两个相邻小朋友之间的比较和分配都是公平的。所以此时f[i]的分布同时也是一个充分解。
-
-贴着下限的充分解，就是题目要求的最优解（最少分发总数）。
-
-[Leetcode Link](https://leetcode.com/problems/candy)
-::::::::::::::
-Greedy/0164.Maximum-Gap/164.Maximum Gap.cpp
-::::::::::::::
-class Solution {
-public:
-    int maximumGap(vector<int>& nums) 
-    {
-        int N=nums.size();
-        if (N<2) return 0;
-        
-        int MIN=INT_MAX;
-        int MAX=INT_MIN;
-        for (int i=0; i<nums.size(); i++)
-        {
-            MIN=min(MIN,nums[i]);
-            MAX=max(MAX,nums[i]);
-        }
-        
-        int bucket_size = max(1,(MAX-MIN)/(N-1));
-        int bucket_nums = (MAX-MIN)/bucket_size+1;
-        vector<int>bucket_min(bucket_nums,INT_MAX);
-        vector<int>bucket_max(bucket_nums,INT_MIN);
-        
-        unordered_set<int>Set;
-        for (int i=0; i<N; i++)
-        {
-            int idx=(nums[i]-MIN)/bucket_size;
-            bucket_min[idx]=min(nums[i],bucket_min[idx]);
-            bucket_max[idx]=max(nums[i],bucket_max[idx]);
-            Set.insert(idx);
-            //cout<<idx<<" "<<bucket_min[idx]<<" "<<bucket_max[idx]<<endl;
-        }
-        
-        int result=INT_MIN;
-        int pre=0;
-        for (int i=0; i<bucket_nums; i++)
-        {
-            if (Set.count(i)==0) continue;
-            result=max(result,bucket_min[i]-bucket_max[pre]);
-            pre = i;
-        }
-        
-        return result;        
-    }
-};
-::::::::::::::
-Greedy/0164.Maximum-Gap/Readme.md
-::::::::::::::
-### 164.Maximum-Gap
-
-假设有N个元素A到B。
-
-那么可以推算，相邻元素的maxumum gap不会小于(B - A) / (N - 1)，否则无法达到B-A的跨越。
-
-所以令bucket（桶）的大小 bucket_size = (B - A) / (N - 1)，则最多会有 bucket_nums = (B - A) / bucket_size + 1个桶。
-
-对于数组中的任意整数nums[i]，很容易通过算式 idx = (nums[i] - A) / bucket_nums 找出其桶的位置，然后维护每一个桶的最大值和最小值。
-
-由于前面提到，maximum gap不会小于bucket_size，而同一个桶里的元素的差值最多是bucket_size-1，因此最终答案所对应的两个数不会来自同一个桶中。
-
-对于每一个非空的桶p，找出下一个非空的桶q，则q.min - p.max可能就是备选答案。返回所有这些可能值中的最大值。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-gap)
-::::::::::::::
-Greedy/0179.Largest-Number/179.Largest-Number.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(string&a, string&b)
-    {
-        return (a+b)>(b+a);
-    }
-public:
-    string largestNumber(vector<int>& nums) 
-    {
-        vector<string>strs;
-        for (int i=0; i<nums.size(); i++)
-            strs.push_back(to_string(nums[i]));
-
-        sort(strs.begin(), strs.end(), cmp);
-
-        string result;
-        for (int i=0; i<strs.size(); i++)
-            result+=strs[i];
-
-        int i=0;
-        while (result[i]=='0') i++;
-        if (i==result.size())
-            return "0";
-        else
-            return result.substr(i);
-            
-        return result;
-    }
-};
-::::::::::::::
-Greedy/0179.Largest-Number/Readme.md
-::::::::::::::
-### 179.Largest-Number
-
-本题的本质是一个非常有用的知识点：给你一个字符串数组，如何排序拼接这些字符串实现字典序最大？方法是设计一个巧妙的排序函数：
-```
-static bool cmp(string a, string b)
-{
-    string c=a+b;
-    string d=b+a;
-    return stoll(c)>stoll(d);
-}
-
-sort(Nums.begin(),Nums.end(),cmp);
-```
-将以此排序的字符串拼接起来，就是字典序最大的！
-
-证明：
-
-1. 传递性      
-我们试图证明如果s3>s2，且s2>s1，那么就一定共有s3>s1. 因为只有具备传递性的大小比较，才能将所有的字符串的唯一排序。
-
-我们令s3、s2、s1的长度对应的10的幂分别是n3、n2、n1（比如说1000,100,10），那么就有
-```
-s3 > s2 => s3s2 > s2s3 => s3*n2+s2 > s2*n3+s3 => s3(n2-1) > s2(n3-1)
-s2 > s1 => s2s1 > s1s2 => s2*n1+s1 > s1*n2+s2 => s2(n1-1) > s1(n2-1)
-```
-因为所有的都是非负数，所以有
-```
-s3s2(n2-1)(n1-1) > s2s1(n3-1)(n2-1)
-```
-如果s2!=0，那么得到```s3(n1-1)>s1(n3-1) => s3n1+s1 > s1n3+s3```，即 s3>s1        
-如果s2==0，那么s1==0，必然有 s3>s1        
-
-2. 算法的正确性       
-对于任意一个乱序的字符串数组，我们都可以通过交换一对相邻的逆序对来实现“冒泡”排序。比如
-```
-s3s1s2s4
-s3s1s4s2
-s3s4s1s2
-s4s3s1s2
-s4s3s2s1
-```
-在每一步中，只有一对相邻的字符串做了交换，每次交换的过程中都是将较大的si移动到较小的sj的前面，即由```...sjsi....```变成了```...sisj....```。显然我们发现这一步变化是将整体的字符串的字典序变大的。于是我们推断出每一步变化都是将这个字符串的字典序变大。也就是说，任意一个乱序拼接的字符串，都不如按照排序函数得到顺序拼接的字符串大。
-
-
-::::::::::::::
-Greedy/0229.Majority-Element-II/229.Majority-Element-II.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> majorityElement(vector<int>& nums) 
-    {
-        int x1,x2;
-        int count1=0,count2=0;
-        
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (count1>0 && nums[i]==x1)
-            {
-                count1++;
-            }
-            else if (count2>0 && nums[i]==x2)
-            {
-                count2++;
-            }
-            else if (count1==0)
-            {
-                x1=nums[i];
-                count1=1;
-            }
-            else if (count2==0)
-            {
-                x2=nums[i];
-                count2=1;
-            }
-            else if (nums[i]!=x1 && nums[i]!=x2)
-            {
-                count1--;
-                count2--;
-            }            
-        }
-                
-        vector<int>results;
-        count1=0;
-        count2=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (nums[i]==x1) count1++;
-            if (nums[i]==x2) count2++;
-        }  
-        if (count1>nums.size()/3) results.push_back(x1);
-        if (x1!=x2 && count2>nums.size()/3) results.push_back(x2);
-        
-        return results;
-    }
-};
-::::::::::::::
-Greedy/0229.Majority-Element-II/Readme.md
-::::::::::::::
-### 229.Majority-Element-II
-
-本题的解法非常巧妙，令人印象深刻。第一次不会做没有关系，但第二次遇到就应该能牢牢记住。
-
-解法的基本思想就是：如果同时消去数组中互不相同的三个数，那么在剩下的数组中，超过1/3的那些数仍然是超过1/3的。所以我们只要不停找到三个互不相同的数并做消去，剩下的就是超过1/3的那些数（最多两个）。
-
-所以我们在遍历nums数组的过程中，设置两个容器：如果有对应是相同元素的容器，那么就放进那个容器里；如果容器有空的，那么新进来的数就放进容器里；如果两个容器都非空，并且这三个数互不相同，那么就把这三个都消去。
-
-注意，遍历完之后，最后剩下的两个容器里有可能都是答案，需要单独验证。
-
-显然，本题可以扩展到定义大于 N/4, N/5 ... 的majority element。只要设置更多的容器即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/majority-element-ii)::::::::::::::
-Greedy/0268.Missing-Number/268.Missing-Number_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int missingNumber(vector<int>& nums) 
-    {
-        int n = nums.size();
-        nums.push_back(n+1);
-        for (int i=0; i<=n; i++)
-        {
-            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
-                swap(nums[i], nums[nums[i]]);
-        }
-        for (int i=0; i<=n; i++)
-            if (nums[i]!=i)
-                return i;
-        return 0;
-    }
-};
-::::::::::::::
-Greedy/0268.Missing-Number/268.Missing-Number_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int missingNumber(vector<int>& nums) 
-    {
-        int k=0;
-        for (int i=0; i<=nums.size(); i++)
-            k = k^i;
-        for (int i=0; i<nums.size(); i++)
-            k = k^nums[i];
-        return k;
-    }
-};
-::::::::::::::
-Greedy/0268.Missing-Number/Readme.md
-::::::::::::::
-### 268.Missing-Number
-
-#### 解法1：
-对于凡是与“从0到N”数字相关的题目，indexing sort（或者叫cyclic sort？）总是一个值得尝试的角度。我们试图将0~N这些数字依次填充到nums的第0\~N个位置。移动的方法就是逐个考察每个index，如果第i个位置的数字不是nums[i]，那么我们就交换nums[i]和nums[nums[i]]：目的是把nums[i]直接送到它应该所在的地方（也就是index是nums[i]的位置）；同时，如果交换来的nums[nums[i]]依然不是我们想要的数字i，那么我们就重复这个swap的操作，直至：
-1. 当前的第i个位置放的就是数字i；or
-2. nums[i]和nums[nums[i]]相等，也就是说swap(nums[i], nums[nums[i]])没有任何效果；or
-3. nums[nums[i]]越界了，也就是nums[i]不是一个合法的index
-
-按照以上规则处理完所有的index之后，我们就已经竭尽全力地把所有数字和索引相match。此时再扫一遍nums数组，唯一的一处nums[i]!=i的地方，就是说明数字i是missing的。
-
-#### 解法2：
-有一个更优雅的做法。nums[i]包含了0\~N的所有数（除了一个missing number，假设是x）。我们将其亦或起来。同时将这个结果再与0\~N都亦或一遍。这样，除了x，其他的数字都被xor了两遍而被消除。剩下的结果就是x。
-::::::::::::::
-Greedy/0300.Longest-Increasing-Subsequence/300.Longest-Increasing-Subsequence_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int lengthOfLIS(vector<int>& nums) 
-    {
-        int n = nums.size();
-        vector<int>dp(n,1);
-        for (int i=0; i<n; i++)
-        {
-            for (int j=0; j<i; j++)
-            {
-                if (nums[j]<nums[i])
-                    dp[i] = max(dp[i], dp[j]+1);
-            }
-        }
-        
-        int ret = 0;
-        for (int i=0; i<n; i++)
-            ret = max(ret, dp[i]);
-        
-        return ret;
-
-    }
-};
-::::::::::::::
-Greedy/0300.Longest-Increasing-Subsequence/300.Longest-Increasing-Subsequence_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int lengthOfLIS(vector<int>& nums) 
-    {
-        int n = nums.size();              
-        vector<int>q(n, INT_MAX);
-        for (int i=0; i<n; i++)
-        {
-            auto iter = lower_bound(q.begin(),q.end(),nums[i]);
-            *iter = nums[i];
-        }
-        for (int i = n - 1; i >= 0; i--)
-        {
-            if (q[i] != INT_MAX)
-                return i + 1;  
-        }
-        return 0;    
-    }
-};
-::::::::::::::
-Greedy/0300.Longest-Increasing-Subsequence/Readme.md
-::::::::::::::
-### 300.Longest-Increasing-Subsequence
-
-#### 解法1：DP
-这是第II类基本型的动态规划。我们考虑以nums[i]为结尾的LIS的第二大元素是什么？于是我们在i之前的所有index里找一个最好的j：如果nums[j]<nums[i]，那么以j为结尾的LIS就可以被收编进以i为结尾的LIS。显然，最好的j就是dp[j]最大的那个。
-
-DP的时间复杂度是o(N^2)
-
-#### 解法2：Greedy
-贪心算法中的经典题：求最长子序列。时间复杂度可以是o(NlogN)
-
-遍历所有元素，维护一个递增的数组q：当q为空，或者新元素val大于q.back()时加入q尾；否则，寻找q中第一个适合val插入的位置（原q序列里第一个大于等于val的位置），替换成val。 这么做的目的是：虽然LIS的长度并没有改变，但是使得当前q里面的LIS“变矮了”，更有利于后续元素加入进来构建更长的LIS。
-
-举个例子：1 3 10 4 6. 考虑前三个元素后的q是[1 3 10]，但是考虑第四个元素后，我们将10替换成了4. 这样的好处是，第五个元素5可以直接append到这个q末尾从而时LIS再增长1.
-
-如此遍历结束之后，q.size()就是最长子序列的长度。
-
-对于C++，用lower_bound(q.begin(),q.end(),val)返回的就是第一个大于或等于val的元素的迭代器（或者说是地址）。
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-increasing-subsequence)
-::::::::::::::
-Greedy/0330.Patching-Array/330.Patching-Array.cpp
-::::::::::::::
-class Solution {
-public:
-    int minPatches(vector<int>& nums, int n) 
-    {
-        int count=0;
-        long miss=1;
-        int i=0;
-        
-        while (miss<=n)
-        {
-            if (i>=nums.size() || miss<nums[i])
-            {
-                count++;
-                miss+=miss;
-            }
-            else
-            {
-                miss+=nums[i];
-                i++;
-            }
-        }
-        
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0330.Patching-Array/Readme.md
-::::::::::::::
-### 330.Patching-Array
-
-假设miss是当前无法通过nums[0]~nums[i-1]这i个数通过题述的加和规则得到的、最小的那个整数，那么我们考虑下一个nums[i]会带来什么影响？
-
-如果nums[i]>miss，说明它的加入对于我们试图得到miss没有任何帮助，因为nums[i]太大了；并且之后的nums元素更不会有帮助，只会更大。所以miss只能是我们必须人为补充的一个数，即我们手工补上miss。这时下一个无法得到的整数是什么呢？那就是miss\*2.因为miss加入前，1~miss-1我们都可以得到，所以miss加入后最大能得到2\*miss-1.
-
-如果nums[i]<=miss，说明它的加入可以将miss提升至miss+nums[i].因为nums[i]加入前，1~miss-1我们都可以得到，所以miss加入后最大能得到miss-1+nums[i].
-
-如此循环重复上述的过程，不断提升miss，直至miss>n. 注意这个过程中nums可以提前用完。
-
-另外，值得注意的是，miss的初始值是1，而不是0. 因为没有任何nums提供时，我们首先试图要填补的就是1.
-
-
-[Leetcode Link](https://leetcode.com/problems/patching-array)::::::::::::::
-Greedy/0334.Increasing-Triplet-Subsequence/334.Increasing-Triplet-Subsequence_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    bool increasingTriplet(vector<int>& nums) 
-    {
-        int N = nums.size();
-        if (N==0) return false;
-        
-        vector<int>LeftMin(N,0);
-        LeftMin[0] = INT_MAX;
-        for (int i=1; i<N; i++)
-            LeftMin[i] = min(LeftMin[i-1],nums[i-1]);
-        
-        vector<int>RightMax(N,0);
-        RightMax[N-1] = INT_MIN;
-        for (int i=N-2; i>=0; i--)
-            RightMax[i] = max(RightMax[i+1],nums[i+1]);
-        
-        for (int i=1; i<N-1; i++)
-        {
-            if (LeftMin[i]<nums[i] && RightMax[i]>nums[i])
-                return true;
-        }
-        return false;
-        
-    }
-};
-::::::::::::::
-Greedy/0334.Increasing-Triplet-Subsequence/334.Increasing-Triplet-Subsequence_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    bool increasingTriplet(vector<int>& nums) 
-    {
-        vector<int>q;
-        for (auto x: nums)
-        {
-            if (q.empty() || q.back()<x)
-                q.push_back(x);
-            else
-            {
-                auto iter = lower_bound(q.begin(), q.end(), x);
-                *iter = x;
-            }
-            if (q.size()==3)
-                return true;
-        }
-        return false;
-    }
-};
-::::::::::::::
-Greedy/0334.Increasing-Triplet-Subsequence/Readme.md
-::::::::::::::
-### 334.Increasing-Triplet-Subsequence
-
-#### 解法1：
-从左往右，从右往左，各扫一遍数组，计算每个元素的LeftMin和RightMax。那么只要LeftMin[i]<nums[i]<RightMax[i]即可找到一对triplet
-
-这样的话，时间是o(3N),空间是o(2N)
-
-#### 解法2：
-非常巧妙的思维，本题即是在这个数组里找到长度为3的increasing subsequence即可！
-
-用一个数组来记录当前的递增序列，长度达到3即可停下来。时间最差是nlog(3)，空间是o(3)。
-
-
-[Leetcode Link](https://leetcode.com/problems/increasing-triplet-subsequence)::::::::::::::
-Greedy/0354.Russian-Doll-Envelopes/354.Russian-Doll-Envelopes_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxEnvelopes(vector<vector<int>>& envelopes) 
-    {
-        int n = envelopes.size();
-        sort(envelopes.begin(), envelopes.end());
-        vector<int>dp(n,0);
-        for (int i=0; i<n; i++)
-        {
-            dp[i] = 1;
-            for (int j=0; j<i; j++)
-            {
-                if (envelopes[j][0]<envelopes[i][0] && envelopes[j][1]<envelopes[i][1])
-                    dp[i] = max(dp[i], dp[j]+1);
-            }
-        }
-        
-        int ret = 0;
-        for (int i=0; i<n; i++)
-            ret = max(ret, dp[i]);
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0354.Russian-Doll-Envelopes/354.Russian-Doll-Envelopes_v2.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        if (a[0]==b[0])
-            return a[1]>b[1];
-        else
-            return a[0]<b[0];
-    }
-public:
-    int maxEnvelopes(vector<vector<int>>& envelopes) 
-    {
-        sort(envelopes.begin(), envelopes.end(), cmp);
-        vector<int>q;
-        for (auto x: envelopes)
-        {
-            if (q.empty() || x[1]>q.back())
-                q.push_back(x[1]);
-            else
-            {
-                auto iter = lower_bound(q.begin(), q.end(), x[1]);
-                *iter = x[1];
-            }
-        }
-        return q.size();
-    }
-};
-::::::::::::::
-Greedy/0354.Russian-Doll-Envelopes/Readme.md
-::::::::::::::
-### 354. Russian-Doll-Envelopes
-
-#### 解法1：
-我们将所有的信封按照长度从小到大排序之后，符合要求的信封嵌套序列一定是这个排序数组的一个subsequence（否则无法满足长度的递增要求）。
-
-我们可以用N^2的DP方法，在这个数组中找到宽度的最长递增子序列(LIS)。参考```300. Longest Increasing Subsequence```. 注意对于第i个元素，想寻找它在LIS中的前一个元素j，必须同时满足两个条件：
-```width[j]<width[i] && length[j]<length[i]```。否则会将长度相等、宽度不等的两个信封选入同一个LIS中。
-
-#### 解法2：
-本题有一个技巧可以在求LIS的过程中不用再考虑长度的制约。那就是排序的时候，将长度相同的信封按照宽度降序排列。这样的好处是，相同长度的信封，不可能在宽度上是递增的。这样求宽度的LIS时，不可能选到两个长度相同的信封。于是，单纯求解宽度数组的LIS序列，就可以用o(NlogN)的贪心解法了。参考```300. Longest Increasing Subsequence```. 
-
-[Leetcode Link](https://leetcode.com/problems/russian-doll-envelopes)
-::::::::::::::
-Greedy/0386.Lexicographical-Numbers/386.Lexicographical-Numbers.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> lexicalOrder(int n) 
-    {
-        int current=1;
-        vector<int>results(n);
-        
-        for (int i=0; i<n; i++)
-        {
-            results[i]=current;
-            
-            if (current*10<=n)
-                current=current*10;
-            else
-            {
-                if (current+1>n) 
-                    current=current/10;
-                current++;
-                while (current % 10==0)
-                    current/=10;
-            }
-        }
-        return results;
-    }
-};
-::::::::::::::
-Greedy/0386.Lexicographical-Numbers/Readme.md
-::::::::::::::
-### 386.Lexicographical-Numbers
-
-研究序列[1,10,11,12,13,2,3,4,5,6,7,8,9]，找出字典序的规律。
-
-规律1：不考虑上限，元素1后面跟什么元素？10, 100 … 也就是不断乘以10。
-
-规律2：如果99是上限，那么10后面的元素不能是100了，该怎么办？答案是11，也就是加1，这样个位上的数变大了。如果加1导致进位的话，虽然个位数变0，但十位上的数会变大，总之肯定字典序往后移。但此时得到的并不是下一个的目标，因为把其末尾的0去掉会得到字典序相对更前的数。砍掉0之后就可以重复规律1的操作了。
-
-规律3：如果上限是19，那么19后面的元素就不能是20了，该怎么办？答案是将19除以10，然后再重复规律2（也就是加1），也就是得到2，之后又可以重复规律1了。
-
-
-[Leetcode Link](https://leetcode.com/problems/lexicographical-numbers)::::::::::::::
-Greedy/0406.Queue-Reconstruction-by-Height/406.Queue-Reconstruction-by-Height.cpp
-::::::::::::::
-class Solution {
-public:
-    static bool cmp(pair<int,int>a,  pair<int,int>b)
-    {
-        if (a.first==b.first)
-            return a.second<b.second;
-        else
-            return a.first>b.first;
-    }
-    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) 
-    {
-        sort(people.begin(),people.end(),cmp);
-        vector<pair<int, int>>results;
-        for (int i=0; i<people.size(); i++)
-        {
-            if (results.size()==0)
-            {
-                results.push_back(people[i]);
-                continue;
-            }
-            
-            int pos = people[i].second;
-            results.insert(results.begin()+pos,people[i]);
-        }
-        return results;
-    }
-};
-::::::::::::::
-Greedy/0406.Queue-Reconstruction-by-Height/Readme.md
-::::::::::::::
-### 406.Queue-Reconstruction-by-Height
-
-此题我们来这样考虑，比如对于[h,k]来说，如果只考虑那些身高比他高、位置比他靠前的人群，他是排第k+1个。那如果我们把所有身高比他高的人都已经拉了出来排成一排，我们再将这个人塞进第k+1位，也是不违和的。因为剩下那些比他矮的人，无论放在哪里，都不会再影响到k这个数值。
-
-于是，贪心的方法很简单。我们按身高依次处理。当处理某人时，所有比他高的都已经处理完了，然后将该人放在第k+1个位置即可。他的插入不会对之前那些“高人”的排名产生任何的影响。依次类推处理完所有的人。
-
-这里，当有两个人的身高相同怎么办呢？先处理k小的，他优先插入，优先得到更靠前的位置。
-
-
-[Leetcode Link](https://leetcode.com/problems/queue-reconstruction-by-height)::::::::::::::
-Greedy/0435.Non-overlapping-Intervals/435.Non-overlapping-Intervals_v1.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        return a[1]<b[1];
-    }
-public:
-    int eraseOverlapIntervals(vector<vector<int>>& intervals) 
-    {
-        sort(intervals.begin(), intervals.end(), cmp);
-        int i = 0;
-        int count = 0;
-        while (i<intervals.size())
-        {
-            count++;
-            int j = i+1;
-            while (j<intervals.size() && intervals[j][0] < intervals[i][1])
-                j++;
-            i = j;
-        }
-        return intervals.size()-count;
-    }
-};
-::::::::::::::
-Greedy/0435.Non-overlapping-Intervals/435.Non-overlapping-Intervals_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int eraseOverlapIntervals(vector<vector<int>>& intervals) 
-    {
-        sort(intervals.begin(), intervals.end());
-        int far = INT_MIN;
-        int count = 0;
-        for (auto interval: intervals)
-        {
-            if (interval[0] >= far)
-            {
-                far = interval[1];
-                count++;
-            }
-            else if (interval[1] < far)
-            {
-                far = interval[1];
-            }
-        }
-        return intervals.size()-count;
-    }
-};
-::::::::::::::
-Greedy/0435.Non-overlapping-Intervals/Readme.md
-::::::::::::::
-### 435.Non-overlapping-Intervals
-
-#### 解法1
-
-此题和452. Minimum Number of Arrows to Burst Balloons非常类似，可以用贪心法来解决类似的区间问题。
-
-我们之前总结过，对区间排序的贪心法，有的需要sort by starting point，有的需要sort by ending point. 大致的规律是：
-1. 如果求的是maximum number of non-overlapping intervals，用sort by ending point的方法
-2. 如果求的是minimum number of intervals to cover the whole range，用sort by starting point的方法
-
-本题就是前者。我们把右边界最小（成为right）的那个区间做为首区间，从排序后的interval中找到所有start小于当前这个右边界right的区间．这些区间都是可以删掉的！这是因为这些区间都互相重合，必然只能保留一个．而保留哪一个呢？就是保留当前这个右边界最小的区间，因为其他区间的右边界都较大，可能会造成对后面区间的重合，有潜在的风险，去掉他们最保险．
-
-或者我们这样理解：为了保留更多的区间数目，在众多重合的区间里面，我们会优先选择右端点靠前的区间。因为它对后续的影响最小，有更大的概率让更多的区间出现。
-
-#### 解法2
-
-因为我们求的是non-overlapping intervals，所以从左往右看每个区间的ending point，就是从右往左看每个区间的starting point。所以理论上本题也一定可以用sort by starting point来做。
-
-当然，具体的做法与1不太一样。我们将所有的区间按照starting point排序之后，依次遍历它们。我们维护一个当前能到达的最远点far。如果
-1. 新区间的左端点在far的右边，那么新区间就不会与之前的任何区间重合，计数器加1
-2. 新区间的右端点在far的左边，那么新区间就被旧区间包围。我们于是舍弃之前的区间，而prefer当前的区间，并更新far为右端点，使其变得更靠前。目的是让后面有机会加入更多的区间。
-
-[Leetcode Link](https://leetcode.com/problems/non-overlapping-intervals)
-::::::::::::::
-Greedy/0442.Find-All-Duplicates-in-an-Array/442.Find-All-Duplicates-in-an-Array_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findDuplicates(vector<int>& nums) 
-    {
-        int n = nums.size();
-        nums.insert(nums.begin(),0);
-        for (int i=1; i<=n; i++)
-        {
-            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
-                swap(nums[i], nums[nums[i]]);
-        }
-        vector<int>rets;
-        for (int i=1; i<=n; i++)
-        {
-            if (nums[i]!=i)
-                rets.push_back(nums[i]);
-        }
-        return rets;
-    }
-};
-::::::::::::::
-Greedy/0442.Find-All-Duplicates-in-an-Array/442.Find-All-Duplicates-in-an-Array_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findDuplicates(vector<int>& nums) 
-    {
-        int n = nums.size();
-        nums.insert(nums.begin(),0);
-        vector<int>results;
-        for (int i=1; i<=n; i++)
-        {
-            if (nums[abs(nums[i])]<0)
-                results.push_back(abs(nums[i]));
-            else
-                nums[abs(nums[i])] *= -1;                                  
-        }
-        return results;
-    }
-};
-::::::::::::::
-Greedy/0442.Find-All-Duplicates-in-an-Array/Readme.md
-::::::::::::::
-### 442.Find-All-Duplicates-in-an-Array
-
-#### 解法1
-此题和 041.First-Missing-Positive 的解法非常相似。题目的共同点是：数组的元素规定了是从1\~N. 这就强烈暗示了，如果试图把正整数1~N顺次放入nums[1]~nums[N]中，那么没有被正确归位的那个元素（即nums[i]!=i）一定有“问题”。
-
-对于“把正整数1~N顺次放入nums[1]~nums[N]中”的这种特殊的排序任务，有如下典型的时间复杂度o(n)、空间复杂度o(1)的方法：
-
-遍历所有元素nums[i]，发现如果nums[i]!=i时，说明当前的nums[i]这个数没有被放置在合适的顺序位置。于是交换nums[i]和nums[nums[i]]。这样做的结果是：把nums[i]放到了它应该在的位置（正确归位），同时nums[i]有了新的值，需要再重复判断、交换的过程。这样的步骤持续到 nums[i]==nums[nums[i]]，这样就到了一个死循环，对于i这个位置就不能再做任何操作，于是跳过。
-
-等到所有元素都遍历结束，那么所有元素就会被“力所能及”地归入了它们应该在的顺序位置。那么此时，对于那些nums[i]!=i的、没有正确归位的元素，在本题的题意下，就是那些重复的元素，可以轻易地挑出来。
-
-#### 解法2
-还有一种比较花哨的解法。对于数值x，我们如何不通过extra space来记录它是否出现过呢？方法是将nums[x]上的数字变成负数来进行标记，注意我们并不关心nums[x]是多少。只关心nums[x]是负数时表示x曾经出现过，反之表示x还没出现过。
-
-所以我们依次遍历数组里的每个数字abs(x)，注意我们关心数值时必须看的是abs(x)，因为x的符号可能被encode了其他含义（如上所说）。如果nums[abs[x]]<0，表示abs(x)曾经出现过，加入我们的答案中。反之，说明abs(x)第一次出现，所以我们将nums[abs(x)]标记为负数，以此留下这个标记。
-
-
-[Leetcode Link](https://leetcode.com/problems/find-all-duplicates-in-an-array)
-::::::::::::::
-Greedy/0448.Find-All-Numbers-Disappeared-in-an-Array/448.Find-All-Numbers-Disappeared-in-an-Array.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findDisappearedNumbers(vector<int>& nums) {
-        int n = nums.size();
-        nums.insert(nums.begin(),0);
-        for (int i=1; i<=n; i++)
-        {
-            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
-                swap(nums[i], nums[nums[i]]);
-        }
-        vector<int>rets;
-        for (int i=1; i<=n; i++)
-        {
-            if (nums[i]!=i)
-                rets.push_back(i);
-        }
-        return rets;
-    }
-};
-::::::::::::::
-Greedy/0448.Find-All-Numbers-Disappeared-in-an-Array/Readme.md
-::::::::::::::
-### 448.Find-All-Numbers-Disappeared-in-an-Array
-
-对于这种数列[1,..,N]摆放在index为[1,..,N]的数组，有一种比较常见的巧妙解法，就是index sorting.
-
-我们观察一个i位置上的数，如果nums[i]!=i的话，那么说明这个nums[i]本不应该在这个位置上，于是我们就把它送到它应该待的地方，也就是index为nums[i]的地方，直至这种交换无法继续为止。什么情况下无法继续呢？一种就是nums[i]==i，说明位置i已经放置了应该出现的数；另一种就是nums[nums[i]]==nums[i]，也就是打算安排nums[i]的位置已经有一个合适的数在那里了，我们也无法继续了，说明位置i上注定无法放置期望出现的数。
-
-核心代码如下：
-```cpp
-        while (i<nums.size())
-        {
-            if (nums[i]==i || nums[nums[i]]==nums[i])             
-                i++;            
-            else            
-                swap(nums[i],nums[nums[i]]);            
-        }
-```        
-此题本质上和 442. Find All Duplicates in an Array 一模一样，只不过最终输出的内容是index而不是元素的值。
-
-
-[Leetcode Link](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array)::::::::::::::
-Greedy/0452.Minimum-Number-of-Arrows-to-Burst-Balloons/452.Minimum-Number-of-Arrows-to-Burst-Balloons.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(pair<int,int>a, pair<int,int>b)
-    {
-        return a.second<b.second;
-    }
-public:
-    int findMinArrowShots(vector<pair<int, int>>& points) 
-    {
-        sort(points.begin(),points.end(),cmp);
-        
-        int j=0;
-        int count=0;
-        while (j<points.size())
-        {            
-            int right=points[j].second;
-            while (j<points.size() && points[j].first<=right)
-                j++;
-            count++;
-        }
-        
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0452.Minimum-Number-of-Arrows-to-Burst-Balloons/Readme.md
-::::::::::::::
-### 452.Minimum-Number-of-Arrows-to-Burst-Balloons
-
-将所有的气球按照右边界进行从小到大的排序。
-
-按照排序后的右边界的值right进行遍历。对于所有未被射破的、左边界小于当前right的气球（此时他们的右边界必然大于right，因为right是从小到大遍历的），只要沿着这个right进行射击，就能最大效率地射破这些气球。
-
-接下来寻找未被射破的下一个气球，更新最小的right。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons)::::::::::::::
-Greedy/0484.Find-Permutation/484.Find-Permutation.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findPermutation(string s) 
-    {
-        s.insert(s.begin(),s[0]);
-        int N=s.size();
-        vector<int>results(N,0);
-        
-        int left=0;
-        int right=0;
-        
-        while (right<s.size())
-        {
-            while (right+1<s.size() && !(s[right]=='D' && s[right+1]=='I'))
-                   right++;
-            if (right==s.size()) right--;
-            
-            int top=left;
-            while (s[top+1]=='I') top++;
-            for (int i=left; i<top; i++)
-                results[i]=i+1;
-            for (int i=top; i<=right; i++)
-                results[i]=top+1+right-i;
-            left=right+1;
-            right=right+1;
-        }
-        
-        return results;
-            
-    }
-};
-::::::::::::::
-Greedy/0484.Find-Permutation/Readme.md
-::::::::::::::
-### 484.Find-Permutation
-
-需要人工分析出最优的策略。
-
-以“下拐点”为分界点将s序列分为若干个II...IIDD...DD的组合。对于每个II...IIDD...DD，可以知道最优方法是：将除最后一个I之外的所有I对应一个递增数列，剩下的一个I和所有的D对应一个递减数列，且递减数列的最小值是那个递增数列最大值加1。更有用的是，可以知道，所有的递增数列的值都是和它的index值是对应的`results[i]=i+1`。
-
-那么s的位数和results的位数不一样怎么办？一个简单的方法是`s.insert(s.begin(),s[0])`，这样s和results的元素数目就是一致的，且各个位置都适用同样的代码语句。
-
-
-[Leetcode Link](https://leetcode.com/problems/find-permutation)::::::::::::::
-Greedy/0517.Super-Washing-Machines/517.Super-Washing-Machines.cpp
-::::::::::::::
-class Solution {
-public:
-    int findMinMoves(vector<int>& machines) 
-    {
-        int n = machines.size();
-        vector<int>left(n,0);
-        vector<int>right(n,0);
-
-        int sum = 0;
-        for (auto x:machines)
-            sum += x;
-        if (sum%n!=0) return -1;
-        int k = sum/n;
-
-        right[0] = machines[0] - k;
-        for (int i=1; i<n-1; i++)
-        {
-            left[i] = -right[i-1];
-            right[i] = machines[i]-k-left[i];
-        }
-        left[n-1] = machines[n-1]-k;
-
-        int ret = 0;
-        for (int i=0; i<n; i++)
-        {
-            int t = 0;
-            if (left[i]>0) t+= left[i];
-            if (right[i]>0) t+= right[i];
-            ret = max(ret,t);
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0517.Super-Washing-Machines/Readme.md
-::::::::::::::
-### 517.Super-Washing-Machines
-
-此题初看会有一种用DP的错觉．但细细想一想，其实最优策略是可以手工制定出来的，这就是贪心法．
-
-首先，我们应该有这样的直觉，对任意一台洗衣机，最优的转移策略肯定不会出现＂反反复复＂的情况．即经过充分的优化调度后，衣物的转移应该是单向的．假设对于第i台洗衣机，最终平衡态是k件，设整个过程中i总共向左边净转移了left[i]件衣物，向右边净转移了right[i]件衣物，则必定满足如下关系：
-```
-machines[i]-k = left[i]+right[i]
-```
-并且在实际的最优操作中，第i台一定只需要向左移动left[i]件衣物，向右移动right[i]件衣物即可（注意，这两个值可能是负数）。总之同一个边不会有多余的双向操作。
-
-其次，我们把所有洗衣机的初始状态想象成一座连绵起伏的山峦。每一次move前，我们知道哪些山峰是净输出的，哪些山谷是净输入的，而这一次move的效果就是：将某些山峰的一件衣物“超距作用”地转移到某些山谷中去。所谓的“超距作用”，就是说这种山峰填山谷的操作只需要一个回合就能完成。这是因为每个回合所有的洗衣机都在同时工作，每个洗衣机只有三种作用：净输出1，净值为0，净输入1或者2（某个山谷同时由两边来填）。那些净值为0的洗衣机其实就相当于传送带，某一边输入一件，同时又往另一边输出一件，从而协助了山峰填山谷的超距作用。
-
-很显然，整批洗衣机需要停止工作的回合，就是等到那些山峰最终夷为平地的时刻。所以最终答案，就是找到“总输出”最多的那台机器即可。为什么是要算总输出呢？因为有可能是这种情景:左边的次山峰->主山峰->填补谷底。这样的一个回合，主山峰其实并没有净输出，是次山峰在净输出。但我们可以想象，主山峰一定是在不停地输出（不一定是净输出），而当主山峰不输出了，说明肯定一切都已经夷为平地了。
-
-至于如何确定left[i]和right[i]是比较简单的，突破口就是最左边的洗衣机，其left[i]一定是零；次外，所有的```right[i]=-left[i+1]```。故这些变量都可解。
-
-
-[Leetcode Link](https://leetcode.com/problems/super-washing-machines)::::::::::::::
-Greedy/0524.Longest-Word-in-Dictionary-through-Deleting/524.Longest-Word-in-Dictionary-through-Deleting.cpp
-::::::::::::::
-class Solution {
-public:
-    string findLongestWord(string S, vector<string>& dictionary) 
-    {
-        int m = S.size();
-        S = "#"+S;
-        int next[m+1][26];
-        
-        for (int k=0; k<26; k++)
-            next[m][k] = -1;
-        for (int i=m; i>=1; i--)
-        {
-            for (int k=0; k<26; k++)
-                next[i-1][k] = next[i][k];
-            next[i-1][S[i]-'a'] = i;
-        }
-        
-        string ret = "";
-        for (auto word: dictionary)
-        {
-            int flag = 1;
-            int i = 0;
-            for (auto ch: word)
-            {
-                i = next[i][ch-'a'];
-                if (i==-1)
-                {
-                    flag = 0;
-                    break;
-                }                
-            }
-            if (flag)
-            {
-                if (word.size() > ret.size() || (word.size() == ret.size() && word < ret))
-                    ret = word;
-            }
-        }
-        return ret;        
-    }
-};
-::::::::::::::
-Greedy/0524.Longest-Word-in-Dictionary-through-Deleting/Readme.md
-::::::::::::::
-### 524.Longest-Word-in-Dictionary-through-Deleting
-
-此题等同于```792.Number-of-Matching-Subsequences```. 我们预处理得到next[i][ch]，表示S中位置i右边第一个出现字符ch的位置。这样对于每一个单词word，假设长度为n，我们只需要用o(n)的时间就可以找到全部字符在s中的对应位置。具体做法是，令初始i=0，然后遍历word所有的ch，不断地更新```i = next[i][ch]```。如果某个```next[i][ch]==-1```，那么就说明word不是s的subsequence。
-::::::::::::::
-Greedy/0581.shortest-unsorted-continuous-subarray/581.shortest-unsorted-continuous-subarray.cpp
-::::::::::::::
-class Solution {
-public:
-    int findUnsortedSubarray(vector<int>& nums) 
-    {
-        int curMax=INT_MIN;
-        int right_bound=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (nums[i]<curMax)
-                right_bound=i;
-            curMax=max(curMax,nums[i]);
-        }
-        
-        int curMin=INT_MAX;
-        int left_bound=nums.size()-1;
-        for (int i=nums.size()-1; i>=0; i--)
-        {
-            if (nums[i]>curMin)
-                left_bound=i;
-            curMin=min(curMin,nums[i]);
-        }        
-        
-        cout<<left_bound<<" "<<right_bound<<endl;
-        
-        return left_bound>=right_bound?0:right_bound-left_bound+1;
-    }
-};
-::::::::::::::
-Greedy/0581.shortest-unsorted-continuous-subarray/Readme.md
-::::::::::::::
-### 581.shortest-unsorted-continuous-subarray
-
-本题的难点是如何设计不需要排序的o(n)算法。
-
-找出这样一个right_bound：位于该数左边的所有数的最大值，要比这个数大，这说明这个数在排序后需要变换位置。怎么找呢？将数组从左到右过一遍，实时保存最大值即可，不断刷新这个right_bound。
-
-同理，找到这样一个left_bound：位于该数右边的所有数的最小值，要比这个数小，这说明这个数在排序后需要变换位置。也是讲数组从右往左过一遍，实时保存最小值。
-
-最后当right_bound>left_bound时，结果就是 right_bound-left_bound+1
-
-
-[Leetcode Link](https://leetcode.com/problems/shortest-unsorted-continuous-subarray)::::::::::::::
-Greedy/0624.Maximum-Distance-in-Arrays/624.Maximum-Distance-in-Arrays.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxDistance(vector<vector<int>>& arrays) 
-    {
-        vector<int>Mins;
-        vector<int>Maxs;
-        for (int i=0; i<arrays.size(); i++)
-        {
-            Mins.push_back(arrays[i][0]);
-            Maxs.push_back(arrays[i].back());
-        }
-        
-        sort(Mins.begin(),Mins.end());
-        sort(Maxs.begin(),Maxs.end());
-        
-        int N=arrays.size();
-        int flag=0;
-        for (int i=0; i<arrays.size(); i++)
-        {
-            if (arrays[i][0]==Mins[0] && arrays[i].back()==Maxs.back() )
-            {
-                flag=1;
-                break;                    
-            }            
-        }
-        
-        if (flag==0)
-            return Maxs.back()-Mins[0];
-        else
-            return max(Maxs.back()-Mins[1],Maxs[N-2]-Mins[0]);
-    }
-};
-::::::::::::::
-Greedy/0624.Maximum-Distance-in-Arrays/Readme.md
-::::::::::::::
-### 624.Maximum-Distance-in-Arrays
-
-最粗浅的最优策略就是，把每个数组的第一个元素挑出来组成Mins数组，每个数组的最后一个元素挑出来组成Maxs数组。理想情况下，Maxs.back()-Mins[0]就是最大的一对差值。
-
-当Maxs.back()和Mins[0]来自同一个数组怎么办？这时候考察Maxs[n-2]-Mins[0]以及Maxs.back()-Mins[1]，取其中较小的。而且这两对数字肯定不会是在同一个数组中的。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-distance-in-arrays)::::::::::::::
-Greedy/0645.Set-Mismatch/645.Set-Mismatch.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findErrorNums(vector<int>& nums) 
-    {
-        int n = nums.size();
-        nums.insert(nums.begin(), 0);
-        for (int i=1; i<=n; i++)
-        {
-            while (nums[i]!=i && nums[i]<=n+1 && nums[i]!=nums[nums[i]])
-            {
-                swap(nums[i], nums[nums[i]]);
-            }
-        }
-        
-        for (int i=1; i<=n; i++)
-        {
-            if (nums[i]!=i)
-               return {nums[i],i}; 
-        }
-
-        return {-1,-1};   
-    }
-};
-::::::::::::::
-Greedy/0645.Set-Mismatch/Readme.md
-::::::::::::::
-### 645.Set-Mismatch
-
-此题其实就是```442.Find-All-Duplicates-in-an-Array```和```448.Find-All-Numbers-Disappeared-in-an-Array```的拼接。最后遍历到```nums[i]!=i```的位置时，说明nums[i]是duplicated number，而i就是missing number.
-
-[Leetcode Link](https://leetcode.com/problems/set-mismatch)
-::::::::::::::
-Greedy/0646.Maximum-Length-of-Pair-Chain/646.Maximum-Length-of-Pair-Chain.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        return a[1]<b[1];
-    }
-public:
-    int findLongestChain(vector<vector<int>>& pairs) 
-    {
-        sort(pairs.begin(), pairs.end(), cmp);
-        int i=0, count = 0;
-        while (i<pairs.size())
-        {
-            int j = i;
-            while (j<pairs.size() && pairs[j][0]<=pairs[i][1])
-                j++;
-            count++;
-            i = j;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0646.Maximum-Length-of-Pair-Chain/Readme.md
-::::::::::::::
-### 646.Maximum-Length-of-Pair-Chain
-
-此题本质和 435.Non-overlapping-Intervals 一模一样。
-::::::::::::::
-Greedy/0649.Dota2-Senate/649.Dota2-Senate.cpp
-::::::::::::::
-class Solution {
-public:
-    string predictPartyVictory(string senate) 
-    {
-        string str=senate;
-        int len=0;
-        int count=0;
-        while (senate.size()!=len)
-        {
-            len=senate.size();
-            string s;
-            for (int i=0; i<senate.size(); i++)
-            {
-                if (senate[i]=='R')
-                {                    
-                    if (count>=0) s.push_back('R');
-                    count++;
-                }
-                else
-                {                    
-                    if (count<=0) s.push_back('D');
-                    count--;
-                }
-            }
-            senate = s;
-        }
-        
-        if (senate[0]=='R')
-            return "Radiant";
-        else
-            return "Dire";
-    }
-};
-::::::::::::::
-Greedy/0649.Dota2-Senate/Readme.md
-::::::::::::::
-### 649.Dota2-Senate
-
-对于R来说，其最优的策略是消灭其身后第一个仍存活的D，如果没有，再从队首开始找第一个仍存活的D。
-
-此题如果依此策略进行模拟的话，效率很低。有比较巧妙的贪心算法，可以o(n)得到结果。
-
-设置一个字符串s，代表senate经过一轮厮杀之后得以存活进入下一轮的子串。那么怎么从senate快捷方便地得到s呢？我们设置一个计数器count，如果遇到R就加一，遇到D就减一。注意，如果遇到R的时候，count>=0，说明之前的所有R/D厮杀得到的结果是R净胜，说明当前的R是不会被之前的任何D所封禁的，所以可以放心地将R加入s中。反之，如果遇到D的时候，count<=0，说明之前的所有R/D厮杀得到的结果是D净胜，说明当前的D是不会被之前的任何R所封禁的，所以可以放心地将D加入s中。其他情况下，都说明当前的R或D都无法能够存活，不能被加入下一轮的s中。
-
-扫完一轮之后，接下来的关键点是：更新senate为s，但count不清零，重复上述的步骤。这是因为上一轮末的count其实反映了队尾存留的R的数目（或者D），他们能可以封禁残存的位于队首的D（或者R）。
-
-最后循环直到新生成的s的长度不再变化，说明此时的s里面全部都是R或者D了。
-
-
-[Leetcode Link](https://leetcode.com/problems/dota2-senate)::::::::::::::
-Greedy/0659.Split-Array-into-Consecutive-Subsequences/659.Split-Array-into-Consecutive-Subsequences.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isPossible(vector<int>& nums) 
-    {
-        unordered_map<int,int>left;
-        unordered_map<int,int>seq;
-        for (auto x: nums)
-            left[x]++;
-
-        for (auto x: nums)
-        {
-            if (left[x]==0) continue;
-            if (seq[x-1]>0)
-            {                
-                left[x]--;
-                seq[x-1]-=1;
-                seq[x]+=1;                
-            }
-            else
-            {
-                if (left[x+1]==0 || left[x+2]==0)
-                    return false;
-                left[x]--;
-                left[x+1]--;
-                left[x+2]--;
-                seq[x+2]+=1;
-            }
-            
-        }
-        return true;        
-    }
-};
-::::::::::::::
-Greedy/0659.Split-Array-into-Consecutive-Subsequences/Readme.md
-::::::::::::::
-### 659.Split-Array-into-Consecutive-Subsequences
-
-假设我们当前处理的数字是x。下面分两种情况讨论：
-
-如果之前的处理过的元素里，已经有以x-1为结尾的、长度大于等于3的序列，那么我们必然会将x接在这个已有的序列上。为什么呢？如果我们不接，那么x必然是作为一段新序列的首元素。但是如果后面没有x+1和x+2接上，那么x这个新序列就无法满足长度要求。而如果后面有x+1和x+2，那么我们何不将x,x+1,x+2一并都接在以x-1为结尾的序列上呢？可见不管后面是否有x+1/x+2，将x接在已有的序列上，都是最保险的决策。
-
-如果之前的处理过的元素里，已经有以x-1为结尾的、长度大于等于3的序列，那么我们该怎么办呢？我们就必须创建以x为首元素的新序列，同时为了保证该新序列的最终长度要大于等于3，我们必须向后面“预支”两个元素：x+1和x+2。如果我们能提前知道后面已经没有了x+1和x+2，那么我们就可以返回false。
-
-所以我们需要两个哈希表。seq[x]表示目前为止已经构建了多少个以x为结尾的、长度大于等于3的序列。left[x]表示后面还有多少个x没有被处理（初始值就是原数组中的x的个数）。当第一种情况时，以x-1结尾的序列会变成以一个新的以x为结尾的序列。第二种情况时，会增加一个以x+2为结尾的序列，同时注意相应的left[x],left[x+1],left[x+2]都需要自减1.
-
-[Leetcode Link](https://leetcode.com/problems/split-array-into-consecutive-subsequences)
-::::::::::::::
-Greedy/0665.Non-decreasing-Array/665.Non-decreasing-Array_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    bool checkPossibility(vector<int>& nums) 
-    {
-        int count=0;
-        for (int i=1; i<nums.size(); i++)
-        {            
-            if (nums[i-1]>nums[i])
-            {
-                count++;
-                
-                if (count==2) return false;
-                
-                if (i>=2 && nums[i-2]>nums[i])
-                    nums[i]=nums[i-1];
-                else
-                    nums[i-1]=nums[i];
-            }
-        }
-        return true;
-    }
-};
-::::::::::::::
-Greedy/0665.Non-decreasing-Array/665.Non-decreasing-Array_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    bool checkPossibility(vector<int>& nums) 
-    {
-        int a = -1, b = -1;
-        for (int i=1; i<nums.size(); i++)
-        {
-            if (nums[i-1]>nums[i])
-            {
-                a = i-1;
-                b = i;
-            }
-        }
-        if (a==-1) return true;
-        
-        int flag = 1;
-        for (int i=1; i<nums.size(); i++)
-        {
-            if (i==a) continue;
-            else if (i==a+1)
-            {
-                if (i-2>=0 && nums[i-2]>nums[i])
-                {
-                    flag = false;
-                    break;                    
-                }                
-            }
-            else if (nums[i-1]>nums[i])
-            {
-                flag = false;
-                break;
-            }                
-        }
-        if (flag) return true;
-        
-        flag = 1;
-        for (int i=1; i<nums.size(); i++)
-        {
-            if (i==b) continue;
-            else if (i==b+1)
-            {
-                if (i-2>=0 && nums[i-2]>nums[i])
-                {
-                    flag = false;
-                    break;                    
-                }  
-            }
-            else if (nums[i-1]>nums[i])
-            {
-                flag = false;
-                break;
-            }                
-        }
-        if (flag) return true;
-        return false;
-    }
-};
-::::::::::::::
-Greedy/0665.Non-decreasing-Array/Readme.md
-::::::::::::::
-### 665.Non-decreasing-Array
-
-此题属于贪心法。考虑为了满足数列递增关系，遇到“坏点”的时候，最优的改动策略是什么。
-
-#### 解法1
-
-遍历数列一路查验是否递增，如果发现nums[i-1]>nums[i]，首先考虑的改动方案是将nums[i-1]=nums[i]，这样就避免改动nums[i]引发后续的变动。但是，如果又有nums[i-2]>nums[i]的话，那没有办法，为了避免改动两次，只能令nums[i]=nums[i-1]。此时计数1次。如果下次再出现了nums[i-1]>nums[i]的话，就返回false。
-
-#### 解法2
-遍历数列一路查验是否递增，如果发现nums[i-1]>nums[i]，说明坏点必然是nums[i-1]和nums[i]中间的一个。我们可以对其中一个进行隐去，看剩下的是否是non-decreasing序列。如果任意一个隐去后都不成立，就返回false。
-
-[Leetcode Link](https://leetcode.com/problems/non-decreasing-array)
-::::::::::::::
-Greedy/0667.Beautiful-Arrangement-II/667.Beautiful-Arrangement-II.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> constructArray(int n, int k) 
-    {
-        vector<int>ret({k+1});
-        int count = 1;
-        for (int d=k; d>=1; d--)
-        {
-            if (count%2==1)
-                ret.push_back(ret.back()-d);
-            else
-                ret.push_back(ret.back()+d);
-            count++;
-        }
-        reverse(ret.begin(), ret.end());
-        for (int i=k+2; i<=n; i++)
-            ret.push_back(i);
-        
-        return ret;
-        
-    }
-};
-::::::::::::::
-Greedy/0667.Beautiful-Arrangement-II/Readme.md
-::::::::::::::
-### 667.Beautiful-Arrangement-II
-
-通过简单的探索，不难发现，例如要构造1-5这五个不同的差，我们只需要用到1-6这六个数字构成wiggle序列即可：6,1,5,2,4,3. 如果还有剩余的数字，他们都是从7开始连续递增by 1的，我们将其放在6前面即可，即```...9,8,7,6,1,5,2,4,3```，不增加更多的差的数目。
-::::::::::::::
-Greedy/0670.Maximum-Swap/670.Maximum-Swap.cpp
-::::::::::::::
-class Solution {
-public:
-    int maximumSwap(int num) 
-    {
-        int MAX=0;
-        int pos;
-        string str=to_string(num);
-        
-        string str2=str;
-        sort(str2.begin(),str2.end());
-        reverse(str2.begin(),str2.end());
-        
-        int j=0;
-        while (j<str.size() && str[j]==str2[j])
-            j++;
-        
-        if (j==str.size()) return num;
-                
-        for (int i=j; i<str.size(); i++)
-        {
-            if (str[i]-'0'>=MAX)
-            {
-                MAX=str[i]-'0';
-                pos=i;
-            }
-        }
-        
-        for (int i=j; i<pos; i++)
-        {
-            if (str[i]-'0'>=MAX)
-                continue;
-            swap(str[i],str[pos]);         
-            break;
-        }
-        
-        return stoi(str);
-        
-        
-    }
-};
-::::::::::::::
-Greedy/0670.Maximum-Swap/Readme.md
-::::::::::::::
-### 670.Maximum-Swap
-
-从前往后遍历，排除最前的极大递减序列之外，找到剩下的序列里最大的那个数字（有相同的取靠后的），用它和递减序列之后的第一个元素交换。
-
-比如986737，我们将它和排序之后的987763比较，发现前两位就是极大递减序列，所有不用管。从第三位开始，找剩下里面的最大值（相同最大值则取靠后的），结果是最后一个数字7。我们将这个7和递减序列之后的6对换，就得到了最终答案987736。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-swap)::::::::::::::
-Greedy/0678.Valid-Parenthesis-String/678.Valid-Parenthesis-String.cpp
-::::::::::::::
-class Solution {
-public:
-    bool checkValidString(string s) 
-    {
-        int lower=0;
-        int upper=0;
-        
-        for (int i=0; i<s.size(); i++)
-        {
-            if (s[i]=='(')
-            {
-                lower++;
-                upper++;
-            }
-            else if (s[i]=='*')
-            {
-                lower--;
-                upper++;
-            }
-            else if (s[i]==')')
-            {
-                lower--;
-                upper--;
-            }
-            
-            if (lower<0) lower=0;
-            
-            if (upper<0) return false;                        
-        }
-        
-        return (lower==0);
-    }
-};
-::::::::::::::
-Greedy/0678.Valid-Parenthesis-String/Readme.md
-::::::::::::::
-### 678.Valid-Parenthesis-String
-
-回想一下，如果没有“\*”的话，我们怎么处理？我们其实只需要一个计数器count表示未匹配的括号，遇到左括号就加一，遇到右括号就减一。在遍历的过程中，count不能小于零；在结束遍历后，count必须等于零。
-
-那么有“\*”的情况下，我们的计数器需要表示一个范围[lower,upper]，表示未匹配的左括号的可能的数目。遇到左括号，未匹配的左括号数就加一；遇到右括号，未匹配的左括号数就减一，这个规则没有变。但是遇到\*的时候，它可以当做左括号，也可以当做右括号,也可以当做空号。所以我们需要处理的方法是：lower--; upper++。换句话说，lower表示我们在探索过程中尽可能地将星号转化为右括号，upper表示我们在探索过程中尽可能地将星号转化为左括号，但是同时保证当前的字符串不违法。最终遍历结束后，未匹配的左括号的数目范围需要包括零。
-
-那么遍历的过程中这个范围会有什么变化呢？
-
-首先，当lower小于0的时候，说明右括号太多了。那么之前出现的某个\*不能再代表右括号了，可以表示成空号。所以lower此时重置为0。而upper保持不变。
-
-（特别注意,如果题目中说的是\*不能作为空号而只能用作左右括号的话,此时的lower应该置为1,因为我们是把一个可能用作右括号的\*确定必须为左括号.一正一反相当于lower的值会增2。此时upper的值仍然不变。）
-
-其次，当upper小于0的时候，依然说明右括号太多了。但因为记录upper的原则是：之前的星号都尽可能地转化为左括号。说明此刻此刻，我们并没有任何多余的星号可以再变成左括号了。因此可以提前判断终止.
-
-最后，遍历结束时，lower和upper还需要满足什么条件？显然[lower,upper]必须包括零点（事实上，lower永远不会小于零），这样表示有可能整体未被匹配的左括号数目为零。
-
-类似的题有[lintcode 1475.Minimum-Legal-Bracket-Sequence](https://github.com/wisdompeak/LintCode/tree/master/Greedy/1475.Minimum-Legal-Bracket-Sequence)
-
-[Leetcode Link](https://leetcode.com/problems/valid-parenthesis-string)
-::::::::::::::
-Greedy/0683.K-Empty-Slots/683.K-Empty-Slots.cpp
-::::::::::::::
-class Solution {
-public:
-    int kEmptySlots(vector<int> &flowers, int k) 
-    {
-        int N = flowers.size();
-        vector<int>days(N);
-        for (int i=0; i<N; i++)
-            days[flowers[i]-1] = i;
-        
-        int result = INT_MAX;
-        int candidate;
-        for (int i=0; i<N; i++)
-        {
-            int left = i;
-            int right = left+k+1;
-            if (right>=N) break;
-            
-            bool flag = 1;
-            for (int j=left+1; j<=right-1; j++)
-            {
-                if (days[j]<days[left] || days[j]<days[right])
-                {
-                    flag = 0;
-                    i = j-1;
-                    break;
-                }
-            }
-            if (flag) 
-            {
-                candidate = max(days[left],days[right])+1;
-                result = min(result,candidate);
-            }
-        }
-        if (result==INT_MAX)
-            return -1;
-        else
-            return result;
-    }
-};
-::::::::::::::
-Greedy/0683.K-Empty-Slots/Readme.md
-::::::::::::::
-### 683.K-Empty-Slots
-
-此题可以用set的迭代器来做，每插入一个元素，只要在这个有序容器里找到前面和后面一个元素，看看之间是否相差ｋ即可．
-
-更巧妙的o(n)解法是一个贪心策略．
-
-我们将题目的条件转换成另一个数组days[i]，表示位置```ｉ```的花在```days[i]```这一天开放．那么我们希望得到什么呢？我们希望有这么一个宽度为k+1的区间[left,right],对于任意left<i<right，都有days[i]>days[left] && days[i]>days[right]．这说明这个区间内部的花都比两边的要晚开．等到left或right其中较晚的一个开放时，他们正好就是一对间隔Ｋ个ｐａｉｒ．
-
-那么如何找到这样一个窗口呢？我们尝试让它滑动起来．令left=0,right=left+k+1,然后逐个考察其中的```ｉ```是否符合条件．如果遇到不符合条件的，说明days[i]要比两边的都要早，成为了一个＂钉子户＂,所有小于i的left都不可能符合要求了．那么显然，我们的策略就是让这个钉子户作为新的left，进行下一次的搜索．
-
-注意,一旦找到一个合适的区间,那么输出的答案应该是max(days[left],days[right]),因为只有两边的花都开了,这个区间才成立.
-
-
-[Leetcode Link](https://leetcode.com/problems/k-empty-slots)::::::::::::::
-Greedy/0727.Minimum-Window-Subsequence/727.Minimum-Window-Subsequence_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    string minWindow(string S, string T) 
-    {
-        int m = S.size();
-        int n = T.size();
-        S = "#"+S;
-        T = "#"+T;
-        auto dp = vector<vector<int>>(m+1,vector<int>(n+1,0));
-        
-        for (int j=1; j<=n; j++)
-            dp[0][j] = INT_MAX/2;
-        for (int i=0; i<=m; i++)
-            dp[i][0] = 0;
-        
-        for (int i=1; i<=m; i++)
-            for (int j=1; j<=n; j++)
-            {
-                if (S[i]==T[j])
-                    dp[i][j] = dp[i-1][j-1]+1;
-                else
-                    dp[i][j] = dp[i-1][j]+1;
-            }
-        
-        int len  = INT_MAX/2;
-        int pos;
-        for (int i=1; i<=m; i++)
-        {
-            if (dp[i][n] < len)
-            {
-                len = dp[i][n];
-                pos = i;
-            }
-        }
-        
-        if (len>=INT_MAX/2)
-            return "";
-        else
-            return S.substr(pos-len+1,len);
-        
-    }
-};
-::::::::::::::
-Greedy/0727.Minimum-Window-Subsequence/727.Minimum-Window-Subsequence_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    string minWindow(string s1, string s2) 
-    {
-        int m = s1.size();
-        int next[m+1][26];
-        s1 = "#" + s1;
-        
-        for (int ch=0; ch<26; ch++)
-            next[m][ch] = -1;
-        for (int i=m-1; i>=0; i--)
-        {
-            for (int ch=0; ch<26; ch++)
-                next[i][ch] = next[i+1][ch];
-            next[i][s1[i+1]-'a'] = i+1;
-        }
-        
-        vector<int>start;
-        for (int i=1; i<=m; i++)
-        {
-            if (s1[i]==s2[0])
-                start.push_back(i);
-        }
-        
-        string ret = "";
-        for (int i: start)
-        {
-            int j = i-1;
-            int flag = 1;
-            for (auto ch: s2)
-            {
-                j = next[j][ch-'a'];
-                if (j==-1)
-                {
-                    flag = 0;
-                    break;
-                }
-            }
-            if (flag)
-            {
-                int len = j-i+1;
-                if (ret == "" || len < ret.size())
-                {
-                    ret = s1.substr(i, len);
-                }
-            }        
-        }
-        
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0727.Minimum-Window-Subsequence/Readme.md
-::::::::::::::
-### 727.Minimum-Window-Subsequence
-
-#### 解法1：双序列DP
-对于双字符串的题目，双序列DP是一个非常自然的思路。根据双序列DP的套路，我们定义dp[i][j]表示，截止到S[i]的最短的substring长度，使得T[1:j]是这个substring的subsequence。注意，这个substring一定要包括S[i]本身。也就是说，如果这个dp的值是k，那么要求T[1:j]是S[i-k+1:i]的一个subsequence。
-
-最终的答案是 min {dp[i][N]} (i=1,2,...M)。
-
-根据双序列DP的套路，转移方程的入手点就是观察S[i]和T[j]的关系。
-```cpp
-for (int i=1; i<=M; i++)
- for (int j=1; j<=N; j++)
- {
-    if (S[i]==T[j])
-       dp[i][j]=dp[i-1][j-1]+1;
-    else
-       dp[i][j]=dp[i-1][j]+1; //说明S[i]对于构建T[1:j]没有帮助，T[1:j]得从dp[i][j-1]里面找
- }
-```
-然后我们考虑边界条件。易知 dp[0][j] (i=0, j=1,2,...N) 都是需要定义的边界条件。长度为0的S子串肯定不会是T的supersequence。故这些初始值应该是INT_MAX.
-
-其次可以看出 dp[i][0] (i=0,1,2,...,M)也是需要提前设置初始值。显然，长度为0的T子串是任何长度为0的S子串的subsequence，故初始值是0.
-
-最后在所有dp[i][N]中找到第一个最小值k，那么 S.substr(i-k+1,k)就是答案。
-
-显然时间复杂度是o(MN).
-
-#### 解法2：状态机
-其实只要确定T[0]在S中的位置（比如说是start），那么T在S里的superstring就可以唯一地用贪心法确定。简单的方法就是双指针：S的指针指向start，T的指针指向0，S的指针一直向右遍历，试图去匹配T里面的每一个字符。如果T能够扫描完每一个字符，那么S指针的位置就是这个superstring的结尾。这样的做法复杂度是```(M+N)*K```，其中K是T[0]在S中出现的次数。
-
-也可以利用类似```LC 792```的状态机的做法。提前对S预处理得到next[i][ch]，表示在S串的i位置上向右看，第一个出现ch的位置。这样我们就可以用o(1)时间实现S指针的跳转。这样的做法时间复杂度是```N*K```.
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-window-subsequence)
-::::::::::::::
-Greedy/0731.My-Calendar-II/731.My-Calendar-II.cpp
-::::::::::::::
-class MyCalendarTwo {
-    vector<pair<int,int>>events;
-public:
-    MyCalendarTwo() 
-    {
-        
-    }
-    
-    bool book(int start, int end) 
-    {
-        vector<pair<int,int>>temp;
-        for (int i=0; i<events.size(); i++)
-        {
-            if (!(events[i].second<=start || events[i].first>=end))
-                temp.push_back(events[i]);
-        }
-        sort(temp.begin(),temp.end());
-        
-        for (int i=1; i<temp.size(); i++)
-        {
-            if (temp[i].first<temp[i-1].second)
-                return false;
-        }
-        
-        events.push_back({start,end});        
-
-        return true;
-    }
-};
-
-/**
- * Your MyCalendarTwo object will be instantiated and called as such:
- * MyCalendarTwo obj = new MyCalendarTwo();
- * bool param_1 = obj.book(start,end);
- */
-::::::::::::::
-Greedy/0731.My-Calendar-II/731.My-Calendar-II_v2.cpp
-::::::::::::::
-class MyCalendarTwo {
-    multiset<pair<int,int>>Set;
-public:
-    MyCalendarTwo() 
-    {
-        
-    }
-    
-    bool book(int start, int end) 
-    {
-        vector<pair<int,int>>p;
-        for (auto x: Set)
-        {
-            if (!(end<=x.first || start>=x.second))
-                p.push_back(x);
-            if (end<=x.first) break;
-        }        
-        for (int i=1; i<p.size(); i++)
-        {
-            if (p[i].first<p[i-1].second)
-                return false;
-        }
-        Set.insert({start,end});
-        return true;
-    }
-};
-
-/**
- * Your MyCalendarTwo object will be instantiated and called as such:
- * MyCalendarTwo obj = new MyCalendarTwo();
- * bool param_1 = obj.book(start,end);
- */
-::::::::::::::
-Greedy/0731.My-Calendar-II/Readme.md
-::::::::::::::
-### 731.My-Calendar-II
-
-不需要考虑有序Hash和迭代器。此题只要找出所有与[start,end)重合的区间，再检查这些区间是否有互相的重合。是的话，说明必然有triple booking。
-
-
-[Leetcode Link](https://leetcode.com/problems/my-calendar-ii)::::::::::::::
-Greedy/0757.Set-Intersection-Size-At-Least-Two/757.Set-Intersection-Size-At-Least-Two.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        if (a[1]==b[1])
-            return a[0]>b[0];
-        else
-            return a[1]<b[1];
-    }
-public:
-    int intersectionSizeTwo(vector<vector<int>>& intervals) 
-    {
-        sort(intervals.begin(), intervals.end(), cmp);
-        int a = intervals[0][1]-1, b = intervals[0][1];
-        int count = 2;
-
-        for (auto& interval: intervals)
-        {
-            if (interval[0]<=a)
-                continue;
-            else if (interval[0]<=b)
-            {
-                count++;
-                a = b;
-                b = interval[1];
-            }
-            else
-            {
-                count+=2;
-                a = interval[1]-1;
-                b = interval[1];
-            }
-        }
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0757.Set-Intersection-Size-At-Least-Two/Readme.md
-::::::::::::::
-### 757.Set-Intersection-Size-At-Least-Two
-
-我们想象如果我们能找出一系列non-overlapping的区间，那么我们的答案必然需要在每个区间内至少采集两点。所以本题的答案至少是maximum number of non-overlapping intervals的两倍。所以借鉴435的思路，我们采用sort by ending points的方法去下手。这个突破口的想法和```452.Minimum-Number-of-Arrows-to-Burst-Balloons```很相似。
-
-如果我们将这些区间按照后边界从小到大排序后（相同后边界的情况下，显然只考虑区间跨度最短的，因为短区间能被S覆盖的话，那么相同右端点的长区间必然也能被覆盖），先考虑第一个区间。对于这个区间，我们肯定会选该区间的最后两点加入S，因为这两点是最有可能与后面的区间重合的，效率最高。
-
-然后我们再考虑下一个区间[x,y]，此时S应该如何更新呢？一个最明显的特点是，y一定大于等于S里的最大点。于是此时最有影响的其实就只是区间的前边界a。我们分类讨论x的位置查看对S的影响：
-1. 如果[x,y]覆盖了S最后两个点，那么S就不用更新；
-2. 如果[x,y]只覆盖了S最后一个点，那么这个点其实就一定是S的后边界，那么S需要再补一个点。这个点是什么呢?最好的选择就是[x,y]的最后一个点，即y。这种做法是最“贪心”的，因为它最可能会与[x,y]之后的区间重合。
-3. 如果[x,y]没有覆盖S，那么S就要加上什么呢，是[x,y]的最后两个点即可，同理也是用贪心的策略。
-
-综上，我们其实只要每次关注集合S里的最大两个点a，b即可，不断与下一个区间[x,y]考察相对关系，更新S。
-
-
-[Leetcode Link](https://leetcode.com/problems/set-intersection-size-at-least-two)
-::::::::::::::
-Greedy/0761.Special-Binary-String/761.Special-Binary-String.cpp
-::::::::::::::
-class Solution {
-public:
-    string makeLargestSpecial(string S) 
-    {
-        if (S.size()==2) return S;
-
-        vector<string>strs;
-        
-        for (int i=0; i<S.size(); i++)
-        {
-            int i0=i;
-            int count=0;
-            while (i<S.size())
-            {
-                if (S[i]=='1')
-                    count++;
-                else
-                    count--;                
-                if (count==0)
-                    break;   
-                i++;
-            }
-            strs.push_back("1"+makeLargestSpecial(S.substr(i0+1,i-i0-1))+"0");
-        }
-        
-        sort(strs.begin(),strs.end(),greater<string>());
-        string result;
-        for (auto a:strs) result+=a;
-        return result;
-        
-    }
-};
-::::::::::::::
-Greedy/0761.Special-Binary-String/Readme.md
-::::::::::::::
-### 761.Special-Binary-String
-
-首先，应该容易分析出：对于一个special string S，它整体可以拆分为一个或若干个不可再拆分的、连续的sub special string。对于每个不可再连续拆分的sub special string S'，它的首位一定是1，末位一定是0，中间一定还是一个special string，于是可能还可以继续拆分下去。
-
-写成式子就是： 任何 S = （1）ABCDEF（0）,首位的1和末位的0可能存在，而中间的ABCDEF都还是不可连续拆分的speical string，
-
-因为题目规定的swap的规则必须是在相邻的special string之间进行，所以对于任何一个S,只能通过内部的ABCDEF这些S'之间的位置调整,使得S自身调整至字典序最大（暂时不考虑ABCDEF内部的调整，假设它们已经各自字典序最优）。那么如何调整ABCDEF使得S的字典序最大呢？显然，只要让ABCDEF按照字典序从大到小排列即可。
-
-这就有了递归的思路。把S拆成ABCDEF，让它们各自递归成字典序最大，然后优化后的ABCDF按字典序重排，技能得到字典序最大的S。
-
-
-[Leetcode Link](https://leetcode.com/problems/special-binary-string)::::::::::::::
-Greedy/0767.Reorganize-String/767.Reorganize-String_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    string reorganizeString(string S) 
-    {
-        unordered_map<char,int>count(26);        
-        for (auto ch:S) 
-            count[ch]++;
-
-        vector<pair<int,char>>arr;
-        for (auto ch: S)
-            arr.push_back({count[ch], ch});
-        sort(arr.rbegin(), arr.rend());
-
-        string ret(S.size(),' ');
-
-        int i = 0;
-        for (auto [cnt, ch]: arr)
-        {
-            ret[i] = ch;
-            if (i>=1 && ret[i]==ret[i-1])
-                return "";
-            i+=2;
-            if (i>=S.size())
-                i = 1;            
-        }
-
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0767.Reorganize-String/767.Reorganize-String_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    string reorganizeString(string S) 
-    {
-        unordered_map<char,int>count;
-        for (auto ch:S) count[ch]++;
-
-        priority_queue<pair<int,char>>pq;        
-        for (auto x:count) 
-            pq.push({x.second, x.first});        
-        
-        string result;
-        while (!pq.empty())
-        {
-            int k = min(2,(int)pq.size());
-            vector<pair<int,char>>temp;
-            
-            for (int i=0; i<k; i++)
-            {
-                auto [num, ch] = pq.top(); 
-                pq.pop();
-                result+=ch;
-                num--;
-                if (num!=0) temp.push_back({num,ch});                
-            }
-            if (k<2 && temp.size()>0) return "";
-            for (auto a:temp) pq.push(a);
-        }
-        return result;
-    }
-};
-::::::::::::::
-Greedy/0767.Reorganize-String/Readme.md
-::::::::::::::
-### 767.Reorganize-String
-
-本题本质上```1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work```的follow up，要求将具体的规划方案打印出来。此题和```1054.Distant-Barcodes```一模一样。类似地，本题还是```358. Rearrange String k Distance Apart```在k=2时的特例。
-
-#### 解法1：贪心
-我们将所有的字符按照频次重新排序，例如abcbba，就会重排成bbbaac。对于频次较高的字符我们会尽量安排它们间隔排列，即先放在奇数的位置上。一旦奇数位置上放满了，就从头开始在偶数位置上。这样就最大限度地避免高频词的字符被放在相邻的位置。
-
-从上面的贪心策略我们可以推论出，只要最高频次的字符的数目不多于总数目的一半，那么用上面的方法构造出的结果就是合法的。反之必然会有相邻的字符相同。
-
-#### 解法2：优先队列
-之前的方法是跳跃地构造结果。用优先队列可以直接顺序地构造结果。
-
-基本的思想就是：每个回合尽量使用当前频次最多的两个字母。如果不优先使用频次最多的字母，则越有可能提早耗尽其他频次较低的字符种类。当最终手头只剩一种字母时，构造就无法进行下去。
-
-数据结构上，维护一个优先队列来实时得到当前频次最多的两个字母。只要每次能取两个不同字母组成一对加入字符串，可以保证顺利构造结果。记得使用完之后，将这两种字母频次减一之后再放入队列之中。
-
-失败的条件：队列中只有一种字母，并且字母的频次大于等于2.
-::::::::::::::
-Greedy/0781.Rabbits-in-Forest/Readme.md
-::::::::::::::
-### 781.Rabbits-in-Forest
-
-如果answers里面含有元素m，那么我们最多允许它出现m+1次，使得这m+1个汇报的兔子是属于共同颜色的。如果出现了第m+2只兔子同样汇报了m，那么它只能是另外一种颜色，即必然另外m+1只兔子属于另一个颜色圈。
-
-更一般的，如果有n只兔子都汇报了m，那么“颜色圈”的数量最少是```k = (n-1) / (m+1) + 1```。那么对应有```(m+1)*k```只兔子。
-::::::::::::::
-Greedy/0792.Number-of-Matching-Subsequences/792.Number-of-Matching-Subsequences_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int numMatchingSubseq(string S, vector<string>& words) 
-    {
-        auto table = vector<vector<int>>(26);
-        for (int i=0; i<S.size(); i++)
-            table[S[i]-'a'].push_back(i);
-        
-        int count = 0;
-        for (auto str:words)
-        {
-            if (str.size()>S.size()) continue;
-            if (check(str,table)) count++;
-        }
-            
-        return count;
-    }
-    
-    bool check(string A, vector<vector<int>>&table)
-    {
-        int i=0;
-        for (char ch:A)
-        {
-            auto iter = lower_bound(table[ch-'a'].begin(),table[ch-'a'].end(),i);
-            if (iter==table[ch-'a'].end()) return false;
-            i = *iter+1;
-        }
-        return true;
-    }
-};
-::::::::::::::
-Greedy/0792.Number-of-Matching-Subsequences/792.Number-of-Matching-Subsequences_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int numMatchingSubseq(string S, vector<string>& words) 
-    {
-        int m = S.size();
-        S = "#"+S;
-        int next[m+1][26];
-        
-        for (int k=0; k<26; k++)
-            next[m][k] = -1;
-        for (int i=m; i>=1; i--)
-        {
-            for (int k=0; k<26; k++)
-                next[i-1][k] = next[i][k];
-            next[i-1][S[i]-'a'] = i;
-        }
-        
-        int ret = 0;
-        for (auto word: words)
-        {
-            int flag = 1;
-            int i = 0;
-            for (auto ch: word)
-            {
-                i = next[i][ch-'a'];
-                if (i==-1)
-                {
-                    flag = 0;
-                    break;
-                }                
-            }
-            if (flag) ret++;
-        }
-        return ret;        
-    }    
-};
-::::::::::::::
-Greedy/0792.Number-of-Matching-Subsequences/Readme.md
-::::::::::::::
-### 792.Number-of-Matching-Subsequences
-
-传统的方法，利用双指针挨个比较s和word，那么时间复杂度就是o(ST)，其中S是s的长度，T是words的总长度。本题的考点在于s的长度很大时，时间复杂度如何优化。
-
-#### 解法1：二分搜索
-我们可以提前预处理s，将每个字符出现的位置分别归类，即pos[ch]包含了s里字符ch所在的位置（可能有若干个）。假设我们在查看word[0]='a'的时候，直接从pos['a']里面找最早的位置i。再查看word[1]='b'的时候，又从pos['b']里面找第一个大于等于i的位置j。再查看word[1]='c'的时候，从pos['c']里面找第一个大于等于j的位置k。依次类推。如果遇到某个word的字符ch，但是pos[ch]里面没有大于等于某个期望位置的元素时，那么这个word就不是s的子序列了。
-
-时间复杂度是o(TlogS)，因为在word中每处理一个字符，都需要在pos[ch]里进行一次二分查找。
-
-#### 解法2：状态机
-我们提前处理s，得到next[i][ch]，表示i位置之后下一个出现字符ch的位置是哪里；如果再没有出现过ch，那么标记-1. next数组的预处理是从后往前进行的，时间是o(26S).
-
-在处理word时，我们通过next[0][word[0]]，找到下一个出现word[0]的位置i。再通过next[i][word[1]]，找到下一个出现word[1]的位置j。再通过next[i][word[2]]，找到下一个出现word[2]的位置k。依次类推，如果word的每一个字符都能在next中找到，那么就OK。否则如果遇到类似```next[k][word[3]]==-1```，就说明该字符找不到，即word不是s的子序列。
-
-时间复杂度是o(T).
-::::::::::::::
-Greedy/0826.Most-Profit-Assigning-Work/826.Most-Profit-Assigning-Work.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) 
-    {
-        vector<pair<int,int>>tasks;
-        for (int i=0; i<difficulty.size(); i++)
-            tasks.push_back({difficulty[i],profit[i]});
-        
-        sort(tasks.begin(),tasks.end());
-        
-        int MAX = tasks[0].second;
-        for (int i=1; i<tasks.size(); i++)
-        {
-            tasks[i].second = max(tasks[i].second,MAX);
-            MAX = tasks[i].second;
-        }        
-        
-        int sum = 0;
-        for (int x:worker)
-        {
-            auto iter = upper_bound(tasks.begin(),tasks.end(),make_pair(x,INT_MAX));
-            if (iter!=tasks.begin())
-            {
-                iter = prev(iter,1);
-                sum+=iter->second;
-            }
-        }
-        return sum;
-    }
-};
-::::::::::::::
-Greedy/0826.Most-Profit-Assigning-Work/Readme.md
-::::::::::::::
-### 826.Most-Profit-Assigning-Work
-
-此题不难想到正确的贪心解法。
-
-我们将所有的任务ｔａｓｋｓ按照难度从小到大进行排序然后遍历。如果难度小的任务的收益是ｐ，那么比之难度更大的任务的收益理论上不应该比ｐ更小，否则我们可以选择用难度小收益大的项目替代更划算。所以我们将这些任务的收益重新赋值，使得ｔａｓｋｓ按照难度从小到大排列后，收益也是递增的。
-
-接下来对于任何一个工人，我们在这个ｔａｓｋｓ序列中找到他所能接受的最大难度ｄ的任务，那么这个任务对应的（重新赋值后的）收益，就是这个工人所能创造的最大收益。因为这个收益，本质对应了所以难度小于等于ｄ的任务中的最高收益。每个工人都是如此计算，得到的总收益就是答案。
-
-本题的ｃｐｐ解法要注意下面这句：
-```
-auto iter = upper_bound(tasks.begin(),tasks.end(),make_pair(x,INT_MAX));
-```
-这里的第三个参数一定要用make_pair来生成，不能用{x,INT_MAX}，否则编译器不能自动正确地转化。
-
-
-[Leetcode Link](https://leetcode.com/problems/most-profit-assigning-work)::::::::::::::
-Greedy/0870.Advantage-Shuffle/870.Advantage-Shuffle.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> advantageCount(vector<int>& A, vector<int>& B) 
-    {
-        int n = A.size();
-        vector<pair<int,int>>BB;
-        for (int i=0; i<n; i++)
-            BB.push_back({B[i],i});
-        sort(BB.begin(), BB.end());
-        sort(A.begin(), A.end());
-        
-        int j=0;
-        vector<int>rets(n,-1);
-        for (int i=0; i<n; i++)
-        {
-            while (j<n && A[j]<=BB[i].first)
-                j++;
-            if (j<n)
-            {
-                rets[BB[i].second] = A[j];
-                A[j] = -1;
-            }                
-        }
-        
-        j = 0;
-        for (int i=0; i<n; i++)
-        {
-            if (rets[i]!=-1) continue;
-            while (j<n && A[j]==-1) j++;
-            rets[i] = A[j];
-            j++;
-        }
-        return rets;
-    }
-};
-::::::::::::::
-Greedy/0871.Minimum-Number-of-Refueling-Stops/871.Minimum-Number-of-Refueling-Stops.cpp
-::::::::::::::
-class Solution {
-public:
-    int minRefuelStops(int target, int startFuel, vector<vector<int>>& stations) 
-    {
-        if (startFuel>=target) return 0;
-        
-        stations.push_back({target,0});
-        
-        int stationID = 0;
-        int curFuel = startFuel;
-        priority_queue<int>pq;
-        int count = 0;
-        
-        while (stationID<stations.size())
-        {
-            if (curFuel>=stations[stationID][0])
-            {
-                pq.push(stations[stationID][1]);
-                stationID++;                
-            }
-            else
-            {
-                while (curFuel<stations[stationID][0] && pq.size()>0)
-                {
-                    curFuel+=pq.top();
-                    pq.pop();
-                    count+=1;
-                }
-                
-                if (curFuel<stations[stationID][0] && pq.size()==0)
-                    return -1;
-            }
-        }
-        
-        return count;        
-    }
-};
-::::::::::::::
-Greedy/0871.Minimum-Number-of-Refueling-Stops/Readme.md
-::::::::::::::
-### 871.Minimum-Number-of-Refueling-Stops
-
-我们可以这样考虑．现在有一定量的startFuel，假设可以驶过两个加油站，但是达不到第三个加油站．说明我们应该在前两个加油站中的某一个或全部两个停下来加油．但是该加多少呢？
-
-其实，我们不用想的太远，千里之行始于足下，目前只需要加油使得能够开到第三个加油站即可．于是，我们优先考虑前两个加油站里较多的那一个，不够的话就算上另一个．反正到了第三个加油站后，我们就又多了一个option．等过了第三个加油站，我们再类似地考虑，是否需要加油才能开到第四个加油站．如果需要，就在前三个加油站里面尚未加过油的那些里，选择油量最多的那个即可；不需要的话，就把第四个加油站放入option list,考虑是否需要加油才能开到第五个加油站...
-
-这就是贪心法的最优策略．特别注意，我们得把target当做一个加油站来处理。不能只用贪心法处理到最后一个加油站，再用剩下的curFuel来考虑是否能到target，那样是错误的：因为这样的话你只是用尽全力到达最后一个加油站，而并没有用尽全力去到达target。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-number-of-refueling-stops)::::::::::::::
-Greedy/0881.Boats-to-Save-People/881.Boats-to-Save-People_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int numRescueBoats(vector<int>& people, int limit) 
-    {
-        sort(people.begin(), people.end());
-        int i=0, j=people.size()-1;
-        int count = 0;
-        while (i<=j)
-        {
-            if (people[i]+people[j]<=limit)
-                i++;
-            j--;
-            count++;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0881.Boats-to-Save-People/881.Boats-to-Save-People_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int numRescueBoats(vector<int>& people, int limit) 
-    {
-        vector<int>p(limit+1,0);
-        for (int w: people)
-            p[w]++;
-        
-        int count = 0;
-        for (int x = limit; x>0; x--)   // weight of the heaviest guy up to now
-        {
-            for (int i = p[x]; i>0; i--)
-            {
-                count++;
-                p[x]--;
-                
-                int y = limit-x;
-                while (y>0 && p[y]==0) y--;
-                if (y>0) p[y]--;
-                if (x==y) i--;
-            }
-        }
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0881.Boats-to-Save-People/881.Boats-to-Save-People_v3.cpp
-::::::::::::::
-class Solution {
-public:
-    int numRescueBoats(vector<int>& people, int limit) 
-    {
-        vector<int>p(limit+1,0);
-        for (int w: people)
-            p[w]++;
-        
-        int count = 0;
-        int x = limit;
-        int y = 1;
-        
-        while (x>0)
-        {
-            while (x>0 && p[x]==0)
-                x--;
-            if (x==0) break;
-            count++;
-            p[x]--;
-            
-            while (y+x<=limit && p[y]==0) 
-                y++;
-            if (y+x<=limit && p[y]>0) 
-                p[y]--;
-        }
-                
-        return count;
-    }
-};
-::::::::::::::
-Greedy/0881.Boats-to-Save-People/Readme.md
-::::::::::::::
-### 881.Boats-to-Save-People
-
-#### 解法1：
-容易想到比较严谨的贪心解，就是找到当前最重的小胖x，然后找到当前最大的小瘦y使得```x+y<=limit```，这样x和y的配对是对资源的最优利用。
-
-事实上这个贪心法可以进行松弛：对于当前最重的小胖x，只需要找到当前最小的小瘦y进行配对，就可以实现对资源的最优利用。分析如下。假设我们将所有人从轻到重排序```y1,y2,y3,y4,...,x4,x3,x2,x1```。对于当前最重的小胖对应的是x1，假设如果根据严谨的贪心算法找到的配对是y4（也就是恰好满足y4+x1<=limit），那么容易证明{x1,y1},{x2,y2},{x3,y3},{x4,y4}这四对其实都满足条件（即两个人加起来不超过limit）。所以我们可以将这四对剥离（因为已经充分利用了资源），对于剩下的人同理进行递归处理就可以了。
-
-于是这道题就转化为了双指针。左右指针朝中间移动，计算有多少对满足```people[i]+people[j]<=limit```.
-
-这种解法最大的隐患是时间复杂度需要O(NlogN)，勉强可以通过。
-
-#### 解法2：
-如何避免排序就能确定最重的人是谁呢？我们可以借鉴桶排序的思想：用一个计数器数组p来记录每个重量的人数。
-
-假设当前最重的小胖的体重是x，那么对于x的值我们可以从limit开始往下猜，一旦发现p[x]>0，说明我们找到了这个最重的人。那么如何寻找x的最合理队友呢？我们可以从体重y=limit-x开始往下猜，一旦发现p[y]>0，就说明我们找到了最适合与x配对的小瘦（其体重为y）。记得每次配对之后，我们都需要及时更新计数器p[x]-- and/or p[y]--.
-
-这种解法最大的雷区在于：如果遇到了```x==y```的情况，说明小胖和小瘦的体重相同，那么对于小胖的处理次数就不是原先的p[x]了，而是需要及时减去一才对。
-
-#### 解法3：
-可以将解法1的松弛贪心思想，以及解法2桶排序的思想结合起来。基本思想依然是双指针，但指针指的不是数组首尾的index，而是区间范围[1,limit]左右边界的value.
-
-假设当前最重的小胖的体重是x，那么对于x的值我们可以从limit开始往下猜，一旦发现p[x]>0，说明我们找到了这个最重的人。同时我们寻找当前最轻的小瘦，假设其体重为y，对于y的值我们可以从1开始往上猜，一旦发现p[y]>0，说明我们找到了当前最轻的人。对于每个小胖我们都试图寻找当前最轻的小瘦，如果符合```x+y<0 && p[y]>0```就说明存在它可以与小胖同船。
-
-显然容易分析出时间复杂度是o(N+limit)，比解法1要优秀.
-
-
-[Leetcode Link](https://leetcode.com/problems/boats-to-save-people)::::::::::::::
-Greedy/0910.Smallest-Range-II/910.Smallest-Range-II.cpp
-::::::::::::::
-class Solution {
-public:
-    int smallestRangeII(vector<int>& A, int K) 
-    {
-        sort(A.begin(), A.end());
-        int diff = A.back()-A[0];
-        for (int i=0; i<A.size()-1; i++)
-        {
-            int MAX = max(A[i]+K, A.back()-K);
-            int MIN = min(A[0]+K, A[i+1]-K);
-            diff = min(diff, MAX-MIN);
-        }
-        return diff;
-    }
-};
-::::::::::::::
-Greedy/0910.Smallest-Range-II/Readme.md
-::::::::::::::
-### 910.Smallest-Range-II
-
-首先要有一个直觉：我们将A排序之后，为了减少“贫富差距”，我们一定是将A的左边一部分元素都加上K，右边一部分元素都减去K。为什么左边那部分一定都是加上K，而不是加减交错呢？比如说，a<b<c，如果我们决策是 a+K, b-K, c+K 的话，b和c之间的差距不仅没有减小反而被拉大了。所以在最终的方案里，绝对不可能出现“加，减，加”交错操作的情况，唯一的方案就是：左边一部分加K，右边一部分减K。
-
-那么如果确定这个分界线呢？其实并没有更优秀的办法，挨个尝试就行了。假设这个分界线在A[i]后面，也即是说A[0]～A[i]都是加K，A[i+1]～A[n-1]都是减K，那么这个新数组B的最大值，其实可以从左右两部分分别的最大值得到，即```MAX = max(A[i]+K, A.back()-K)```.同理，这个新数组B的最小值，其实可以从左右两部分分别的最小值得到，即```MIN = min(A[0]+K, A[i+1]-K)```。而我们的答案就是在所有的```diff=MAX-MIN```中挑选最小的那个。
-
-
-[Leetcode Link](https://leetcode.com/problems/smallest-range-ii)::::::::::::::
-Greedy/0921.Minimum-Add-to-Make-Parentheses-Valid/921.Minimum-Add-to-Make-Parentheses-Valid.cpp
-::::::::::::::
-class Solution {
-public:
-    int minAddToMakeValid(string S) 
-    {        
-        int count = 0;
-        int ret = 0;
-        for (auto ch:S)
-        {
-            if (ch=='(')
-                count++;
-            else
-                count--;
-            if (count < 0)
-            {
-                ret += 1;
-                count = 0;
-            }
-        }
-        ret += count;
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0921.Minimum-Add-to-Make-Parentheses-Valid/Readme.md
-::::::::::::::
-### 921.Minimum-Add-to-Make-Parentheses-Valid
-
-此题的贪心法比较容易理解。我们维护一个计数器count，表示是目前为止尚未被匹配的左括号的数目。
-
-举个例子：s = (()))((
-
-我们依次查看到```((```的时候，count=2，此时我们并不着急对s做任何改动，因为s后面还有字符，说不定这些左括号都能被匹配到。
-
-我们继续查看到```(())```的时候，count=0，果然这时候的字符就是匹配的，我们依然不需要对s做任何改动。
-
-我们继续查看到```(()))```的时候，count=-1，此时我们不得不出手。因为无论s后面的字符如何，都无法挽救当前这个无法被匹配的右括号。此时必须处理，即增加一个左括号与之匹配。至于放在哪里我们并不关心，总之有地方放就是了。注意，既然增加一个左括号，那么此时的count=0.
-
-我们继续查看到```(()))((```的时候，count=2，字符串完结。对于这两个未被匹配的左括号，我们也必须处理，不得不增加两个右括号与之匹配。
-
-回顾上述的过程，我们所有增加括号的操作都是必要操作。最终我们实现了count=0，意味着这个字符串此时已经合法了。所以之前的“必要操作”也是“充分操作”，就是最终解。
-
-如果题目改成"Minimum delete to Make Parentheses Valid"，答案其实一模一样。我们增加多少括号促成匹配，就等效于减少多少（对称的）括号促成匹配。
-::::::::::::::
-Greedy/0932.Beautiful-Array/932.Beautiful-Array.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> beautifulArray(int N) 
-    {
-        if (N==1) return {1};
-        if (N==2) return {2,1};
-        
-        vector<int>A = beautifulArray((N+1)/2);
-        vector<int>B = beautifulArray(N-(N+1)/2);
-        vector<int>ret;
-        for (int x:A) ret.push_back(x*2-1);
-        for (int x:B) ret.push_back(x*2);
-        return ret;
-    }
-};
-::::::::::::::
-Greedy/0932.Beautiful-Array/Readme.md
-::::::::::::::
-### 932.Beautiful-Array
-
-此题的突破点是：如果A是奇数，B是偶数，那么A和B的摆放位置是任意的，因为不可能有C夹在AB之间且C*2=A+B.所以这就提示我们如果我们把所有的奇数组成一个beautiful array，所有的偶数组成一个beautiful array，那么把这两个array简单的拼接，就能组成一个完整的beautiful array.
-
-那么我们怎么把所有的奇数,比如说[1,3,5,7]组成一个beautiful array呢？这是一个四元素的数组，我们很容易想到，如果已知[1,2,3,4]组成的beautiful array，那么将它们统统乘以2减去1，就能得到用[1,3,5,7]组成的beautiful array了。同理，将[1,2,3,4]组成的beautiful array乘以2，也能得到[2,4,6,8]组成的beautiful array。于是两者拼接，就有了从1到8组成的beautiful array。
-
-由此可见，这道题就是考察了简单的递归思想。
-
-
-[Leetcode Link](https://leetcode.com/problems/beautiful-array)::::::::::::::
-Greedy/0936.Stamping-The-Sequence/936.Stamping-The-Sequence.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> movesToStamp(string stamp, string target) 
-    {
-        bool changed = 1;
-        vector<int>results;
-        
-        while (changed==1)
-        {
-            changed = 0;
-            for (int i=0; i<target.size(); i++)
-            {
-                if (check(stamp,target,i))
-                {                    
-                    for (int k=0; k<stamp.size(); k++)
-                        target[i+k] = '*';       
-                    results.push_back(i);
-                    changed = 1;
-                    break;
-                }
-            }
-        }
-        
-        for (int i=0; i<target.size(); i++)        
-            if (target[i]!='*') return {};
-                            
-        reverse(results.begin(),results.end());
-        return results;
-        
-    }
-    
-    bool check(string&stamp, string&target, int pos)
-    {
-        int flag = 0;
-        for (int i=0; i<stamp.size(); i++)
-        {
-            if (pos+i>=target.size()) return false;
-            if (target[pos+i]=='*') continue;
-            if (target[pos+i]!=stamp[i]) return false;
-            flag = 1;
-        }
-        return flag;
-    }
-};
-::::::::::::::
-Greedy/0936.Stamping-The-Sequence/Readme.md
-::::::::::::::
-### 936.Stamping-The-Sequence
-
-周赛的时候想到的是递归。对于这一系列ｓｔａｍｐ的操作，只关注最后一次盖章：其实可以看成找到中间某处完全匹配的地方，将整个序列断成了两部分，能匹配的部分我们就替换成是"*****".这样我们将原来的问题分解为了两个子序列，可以再递归处理。其中如果遇到边界是星号的部分我们都认为能匹配上的。
-
-其实上面的想法再进一步的话，可以得到更优美的贪心解法。
-
-思想本质是：我们只要在当前的target中能够找到匹配stamp的片段，比如说是区间[a,b],我们就将标记这个操作为最后一步操作。然后无论我们怎么处理剩下的序列，当我们回过头来最终执行替换[a,b]的操作时，都能保证[a,b]是正确的。也就是说，无论怎么折腾剩下的，最终都不会影响[a,b]。同理，如果我们再在剩下的target里中能找到匹配stamp的片段，比如说[c,d]时，我们就将其标记为倒数第二次操作，那么无论再之后的操作如何，最终都不会影响[c,d]以及[a,b]。
-
-举个例子：
-```
-target:
-XXXXabcabcdcdXXX
-
-operations:
-#N-0: XXXXXXXabcdXXXXX
-#N-1: XXXXabcd***XXXXX
-#N-2: XXXXXXX**abcdXXX
-...
-```
-当从下往上执行最后三步替换之后，一定能保证序列最终中间的部分是期望的```abcabcdcd```.原因在于，后面的操作会覆盖前面的操作，所以前面的操作(比如说第N-1次)只需要负责后面操作（第Ｎ次）覆盖不到的那部分即可(i.e. abc)，其他的反正都会被后面的操作覆盖(i.e. d)，当前的替换即使不正确也没关系。
-
-所以我们的策略是从上往下,只要能在当前序列中能找到匹配的，我们就将其置为星号。然后再剩下的序列里，只要能找到匹配的（其中如果序列中已经有星号则视为任意匹配），我们也立即将其置为星号。直至序列中所有的字符都已经置为星号为止。注意，最终的操作顺序则是反过来。
-
-
-[Leetcode Link](https://leetcode.com/problems/stamping-the-sequence)::::::::::::::
-Greedy/0948.Bag-of-Tokens/948.Bag-of-Tokens.cpp
-::::::::::::::
-class Solution {
-public:
-    int bagOfTokensScore(vector<int>& tokens, int P) 
-    {
-        sort(tokens.begin(),tokens.end());
-        int i = 0;
-        int j = tokens.size()-1;
-        int score = 0;
-        int result = 0;
-        
-        while (i<=j)
-        {
-            if (P>=tokens[i])
-            {
-                P-=tokens[i];
-                i++;
-                score++;
-                result = max(result,score);
-            }
-            else if (score>0)
-            {
-                score--;
-                P+=tokens[j];
-                j--;
-            }
-            else
-                break;
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-Greedy/0948.Bag-of-Tokens/Readme.md
-::::::::::::::
-### 948.Bag-of-Tokens
-
-本题的大体思路是，我们先将tokens排序，优先用手头的P去收购面值最小的tokens[i]，等到手头的P不够用了怎么办？我们将当前手头最小的token[i]兑换成1个point再去兑换面值最大的token[j]，这样空手套白狼，就将手头的P又凭空增加了token[j]．但代价有两个：第一是我们少了一个point；第二是我们失去未来收购面值最大的token[j]的机会．
-
-所以，总体的最优策略已经出来了．那就是按照上面的方法，手头的Ｐ按从小到大能收购多少token那就收购，不能收购就卖掉面值减去1分（卖掉最小的token）换面值最大的，增值手头的Ｐ．然后重复上述过程．整个流程中，手头曾持有最多的token的数量，就是答案．
-
-核心的代码如下：
-```cpp
-        while (i<=j)  // 保证手头待买入的i必须在待替换的j之前
-        {
-            if (P>=tokens[i])   // 仍然有钱买入
-            {
-                P-=tokens[i];
-                i++;
-                points++;
-                result = max(result,points);
-            }
-            else if (points>0)  // 没钱买了，但是仍有分可以卖
-            {
-                points--;
-                P+=tokens[j];
-                j--;
-            }
-            else                // 既不能买，也不能卖，策略结束
-                break;
-        }
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/bag-of-tokens)::::::::::::::
-Greedy/0955.Delete-Columns-to-Make-Sorted-II/955.Delete-Columns-to-Make-Sorted-II.cpp
-::::::::::::::
-class Solution {
-public:
-    int minDeletionSize(vector<string>& A) 
-    {
-        int m = A.size();
-        int n = A[0].size();
-        vector<int>p(m, 0);
-        int ret = 0;
-        for (int j=0; j<n; j++)
-        {
-            vector<int>p2 = p;
-            int flag = true;
-            for (int i=1; i<m; i++)
-            {
-                if (p[i]==1) continue;
-                if (p[i]==0)
-                {
-                    if (A[i][j]>A[i-1][j])
-                        p2[i] = 1;
-                    else if (A[i][j]<A[i-1][j])
-                    {
-                        flag = false;
-                        break;
-                    }                        
-                }
-            }
-            if (flag==true)
-                p = p2;
-            else
-                ret++;
-        }
-        return ret;
-
-    }
-};
-::::::::::::::
-Greedy/0955.Delete-Columns-to-Make-Sorted-II/Readme.md
-::::::::::::::
-### 955.Delete-Columns-to-Make-Sorted-II
-
-我们考虑第一列。如果有任何相邻两行字符的关系是降序的，就意味着第一列我们必须删除。如果没有出现逆序，那么我们就可以保留第一列。
-
-假设我们可以保留第一列，那么我们考虑第二列时，在判断相邻两行字符串A[i-1][0:1]和A[i][0:1]的关系时，如何高效地判断是否存在逆序呢？我们注意到，如果A[i-1][0]<A[i][0]，那么无论A[i-1][1]和论A[i][1]的关系如何，这两个字符串总是升序关系的。如果A[i-1][0]==A[i][0]，那么这两个字符串的关系就取决于A[i-1][1]和A[i][1]。至于A[i-1][0]>A[i][0]，那是不可能出现的，因为我们之前所做的任何删除列的操作就是为了保证每行的字符串是增序的。
-
-所以我们维护一个数组p，p[i]=1表示第i行的字符串已经大于第i-1行的字符串，否则表示目前为止第i行的字符串完全等于第i-1行的字符串。这样我们只需要根据上一轮的p[i]、和这一列A[i-1][j]与A[i][j]两个字符的关系，就能判断是否维持了增序，并且记得更新p[i]。具体的是：
-1. 如果p[i]=1，那么已经增序，不用判断。
-2. 如果p[i]=0，且A[i-1][j]==A[i][j]，那么继续维持p[i]=0
-3. 如果p[i]=0，且A[i-1][j]<A[i][j]，那么可以更新p[i]=1
-4. 如果p[i]=0，且A[i-1][j]>A[i][j]，那么整个第j列都不能保留，同时p也不更新。
-::::::::::::::
-Greedy/0968.Binary-Tree-Cameras/968.Binary-Tree-Cameras.cpp
-::::::::::::::
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
-class Solution {
-    // 0: uncovered
-    // 1: with camera
-    // 2: covered without camera
-    int result;
-public:
-    int minCameraCover(TreeNode* root) 
-    {
-        result = 0;
-        int temp = DFS(root);
-        if (temp==0) result++;
-        return result;
-    }
-    
-    int DFS(TreeNode* node)
-    {
-        if (node==NULL) return 2;
-        int left = DFS(node->left);
-        int right = DFS(node->right);
-        if (left==0 || right==0)
-        {
-            result++;
-            return 1;
-        }
-        if (left==2 && right==2)
-        {
-            return 0;
-        }
-        return 2;
-    }
-};
-::::::::::::::
-Greedy/0968.Binary-Tree-Cameras/Readme.md
-::::::::::::::
-### 968.Binary-Tree-Cameras
-
-本题粗看有点像house robber系列，考虑是否可以用ＤＰ来解，似乎应该设计三个状态：本身没有被cover(0),本身有camera(1)，本身没camera但是被邻近的camera给cover了(2)。基本的思路应该是，按照从上往下的顺序，后续节点的状态取决于前面的（若干个）节点状态。但是问题在于，依照从上往下的顺序的话，每个节点只能受父节点或者更高层的节点影响，显然是不合适的，因为它应该还应该受平行的兄弟节点的影响，而这个在线性的ＤＰ遍历中没法实现（因为你没法保证在考察这个node之前，它的兄弟node已经被更新过了）。
-
-于是我们反向考虑，如果从下往上走会怎么样？这样，每个节点的状态可以取决于它的两个子节点。这个方案似乎有戏。为什么呢？假设我们从下往上依次更新，考察node时它的两个子节点的状态是已知的：
-
-1.如果当前node的两个子节点只要有一个状态是0，那么该node必须设置为状态１，以保证两个子节点都被cover到。相应result++.
-
-2.如果当前node的两个子节点都是状态２，那么按照从简的原则，当前node就可以不必安排camera，故状态可以设置为0。状态是0了没有被cover怎么办？不用担心，靠后续node的父节点来兜着就行，当前不用操心。
-
-3.其他情况下，当前node都没有必要设置camera，并且当前node必然已经被某个子节点给cover了，所以我们设置node状态为2.
-
-有了以上的传递关系，我们再考虑边界条件。边界条件就是叶子节点（最底层）。直觉告诉我们，所有的叶子节点没有必要设置camera，只要把camera放在它的父节点即可，这样肯定不亏（父节点装一个camera可以管两个子节点）。事实上，这个贪心法的思想（将最底层节点设置状态为２）是整个递归传递(从下往上更新)的根基。因此只有double check这个贪心的思想是对的，这个算法才是可行的。
-
-最后需要注意的是，如果根节点最终设置状态为0了（此时程序结束），那么我还需要额外再在root上加一个camera以覆盖root。
-
-
-[Leetcode Link](https://leetcode.com/problems/binary-tree-cameras)::::::::::::::
-Greedy/0984.String-Without-AAA-or-BBB/984.String-Without-AAA-or-BBB_greedy.cpp
-::::::::::::::
-class Solution {
-public:
-    string strWithout3a3b(int A, int B) 
-    {
-        string ret;
-        
-        if (A>B)
-        {
-            int diff = A-B;
-            for (int i=0; i<B; i++)
-            {
-                ret.push_back('a');
-                if (diff>0)
-                {
-                    ret.push_back('a');
-                    diff--;
-                }
-                ret.push_back('b');
-            }
-            for (int i=0; i<diff; i++)
-                ret.push_back('a');
-        }
-        else
-        {
-            int diff = B-A;
-            for (int i=0; i<A; i++)
-            {
-                ret.push_back('b');
-                if (diff>0)
-                {
-                    ret.push_back('b');
-                    diff--;
-                }
-                ret.push_back('a');
-            }
-            for (int i=0; i<diff; i++)
-                ret.push_back('b');
-        }
-        
-        return ret;
-        
-    }
-};
-::::::::::::::
-Greedy/0984.String-Without-AAA-or-BBB/984.String-Without-AAA-or-BBB_pq.cpp
-::::::::::::::
-class Solution {
-public:
-    string strWithout3a3b(int A, int B) 
-    {
-        priority_queue<pair<int,char>>pq;
-        pq.push({A,'a'});
-        pq.push({B,'b'});
-
-        string ret;
-        while (!pq.empty())
-        {
-            if (pq.size()==1) 
-            {
-                int k = pq.top().first;
-                if (k>2)
-                    return "";
-                else
-                {
-                    for (int i=0; i<k; i++)                    
-                        ret.push_back(pq.top().second);
-                    return ret;
-                }
-            }
-
-            auto x = pq.top();
-            pq.pop();
-            auto y = pq.top();
-            pq.pop();
-
-            int k = min(1+x.first-y.first, 2);
-            for (int i=0; i<k; i++)
-                ret.push_back(x.second);
-            ret.push_back(y.second);
-
-            x.first-=k;
-            y.first-=1;
-            if (x.first!=0) pq.push(x);
-            if (y.first!=0) pq.push(y);
-        }
-        return ret;
-    }
-
-};
-::::::::::::::
-Greedy/0984.String-Without-AAA-or-BBB/Readme.md
-::::::::::::::
-### 984.String-Without-AAA-or-BBB
-
-#### 解法1： 贪心
-假设A的频次比B多。因为题目保证总有答案，所以一定有```A<=B*2+2```.
-
-我们可以先构建```ab ab ab...ab ab```，然后将多余的a，往每个ab段之间分别插入。还有更多的的a的话（最多两个）就再加在最后。
-
-#### 解法2： 优先队列
-对于这类题目，按照频次从大到小在优先队列里排列是个套路解法。
-
-假设A的字符比B多。总体的算法思想是：
-
-1. 每回合要取两种字符。否则这个回合取字符A的话，下一个回合A可能还是频次最多的字符，依然会取到A，就可能使得连续的A的数目超标。所以每回合加入一个B，就能够阻断两个回合的A相邻接。
-
-2. 每回合中每种字符所取的数目，是为了使得剩下每种字符的数目尽量相等。（假想手头的A和B数目相等，那么之后的构造就非常容易，就不停ABAB...即可。）那么如何确定每个回合A取多少个呢？很简单，如果A的频次比B的频次多一个以上，就取两个A加一个B。这样做既可以避免连续的A超标，也最大限度地拉近了剩余两个字符的频次。
-
-不断重复上述每个回合的操作。直到最后队列里只剩一种字符，并且那个字符的个数不超过2，那么直接加在ret最后即可。
 ::::::::::::::
 Greedy/1024.Video-Stitching/1024.Video-Stitching.cpp
 ::::::::::::::
@@ -3606,6 +778,46 @@ Greedy/1326.Minimum-Number-of-Taps-to-Open-to-Water-a-Garden/Readme.md
 
 注意无解的情况有三种：1. 最右端的位置还没有推进到n，但是区间i之后已经没有任何其他区间能与之重叠；2. 如果考察完所有的区间，最右端的位置仍然无法推进到n，3. 第一个区间的左端点在0后面。
 ::::::::::::::
+Greedy/134.Gas-Station/134.Gas-Station.cpp
+::::::::::::::
+class Solution {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) 
+    {
+        int sum = 0;
+        for (int i=0; i<gas.size(); i++)
+            sum+= gas[i]-cost[i];
+        if (sum<0) return -1;
+        
+        sum = 0;
+        int result=0;
+        for (int i=0; i<gas.size(); i++)
+        {
+            sum+= gas[i]-cost[i];
+            if (sum<0)
+            {
+                sum = 0;
+                result = i+1;
+            }                
+        }
+        return result;
+    }
+};
+::::::::::::::
+Greedy/134.Gas-Station/Readme.md
+::::::::::::::
+### 134.Gas-Station
+
+此题和 135.Candy 等都是LC比较经典的贪心法的题目，没有固定的套路可以用在其他题目上，但是这两题各自经典的解法值得深刻地记住。
+
+这里，先考虑是否能够成功绕行一圈的问题。这个比较好理解，将所有的gas之和减去所有的cost之和，如果是负数，那么就说明无法绕行成功。
+
+那么可以绕行成功，那么该如何选择起点呢？这里有个先行的结论需要先理解一下：如果从A点出发，走到B点就走不下去了，那么从A点到B点之间的任意一点出发，都不可能走过B点（甚至可能在B点之前就走不下去）。这个还是比较好理解的。因为假设能从A点走到B点，说明在走到A+1这个点的时候，肯定是有一部分A点的汽油还富余着的。那么说明如果直接从A+1点作为起点出发，肯定相比于从A点作为起点出发，资源更为紧缺，肯定更不可能超越B点。
+
+所以我们从0点开始出发，假设到了B点走不下去了，那么说明从0点到B点都不可能是作为起点。那么起点从哪里开始呢？我们可以从B+1点作为起点开始尝试。如果从B+1点作为起点走到C点就走不下去了，说明B+1点到C点也都不可能作为起点。所以我们可以从C+1点开始尝试...如此下来，我们只要转一圈，就能最终确定从哪里作为起点可以到达0点，即成功环绕一周。
+
+
+[Leetcode Link](https://leetcode.com/problems/gas-station)::::::::::::::
 Greedy/1354.Construct-Target-Array-With-Multiple-Sums/1354.Construct-Target-Array-With-Multiple-Sums.cpp
 ::::::::::::::
 class Solution {
@@ -3683,6 +895,45 @@ while (pq.top()!=1)
 }   
 ```        
 但是以上还有一个bug。那就是b在取余运算之后的结果可能是零。但是题目中要求的所有元素的初始状态是1。这说明我们不能把b降到0。也就是说，如果a能被other整除，我们就只能把b降到others。
+::::::::::::::
+Greedy/135.Candy/135.Candy.cpp
+::::::::::::::
+class Solution {
+public:
+    int candy(vector<int>& ratings) 
+    {
+        int n = ratings.size();
+        vector<int>rets(n, 1);
+        for (int i=1; i<n; i++)
+        {
+            if (ratings[i]>ratings[i-1])
+                rets[i] = max(rets[i], rets[i-1]+1);
+        }
+        for (int i=n-2; i>=0; i--)
+        {
+            if (ratings[i]>ratings[i+1])
+                rets[i] = max(rets[i], rets[i+1]+1);
+        }
+        int sum = accumulate(rets.begin(), rets.end(), 0);
+        return sum;
+    }
+};
+::::::::::::::
+Greedy/135.Candy/Readme.md
+::::::::::::::
+### 135.Candy
+
+这是一道经典的贪心法。
+
+我们令f[0]=1，然后从左往右扫一遍，保证f[i]与f[i-1]比较时符合要求，即```f[i]=max(1, f[i-1]+1 if rating[i]>rating[i-1])```. 这个操作更新了f[i]的下限，是f[i]合法的一个必要条件。言下之意就是说，f[i]不保证是一个合法的分配，但f[i]不能更小了。
+
+然后从右往左扫一遍，保证f[i]与f[i+1]比较时符合要求，即```f[i]=max(f[i], f[i+1]+1 if rating[i]>rating[i+1])```. 这个操作同样进一步更新了f[i]的下限，即f[i]不能更小了。
+
+以上两步操作都是必要条件，找到了f[i]的一个下限。但是这个下限本身是否就是符合要求的方案呢？事实上就是如此。上面两轮two pass保证了每个小朋友与相邻两个人做比较时都是公平的。换句话说，任意两个相邻小朋友之间的比较和分配都是公平的。所以此时f[i]的分布同时也是一个充分解。
+
+贴着下限的充分解，就是题目要求的最优解（最少分发总数）。
+
+[Leetcode Link](https://leetcode.com/problems/candy)
 ::::::::::::::
 Greedy/1402.Reducing-Dishes/1402.Reducing-Dishes.cpp
 ::::::::::::::
@@ -4568,6 +1819,70 @@ t: 5 6 X X X X X X
 
 这看上去依然是o(N^2)的方法。但可以优化的地方在于，我们将所有的数字排序之后，更新所有小于s[i]的数字的leftLimit，这是一个区间操作。可以用线段树或者BIT来化简到log(N)的时间复杂度。
 ::::::::::::::
+Greedy/164.Maximum-Gap/164.Maximum Gap.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximumGap(vector<int>& nums) 
+    {
+        int N=nums.size();
+        if (N<2) return 0;
+        
+        int MIN=INT_MAX;
+        int MAX=INT_MIN;
+        for (int i=0; i<nums.size(); i++)
+        {
+            MIN=min(MIN,nums[i]);
+            MAX=max(MAX,nums[i]);
+        }
+        
+        int bucket_size = max(1,(MAX-MIN)/(N-1));
+        int bucket_nums = (MAX-MIN)/bucket_size+1;
+        vector<int>bucket_min(bucket_nums,INT_MAX);
+        vector<int>bucket_max(bucket_nums,INT_MIN);
+        
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            int idx=(nums[i]-MIN)/bucket_size;
+            bucket_min[idx]=min(nums[i],bucket_min[idx]);
+            bucket_max[idx]=max(nums[i],bucket_max[idx]);
+            Set.insert(idx);
+            //cout<<idx<<" "<<bucket_min[idx]<<" "<<bucket_max[idx]<<endl;
+        }
+        
+        int result=INT_MIN;
+        int pre=0;
+        for (int i=0; i<bucket_nums; i++)
+        {
+            if (Set.count(i)==0) continue;
+            result=max(result,bucket_min[i]-bucket_max[pre]);
+            pre = i;
+        }
+        
+        return result;        
+    }
+};
+::::::::::::::
+Greedy/164.Maximum-Gap/Readme.md
+::::::::::::::
+### 164.Maximum-Gap
+
+假设有N个元素A到B。
+
+那么可以推算，相邻元素的maxumum gap不会小于(B - A) / (N - 1)，否则无法达到B-A的跨越。
+
+所以令bucket（桶）的大小 bucket_size = (B - A) / (N - 1)，则最多会有 bucket_nums = (B - A) / bucket_size + 1个桶。
+
+对于数组中的任意整数nums[i]，很容易通过算式 idx = (nums[i] - A) / bucket_nums 找出其桶的位置，然后维护每一个桶的最大值和最小值。
+
+由于前面提到，maximum gap不会小于bucket_size，而同一个桶里的元素的差值最多是bucket_size-1，因此最终答案所对应的两个数不会来自同一个桶中。
+
+对于每一个非空的桶p，找出下一个非空的桶q，则q.min - p.max可能就是备选答案。返回所有这些可能值中的最大值。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-gap)
+::::::::::::::
 Greedy/1653.Minimum-Deletions-to-Make-String-Balanced/1653.Minimum-Deletions-to-Make-String-Balanced.cpp
 ::::::::::::::
 class Solution {
@@ -5299,6 +2614,84 @@ Greedy/1798.Maximum-Number-of-Consecutive-Values-You-Can-Make/Readme.md
 本题的突破口其实是，要注意到，每次这个集合的元素其实都应该是保证连续的！
 
 假设当前集合能够构造从0到curMax的连续面值。那么显然加入新硬币c之后，就能够构造从c到curMax+c的连续面值。如果[0,curMax]和[c,curMax+c]这两段区间是交叠的，那么新的curMax就是curMax+c。如果这两段区间不交叠，即```curmax+1 < c```（注意+1），那么说明curMax+1无法构造。注意，此后的新硬币面值都将大于c，那么也意味着大于```curMax+1```。说明以后任何新硬币都不会给构造curMax+1带来帮助。此时能构造的连续面值就是[0, curMax].
+::::::::::::::
+Greedy/179.Largest-Number/179.Largest-Number.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(string&a, string&b)
+    {
+        return (a+b)>(b+a);
+    }
+public:
+    string largestNumber(vector<int>& nums) 
+    {
+        vector<string>strs;
+        for (int i=0; i<nums.size(); i++)
+            strs.push_back(to_string(nums[i]));
+
+        sort(strs.begin(), strs.end(), cmp);
+
+        string result;
+        for (int i=0; i<strs.size(); i++)
+            result+=strs[i];
+
+        int i=0;
+        while (result[i]=='0') i++;
+        if (i==result.size())
+            return "0";
+        else
+            return result.substr(i);
+            
+        return result;
+    }
+};
+::::::::::::::
+Greedy/179.Largest-Number/Readme.md
+::::::::::::::
+### 179.Largest-Number
+
+本题的本质是一个非常有用的知识点：给你一个字符串数组，如何排序拼接这些字符串实现字典序最大？方法是设计一个巧妙的排序函数：
+```
+static bool cmp(string a, string b)
+{
+    string c=a+b;
+    string d=b+a;
+    return stoll(c)>stoll(d);
+}
+
+sort(Nums.begin(),Nums.end(),cmp);
+```
+将以此排序的字符串拼接起来，就是字典序最大的！
+
+证明：
+
+1. 传递性      
+我们试图证明如果s3>s2，且s2>s1，那么就一定共有s3>s1. 因为只有具备传递性的大小比较，才能将所有的字符串的唯一排序。
+
+我们令s3、s2、s1的长度对应的10的幂分别是n3、n2、n1（比如说1000,100,10），那么就有
+```
+s3 > s2 => s3s2 > s2s3 => s3*n2+s2 > s2*n3+s3 => s3(n2-1) > s2(n3-1)
+s2 > s1 => s2s1 > s1s2 => s2*n1+s1 > s1*n2+s2 => s2(n1-1) > s1(n2-1)
+```
+因为所有的都是非负数，所以有
+```
+s3s2(n2-1)(n1-1) > s2s1(n3-1)(n2-1)
+```
+如果s2!=0，那么得到```s3(n1-1)>s1(n3-1) => s3n1+s1 > s1n3+s3```，即 s3>s1        
+如果s2==0，那么s1==0，必然有 s3>s1        
+
+2. 算法的正确性       
+对于任意一个乱序的字符串数组，我们都可以通过交换一对相邻的逆序对来实现“冒泡”排序。比如
+```
+s3s1s2s4
+s3s1s4s2
+s3s4s1s2
+s4s3s1s2
+s4s3s2s1
+```
+在每一步中，只有一对相邻的字符串做了交换，每次交换的过程中都是将较大的si移动到较小的sj的前面，即由```...sjsi....```变成了```...sisj....```。显然我们发现这一步变化是将整体的字符串的字典序变大的。于是我们推断出每一步变化都是将这个字符串的字典序变大。也就是说，任意一个乱序拼接的字符串，都不如按照排序函数得到顺序拼接的字符串大。
+
+
 ::::::::::::::
 Greedy/1818.Minimum-Absolute-Sum-Difference/1818.Minimum-Absolute-Sum-Difference.cpp
 ::::::::::::::
@@ -7102,3 +4495,2610 @@ Greedy/2216.Minimum-Deletions-to-Make-Array-Beautiful/Readme.md
 第二种方法，就是如上所说，我们删掉前面的Y（或者其他任何在2之前的元素），这样会将这对2拆开，试图将第一个2与之前的元素X配对，第二个2与之后的元素配对，这样就变成了```... X 2 | 2 Z W ... ```
 
 很显然，这两种方案产生的后半部分（即```2ZW...```）是完全一样的。而对于前半部分，第一种方法里X和Y已经是互异的了（因为我们约定这一对2是第一次遇到的一对相邻的相同元素）；但第二种方法引入了一个不确定的因素，即X与2是否互异我们不得而知，有可能需要更多的操作来使得前半部分满足条件。所以总的来说第二种方法是不合算的。
+::::::::::::::
+Greedy/229.Majority-Element-II/229.Majority-Element-II.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> majorityElement(vector<int>& nums) 
+    {
+        int x1,x2;
+        int count1=0,count2=0;
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (count1>0 && nums[i]==x1)
+            {
+                count1++;
+            }
+            else if (count2>0 && nums[i]==x2)
+            {
+                count2++;
+            }
+            else if (count1==0)
+            {
+                x1=nums[i];
+                count1=1;
+            }
+            else if (count2==0)
+            {
+                x2=nums[i];
+                count2=1;
+            }
+            else if (nums[i]!=x1 && nums[i]!=x2)
+            {
+                count1--;
+                count2--;
+            }            
+        }
+                
+        vector<int>results;
+        count1=0;
+        count2=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (nums[i]==x1) count1++;
+            if (nums[i]==x2) count2++;
+        }  
+        if (count1>nums.size()/3) results.push_back(x1);
+        if (x1!=x2 && count2>nums.size()/3) results.push_back(x2);
+        
+        return results;
+    }
+};
+::::::::::::::
+Greedy/229.Majority-Element-II/Readme.md
+::::::::::::::
+### 229.Majority-Element-II
+
+本题的解法非常巧妙，令人印象深刻。第一次不会做没有关系，但第二次遇到就应该能牢牢记住。
+
+解法的基本思想就是：如果同时消去数组中互不相同的三个数，那么在剩下的数组中，超过1/3的那些数仍然是超过1/3的。所以我们只要不停找到三个互不相同的数并做消去，剩下的就是超过1/3的那些数（最多两个）。
+
+所以我们在遍历nums数组的过程中，设置两个容器：如果有对应是相同元素的容器，那么就放进那个容器里；如果容器有空的，那么新进来的数就放进容器里；如果两个容器都非空，并且这三个数互不相同，那么就把这三个都消去。
+
+注意，遍历完之后，最后剩下的两个容器里有可能都是答案，需要单独验证。
+
+显然，本题可以扩展到定义大于 N/4, N/5 ... 的majority element。只要设置更多的容器即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/majority-element-ii)::::::::::::::
+Greedy/268.Missing-Number/268.Missing-Number_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) 
+    {
+        int n = nums.size();
+        nums.push_back(n+1);
+        for (int i=0; i<=n; i++)
+        {
+            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
+                swap(nums[i], nums[nums[i]]);
+        }
+        for (int i=0; i<=n; i++)
+            if (nums[i]!=i)
+                return i;
+        return 0;
+    }
+};
+::::::::::::::
+Greedy/268.Missing-Number/268.Missing-Number_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) 
+    {
+        int k=0;
+        for (int i=0; i<=nums.size(); i++)
+            k = k^i;
+        for (int i=0; i<nums.size(); i++)
+            k = k^nums[i];
+        return k;
+    }
+};
+::::::::::::::
+Greedy/268.Missing-Number/Readme.md
+::::::::::::::
+### 268.Missing-Number
+
+#### 解法1：
+对于凡是与“从0到N”数字相关的题目，indexing sort（或者叫cyclic sort？）总是一个值得尝试的角度。我们试图将0~N这些数字依次填充到nums的第0\~N个位置。移动的方法就是逐个考察每个index，如果第i个位置的数字不是nums[i]，那么我们就交换nums[i]和nums[nums[i]]：目的是把nums[i]直接送到它应该所在的地方（也就是index是nums[i]的位置）；同时，如果交换来的nums[nums[i]]依然不是我们想要的数字i，那么我们就重复这个swap的操作，直至：
+1. 当前的第i个位置放的就是数字i；or
+2. nums[i]和nums[nums[i]]相等，也就是说swap(nums[i], nums[nums[i]])没有任何效果；or
+3. nums[nums[i]]越界了，也就是nums[i]不是一个合法的index
+
+按照以上规则处理完所有的index之后，我们就已经竭尽全力地把所有数字和索引相match。此时再扫一遍nums数组，唯一的一处nums[i]!=i的地方，就是说明数字i是missing的。
+
+#### 解法2：
+有一个更优雅的做法。nums[i]包含了0\~N的所有数（除了一个missing number，假设是x）。我们将其亦或起来。同时将这个结果再与0\~N都亦或一遍。这样，除了x，其他的数字都被xor了两遍而被消除。剩下的结果就是x。
+::::::::::::::
+Greedy/300.Longest-Increasing-Subsequence/300.Longest-Increasing-Subsequence_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) 
+    {
+        int n = nums.size();
+        vector<int>dp(n,1);
+        for (int i=0; i<n; i++)
+        {
+            for (int j=0; j<i; j++)
+            {
+                if (nums[j]<nums[i])
+                    dp[i] = max(dp[i], dp[j]+1);
+            }
+        }
+        
+        int ret = 0;
+        for (int i=0; i<n; i++)
+            ret = max(ret, dp[i]);
+        
+        return ret;
+
+    }
+};
+::::::::::::::
+Greedy/300.Longest-Increasing-Subsequence/300.Longest-Increasing-Subsequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) 
+    {
+        int n = nums.size();              
+        vector<int>q(n, INT_MAX);
+        for (int i=0; i<n; i++)
+        {
+            auto iter = lower_bound(q.begin(),q.end(),nums[i]);
+            *iter = nums[i];
+        }
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (q[i] != INT_MAX)
+                return i + 1;  
+        }
+        return 0;    
+    }
+};
+::::::::::::::
+Greedy/300.Longest-Increasing-Subsequence/Readme.md
+::::::::::::::
+### 300.Longest-Increasing-Subsequence
+
+#### 解法1：DP
+这是第II类基本型的动态规划。我们考虑以nums[i]为结尾的LIS的第二大元素是什么？于是我们在i之前的所有index里找一个最好的j：如果nums[j]<nums[i]，那么以j为结尾的LIS就可以被收编进以i为结尾的LIS。显然，最好的j就是dp[j]最大的那个。
+
+DP的时间复杂度是o(N^2)
+
+#### 解法2：Greedy
+贪心算法中的经典题：求最长子序列。时间复杂度可以是o(NlogN)
+
+遍历所有元素，维护一个递增的数组q：当q为空，或者新元素val大于q.back()时加入q尾；否则，寻找q中第一个适合val插入的位置（原q序列里第一个大于等于val的位置），替换成val。 这么做的目的是：虽然LIS的长度并没有改变，但是使得当前q里面的LIS“变矮了”，更有利于后续元素加入进来构建更长的LIS。
+
+举个例子：1 3 10 4 6. 考虑前三个元素后的q是[1 3 10]，但是考虑第四个元素后，我们将10替换成了4. 这样的好处是，第五个元素5可以直接append到这个q末尾从而时LIS再增长1.
+
+如此遍历结束之后，q.size()就是最长子序列的长度。
+
+对于C++，用lower_bound(q.begin(),q.end(),val)返回的就是第一个大于或等于val的元素的迭代器（或者说是地址）。
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-increasing-subsequence)
+::::::::::::::
+Greedy/330.Patching-Array/330.Patching-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int minPatches(vector<int>& nums, int n) 
+    {
+        int count=0;
+        long miss=1;
+        int i=0;
+        
+        while (miss<=n)
+        {
+            if (i>=nums.size() || miss<nums[i])
+            {
+                count++;
+                miss+=miss;
+            }
+            else
+            {
+                miss+=nums[i];
+                i++;
+            }
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Greedy/330.Patching-Array/Readme.md
+::::::::::::::
+### 330.Patching-Array
+
+假设miss是当前无法通过nums[0]~nums[i-1]这i个数通过题述的加和规则得到的、最小的那个整数，那么我们考虑下一个nums[i]会带来什么影响？
+
+如果nums[i]>miss，说明它的加入对于我们试图得到miss没有任何帮助，因为nums[i]太大了；并且之后的nums元素更不会有帮助，只会更大。所以miss只能是我们必须人为补充的一个数，即我们手工补上miss。这时下一个无法得到的整数是什么呢？那就是miss\*2.因为miss加入前，1~miss-1我们都可以得到，所以miss加入后最大能得到2\*miss-1.
+
+如果nums[i]<=miss，说明它的加入可以将miss提升至miss+nums[i].因为nums[i]加入前，1~miss-1我们都可以得到，所以miss加入后最大能得到miss-1+nums[i].
+
+如此循环重复上述的过程，不断提升miss，直至miss>n. 注意这个过程中nums可以提前用完。
+
+另外，值得注意的是，miss的初始值是1，而不是0. 因为没有任何nums提供时，我们首先试图要填补的就是1.
+
+
+[Leetcode Link](https://leetcode.com/problems/patching-array)::::::::::::::
+Greedy/334.Increasing-Triplet-Subsequence/334.Increasing-Triplet-Subsequence_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) 
+    {
+        int N = nums.size();
+        if (N==0) return false;
+        
+        vector<int>LeftMin(N,0);
+        LeftMin[0] = INT_MAX;
+        for (int i=1; i<N; i++)
+            LeftMin[i] = min(LeftMin[i-1],nums[i-1]);
+        
+        vector<int>RightMax(N,0);
+        RightMax[N-1] = INT_MIN;
+        for (int i=N-2; i>=0; i--)
+            RightMax[i] = max(RightMax[i+1],nums[i+1]);
+        
+        for (int i=1; i<N-1; i++)
+        {
+            if (LeftMin[i]<nums[i] && RightMax[i]>nums[i])
+                return true;
+        }
+        return false;
+        
+    }
+};
+::::::::::::::
+Greedy/334.Increasing-Triplet-Subsequence/334.Increasing-Triplet-Subsequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) 
+    {
+        vector<int>q;
+        for (auto x: nums)
+        {
+            if (q.empty() || q.back()<x)
+                q.push_back(x);
+            else
+            {
+                auto iter = lower_bound(q.begin(), q.end(), x);
+                *iter = x;
+            }
+            if (q.size()==3)
+                return true;
+        }
+        return false;
+    }
+};
+::::::::::::::
+Greedy/334.Increasing-Triplet-Subsequence/Readme.md
+::::::::::::::
+### 334.Increasing-Triplet-Subsequence
+
+#### 解法1：
+从左往右，从右往左，各扫一遍数组，计算每个元素的LeftMin和RightMax。那么只要LeftMin[i]<nums[i]<RightMax[i]即可找到一对triplet
+
+这样的话，时间是o(3N),空间是o(2N)
+
+#### 解法2：
+非常巧妙的思维，本题即是在这个数组里找到长度为3的increasing subsequence即可！
+
+用一个数组来记录当前的递增序列，长度达到3即可停下来。时间最差是nlog(3)，空间是o(3)。
+
+
+[Leetcode Link](https://leetcode.com/problems/increasing-triplet-subsequence)::::::::::::::
+Greedy/354.Russian-Doll-Envelopes/354.Russian-Doll-Envelopes_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) 
+    {
+        int n = envelopes.size();
+        sort(envelopes.begin(), envelopes.end());
+        vector<int>dp(n,0);
+        for (int i=0; i<n; i++)
+        {
+            dp[i] = 1;
+            for (int j=0; j<i; j++)
+            {
+                if (envelopes[j][0]<envelopes[i][0] && envelopes[j][1]<envelopes[i][1])
+                    dp[i] = max(dp[i], dp[j]+1);
+            }
+        }
+        
+        int ret = 0;
+        for (int i=0; i<n; i++)
+            ret = max(ret, dp[i]);
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/354.Russian-Doll-Envelopes/354.Russian-Doll-Envelopes_v2.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        if (a[0]==b[0])
+            return a[1]>b[1];
+        else
+            return a[0]<b[0];
+    }
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) 
+    {
+        sort(envelopes.begin(), envelopes.end(), cmp);
+        vector<int>q;
+        for (auto x: envelopes)
+        {
+            if (q.empty() || x[1]>q.back())
+                q.push_back(x[1]);
+            else
+            {
+                auto iter = lower_bound(q.begin(), q.end(), x[1]);
+                *iter = x[1];
+            }
+        }
+        return q.size();
+    }
+};
+::::::::::::::
+Greedy/354.Russian-Doll-Envelopes/Readme.md
+::::::::::::::
+### 354. Russian-Doll-Envelopes
+
+#### 解法1：
+我们将所有的信封按照长度从小到大排序之后，符合要求的信封嵌套序列一定是这个排序数组的一个subsequence（否则无法满足长度的递增要求）。
+
+我们可以用N^2的DP方法，在这个数组中找到宽度的最长递增子序列(LIS)。参考```300. Longest Increasing Subsequence```. 注意对于第i个元素，想寻找它在LIS中的前一个元素j，必须同时满足两个条件：
+```width[j]<width[i] && length[j]<length[i]```。否则会将长度相等、宽度不等的两个信封选入同一个LIS中。
+
+#### 解法2：
+本题有一个技巧可以在求LIS的过程中不用再考虑长度的制约。那就是排序的时候，将长度相同的信封按照宽度降序排列。这样的好处是，相同长度的信封，不可能在宽度上是递增的。这样求宽度的LIS时，不可能选到两个长度相同的信封。于是，单纯求解宽度数组的LIS序列，就可以用o(NlogN)的贪心解法了。参考```300. Longest Increasing Subsequence```. 
+
+[Leetcode Link](https://leetcode.com/problems/russian-doll-envelopes)
+::::::::::::::
+Greedy/386.Lexicographical-Numbers/386.Lexicographical-Numbers.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> lexicalOrder(int n) 
+    {
+        int current=1;
+        vector<int>results(n);
+        
+        for (int i=0; i<n; i++)
+        {
+            results[i]=current;
+            
+            if (current*10<=n)
+                current=current*10;
+            else
+            {
+                if (current+1>n) 
+                    current=current/10;
+                current++;
+                while (current % 10==0)
+                    current/=10;
+            }
+        }
+        return results;
+    }
+};
+::::::::::::::
+Greedy/386.Lexicographical-Numbers/Readme.md
+::::::::::::::
+### 386.Lexicographical-Numbers
+
+研究序列[1,10,11,12,13,2,3,4,5,6,7,8,9]，找出字典序的规律。
+
+规律1：不考虑上限，元素1后面跟什么元素？10, 100 … 也就是不断乘以10。
+
+规律2：如果99是上限，那么10后面的元素不能是100了，该怎么办？答案是11，也就是加1，这样个位上的数变大了。如果加1导致进位的话，虽然个位数变0，但十位上的数会变大，总之肯定字典序往后移。但此时得到的并不是下一个的目标，因为把其末尾的0去掉会得到字典序相对更前的数。砍掉0之后就可以重复规律1的操作了。
+
+规律3：如果上限是19，那么19后面的元素就不能是20了，该怎么办？答案是将19除以10，然后再重复规律2（也就是加1），也就是得到2，之后又可以重复规律1了。
+
+
+[Leetcode Link](https://leetcode.com/problems/lexicographical-numbers)::::::::::::::
+Greedy/406.Queue-Reconstruction-by-Height/406.Queue-Reconstruction-by-Height.cpp
+::::::::::::::
+class Solution {
+public:
+    static bool cmp(pair<int,int>a,  pair<int,int>b)
+    {
+        if (a.first==b.first)
+            return a.second<b.second;
+        else
+            return a.first>b.first;
+    }
+    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) 
+    {
+        sort(people.begin(),people.end(),cmp);
+        vector<pair<int, int>>results;
+        for (int i=0; i<people.size(); i++)
+        {
+            if (results.size()==0)
+            {
+                results.push_back(people[i]);
+                continue;
+            }
+            
+            int pos = people[i].second;
+            results.insert(results.begin()+pos,people[i]);
+        }
+        return results;
+    }
+};
+::::::::::::::
+Greedy/406.Queue-Reconstruction-by-Height/Readme.md
+::::::::::::::
+### 406.Queue-Reconstruction-by-Height
+
+此题我们来这样考虑，比如对于[h,k]来说，如果只考虑那些身高比他高、位置比他靠前的人群，他是排第k+1个。那如果我们把所有身高比他高的人都已经拉了出来排成一排，我们再将这个人塞进第k+1位，也是不违和的。因为剩下那些比他矮的人，无论放在哪里，都不会再影响到k这个数值。
+
+于是，贪心的方法很简单。我们按身高依次处理。当处理某人时，所有比他高的都已经处理完了，然后将该人放在第k+1个位置即可。他的插入不会对之前那些“高人”的排名产生任何的影响。依次类推处理完所有的人。
+
+这里，当有两个人的身高相同怎么办呢？先处理k小的，他优先插入，优先得到更靠前的位置。
+
+
+[Leetcode Link](https://leetcode.com/problems/queue-reconstruction-by-height)::::::::::::::
+Greedy/435.Non-overlapping-Intervals/435.Non-overlapping-Intervals_v1.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[1]<b[1];
+    }
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) 
+    {
+        sort(intervals.begin(), intervals.end(), cmp);
+        int i = 0;
+        int count = 0;
+        while (i<intervals.size())
+        {
+            count++;
+            int j = i+1;
+            while (j<intervals.size() && intervals[j][0] < intervals[i][1])
+                j++;
+            i = j;
+        }
+        return intervals.size()-count;
+    }
+};
+::::::::::::::
+Greedy/435.Non-overlapping-Intervals/435.Non-overlapping-Intervals_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) 
+    {
+        sort(intervals.begin(), intervals.end());
+        int far = INT_MIN;
+        int count = 0;
+        for (auto interval: intervals)
+        {
+            if (interval[0] >= far)
+            {
+                far = interval[1];
+                count++;
+            }
+            else if (interval[1] < far)
+            {
+                far = interval[1];
+            }
+        }
+        return intervals.size()-count;
+    }
+};
+::::::::::::::
+Greedy/435.Non-overlapping-Intervals/Readme.md
+::::::::::::::
+### 435.Non-overlapping-Intervals
+
+#### 解法1
+
+此题和452. Minimum Number of Arrows to Burst Balloons非常类似，可以用贪心法来解决类似的区间问题。
+
+我们之前总结过，对区间排序的贪心法，有的需要sort by starting point，有的需要sort by ending point. 大致的规律是：
+1. 如果求的是maximum number of non-overlapping intervals，用sort by ending point的方法
+2. 如果求的是minimum number of intervals to cover the whole range，用sort by starting point的方法
+
+本题就是前者。我们把右边界最小（成为right）的那个区间做为首区间，从排序后的interval中找到所有start小于当前这个右边界right的区间．这些区间都是可以删掉的！这是因为这些区间都互相重合，必然只能保留一个．而保留哪一个呢？就是保留当前这个右边界最小的区间，因为其他区间的右边界都较大，可能会造成对后面区间的重合，有潜在的风险，去掉他们最保险．
+
+或者我们这样理解：为了保留更多的区间数目，在众多重合的区间里面，我们会优先选择右端点靠前的区间。因为它对后续的影响最小，有更大的概率让更多的区间出现。
+
+#### 解法2
+
+因为我们求的是non-overlapping intervals，所以从左往右看每个区间的ending point，就是从右往左看每个区间的starting point。所以理论上本题也一定可以用sort by starting point来做。
+
+当然，具体的做法与1不太一样。我们将所有的区间按照starting point排序之后，依次遍历它们。我们维护一个当前能到达的最远点far。如果
+1. 新区间的左端点在far的右边，那么新区间就不会与之前的任何区间重合，计数器加1
+2. 新区间的右端点在far的左边，那么新区间就被旧区间包围。我们于是舍弃之前的区间，而prefer当前的区间，并更新far为右端点，使其变得更靠前。目的是让后面有机会加入更多的区间。
+
+[Leetcode Link](https://leetcode.com/problems/non-overlapping-intervals)
+::::::::::::::
+Greedy/442.Find-All-Duplicates-in-an-Array/442.Find-All-Duplicates-in-an-Array_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) 
+    {
+        int n = nums.size();
+        nums.insert(nums.begin(),0);
+        for (int i=1; i<=n; i++)
+        {
+            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
+                swap(nums[i], nums[nums[i]]);
+        }
+        vector<int>rets;
+        for (int i=1; i<=n; i++)
+        {
+            if (nums[i]!=i)
+                rets.push_back(nums[i]);
+        }
+        return rets;
+    }
+};
+::::::::::::::
+Greedy/442.Find-All-Duplicates-in-an-Array/442.Find-All-Duplicates-in-an-Array_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) 
+    {
+        int n = nums.size();
+        nums.insert(nums.begin(),0);
+        vector<int>results;
+        for (int i=1; i<=n; i++)
+        {
+            if (nums[abs(nums[i])]<0)
+                results.push_back(abs(nums[i]));
+            else
+                nums[abs(nums[i])] *= -1;                                  
+        }
+        return results;
+    }
+};
+::::::::::::::
+Greedy/442.Find-All-Duplicates-in-an-Array/Readme.md
+::::::::::::::
+### 442.Find-All-Duplicates-in-an-Array
+
+#### 解法1
+此题和 041.First-Missing-Positive 的解法非常相似。题目的共同点是：数组的元素规定了是从1\~N. 这就强烈暗示了，如果试图把正整数1~N顺次放入nums[1]~nums[N]中，那么没有被正确归位的那个元素（即nums[i]!=i）一定有“问题”。
+
+对于“把正整数1~N顺次放入nums[1]~nums[N]中”的这种特殊的排序任务，有如下典型的时间复杂度o(n)、空间复杂度o(1)的方法：
+
+遍历所有元素nums[i]，发现如果nums[i]!=i时，说明当前的nums[i]这个数没有被放置在合适的顺序位置。于是交换nums[i]和nums[nums[i]]。这样做的结果是：把nums[i]放到了它应该在的位置（正确归位），同时nums[i]有了新的值，需要再重复判断、交换的过程。这样的步骤持续到 nums[i]==nums[nums[i]]，这样就到了一个死循环，对于i这个位置就不能再做任何操作，于是跳过。
+
+等到所有元素都遍历结束，那么所有元素就会被“力所能及”地归入了它们应该在的顺序位置。那么此时，对于那些nums[i]!=i的、没有正确归位的元素，在本题的题意下，就是那些重复的元素，可以轻易地挑出来。
+
+#### 解法2
+还有一种比较花哨的解法。对于数值x，我们如何不通过extra space来记录它是否出现过呢？方法是将nums[x]上的数字变成负数来进行标记，注意我们并不关心nums[x]是多少。只关心nums[x]是负数时表示x曾经出现过，反之表示x还没出现过。
+
+所以我们依次遍历数组里的每个数字abs(x)，注意我们关心数值时必须看的是abs(x)，因为x的符号可能被encode了其他含义（如上所说）。如果nums[abs[x]]<0，表示abs(x)曾经出现过，加入我们的答案中。反之，说明abs(x)第一次出现，所以我们将nums[abs(x)]标记为负数，以此留下这个标记。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-all-duplicates-in-an-array)
+::::::::::::::
+Greedy/448.Find-All-Numbers-Disappeared-in-an-Array/448.Find-All-Numbers-Disappeared-in-an-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int n = nums.size();
+        nums.insert(nums.begin(),0);
+        for (int i=1; i<=n; i++)
+        {
+            while (nums[i]!=i && nums[i]<=n && nums[i]!=nums[nums[i]])
+                swap(nums[i], nums[nums[i]]);
+        }
+        vector<int>rets;
+        for (int i=1; i<=n; i++)
+        {
+            if (nums[i]!=i)
+                rets.push_back(i);
+        }
+        return rets;
+    }
+};
+::::::::::::::
+Greedy/448.Find-All-Numbers-Disappeared-in-an-Array/Readme.md
+::::::::::::::
+### 448.Find-All-Numbers-Disappeared-in-an-Array
+
+对于这种数列[1,..,N]摆放在index为[1,..,N]的数组，有一种比较常见的巧妙解法，就是index sorting.
+
+我们观察一个i位置上的数，如果nums[i]!=i的话，那么说明这个nums[i]本不应该在这个位置上，于是我们就把它送到它应该待的地方，也就是index为nums[i]的地方，直至这种交换无法继续为止。什么情况下无法继续呢？一种就是nums[i]==i，说明位置i已经放置了应该出现的数；另一种就是nums[nums[i]]==nums[i]，也就是打算安排nums[i]的位置已经有一个合适的数在那里了，我们也无法继续了，说明位置i上注定无法放置期望出现的数。
+
+核心代码如下：
+```cpp
+        while (i<nums.size())
+        {
+            if (nums[i]==i || nums[nums[i]]==nums[i])             
+                i++;            
+            else            
+                swap(nums[i],nums[nums[i]]);            
+        }
+```        
+此题本质上和 442. Find All Duplicates in an Array 一模一样，只不过最终输出的内容是index而不是元素的值。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array)::::::::::::::
+Greedy/452.Minimum-Number-of-Arrows-to-Burst-Balloons/452.Minimum-Number-of-Arrows-to-Burst-Balloons.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(pair<int,int>a, pair<int,int>b)
+    {
+        return a.second<b.second;
+    }
+public:
+    int findMinArrowShots(vector<pair<int, int>>& points) 
+    {
+        sort(points.begin(),points.end(),cmp);
+        
+        int j=0;
+        int count=0;
+        while (j<points.size())
+        {            
+            int right=points[j].second;
+            while (j<points.size() && points[j].first<=right)
+                j++;
+            count++;
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Greedy/452.Minimum-Number-of-Arrows-to-Burst-Balloons/Readme.md
+::::::::::::::
+### 452.Minimum-Number-of-Arrows-to-Burst-Balloons
+
+将所有的气球按照右边界进行从小到大的排序。
+
+按照排序后的右边界的值right进行遍历。对于所有未被射破的、左边界小于当前right的气球（此时他们的右边界必然大于right，因为right是从小到大遍历的），只要沿着这个right进行射击，就能最大效率地射破这些气球。
+
+接下来寻找未被射破的下一个气球，更新最小的right。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons)::::::::::::::
+Greedy/484.Find-Permutation/484.Find-Permutation.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findPermutation(string s) 
+    {
+        s.insert(s.begin(),s[0]);
+        int N=s.size();
+        vector<int>results(N,0);
+        
+        int left=0;
+        int right=0;
+        
+        while (right<s.size())
+        {
+            while (right+1<s.size() && !(s[right]=='D' && s[right+1]=='I'))
+                   right++;
+            if (right==s.size()) right--;
+            
+            int top=left;
+            while (s[top+1]=='I') top++;
+            for (int i=left; i<top; i++)
+                results[i]=i+1;
+            for (int i=top; i<=right; i++)
+                results[i]=top+1+right-i;
+            left=right+1;
+            right=right+1;
+        }
+        
+        return results;
+            
+    }
+};
+::::::::::::::
+Greedy/484.Find-Permutation/Readme.md
+::::::::::::::
+### 484.Find-Permutation
+
+需要人工分析出最优的策略。
+
+以“下拐点”为分界点将s序列分为若干个II...IIDD...DD的组合。对于每个II...IIDD...DD，可以知道最优方法是：将除最后一个I之外的所有I对应一个递增数列，剩下的一个I和所有的D对应一个递减数列，且递减数列的最小值是那个递增数列最大值加1。更有用的是，可以知道，所有的递增数列的值都是和它的index值是对应的`results[i]=i+1`。
+
+那么s的位数和results的位数不一样怎么办？一个简单的方法是`s.insert(s.begin(),s[0])`，这样s和results的元素数目就是一致的，且各个位置都适用同样的代码语句。
+
+
+[Leetcode Link](https://leetcode.com/problems/find-permutation)::::::::::::::
+Greedy/517.Super-Washing-Machines/517.Super-Washing-Machines.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMinMoves(vector<int>& machines) 
+    {
+        int n = machines.size();
+        vector<int>left(n,0);
+        vector<int>right(n,0);
+
+        int sum = 0;
+        for (auto x:machines)
+            sum += x;
+        if (sum%n!=0) return -1;
+        int k = sum/n;
+
+        right[0] = machines[0] - k;
+        for (int i=1; i<n-1; i++)
+        {
+            left[i] = -right[i-1];
+            right[i] = machines[i]-k-left[i];
+        }
+        left[n-1] = machines[n-1]-k;
+
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            int t = 0;
+            if (left[i]>0) t+= left[i];
+            if (right[i]>0) t+= right[i];
+            ret = max(ret,t);
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/517.Super-Washing-Machines/Readme.md
+::::::::::::::
+### 517.Super-Washing-Machines
+
+此题初看会有一种用DP的错觉．但细细想一想，其实最优策略是可以手工制定出来的，这就是贪心法．
+
+首先，我们应该有这样的直觉，对任意一台洗衣机，最优的转移策略肯定不会出现＂反反复复＂的情况．即经过充分的优化调度后，衣物的转移应该是单向的．假设对于第i台洗衣机，最终平衡态是k件，设整个过程中i总共向左边净转移了left[i]件衣物，向右边净转移了right[i]件衣物，则必定满足如下关系：
+```
+machines[i]-k = left[i]+right[i]
+```
+并且在实际的最优操作中，第i台一定只需要向左移动left[i]件衣物，向右移动right[i]件衣物即可（注意，这两个值可能是负数）。总之同一个边不会有多余的双向操作。
+
+其次，我们把所有洗衣机的初始状态想象成一座连绵起伏的山峦。每一次move前，我们知道哪些山峰是净输出的，哪些山谷是净输入的，而这一次move的效果就是：将某些山峰的一件衣物“超距作用”地转移到某些山谷中去。所谓的“超距作用”，就是说这种山峰填山谷的操作只需要一个回合就能完成。这是因为每个回合所有的洗衣机都在同时工作，每个洗衣机只有三种作用：净输出1，净值为0，净输入1或者2（某个山谷同时由两边来填）。那些净值为0的洗衣机其实就相当于传送带，某一边输入一件，同时又往另一边输出一件，从而协助了山峰填山谷的超距作用。
+
+很显然，整批洗衣机需要停止工作的回合，就是等到那些山峰最终夷为平地的时刻。所以最终答案，就是找到“总输出”最多的那台机器即可。为什么是要算总输出呢？因为有可能是这种情景:左边的次山峰->主山峰->填补谷底。这样的一个回合，主山峰其实并没有净输出，是次山峰在净输出。但我们可以想象，主山峰一定是在不停地输出（不一定是净输出），而当主山峰不输出了，说明肯定一切都已经夷为平地了。
+
+至于如何确定left[i]和right[i]是比较简单的，突破口就是最左边的洗衣机，其left[i]一定是零；次外，所有的```right[i]=-left[i+1]```。故这些变量都可解。
+
+
+[Leetcode Link](https://leetcode.com/problems/super-washing-machines)::::::::::::::
+Greedy/524.Longest-Word-in-Dictionary-through-Deleting/524.Longest-Word-in-Dictionary-through-Deleting.cpp
+::::::::::::::
+class Solution {
+public:
+    string findLongestWord(string S, vector<string>& dictionary) 
+    {
+        int m = S.size();
+        S = "#"+S;
+        int next[m+1][26];
+        
+        for (int k=0; k<26; k++)
+            next[m][k] = -1;
+        for (int i=m; i>=1; i--)
+        {
+            for (int k=0; k<26; k++)
+                next[i-1][k] = next[i][k];
+            next[i-1][S[i]-'a'] = i;
+        }
+        
+        string ret = "";
+        for (auto word: dictionary)
+        {
+            int flag = 1;
+            int i = 0;
+            for (auto ch: word)
+            {
+                i = next[i][ch-'a'];
+                if (i==-1)
+                {
+                    flag = 0;
+                    break;
+                }                
+            }
+            if (flag)
+            {
+                if (word.size() > ret.size() || (word.size() == ret.size() && word < ret))
+                    ret = word;
+            }
+        }
+        return ret;        
+    }
+};
+::::::::::::::
+Greedy/524.Longest-Word-in-Dictionary-through-Deleting/Readme.md
+::::::::::::::
+### 524.Longest-Word-in-Dictionary-through-Deleting
+
+此题等同于```792.Number-of-Matching-Subsequences```. 我们预处理得到next[i][ch]，表示S中位置i右边第一个出现字符ch的位置。这样对于每一个单词word，假设长度为n，我们只需要用o(n)的时间就可以找到全部字符在s中的对应位置。具体做法是，令初始i=0，然后遍历word所有的ch，不断地更新```i = next[i][ch]```。如果某个```next[i][ch]==-1```，那么就说明word不是s的subsequence。
+::::::::::::::
+Greedy/581.shortest-unsorted-continuous-subarray/581.shortest-unsorted-continuous-subarray.cpp
+::::::::::::::
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) 
+    {
+        int curMax=INT_MIN;
+        int right_bound=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (nums[i]<curMax)
+                right_bound=i;
+            curMax=max(curMax,nums[i]);
+        }
+        
+        int curMin=INT_MAX;
+        int left_bound=nums.size()-1;
+        for (int i=nums.size()-1; i>=0; i--)
+        {
+            if (nums[i]>curMin)
+                left_bound=i;
+            curMin=min(curMin,nums[i]);
+        }        
+        
+        cout<<left_bound<<" "<<right_bound<<endl;
+        
+        return left_bound>=right_bound?0:right_bound-left_bound+1;
+    }
+};
+::::::::::::::
+Greedy/581.shortest-unsorted-continuous-subarray/Readme.md
+::::::::::::::
+### 581.shortest-unsorted-continuous-subarray
+
+本题的难点是如何设计不需要排序的o(n)算法。
+
+找出这样一个right_bound：位于该数左边的所有数的最大值，要比这个数大，这说明这个数在排序后需要变换位置。怎么找呢？将数组从左到右过一遍，实时保存最大值即可，不断刷新这个right_bound。
+
+同理，找到这样一个left_bound：位于该数右边的所有数的最小值，要比这个数小，这说明这个数在排序后需要变换位置。也是讲数组从右往左过一遍，实时保存最小值。
+
+最后当right_bound>left_bound时，结果就是 right_bound-left_bound+1
+
+
+[Leetcode Link](https://leetcode.com/problems/shortest-unsorted-continuous-subarray)::::::::::::::
+Greedy/624.Maximum-Distance-in-Arrays/624.Maximum-Distance-in-Arrays.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxDistance(vector<vector<int>>& arrays) 
+    {
+        vector<int>Mins;
+        vector<int>Maxs;
+        for (int i=0; i<arrays.size(); i++)
+        {
+            Mins.push_back(arrays[i][0]);
+            Maxs.push_back(arrays[i].back());
+        }
+        
+        sort(Mins.begin(),Mins.end());
+        sort(Maxs.begin(),Maxs.end());
+        
+        int N=arrays.size();
+        int flag=0;
+        for (int i=0; i<arrays.size(); i++)
+        {
+            if (arrays[i][0]==Mins[0] && arrays[i].back()==Maxs.back() )
+            {
+                flag=1;
+                break;                    
+            }            
+        }
+        
+        if (flag==0)
+            return Maxs.back()-Mins[0];
+        else
+            return max(Maxs.back()-Mins[1],Maxs[N-2]-Mins[0]);
+    }
+};
+::::::::::::::
+Greedy/624.Maximum-Distance-in-Arrays/Readme.md
+::::::::::::::
+### 624.Maximum-Distance-in-Arrays
+
+最粗浅的最优策略就是，把每个数组的第一个元素挑出来组成Mins数组，每个数组的最后一个元素挑出来组成Maxs数组。理想情况下，Maxs.back()-Mins[0]就是最大的一对差值。
+
+当Maxs.back()和Mins[0]来自同一个数组怎么办？这时候考察Maxs[n-2]-Mins[0]以及Maxs.back()-Mins[1]，取其中较小的。而且这两对数字肯定不会是在同一个数组中的。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-distance-in-arrays)::::::::::::::
+Greedy/645.Set-Mismatch/645.Set-Mismatch.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findErrorNums(vector<int>& nums) 
+    {
+        int n = nums.size();
+        nums.insert(nums.begin(), 0);
+        for (int i=1; i<=n; i++)
+        {
+            while (nums[i]!=i && nums[i]<=n+1 && nums[i]!=nums[nums[i]])
+            {
+                swap(nums[i], nums[nums[i]]);
+            }
+        }
+        
+        for (int i=1; i<=n; i++)
+        {
+            if (nums[i]!=i)
+               return {nums[i],i}; 
+        }
+
+        return {-1,-1};   
+    }
+};
+::::::::::::::
+Greedy/645.Set-Mismatch/Readme.md
+::::::::::::::
+### 645.Set-Mismatch
+
+此题其实就是```442.Find-All-Duplicates-in-an-Array```和```448.Find-All-Numbers-Disappeared-in-an-Array```的拼接。最后遍历到```nums[i]!=i```的位置时，说明nums[i]是duplicated number，而i就是missing number.
+
+[Leetcode Link](https://leetcode.com/problems/set-mismatch)
+::::::::::::::
+Greedy/646.Maximum-Length-of-Pair-Chain/646.Maximum-Length-of-Pair-Chain.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[1]<b[1];
+    }
+public:
+    int findLongestChain(vector<vector<int>>& pairs) 
+    {
+        sort(pairs.begin(), pairs.end(), cmp);
+        int i=0, count = 0;
+        while (i<pairs.size())
+        {
+            int j = i;
+            while (j<pairs.size() && pairs[j][0]<=pairs[i][1])
+                j++;
+            count++;
+            i = j;
+        }
+        return count;
+    }
+};
+::::::::::::::
+Greedy/646.Maximum-Length-of-Pair-Chain/Readme.md
+::::::::::::::
+### 646.Maximum-Length-of-Pair-Chain
+
+此题本质和 435.Non-overlapping-Intervals 一模一样。
+::::::::::::::
+Greedy/649.Dota2-Senate/649.Dota2-Senate.cpp
+::::::::::::::
+class Solution {
+public:
+    string predictPartyVictory(string senate) 
+    {
+        string str=senate;
+        int len=0;
+        int count=0;
+        while (senate.size()!=len)
+        {
+            len=senate.size();
+            string s;
+            for (int i=0; i<senate.size(); i++)
+            {
+                if (senate[i]=='R')
+                {                    
+                    if (count>=0) s.push_back('R');
+                    count++;
+                }
+                else
+                {                    
+                    if (count<=0) s.push_back('D');
+                    count--;
+                }
+            }
+            senate = s;
+        }
+        
+        if (senate[0]=='R')
+            return "Radiant";
+        else
+            return "Dire";
+    }
+};
+::::::::::::::
+Greedy/649.Dota2-Senate/Readme.md
+::::::::::::::
+### 649.Dota2-Senate
+
+对于R来说，其最优的策略是消灭其身后第一个仍存活的D，如果没有，再从队首开始找第一个仍存活的D。
+
+此题如果依此策略进行模拟的话，效率很低。有比较巧妙的贪心算法，可以o(n)得到结果。
+
+设置一个字符串s，代表senate经过一轮厮杀之后得以存活进入下一轮的子串。那么怎么从senate快捷方便地得到s呢？我们设置一个计数器count，如果遇到R就加一，遇到D就减一。注意，如果遇到R的时候，count>=0，说明之前的所有R/D厮杀得到的结果是R净胜，说明当前的R是不会被之前的任何D所封禁的，所以可以放心地将R加入s中。反之，如果遇到D的时候，count<=0，说明之前的所有R/D厮杀得到的结果是D净胜，说明当前的D是不会被之前的任何R所封禁的，所以可以放心地将D加入s中。其他情况下，都说明当前的R或D都无法能够存活，不能被加入下一轮的s中。
+
+扫完一轮之后，接下来的关键点是：更新senate为s，但count不清零，重复上述的步骤。这是因为上一轮末的count其实反映了队尾存留的R的数目（或者D），他们能可以封禁残存的位于队首的D（或者R）。
+
+最后循环直到新生成的s的长度不再变化，说明此时的s里面全部都是R或者D了。
+
+
+[Leetcode Link](https://leetcode.com/problems/dota2-senate)::::::::::::::
+Greedy/659.Split-Array-into-Consecutive-Subsequences/659.Split-Array-into-Consecutive-Subsequences.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isPossible(vector<int>& nums) 
+    {
+        unordered_map<int,int>left;
+        unordered_map<int,int>seq;
+        for (auto x: nums)
+            left[x]++;
+
+        for (auto x: nums)
+        {
+            if (left[x]==0) continue;
+            if (seq[x-1]>0)
+            {                
+                left[x]--;
+                seq[x-1]-=1;
+                seq[x]+=1;                
+            }
+            else
+            {
+                if (left[x+1]==0 || left[x+2]==0)
+                    return false;
+                left[x]--;
+                left[x+1]--;
+                left[x+2]--;
+                seq[x+2]+=1;
+            }
+            
+        }
+        return true;        
+    }
+};
+::::::::::::::
+Greedy/659.Split-Array-into-Consecutive-Subsequences/Readme.md
+::::::::::::::
+### 659.Split-Array-into-Consecutive-Subsequences
+
+假设我们当前处理的数字是x。下面分两种情况讨论：
+
+如果之前的处理过的元素里，已经有以x-1为结尾的、长度大于等于3的序列，那么我们必然会将x接在这个已有的序列上。为什么呢？如果我们不接，那么x必然是作为一段新序列的首元素。但是如果后面没有x+1和x+2接上，那么x这个新序列就无法满足长度要求。而如果后面有x+1和x+2，那么我们何不将x,x+1,x+2一并都接在以x-1为结尾的序列上呢？可见不管后面是否有x+1/x+2，将x接在已有的序列上，都是最保险的决策。
+
+如果之前的处理过的元素里，已经有以x-1为结尾的、长度大于等于3的序列，那么我们该怎么办呢？我们就必须创建以x为首元素的新序列，同时为了保证该新序列的最终长度要大于等于3，我们必须向后面“预支”两个元素：x+1和x+2。如果我们能提前知道后面已经没有了x+1和x+2，那么我们就可以返回false。
+
+所以我们需要两个哈希表。seq[x]表示目前为止已经构建了多少个以x为结尾的、长度大于等于3的序列。left[x]表示后面还有多少个x没有被处理（初始值就是原数组中的x的个数）。当第一种情况时，以x-1结尾的序列会变成以一个新的以x为结尾的序列。第二种情况时，会增加一个以x+2为结尾的序列，同时注意相应的left[x],left[x+1],left[x+2]都需要自减1.
+
+[Leetcode Link](https://leetcode.com/problems/split-array-into-consecutive-subsequences)
+::::::::::::::
+Greedy/665.Non-decreasing-Array/665.Non-decreasing-Array_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    bool checkPossibility(vector<int>& nums) 
+    {
+        int count=0;
+        for (int i=1; i<nums.size(); i++)
+        {            
+            if (nums[i-1]>nums[i])
+            {
+                count++;
+                
+                if (count==2) return false;
+                
+                if (i>=2 && nums[i-2]>nums[i])
+                    nums[i]=nums[i-1];
+                else
+                    nums[i-1]=nums[i];
+            }
+        }
+        return true;
+    }
+};
+::::::::::::::
+Greedy/665.Non-decreasing-Array/665.Non-decreasing-Array_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    bool checkPossibility(vector<int>& nums) 
+    {
+        int a = -1, b = -1;
+        for (int i=1; i<nums.size(); i++)
+        {
+            if (nums[i-1]>nums[i])
+            {
+                a = i-1;
+                b = i;
+            }
+        }
+        if (a==-1) return true;
+        
+        int flag = 1;
+        for (int i=1; i<nums.size(); i++)
+        {
+            if (i==a) continue;
+            else if (i==a+1)
+            {
+                if (i-2>=0 && nums[i-2]>nums[i])
+                {
+                    flag = false;
+                    break;                    
+                }                
+            }
+            else if (nums[i-1]>nums[i])
+            {
+                flag = false;
+                break;
+            }                
+        }
+        if (flag) return true;
+        
+        flag = 1;
+        for (int i=1; i<nums.size(); i++)
+        {
+            if (i==b) continue;
+            else if (i==b+1)
+            {
+                if (i-2>=0 && nums[i-2]>nums[i])
+                {
+                    flag = false;
+                    break;                    
+                }  
+            }
+            else if (nums[i-1]>nums[i])
+            {
+                flag = false;
+                break;
+            }                
+        }
+        if (flag) return true;
+        return false;
+    }
+};
+::::::::::::::
+Greedy/665.Non-decreasing-Array/Readme.md
+::::::::::::::
+### 665.Non-decreasing-Array
+
+此题属于贪心法。考虑为了满足数列递增关系，遇到“坏点”的时候，最优的改动策略是什么。
+
+#### 解法1
+
+遍历数列一路查验是否递增，如果发现nums[i-1]>nums[i]，首先考虑的改动方案是将nums[i-1]=nums[i]，这样就避免改动nums[i]引发后续的变动。但是，如果又有nums[i-2]>nums[i]的话，那没有办法，为了避免改动两次，只能令nums[i]=nums[i-1]。此时计数1次。如果下次再出现了nums[i-1]>nums[i]的话，就返回false。
+
+#### 解法2
+遍历数列一路查验是否递增，如果发现nums[i-1]>nums[i]，说明坏点必然是nums[i-1]和nums[i]中间的一个。我们可以对其中一个进行隐去，看剩下的是否是non-decreasing序列。如果任意一个隐去后都不成立，就返回false。
+
+[Leetcode Link](https://leetcode.com/problems/non-decreasing-array)
+::::::::::::::
+Greedy/667.Beautiful-Arrangement-II/667.Beautiful-Arrangement-II.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> constructArray(int n, int k) 
+    {
+        vector<int>ret({k+1});
+        int count = 1;
+        for (int d=k; d>=1; d--)
+        {
+            if (count%2==1)
+                ret.push_back(ret.back()-d);
+            else
+                ret.push_back(ret.back()+d);
+            count++;
+        }
+        reverse(ret.begin(), ret.end());
+        for (int i=k+2; i<=n; i++)
+            ret.push_back(i);
+        
+        return ret;
+        
+    }
+};
+::::::::::::::
+Greedy/667.Beautiful-Arrangement-II/Readme.md
+::::::::::::::
+### 667.Beautiful-Arrangement-II
+
+通过简单的探索，不难发现，例如要构造1-5这五个不同的差，我们只需要用到1-6这六个数字构成wiggle序列即可：6,1,5,2,4,3. 如果还有剩余的数字，他们都是从7开始连续递增by 1的，我们将其放在6前面即可，即```...9,8,7,6,1,5,2,4,3```，不增加更多的差的数目。
+::::::::::::::
+Greedy/670.Maximum-Swap/670.Maximum-Swap.cpp
+::::::::::::::
+class Solution {
+public:
+    int maximumSwap(int num) 
+    {
+        int MAX=0;
+        int pos;
+        string str=to_string(num);
+        
+        string str2=str;
+        sort(str2.begin(),str2.end());
+        reverse(str2.begin(),str2.end());
+        
+        int j=0;
+        while (j<str.size() && str[j]==str2[j])
+            j++;
+        
+        if (j==str.size()) return num;
+                
+        for (int i=j; i<str.size(); i++)
+        {
+            if (str[i]-'0'>=MAX)
+            {
+                MAX=str[i]-'0';
+                pos=i;
+            }
+        }
+        
+        for (int i=j; i<pos; i++)
+        {
+            if (str[i]-'0'>=MAX)
+                continue;
+            swap(str[i],str[pos]);         
+            break;
+        }
+        
+        return stoi(str);
+        
+        
+    }
+};
+::::::::::::::
+Greedy/670.Maximum-Swap/Readme.md
+::::::::::::::
+### 670.Maximum-Swap
+
+从前往后遍历，排除最前的极大递减序列之外，找到剩下的序列里最大的那个数字（有相同的取靠后的），用它和递减序列之后的第一个元素交换。
+
+比如986737，我们将它和排序之后的987763比较，发现前两位就是极大递减序列，所有不用管。从第三位开始，找剩下里面的最大值（相同最大值则取靠后的），结果是最后一个数字7。我们将这个7和递减序列之后的6对换，就得到了最终答案987736。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-swap)::::::::::::::
+Greedy/678.Valid-Parenthesis-String/678.Valid-Parenthesis-String.cpp
+::::::::::::::
+class Solution {
+public:
+    bool checkValidString(string s) 
+    {
+        int lower=0;
+        int upper=0;
+        
+        for (int i=0; i<s.size(); i++)
+        {
+            if (s[i]=='(')
+            {
+                lower++;
+                upper++;
+            }
+            else if (s[i]=='*')
+            {
+                lower--;
+                upper++;
+            }
+            else if (s[i]==')')
+            {
+                lower--;
+                upper--;
+            }
+            
+            if (lower<0) lower=0;
+            
+            if (upper<0) return false;                        
+        }
+        
+        return (lower==0);
+    }
+};
+::::::::::::::
+Greedy/678.Valid-Parenthesis-String/Readme.md
+::::::::::::::
+### 678.Valid-Parenthesis-String
+
+回想一下，如果没有“\*”的话，我们怎么处理？我们其实只需要一个计数器count表示未匹配的括号，遇到左括号就加一，遇到右括号就减一。在遍历的过程中，count不能小于零；在结束遍历后，count必须等于零。
+
+那么有“\*”的情况下，我们的计数器需要表示一个范围[lower,upper]，表示未匹配的左括号的可能的数目。遇到左括号，未匹配的左括号数就加一；遇到右括号，未匹配的左括号数就减一，这个规则没有变。但是遇到\*的时候，它可以当做左括号，也可以当做右括号,也可以当做空号。所以我们需要处理的方法是：lower--; upper++。换句话说，lower表示我们在探索过程中尽可能地将星号转化为右括号，upper表示我们在探索过程中尽可能地将星号转化为左括号，但是同时保证当前的字符串不违法。最终遍历结束后，未匹配的左括号的数目范围需要包括零。
+
+那么遍历的过程中这个范围会有什么变化呢？
+
+首先，当lower小于0的时候，说明右括号太多了。那么之前出现的某个\*不能再代表右括号了，可以表示成空号。所以lower此时重置为0。而upper保持不变。
+
+（特别注意,如果题目中说的是\*不能作为空号而只能用作左右括号的话,此时的lower应该置为1,因为我们是把一个可能用作右括号的\*确定必须为左括号.一正一反相当于lower的值会增2。此时upper的值仍然不变。）
+
+其次，当upper小于0的时候，依然说明右括号太多了。但因为记录upper的原则是：之前的星号都尽可能地转化为左括号。说明此刻此刻，我们并没有任何多余的星号可以再变成左括号了。因此可以提前判断终止.
+
+最后，遍历结束时，lower和upper还需要满足什么条件？显然[lower,upper]必须包括零点（事实上，lower永远不会小于零），这样表示有可能整体未被匹配的左括号数目为零。
+
+类似的题有[lintcode 1475.Minimum-Legal-Bracket-Sequence](https://github.com/wisdompeak/LintCode/tree/master/Greedy/1475.Minimum-Legal-Bracket-Sequence)
+
+[Leetcode Link](https://leetcode.com/problems/valid-parenthesis-string)
+::::::::::::::
+Greedy/683.K-Empty-Slots/683.K-Empty-Slots.cpp
+::::::::::::::
+class Solution {
+public:
+    int kEmptySlots(vector<int> &flowers, int k) 
+    {
+        int N = flowers.size();
+        vector<int>days(N);
+        for (int i=0; i<N; i++)
+            days[flowers[i]-1] = i;
+        
+        int result = INT_MAX;
+        int candidate;
+        for (int i=0; i<N; i++)
+        {
+            int left = i;
+            int right = left+k+1;
+            if (right>=N) break;
+            
+            bool flag = 1;
+            for (int j=left+1; j<=right-1; j++)
+            {
+                if (days[j]<days[left] || days[j]<days[right])
+                {
+                    flag = 0;
+                    i = j-1;
+                    break;
+                }
+            }
+            if (flag) 
+            {
+                candidate = max(days[left],days[right])+1;
+                result = min(result,candidate);
+            }
+        }
+        if (result==INT_MAX)
+            return -1;
+        else
+            return result;
+    }
+};
+::::::::::::::
+Greedy/683.K-Empty-Slots/Readme.md
+::::::::::::::
+### 683.K-Empty-Slots
+
+此题可以用set的迭代器来做，每插入一个元素，只要在这个有序容器里找到前面和后面一个元素，看看之间是否相差ｋ即可．
+
+更巧妙的o(n)解法是一个贪心策略．
+
+我们将题目的条件转换成另一个数组days[i]，表示位置```ｉ```的花在```days[i]```这一天开放．那么我们希望得到什么呢？我们希望有这么一个宽度为k+1的区间[left,right],对于任意left<i<right，都有days[i]>days[left] && days[i]>days[right]．这说明这个区间内部的花都比两边的要晚开．等到left或right其中较晚的一个开放时，他们正好就是一对间隔Ｋ个ｐａｉｒ．
+
+那么如何找到这样一个窗口呢？我们尝试让它滑动起来．令left=0,right=left+k+1,然后逐个考察其中的```ｉ```是否符合条件．如果遇到不符合条件的，说明days[i]要比两边的都要早，成为了一个＂钉子户＂,所有小于i的left都不可能符合要求了．那么显然，我们的策略就是让这个钉子户作为新的left，进行下一次的搜索．
+
+注意,一旦找到一个合适的区间,那么输出的答案应该是max(days[left],days[right]),因为只有两边的花都开了,这个区间才成立.
+
+
+[Leetcode Link](https://leetcode.com/problems/k-empty-slots)::::::::::::::
+Greedy/727.Minimum-Window-Subsequence/727.Minimum-Window-Subsequence_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    string minWindow(string S, string T) 
+    {
+        int m = S.size();
+        int n = T.size();
+        S = "#"+S;
+        T = "#"+T;
+        auto dp = vector<vector<int>>(m+1,vector<int>(n+1,0));
+        
+        for (int j=1; j<=n; j++)
+            dp[0][j] = INT_MAX/2;
+        for (int i=0; i<=m; i++)
+            dp[i][0] = 0;
+        
+        for (int i=1; i<=m; i++)
+            for (int j=1; j<=n; j++)
+            {
+                if (S[i]==T[j])
+                    dp[i][j] = dp[i-1][j-1]+1;
+                else
+                    dp[i][j] = dp[i-1][j]+1;
+            }
+        
+        int len  = INT_MAX/2;
+        int pos;
+        for (int i=1; i<=m; i++)
+        {
+            if (dp[i][n] < len)
+            {
+                len = dp[i][n];
+                pos = i;
+            }
+        }
+        
+        if (len>=INT_MAX/2)
+            return "";
+        else
+            return S.substr(pos-len+1,len);
+        
+    }
+};
+::::::::::::::
+Greedy/727.Minimum-Window-Subsequence/727.Minimum-Window-Subsequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    string minWindow(string s1, string s2) 
+    {
+        int m = s1.size();
+        int next[m+1][26];
+        s1 = "#" + s1;
+        
+        for (int ch=0; ch<26; ch++)
+            next[m][ch] = -1;
+        for (int i=m-1; i>=0; i--)
+        {
+            for (int ch=0; ch<26; ch++)
+                next[i][ch] = next[i+1][ch];
+            next[i][s1[i+1]-'a'] = i+1;
+        }
+        
+        vector<int>start;
+        for (int i=1; i<=m; i++)
+        {
+            if (s1[i]==s2[0])
+                start.push_back(i);
+        }
+        
+        string ret = "";
+        for (int i: start)
+        {
+            int j = i-1;
+            int flag = 1;
+            for (auto ch: s2)
+            {
+                j = next[j][ch-'a'];
+                if (j==-1)
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag)
+            {
+                int len = j-i+1;
+                if (ret == "" || len < ret.size())
+                {
+                    ret = s1.substr(i, len);
+                }
+            }        
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/727.Minimum-Window-Subsequence/Readme.md
+::::::::::::::
+### 727.Minimum-Window-Subsequence
+
+#### 解法1：双序列DP
+对于双字符串的题目，双序列DP是一个非常自然的思路。根据双序列DP的套路，我们定义dp[i][j]表示，截止到S[i]的最短的substring长度，使得T[1:j]是这个substring的subsequence。注意，这个substring一定要包括S[i]本身。也就是说，如果这个dp的值是k，那么要求T[1:j]是S[i-k+1:i]的一个subsequence。
+
+最终的答案是 min {dp[i][N]} (i=1,2,...M)。
+
+根据双序列DP的套路，转移方程的入手点就是观察S[i]和T[j]的关系。
+```cpp
+for (int i=1; i<=M; i++)
+ for (int j=1; j<=N; j++)
+ {
+    if (S[i]==T[j])
+       dp[i][j]=dp[i-1][j-1]+1;
+    else
+       dp[i][j]=dp[i-1][j]+1; //说明S[i]对于构建T[1:j]没有帮助，T[1:j]得从dp[i][j-1]里面找
+ }
+```
+然后我们考虑边界条件。易知 dp[0][j] (i=0, j=1,2,...N) 都是需要定义的边界条件。长度为0的S子串肯定不会是T的supersequence。故这些初始值应该是INT_MAX.
+
+其次可以看出 dp[i][0] (i=0,1,2,...,M)也是需要提前设置初始值。显然，长度为0的T子串是任何长度为0的S子串的subsequence，故初始值是0.
+
+最后在所有dp[i][N]中找到第一个最小值k，那么 S.substr(i-k+1,k)就是答案。
+
+显然时间复杂度是o(MN).
+
+#### 解法2：状态机
+其实只要确定T[0]在S中的位置（比如说是start），那么T在S里的superstring就可以唯一地用贪心法确定。简单的方法就是双指针：S的指针指向start，T的指针指向0，S的指针一直向右遍历，试图去匹配T里面的每一个字符。如果T能够扫描完每一个字符，那么S指针的位置就是这个superstring的结尾。这样的做法复杂度是```(M+N)*K```，其中K是T[0]在S中出现的次数。
+
+也可以利用类似```LC 792```的状态机的做法。提前对S预处理得到next[i][ch]，表示在S串的i位置上向右看，第一个出现ch的位置。这样我们就可以用o(1)时间实现S指针的跳转。这样的做法时间复杂度是```N*K```.
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-window-subsequence)
+::::::::::::::
+Greedy/731.My-Calendar-II/731.My-Calendar-II.cpp
+::::::::::::::
+class MyCalendarTwo {
+    vector<pair<int,int>>events;
+public:
+    MyCalendarTwo() 
+    {
+        
+    }
+    
+    bool book(int start, int end) 
+    {
+        vector<pair<int,int>>temp;
+        for (int i=0; i<events.size(); i++)
+        {
+            if (!(events[i].second<=start || events[i].first>=end))
+                temp.push_back(events[i]);
+        }
+        sort(temp.begin(),temp.end());
+        
+        for (int i=1; i<temp.size(); i++)
+        {
+            if (temp[i].first<temp[i-1].second)
+                return false;
+        }
+        
+        events.push_back({start,end});        
+
+        return true;
+    }
+};
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * bool param_1 = obj.book(start,end);
+ */
+::::::::::::::
+Greedy/731.My-Calendar-II/731.My-Calendar-II_v2.cpp
+::::::::::::::
+class MyCalendarTwo {
+    multiset<pair<int,int>>Set;
+public:
+    MyCalendarTwo() 
+    {
+        
+    }
+    
+    bool book(int start, int end) 
+    {
+        vector<pair<int,int>>p;
+        for (auto x: Set)
+        {
+            if (!(end<=x.first || start>=x.second))
+                p.push_back(x);
+            if (end<=x.first) break;
+        }        
+        for (int i=1; i<p.size(); i++)
+        {
+            if (p[i].first<p[i-1].second)
+                return false;
+        }
+        Set.insert({start,end});
+        return true;
+    }
+};
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * bool param_1 = obj.book(start,end);
+ */
+::::::::::::::
+Greedy/731.My-Calendar-II/Readme.md
+::::::::::::::
+### 731.My-Calendar-II
+
+不需要考虑有序Hash和迭代器。此题只要找出所有与[start,end)重合的区间，再检查这些区间是否有互相的重合。是的话，说明必然有triple booking。
+
+
+[Leetcode Link](https://leetcode.com/problems/my-calendar-ii)::::::::::::::
+Greedy/757.Set-Intersection-Size-At-Least-Two/757.Set-Intersection-Size-At-Least-Two.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        if (a[1]==b[1])
+            return a[0]>b[0];
+        else
+            return a[1]<b[1];
+    }
+public:
+    int intersectionSizeTwo(vector<vector<int>>& intervals) 
+    {
+        sort(intervals.begin(), intervals.end(), cmp);
+        int a = intervals[0][1]-1, b = intervals[0][1];
+        int count = 2;
+
+        for (auto& interval: intervals)
+        {
+            if (interval[0]<=a)
+                continue;
+            else if (interval[0]<=b)
+            {
+                count++;
+                a = b;
+                b = interval[1];
+            }
+            else
+            {
+                count+=2;
+                a = interval[1]-1;
+                b = interval[1];
+            }
+        }
+        return count;
+    }
+};
+::::::::::::::
+Greedy/757.Set-Intersection-Size-At-Least-Two/Readme.md
+::::::::::::::
+### 757.Set-Intersection-Size-At-Least-Two
+
+我们想象如果我们能找出一系列non-overlapping的区间，那么我们的答案必然需要在每个区间内至少采集两点。所以本题的答案至少是maximum number of non-overlapping intervals的两倍。所以借鉴435的思路，我们采用sort by ending points的方法去下手。这个突破口的想法和```452.Minimum-Number-of-Arrows-to-Burst-Balloons```很相似。
+
+如果我们将这些区间按照后边界从小到大排序后（相同后边界的情况下，显然只考虑区间跨度最短的，因为短区间能被S覆盖的话，那么相同右端点的长区间必然也能被覆盖），先考虑第一个区间。对于这个区间，我们肯定会选该区间的最后两点加入S，因为这两点是最有可能与后面的区间重合的，效率最高。
+
+然后我们再考虑下一个区间[x,y]，此时S应该如何更新呢？一个最明显的特点是，y一定大于等于S里的最大点。于是此时最有影响的其实就只是区间的前边界a。我们分类讨论x的位置查看对S的影响：
+1. 如果[x,y]覆盖了S最后两个点，那么S就不用更新；
+2. 如果[x,y]只覆盖了S最后一个点，那么这个点其实就一定是S的后边界，那么S需要再补一个点。这个点是什么呢?最好的选择就是[x,y]的最后一个点，即y。这种做法是最“贪心”的，因为它最可能会与[x,y]之后的区间重合。
+3. 如果[x,y]没有覆盖S，那么S就要加上什么呢，是[x,y]的最后两个点即可，同理也是用贪心的策略。
+
+综上，我们其实只要每次关注集合S里的最大两个点a，b即可，不断与下一个区间[x,y]考察相对关系，更新S。
+
+
+[Leetcode Link](https://leetcode.com/problems/set-intersection-size-at-least-two)
+::::::::::::::
+Greedy/761.Special-Binary-String/761.Special-Binary-String.cpp
+::::::::::::::
+class Solution {
+public:
+    string makeLargestSpecial(string S) 
+    {
+        if (S.size()==2) return S;
+
+        vector<string>strs;
+        
+        for (int i=0; i<S.size(); i++)
+        {
+            int i0=i;
+            int count=0;
+            while (i<S.size())
+            {
+                if (S[i]=='1')
+                    count++;
+                else
+                    count--;                
+                if (count==0)
+                    break;   
+                i++;
+            }
+            strs.push_back("1"+makeLargestSpecial(S.substr(i0+1,i-i0-1))+"0");
+        }
+        
+        sort(strs.begin(),strs.end(),greater<string>());
+        string result;
+        for (auto a:strs) result+=a;
+        return result;
+        
+    }
+};
+::::::::::::::
+Greedy/761.Special-Binary-String/Readme.md
+::::::::::::::
+### 761.Special-Binary-String
+
+首先，应该容易分析出：对于一个special string S，它整体可以拆分为一个或若干个不可再拆分的、连续的sub special string。对于每个不可再连续拆分的sub special string S'，它的首位一定是1，末位一定是0，中间一定还是一个special string，于是可能还可以继续拆分下去。
+
+写成式子就是： 任何 S = （1）ABCDEF（0）,首位的1和末位的0可能存在，而中间的ABCDEF都还是不可连续拆分的speical string，
+
+因为题目规定的swap的规则必须是在相邻的special string之间进行，所以对于任何一个S,只能通过内部的ABCDEF这些S'之间的位置调整,使得S自身调整至字典序最大（暂时不考虑ABCDEF内部的调整，假设它们已经各自字典序最优）。那么如何调整ABCDEF使得S的字典序最大呢？显然，只要让ABCDEF按照字典序从大到小排列即可。
+
+这就有了递归的思路。把S拆成ABCDEF，让它们各自递归成字典序最大，然后优化后的ABCDF按字典序重排，技能得到字典序最大的S。
+
+
+[Leetcode Link](https://leetcode.com/problems/special-binary-string)::::::::::::::
+Greedy/767.Reorganize-String/767.Reorganize-String_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    string reorganizeString(string S) 
+    {
+        unordered_map<char,int>count(26);        
+        for (auto ch:S) 
+            count[ch]++;
+
+        vector<pair<int,char>>arr;
+        for (auto ch: S)
+            arr.push_back({count[ch], ch});
+        sort(arr.rbegin(), arr.rend());
+
+        string ret(S.size(),' ');
+
+        int i = 0;
+        for (auto [cnt, ch]: arr)
+        {
+            ret[i] = ch;
+            if (i>=1 && ret[i]==ret[i-1])
+                return "";
+            i+=2;
+            if (i>=S.size())
+                i = 1;            
+        }
+
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/767.Reorganize-String/767.Reorganize-String_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    string reorganizeString(string S) 
+    {
+        unordered_map<char,int>count;
+        for (auto ch:S) count[ch]++;
+
+        priority_queue<pair<int,char>>pq;        
+        for (auto x:count) 
+            pq.push({x.second, x.first});        
+        
+        string result;
+        while (!pq.empty())
+        {
+            int k = min(2,(int)pq.size());
+            vector<pair<int,char>>temp;
+            
+            for (int i=0; i<k; i++)
+            {
+                auto [num, ch] = pq.top(); 
+                pq.pop();
+                result+=ch;
+                num--;
+                if (num!=0) temp.push_back({num,ch});                
+            }
+            if (k<2 && temp.size()>0) return "";
+            for (auto a:temp) pq.push(a);
+        }
+        return result;
+    }
+};
+::::::::::::::
+Greedy/767.Reorganize-String/Readme.md
+::::::::::::::
+### 767.Reorganize-String
+
+本题本质上```1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work```的follow up，要求将具体的规划方案打印出来。此题和```1054.Distant-Barcodes```一模一样。类似地，本题还是```358. Rearrange String k Distance Apart```在k=2时的特例。
+
+#### 解法1：贪心
+我们将所有的字符按照频次重新排序，例如abcbba，就会重排成bbbaac。对于频次较高的字符我们会尽量安排它们间隔排列，即先放在奇数的位置上。一旦奇数位置上放满了，就从头开始在偶数位置上。这样就最大限度地避免高频词的字符被放在相邻的位置。
+
+从上面的贪心策略我们可以推论出，只要最高频次的字符的数目不多于总数目的一半，那么用上面的方法构造出的结果就是合法的。反之必然会有相邻的字符相同。
+
+#### 解法2：优先队列
+之前的方法是跳跃地构造结果。用优先队列可以直接顺序地构造结果。
+
+基本的思想就是：每个回合尽量使用当前频次最多的两个字母。如果不优先使用频次最多的字母，则越有可能提早耗尽其他频次较低的字符种类。当最终手头只剩一种字母时，构造就无法进行下去。
+
+数据结构上，维护一个优先队列来实时得到当前频次最多的两个字母。只要每次能取两个不同字母组成一对加入字符串，可以保证顺利构造结果。记得使用完之后，将这两种字母频次减一之后再放入队列之中。
+
+失败的条件：队列中只有一种字母，并且字母的频次大于等于2.
+::::::::::::::
+Greedy/781.Rabbits-in-Forest/Readme.md
+::::::::::::::
+### 781.Rabbits-in-Forest
+
+如果answers里面含有元素m，那么我们最多允许它出现m+1次，使得这m+1个汇报的兔子是属于共同颜色的。如果出现了第m+2只兔子同样汇报了m，那么它只能是另外一种颜色，即必然另外m+1只兔子属于另一个颜色圈。
+
+更一般的，如果有n只兔子都汇报了m，那么“颜色圈”的数量最少是```k = (n-1) / (m+1) + 1```。那么对应有```(m+1)*k```只兔子。
+::::::::::::::
+Greedy/792.Number-of-Matching-Subsequences/792.Number-of-Matching-Subsequences_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int numMatchingSubseq(string S, vector<string>& words) 
+    {
+        auto table = vector<vector<int>>(26);
+        for (int i=0; i<S.size(); i++)
+            table[S[i]-'a'].push_back(i);
+        
+        int count = 0;
+        for (auto str:words)
+        {
+            if (str.size()>S.size()) continue;
+            if (check(str,table)) count++;
+        }
+            
+        return count;
+    }
+    
+    bool check(string A, vector<vector<int>>&table)
+    {
+        int i=0;
+        for (char ch:A)
+        {
+            auto iter = lower_bound(table[ch-'a'].begin(),table[ch-'a'].end(),i);
+            if (iter==table[ch-'a'].end()) return false;
+            i = *iter+1;
+        }
+        return true;
+    }
+};
+::::::::::::::
+Greedy/792.Number-of-Matching-Subsequences/792.Number-of-Matching-Subsequences_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int numMatchingSubseq(string S, vector<string>& words) 
+    {
+        int m = S.size();
+        S = "#"+S;
+        int next[m+1][26];
+        
+        for (int k=0; k<26; k++)
+            next[m][k] = -1;
+        for (int i=m; i>=1; i--)
+        {
+            for (int k=0; k<26; k++)
+                next[i-1][k] = next[i][k];
+            next[i-1][S[i]-'a'] = i;
+        }
+        
+        int ret = 0;
+        for (auto word: words)
+        {
+            int flag = 1;
+            int i = 0;
+            for (auto ch: word)
+            {
+                i = next[i][ch-'a'];
+                if (i==-1)
+                {
+                    flag = 0;
+                    break;
+                }                
+            }
+            if (flag) ret++;
+        }
+        return ret;        
+    }    
+};
+::::::::::::::
+Greedy/792.Number-of-Matching-Subsequences/Readme.md
+::::::::::::::
+### 792.Number-of-Matching-Subsequences
+
+传统的方法，利用双指针挨个比较s和word，那么时间复杂度就是o(ST)，其中S是s的长度，T是words的总长度。本题的考点在于s的长度很大时，时间复杂度如何优化。
+
+#### 解法1：二分搜索
+我们可以提前预处理s，将每个字符出现的位置分别归类，即pos[ch]包含了s里字符ch所在的位置（可能有若干个）。假设我们在查看word[0]='a'的时候，直接从pos['a']里面找最早的位置i。再查看word[1]='b'的时候，又从pos['b']里面找第一个大于等于i的位置j。再查看word[1]='c'的时候，从pos['c']里面找第一个大于等于j的位置k。依次类推。如果遇到某个word的字符ch，但是pos[ch]里面没有大于等于某个期望位置的元素时，那么这个word就不是s的子序列了。
+
+时间复杂度是o(TlogS)，因为在word中每处理一个字符，都需要在pos[ch]里进行一次二分查找。
+
+#### 解法2：状态机
+我们提前处理s，得到next[i][ch]，表示i位置之后下一个出现字符ch的位置是哪里；如果再没有出现过ch，那么标记-1. next数组的预处理是从后往前进行的，时间是o(26S).
+
+在处理word时，我们通过next[0][word[0]]，找到下一个出现word[0]的位置i。再通过next[i][word[1]]，找到下一个出现word[1]的位置j。再通过next[i][word[2]]，找到下一个出现word[2]的位置k。依次类推，如果word的每一个字符都能在next中找到，那么就OK。否则如果遇到类似```next[k][word[3]]==-1```，就说明该字符找不到，即word不是s的子序列。
+
+时间复杂度是o(T).
+::::::::::::::
+Greedy/826.Most-Profit-Assigning-Work/826.Most-Profit-Assigning-Work.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) 
+    {
+        vector<pair<int,int>>tasks;
+        for (int i=0; i<difficulty.size(); i++)
+            tasks.push_back({difficulty[i],profit[i]});
+        
+        sort(tasks.begin(),tasks.end());
+        
+        int MAX = tasks[0].second;
+        for (int i=1; i<tasks.size(); i++)
+        {
+            tasks[i].second = max(tasks[i].second,MAX);
+            MAX = tasks[i].second;
+        }        
+        
+        int sum = 0;
+        for (int x:worker)
+        {
+            auto iter = upper_bound(tasks.begin(),tasks.end(),make_pair(x,INT_MAX));
+            if (iter!=tasks.begin())
+            {
+                iter = prev(iter,1);
+                sum+=iter->second;
+            }
+        }
+        return sum;
+    }
+};
+::::::::::::::
+Greedy/826.Most-Profit-Assigning-Work/Readme.md
+::::::::::::::
+### 826.Most-Profit-Assigning-Work
+
+此题不难想到正确的贪心解法。
+
+我们将所有的任务ｔａｓｋｓ按照难度从小到大进行排序然后遍历。如果难度小的任务的收益是ｐ，那么比之难度更大的任务的收益理论上不应该比ｐ更小，否则我们可以选择用难度小收益大的项目替代更划算。所以我们将这些任务的收益重新赋值，使得ｔａｓｋｓ按照难度从小到大排列后，收益也是递增的。
+
+接下来对于任何一个工人，我们在这个ｔａｓｋｓ序列中找到他所能接受的最大难度ｄ的任务，那么这个任务对应的（重新赋值后的）收益，就是这个工人所能创造的最大收益。因为这个收益，本质对应了所以难度小于等于ｄ的任务中的最高收益。每个工人都是如此计算，得到的总收益就是答案。
+
+本题的ｃｐｐ解法要注意下面这句：
+```
+auto iter = upper_bound(tasks.begin(),tasks.end(),make_pair(x,INT_MAX));
+```
+这里的第三个参数一定要用make_pair来生成，不能用{x,INT_MAX}，否则编译器不能自动正确地转化。
+
+
+[Leetcode Link](https://leetcode.com/problems/most-profit-assigning-work)::::::::::::::
+Greedy/870.Advantage-Shuffle/870.Advantage-Shuffle.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> advantageCount(vector<int>& A, vector<int>& B) 
+    {
+        int n = A.size();
+        vector<pair<int,int>>BB;
+        for (int i=0; i<n; i++)
+            BB.push_back({B[i],i});
+        sort(BB.begin(), BB.end());
+        sort(A.begin(), A.end());
+        
+        int j=0;
+        vector<int>rets(n,-1);
+        for (int i=0; i<n; i++)
+        {
+            while (j<n && A[j]<=BB[i].first)
+                j++;
+            if (j<n)
+            {
+                rets[BB[i].second] = A[j];
+                A[j] = -1;
+            }                
+        }
+        
+        j = 0;
+        for (int i=0; i<n; i++)
+        {
+            if (rets[i]!=-1) continue;
+            while (j<n && A[j]==-1) j++;
+            rets[i] = A[j];
+            j++;
+        }
+        return rets;
+    }
+};
+::::::::::::::
+Greedy/871.Minimum-Number-of-Refueling-Stops/871.Minimum-Number-of-Refueling-Stops.cpp
+::::::::::::::
+class Solution {
+public:
+    int minRefuelStops(int target, int startFuel, vector<vector<int>>& stations) 
+    {
+        if (startFuel>=target) return 0;
+        
+        stations.push_back({target,0});
+        
+        int stationID = 0;
+        int curFuel = startFuel;
+        priority_queue<int>pq;
+        int count = 0;
+        
+        while (stationID<stations.size())
+        {
+            if (curFuel>=stations[stationID][0])
+            {
+                pq.push(stations[stationID][1]);
+                stationID++;                
+            }
+            else
+            {
+                while (curFuel<stations[stationID][0] && pq.size()>0)
+                {
+                    curFuel+=pq.top();
+                    pq.pop();
+                    count+=1;
+                }
+                
+                if (curFuel<stations[stationID][0] && pq.size()==0)
+                    return -1;
+            }
+        }
+        
+        return count;        
+    }
+};
+::::::::::::::
+Greedy/871.Minimum-Number-of-Refueling-Stops/Readme.md
+::::::::::::::
+### 871.Minimum-Number-of-Refueling-Stops
+
+我们可以这样考虑．现在有一定量的startFuel，假设可以驶过两个加油站，但是达不到第三个加油站．说明我们应该在前两个加油站中的某一个或全部两个停下来加油．但是该加多少呢？
+
+其实，我们不用想的太远，千里之行始于足下，目前只需要加油使得能够开到第三个加油站即可．于是，我们优先考虑前两个加油站里较多的那一个，不够的话就算上另一个．反正到了第三个加油站后，我们就又多了一个option．等过了第三个加油站，我们再类似地考虑，是否需要加油才能开到第四个加油站．如果需要，就在前三个加油站里面尚未加过油的那些里，选择油量最多的那个即可；不需要的话，就把第四个加油站放入option list,考虑是否需要加油才能开到第五个加油站...
+
+这就是贪心法的最优策略．特别注意，我们得把target当做一个加油站来处理。不能只用贪心法处理到最后一个加油站，再用剩下的curFuel来考虑是否能到target，那样是错误的：因为这样的话你只是用尽全力到达最后一个加油站，而并没有用尽全力去到达target。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-number-of-refueling-stops)::::::::::::::
+Greedy/881.Boats-to-Save-People/881.Boats-to-Save-People_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int numRescueBoats(vector<int>& people, int limit) 
+    {
+        sort(people.begin(), people.end());
+        int i=0, j=people.size()-1;
+        int count = 0;
+        while (i<=j)
+        {
+            if (people[i]+people[j]<=limit)
+                i++;
+            j--;
+            count++;
+        }
+        return count;
+    }
+};
+::::::::::::::
+Greedy/881.Boats-to-Save-People/881.Boats-to-Save-People_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int numRescueBoats(vector<int>& people, int limit) 
+    {
+        vector<int>p(limit+1,0);
+        for (int w: people)
+            p[w]++;
+        
+        int count = 0;
+        for (int x = limit; x>0; x--)   // weight of the heaviest guy up to now
+        {
+            for (int i = p[x]; i>0; i--)
+            {
+                count++;
+                p[x]--;
+                
+                int y = limit-x;
+                while (y>0 && p[y]==0) y--;
+                if (y>0) p[y]--;
+                if (x==y) i--;
+            }
+        }
+        return count;
+    }
+};
+::::::::::::::
+Greedy/881.Boats-to-Save-People/881.Boats-to-Save-People_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    int numRescueBoats(vector<int>& people, int limit) 
+    {
+        vector<int>p(limit+1,0);
+        for (int w: people)
+            p[w]++;
+        
+        int count = 0;
+        int x = limit;
+        int y = 1;
+        
+        while (x>0)
+        {
+            while (x>0 && p[x]==0)
+                x--;
+            if (x==0) break;
+            count++;
+            p[x]--;
+            
+            while (y+x<=limit && p[y]==0) 
+                y++;
+            if (y+x<=limit && p[y]>0) 
+                p[y]--;
+        }
+                
+        return count;
+    }
+};
+::::::::::::::
+Greedy/881.Boats-to-Save-People/Readme.md
+::::::::::::::
+### 881.Boats-to-Save-People
+
+#### 解法1：
+容易想到比较严谨的贪心解，就是找到当前最重的小胖x，然后找到当前最大的小瘦y使得```x+y<=limit```，这样x和y的配对是对资源的最优利用。
+
+事实上这个贪心法可以进行松弛：对于当前最重的小胖x，只需要找到当前最小的小瘦y进行配对，就可以实现对资源的最优利用。分析如下。假设我们将所有人从轻到重排序```y1,y2,y3,y4,...,x4,x3,x2,x1```。对于当前最重的小胖对应的是x1，假设如果根据严谨的贪心算法找到的配对是y4（也就是恰好满足y4+x1<=limit），那么容易证明{x1,y1},{x2,y2},{x3,y3},{x4,y4}这四对其实都满足条件（即两个人加起来不超过limit）。所以我们可以将这四对剥离（因为已经充分利用了资源），对于剩下的人同理进行递归处理就可以了。
+
+于是这道题就转化为了双指针。左右指针朝中间移动，计算有多少对满足```people[i]+people[j]<=limit```.
+
+这种解法最大的隐患是时间复杂度需要O(NlogN)，勉强可以通过。
+
+#### 解法2：
+如何避免排序就能确定最重的人是谁呢？我们可以借鉴桶排序的思想：用一个计数器数组p来记录每个重量的人数。
+
+假设当前最重的小胖的体重是x，那么对于x的值我们可以从limit开始往下猜，一旦发现p[x]>0，说明我们找到了这个最重的人。那么如何寻找x的最合理队友呢？我们可以从体重y=limit-x开始往下猜，一旦发现p[y]>0，就说明我们找到了最适合与x配对的小瘦（其体重为y）。记得每次配对之后，我们都需要及时更新计数器p[x]-- and/or p[y]--.
+
+这种解法最大的雷区在于：如果遇到了```x==y```的情况，说明小胖和小瘦的体重相同，那么对于小胖的处理次数就不是原先的p[x]了，而是需要及时减去一才对。
+
+#### 解法3：
+可以将解法1的松弛贪心思想，以及解法2桶排序的思想结合起来。基本思想依然是双指针，但指针指的不是数组首尾的index，而是区间范围[1,limit]左右边界的value.
+
+假设当前最重的小胖的体重是x，那么对于x的值我们可以从limit开始往下猜，一旦发现p[x]>0，说明我们找到了这个最重的人。同时我们寻找当前最轻的小瘦，假设其体重为y，对于y的值我们可以从1开始往上猜，一旦发现p[y]>0，说明我们找到了当前最轻的人。对于每个小胖我们都试图寻找当前最轻的小瘦，如果符合```x+y<0 && p[y]>0```就说明存在它可以与小胖同船。
+
+显然容易分析出时间复杂度是o(N+limit)，比解法1要优秀.
+
+
+[Leetcode Link](https://leetcode.com/problems/boats-to-save-people)::::::::::::::
+Greedy/910.Smallest-Range-II/910.Smallest-Range-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int smallestRangeII(vector<int>& A, int K) 
+    {
+        sort(A.begin(), A.end());
+        int diff = A.back()-A[0];
+        for (int i=0; i<A.size()-1; i++)
+        {
+            int MAX = max(A[i]+K, A.back()-K);
+            int MIN = min(A[0]+K, A[i+1]-K);
+            diff = min(diff, MAX-MIN);
+        }
+        return diff;
+    }
+};
+::::::::::::::
+Greedy/910.Smallest-Range-II/Readme.md
+::::::::::::::
+### 910.Smallest-Range-II
+
+首先要有一个直觉：我们将A排序之后，为了减少“贫富差距”，我们一定是将A的左边一部分元素都加上K，右边一部分元素都减去K。为什么左边那部分一定都是加上K，而不是加减交错呢？比如说，a<b<c，如果我们决策是 a+K, b-K, c+K 的话，b和c之间的差距不仅没有减小反而被拉大了。所以在最终的方案里，绝对不可能出现“加，减，加”交错操作的情况，唯一的方案就是：左边一部分加K，右边一部分减K。
+
+那么如果确定这个分界线呢？其实并没有更优秀的办法，挨个尝试就行了。假设这个分界线在A[i]后面，也即是说A[0]～A[i]都是加K，A[i+1]～A[n-1]都是减K，那么这个新数组B的最大值，其实可以从左右两部分分别的最大值得到，即```MAX = max(A[i]+K, A.back()-K)```.同理，这个新数组B的最小值，其实可以从左右两部分分别的最小值得到，即```MIN = min(A[0]+K, A[i+1]-K)```。而我们的答案就是在所有的```diff=MAX-MIN```中挑选最小的那个。
+
+
+[Leetcode Link](https://leetcode.com/problems/smallest-range-ii)::::::::::::::
+Greedy/921.Minimum-Add-to-Make-Parentheses-Valid/921.Minimum-Add-to-Make-Parentheses-Valid.cpp
+::::::::::::::
+class Solution {
+public:
+    int minAddToMakeValid(string S) 
+    {        
+        int count = 0;
+        int ret = 0;
+        for (auto ch:S)
+        {
+            if (ch=='(')
+                count++;
+            else
+                count--;
+            if (count < 0)
+            {
+                ret += 1;
+                count = 0;
+            }
+        }
+        ret += count;
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/921.Minimum-Add-to-Make-Parentheses-Valid/Readme.md
+::::::::::::::
+### 921.Minimum-Add-to-Make-Parentheses-Valid
+
+此题的贪心法比较容易理解。我们维护一个计数器count，表示是目前为止尚未被匹配的左括号的数目。
+
+举个例子：s = (()))((
+
+我们依次查看到```((```的时候，count=2，此时我们并不着急对s做任何改动，因为s后面还有字符，说不定这些左括号都能被匹配到。
+
+我们继续查看到```(())```的时候，count=0，果然这时候的字符就是匹配的，我们依然不需要对s做任何改动。
+
+我们继续查看到```(()))```的时候，count=-1，此时我们不得不出手。因为无论s后面的字符如何，都无法挽救当前这个无法被匹配的右括号。此时必须处理，即增加一个左括号与之匹配。至于放在哪里我们并不关心，总之有地方放就是了。注意，既然增加一个左括号，那么此时的count=0.
+
+我们继续查看到```(()))((```的时候，count=2，字符串完结。对于这两个未被匹配的左括号，我们也必须处理，不得不增加两个右括号与之匹配。
+
+回顾上述的过程，我们所有增加括号的操作都是必要操作。最终我们实现了count=0，意味着这个字符串此时已经合法了。所以之前的“必要操作”也是“充分操作”，就是最终解。
+
+如果题目改成"Minimum delete to Make Parentheses Valid"，答案其实一模一样。我们增加多少括号促成匹配，就等效于减少多少（对称的）括号促成匹配。
+::::::::::::::
+Greedy/932.Beautiful-Array/932.Beautiful-Array.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> beautifulArray(int N) 
+    {
+        if (N==1) return {1};
+        if (N==2) return {2,1};
+        
+        vector<int>A = beautifulArray((N+1)/2);
+        vector<int>B = beautifulArray(N-(N+1)/2);
+        vector<int>ret;
+        for (int x:A) ret.push_back(x*2-1);
+        for (int x:B) ret.push_back(x*2);
+        return ret;
+    }
+};
+::::::::::::::
+Greedy/932.Beautiful-Array/Readme.md
+::::::::::::::
+### 932.Beautiful-Array
+
+此题的突破点是：如果A是奇数，B是偶数，那么A和B的摆放位置是任意的，因为不可能有C夹在AB之间且C*2=A+B.所以这就提示我们如果我们把所有的奇数组成一个beautiful array，所有的偶数组成一个beautiful array，那么把这两个array简单的拼接，就能组成一个完整的beautiful array.
+
+那么我们怎么把所有的奇数,比如说[1,3,5,7]组成一个beautiful array呢？这是一个四元素的数组，我们很容易想到，如果已知[1,2,3,4]组成的beautiful array，那么将它们统统乘以2减去1，就能得到用[1,3,5,7]组成的beautiful array了。同理，将[1,2,3,4]组成的beautiful array乘以2，也能得到[2,4,6,8]组成的beautiful array。于是两者拼接，就有了从1到8组成的beautiful array。
+
+由此可见，这道题就是考察了简单的递归思想。
+
+
+[Leetcode Link](https://leetcode.com/problems/beautiful-array)::::::::::::::
+Greedy/936.Stamping-The-Sequence/936.Stamping-The-Sequence.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> movesToStamp(string stamp, string target) 
+    {
+        bool changed = 1;
+        vector<int>results;
+        
+        while (changed==1)
+        {
+            changed = 0;
+            for (int i=0; i<target.size(); i++)
+            {
+                if (check(stamp,target,i))
+                {                    
+                    for (int k=0; k<stamp.size(); k++)
+                        target[i+k] = '*';       
+                    results.push_back(i);
+                    changed = 1;
+                    break;
+                }
+            }
+        }
+        
+        for (int i=0; i<target.size(); i++)        
+            if (target[i]!='*') return {};
+                            
+        reverse(results.begin(),results.end());
+        return results;
+        
+    }
+    
+    bool check(string&stamp, string&target, int pos)
+    {
+        int flag = 0;
+        for (int i=0; i<stamp.size(); i++)
+        {
+            if (pos+i>=target.size()) return false;
+            if (target[pos+i]=='*') continue;
+            if (target[pos+i]!=stamp[i]) return false;
+            flag = 1;
+        }
+        return flag;
+    }
+};
+::::::::::::::
+Greedy/936.Stamping-The-Sequence/Readme.md
+::::::::::::::
+### 936.Stamping-The-Sequence
+
+周赛的时候想到的是递归。对于这一系列ｓｔａｍｐ的操作，只关注最后一次盖章：其实可以看成找到中间某处完全匹配的地方，将整个序列断成了两部分，能匹配的部分我们就替换成是"*****".这样我们将原来的问题分解为了两个子序列，可以再递归处理。其中如果遇到边界是星号的部分我们都认为能匹配上的。
+
+其实上面的想法再进一步的话，可以得到更优美的贪心解法。
+
+思想本质是：我们只要在当前的target中能够找到匹配stamp的片段，比如说是区间[a,b],我们就将标记这个操作为最后一步操作。然后无论我们怎么处理剩下的序列，当我们回过头来最终执行替换[a,b]的操作时，都能保证[a,b]是正确的。也就是说，无论怎么折腾剩下的，最终都不会影响[a,b]。同理，如果我们再在剩下的target里中能找到匹配stamp的片段，比如说[c,d]时，我们就将其标记为倒数第二次操作，那么无论再之后的操作如何，最终都不会影响[c,d]以及[a,b]。
+
+举个例子：
+```
+target:
+XXXXabcabcdcdXXX
+
+operations:
+#N-0: XXXXXXXabcdXXXXX
+#N-1: XXXXabcd***XXXXX
+#N-2: XXXXXXX**abcdXXX
+...
+```
+当从下往上执行最后三步替换之后，一定能保证序列最终中间的部分是期望的```abcabcdcd```.原因在于，后面的操作会覆盖前面的操作，所以前面的操作(比如说第N-1次)只需要负责后面操作（第Ｎ次）覆盖不到的那部分即可(i.e. abc)，其他的反正都会被后面的操作覆盖(i.e. d)，当前的替换即使不正确也没关系。
+
+所以我们的策略是从上往下,只要能在当前序列中能找到匹配的，我们就将其置为星号。然后再剩下的序列里，只要能找到匹配的（其中如果序列中已经有星号则视为任意匹配），我们也立即将其置为星号。直至序列中所有的字符都已经置为星号为止。注意，最终的操作顺序则是反过来。
+
+
+[Leetcode Link](https://leetcode.com/problems/stamping-the-sequence)::::::::::::::
+Greedy/948.Bag-of-Tokens/948.Bag-of-Tokens.cpp
+::::::::::::::
+class Solution {
+public:
+    int bagOfTokensScore(vector<int>& tokens, int P) 
+    {
+        sort(tokens.begin(),tokens.end());
+        int i = 0;
+        int j = tokens.size()-1;
+        int score = 0;
+        int result = 0;
+        
+        while (i<=j)
+        {
+            if (P>=tokens[i])
+            {
+                P-=tokens[i];
+                i++;
+                score++;
+                result = max(result,score);
+            }
+            else if (score>0)
+            {
+                score--;
+                P+=tokens[j];
+                j--;
+            }
+            else
+                break;
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Greedy/948.Bag-of-Tokens/Readme.md
+::::::::::::::
+### 948.Bag-of-Tokens
+
+本题的大体思路是，我们先将tokens排序，优先用手头的P去收购面值最小的tokens[i]，等到手头的P不够用了怎么办？我们将当前手头最小的token[i]兑换成1个point再去兑换面值最大的token[j]，这样空手套白狼，就将手头的P又凭空增加了token[j]．但代价有两个：第一是我们少了一个point；第二是我们失去未来收购面值最大的token[j]的机会．
+
+所以，总体的最优策略已经出来了．那就是按照上面的方法，手头的Ｐ按从小到大能收购多少token那就收购，不能收购就卖掉面值减去1分（卖掉最小的token）换面值最大的，增值手头的Ｐ．然后重复上述过程．整个流程中，手头曾持有最多的token的数量，就是答案．
+
+核心的代码如下：
+```cpp
+        while (i<=j)  // 保证手头待买入的i必须在待替换的j之前
+        {
+            if (P>=tokens[i])   // 仍然有钱买入
+            {
+                P-=tokens[i];
+                i++;
+                points++;
+                result = max(result,points);
+            }
+            else if (points>0)  // 没钱买了，但是仍有分可以卖
+            {
+                points--;
+                P+=tokens[j];
+                j--;
+            }
+            else                // 既不能买，也不能卖，策略结束
+                break;
+        }
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/bag-of-tokens)::::::::::::::
+Greedy/955.Delete-Columns-to-Make-Sorted-II/955.Delete-Columns-to-Make-Sorted-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int minDeletionSize(vector<string>& A) 
+    {
+        int m = A.size();
+        int n = A[0].size();
+        vector<int>p(m, 0);
+        int ret = 0;
+        for (int j=0; j<n; j++)
+        {
+            vector<int>p2 = p;
+            int flag = true;
+            for (int i=1; i<m; i++)
+            {
+                if (p[i]==1) continue;
+                if (p[i]==0)
+                {
+                    if (A[i][j]>A[i-1][j])
+                        p2[i] = 1;
+                    else if (A[i][j]<A[i-1][j])
+                    {
+                        flag = false;
+                        break;
+                    }                        
+                }
+            }
+            if (flag==true)
+                p = p2;
+            else
+                ret++;
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Greedy/955.Delete-Columns-to-Make-Sorted-II/Readme.md
+::::::::::::::
+### 955.Delete-Columns-to-Make-Sorted-II
+
+我们考虑第一列。如果有任何相邻两行字符的关系是降序的，就意味着第一列我们必须删除。如果没有出现逆序，那么我们就可以保留第一列。
+
+假设我们可以保留第一列，那么我们考虑第二列时，在判断相邻两行字符串A[i-1][0:1]和A[i][0:1]的关系时，如何高效地判断是否存在逆序呢？我们注意到，如果A[i-1][0]<A[i][0]，那么无论A[i-1][1]和论A[i][1]的关系如何，这两个字符串总是升序关系的。如果A[i-1][0]==A[i][0]，那么这两个字符串的关系就取决于A[i-1][1]和A[i][1]。至于A[i-1][0]>A[i][0]，那是不可能出现的，因为我们之前所做的任何删除列的操作就是为了保证每行的字符串是增序的。
+
+所以我们维护一个数组p，p[i]=1表示第i行的字符串已经大于第i-1行的字符串，否则表示目前为止第i行的字符串完全等于第i-1行的字符串。这样我们只需要根据上一轮的p[i]、和这一列A[i-1][j]与A[i][j]两个字符的关系，就能判断是否维持了增序，并且记得更新p[i]。具体的是：
+1. 如果p[i]=1，那么已经增序，不用判断。
+2. 如果p[i]=0，且A[i-1][j]==A[i][j]，那么继续维持p[i]=0
+3. 如果p[i]=0，且A[i-1][j]<A[i][j]，那么可以更新p[i]=1
+4. 如果p[i]=0，且A[i-1][j]>A[i][j]，那么整个第j列都不能保留，同时p也不更新。
+::::::::::::::
+Greedy/968.Binary-Tree-Cameras/968.Binary-Tree-Cameras.cpp
+::::::::::::::
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    // 0: uncovered
+    // 1: with camera
+    // 2: covered without camera
+    int result;
+public:
+    int minCameraCover(TreeNode* root) 
+    {
+        result = 0;
+        int temp = DFS(root);
+        if (temp==0) result++;
+        return result;
+    }
+    
+    int DFS(TreeNode* node)
+    {
+        if (node==NULL) return 2;
+        int left = DFS(node->left);
+        int right = DFS(node->right);
+        if (left==0 || right==0)
+        {
+            result++;
+            return 1;
+        }
+        if (left==2 && right==2)
+        {
+            return 0;
+        }
+        return 2;
+    }
+};
+::::::::::::::
+Greedy/968.Binary-Tree-Cameras/Readme.md
+::::::::::::::
+### 968.Binary-Tree-Cameras
+
+本题粗看有点像house robber系列，考虑是否可以用ＤＰ来解，似乎应该设计三个状态：本身没有被cover(0),本身有camera(1)，本身没camera但是被邻近的camera给cover了(2)。基本的思路应该是，按照从上往下的顺序，后续节点的状态取决于前面的（若干个）节点状态。但是问题在于，依照从上往下的顺序的话，每个节点只能受父节点或者更高层的节点影响，显然是不合适的，因为它应该还应该受平行的兄弟节点的影响，而这个在线性的ＤＰ遍历中没法实现（因为你没法保证在考察这个node之前，它的兄弟node已经被更新过了）。
+
+于是我们反向考虑，如果从下往上走会怎么样？这样，每个节点的状态可以取决于它的两个子节点。这个方案似乎有戏。为什么呢？假设我们从下往上依次更新，考察node时它的两个子节点的状态是已知的：
+
+1.如果当前node的两个子节点只要有一个状态是0，那么该node必须设置为状态１，以保证两个子节点都被cover到。相应result++.
+
+2.如果当前node的两个子节点都是状态２，那么按照从简的原则，当前node就可以不必安排camera，故状态可以设置为0。状态是0了没有被cover怎么办？不用担心，靠后续node的父节点来兜着就行，当前不用操心。
+
+3.其他情况下，当前node都没有必要设置camera，并且当前node必然已经被某个子节点给cover了，所以我们设置node状态为2.
+
+有了以上的传递关系，我们再考虑边界条件。边界条件就是叶子节点（最底层）。直觉告诉我们，所有的叶子节点没有必要设置camera，只要把camera放在它的父节点即可，这样肯定不亏（父节点装一个camera可以管两个子节点）。事实上，这个贪心法的思想（将最底层节点设置状态为２）是整个递归传递(从下往上更新)的根基。因此只有double check这个贪心的思想是对的，这个算法才是可行的。
+
+最后需要注意的是，如果根节点最终设置状态为0了（此时程序结束），那么我还需要额外再在root上加一个camera以覆盖root。
+
+
+[Leetcode Link](https://leetcode.com/problems/binary-tree-cameras)::::::::::::::
+Greedy/984.String-Without-AAA-or-BBB/984.String-Without-AAA-or-BBB_greedy.cpp
+::::::::::::::
+class Solution {
+public:
+    string strWithout3a3b(int A, int B) 
+    {
+        string ret;
+        
+        if (A>B)
+        {
+            int diff = A-B;
+            for (int i=0; i<B; i++)
+            {
+                ret.push_back('a');
+                if (diff>0)
+                {
+                    ret.push_back('a');
+                    diff--;
+                }
+                ret.push_back('b');
+            }
+            for (int i=0; i<diff; i++)
+                ret.push_back('a');
+        }
+        else
+        {
+            int diff = B-A;
+            for (int i=0; i<A; i++)
+            {
+                ret.push_back('b');
+                if (diff>0)
+                {
+                    ret.push_back('b');
+                    diff--;
+                }
+                ret.push_back('a');
+            }
+            for (int i=0; i<diff; i++)
+                ret.push_back('b');
+        }
+        
+        return ret;
+        
+    }
+};
+::::::::::::::
+Greedy/984.String-Without-AAA-or-BBB/984.String-Without-AAA-or-BBB_pq.cpp
+::::::::::::::
+class Solution {
+public:
+    string strWithout3a3b(int A, int B) 
+    {
+        priority_queue<pair<int,char>>pq;
+        pq.push({A,'a'});
+        pq.push({B,'b'});
+
+        string ret;
+        while (!pq.empty())
+        {
+            if (pq.size()==1) 
+            {
+                int k = pq.top().first;
+                if (k>2)
+                    return "";
+                else
+                {
+                    for (int i=0; i<k; i++)                    
+                        ret.push_back(pq.top().second);
+                    return ret;
+                }
+            }
+
+            auto x = pq.top();
+            pq.pop();
+            auto y = pq.top();
+            pq.pop();
+
+            int k = min(1+x.first-y.first, 2);
+            for (int i=0; i<k; i++)
+                ret.push_back(x.second);
+            ret.push_back(y.second);
+
+            x.first-=k;
+            y.first-=1;
+            if (x.first!=0) pq.push(x);
+            if (y.first!=0) pq.push(y);
+        }
+        return ret;
+    }
+
+};
+::::::::::::::
+Greedy/984.String-Without-AAA-or-BBB/Readme.md
+::::::::::::::
+### 984.String-Without-AAA-or-BBB
+
+#### 解法1： 贪心
+假设A的频次比B多。因为题目保证总有答案，所以一定有```A<=B*2+2```.
+
+我们可以先构建```ab ab ab...ab ab```，然后将多余的a，往每个ab段之间分别插入。还有更多的的a的话（最多两个）就再加在最后。
+
+#### 解法2： 优先队列
+对于这类题目，按照频次从大到小在优先队列里排列是个套路解法。
+
+假设A的字符比B多。总体的算法思想是：
+
+1. 每回合要取两种字符。否则这个回合取字符A的话，下一个回合A可能还是频次最多的字符，依然会取到A，就可能使得连续的A的数目超标。所以每回合加入一个B，就能够阻断两个回合的A相邻接。
+
+2. 每回合中每种字符所取的数目，是为了使得剩下每种字符的数目尽量相等。（假想手头的A和B数目相等，那么之后的构造就非常容易，就不停ABAB...即可。）那么如何确定每个回合A取多少个呢？很简单，如果A的频次比B的频次多一个以上，就取两个A加一个B。这样做既可以避免连续的A超标，也最大限度地拉近了剩余两个字符的频次。
+
+不断重复上述每个回合的操作。直到最后队列里只剩一种字符，并且那个字符的个数不超过2，那么直接加在ret最后即可。

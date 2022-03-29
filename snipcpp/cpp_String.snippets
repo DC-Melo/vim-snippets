@@ -1,5 +1,5 @@
 ::::::::::::::
-String/0005.Longest-Palindromic-Substring/005.Longest-Palindromic-Substring.cpp
+String/005.Longest-Palindromic-Substring/005.Longest-Palindromic-Substring.cpp
 ::::::::::::::
 
 class Solution {
@@ -52,7 +52,7 @@ public:
     }
 };
 ::::::::::::::
-String/0005.Longest-Palindromic-Substring/Readme.md
+String/005.Longest-Palindromic-Substring/Readme.md
 ::::::::::::::
 ### 005.Longest-Palindromic-Substring
 
@@ -85,7 +85,7 @@ X  X  X  {X  X  X  X  X  X  X  X  X  X  X}  X  X  X  X  X
 
 [Leetcode Link](https://leetcode.com/problems/longest-palindromic-substring)
 ::::::::::::::
-String/0006.ZigZag-Conversion/006.ZigZag-Conversion.cpp
+String/006.ZigZag-Conversion/006.ZigZag-Conversion.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -112,7 +112,7 @@ public:
     }
 };
 ::::::::::::::
-String/0006.ZigZag-Conversion/Readme.md
+String/006.ZigZag-Conversion/Readme.md
 ::::::::::::::
 ### 006.ZigZag-Conversion
 
@@ -141,7 +141,7 @@ for (int i=0; i<N; i++)
 
 [Leetcode Link](https://leetcode.com/problems/zigzag-conversion)
 ::::::::::::::
-String/0028.Implement-strStr/028.Implement-strStr-KMP.cpp
+String/028.Implement-strStr/028.Implement-strStr-KMP.cpp
 ::::::::::::::
 class Solution {
 
@@ -189,7 +189,7 @@ public:
     }
 };
 ::::::::::::::
-String/0028.Implement-strStr/028.Implement-strStr-sunday.cpp
+String/028.Implement-strStr/028.Implement-strStr-sunday.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -225,7 +225,7 @@ public:
     }
 };
 ::::::::::::::
-String/0028.Implement-strStr/Readme.md
+String/028.Implement-strStr/Readme.md
 ::::::::::::::
 ### 028.Implement-strStr
 
@@ -284,7 +284,7 @@ for (int i=1; i<n; i++)
 
 [Leetcode Link](https://leetcode.com/problems/implement-strstr)
 ::::::::::::::
-String/0068.Text-Justification/068.Text-Justification.cpp
+String/068.Text-Justification/068.Text-Justification.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -361,7 +361,7 @@ public:
     }
 };
 ::::::::::::::
-String/0068.Text-Justification/Readme.md
+String/068.Text-Justification/Readme.md
 ::::::::::::::
 ### 068.Text-Justification
 
@@ -377,1486 +377,6 @@ String/0068.Text-Justification/Readme.md
             ret += words[i] + addspace(s);        
         ret+=words[b];              
 ```        
-::::::::::::::
-String/0214.Shortest-Palindrome/214.Shortest-Palindrome.cpp
-::::::::::::::
-class Solution {
-public:
-    string shortestPalindrome(string s) 
-    {
-        if (s=="") return s;
-        string t = s;
-        reverse(t.begin(),t.end());
-        
-        int N = s.size();
-        int len = N;
-        while (s.substr(0,len)!=t.substr(N-len,len))
-            len--;
-        
-        t = s.substr(len);
-        reverse(t.begin(),t.end());
-        return t+s;
-        
-    }
-};
-::::::::::::::
-String/0214.Shortest-Palindrome/214.Shortest-Palindrome_KMP.cpp
-::::::::::::::
-class Solution {
-public:
-    string shortestPalindrome(string s) 
-    {
-        if (s=="") return s;
-        string r = s;
-        reverse(r.begin(), r.end());
-        vector<int>suf = preprocess(s);
-
-        // s = A'AB
-        // r = BA'A
-
-        int n = r.size();        
-        vector<int>dp(n,0);
-        dp[0] = (r[0]==s[0]);
-
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];
-            while (j>0 && s[j]!=r[i])
-                j = suf[j-1];
-            dp[i] = j + (s[j]==r[i]);
-        }
-
-        int len = dp[n-1];
-        string ret = s.substr(len);
-        reverse(ret.begin(), ret.end());
-        ret += s;
-        return ret;
-    }
-
-    vector<int> preprocess(string s)
-    {
-        int n = s.size();
-        vector<int>dp(n,0);
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];                       
-            while (j>=1 && s[j]!=s[i])
-            {
-                j = dp[j-1];
-            }          
-            dp[i] = j + (s[j]==s[i]);
-        }
-        return dp;
-    }
-};
-::::::::::::::
-String/0214.Shortest-Palindrome/214.Shortest-Palindrome_Manacher.cpp
-::::::::::::::
-class Solution {
-public:
-    string shortestPalindrome(string s) 
-    {
-        string t = "#";
-        for (int i=0; i<s.size(); i++)
-        {            
-            t.push_back(s[i]);
-            t.push_back('#');
-        }
-
-        int n = t.size();
-        vector<int>P(n);
-        int maxCenter = -1, maxRight = -1;
-        int L = 1;
-        for (int i=0; i<n; i++)
-        {
-            int r;
-            if ( i < maxRight)
-            {
-                int j = maxCenter*2 - i;
-                r = min(P[j], maxRight - i);
-            }
-            else
-                r = 0;
-
-            while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
-                r++;
-
-            P[i] = r-1;
-            if (i+P[i]>maxRight)
-            {
-                maxRight = i+P[i];
-                maxCenter = i;
-            }
-
-            if (i-P[i]==0)
-                L = P[i];
-        }
-        
-        string temp = s.substr(L);
-        reverse(temp.begin(), temp.end());
-        return temp+s;
-        
-    }
-};
-::::::::::::::
-String/0214.Shortest-Palindrome/Readme.md
-::::::::::::::
-### 214.Shortest-Palindrome
-
-#### 解法1：KMP
-此题的解法非常巧妙.首先,题意是试图将s分解为```s=A'AB```的形式,其中A'是A的逆序,求使得A'A最长的分解方式.
-
-如果我们将s整体逆序写成r,那么```r=B'A'A```.可以发现s的前段和r的后端恰好都是```A'A```.此外,反过来考虑,已知r是s的逆序,并且r的尾端等于s的首端,那么这段相同的字符串一定是个palindrome,即A'A的形式.
-
-有了以上两点证明,那么我们就只要找到最大的```i```,使得```s[0:i]==r[len(r)-i:]```，即在r中找到最长的后缀，使得其等于s的前缀。实现这个可以有两种方法：1. 暴力尝试这个长度。2. 类似KMP中求后缀数组的方法，计算数组r的suf[i]，即r中截止位置i的最长后缀字符串使得恰好是s的前缀字符串。
-
-最终suf[n-1]就是A'A的最大长度。因此B = s.substr(len). 返回的答案就是ret = B'+s.
-
-### 解法2：Manacher
-本题的本质就是在s中找一个最长的、起点在左端点的回文串。然后将s除去回文串的后端复制、翻转并拼接在原s串的前端，就是最优的答案。
-
-所以此题的本质就是Manacher的模板题```005.Longest-Palindromic-Substring```，求出每个位置作为中心能够构造的最长回文串，查看这个回文串是否能抵达s的最左端，是的话就记录下这个回文串的长度L。输出的答案是：
-```cpp
-string temp = s.substr(R);
-reverse(temp.begin(), temp.end());
-return temp+s;
-```
-
-[Leetcode Link](https://leetcode.com/problems/shortest-palindrome)
-::::::::::::::
-String/0320.Generalized-Abbreviation/320.Generalized-Abbreviation.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> generateAbbreviations(string word) 
-    {
-        int n = word.size();
-        vector<string>rets;
-        for (int state = 0; state < (1<<n); state++)
-        {
-            string s;
-            for (int i=0; i<n; i++)
-            {
-                if ((state>>i)&1)
-                {
-                    s.push_back(word[i]);
-                }
-                else
-                {
-                    int j = i;
-                    while (j<n && ((state>>j)&1)==0)
-                        j++;
-                    s += to_string(j-i);                    
-                    i = j-1;
-                }
-            }
-            rets.push_back(s);
-        }
-        return rets;
-    }
-};
-::::::::::::::
-String/0320.Generalized-Abbreviation/Readme.md
-::::::::::::::
-### 320.Generalized-Abbreviation
-
-本题需要穷举所有的可能，可以考虑DFS用递归处理。但是因为本题不需要剪枝，并且每个位置上的字符都有且只有两种可能：要么被缩略，要么不被缩略。所以用bitmask来实现穷举写起来更方便。
-
-我们遍历```00..0```到```11..1```的所有n位二进制状态。如果某位上是1，那么对应位置的字符就保留。如果某位上是0，那么对应位置上的字符就要被缩略：具体所谓的方法就是查看周围是否有连续的0，将这些连续0的数目改写成数字串即可。
-::::::::::::::
-String/0336.Palindrome-Pairs/336.Palindrome Pairs.cpp
-::::::::::::::
-class Solution {
-public:
-    static bool cmp(string a, string b)
-    {
-        return (a.size()<b.size());
-    }
-    
-    vector<vector<int>> palindromePairs(vector<string>& words) 
-    {
-        vector<vector<int>>result;
-        
-        unordered_set<string>Set;
-        unordered_map<string,int>Map;
-        for (int i=0; i<words.size(); i++)
-            Map[words[i]]=i;
-            
-        sort(words.begin(),words.end(),cmp);
-        
-        for (int i=0; i<words.size(); i++)
-        {
-            string t=words[i];
-
-            for (int k=0; k<=t.size(); k++)
-            {
-                string s1=t.substr(0,k);
-                reverse(s1.begin(),s1.end());
-                string s2=t.substr(k,t.size()-k);
-                if (Set.find(s1)!=Set.end() && palindrome(s2))
-                    result.push_back({Map[t],Map[s1]});
-                    
-                s1=t.substr(0,k);
-                s2=t.substr(k,t.size()-k);
-                reverse(s2.begin(),s2.end());                
-                if (Set.find(s2)!=Set.end() && palindrome(s1))
-                    result.push_back({Map[s2],Map[t]});
-                    
-            }
-            
-            Set.insert(t);
-        }
-        
-        return result;
-    }
-    
-    bool palindrome(string s)
-    {
-        int i=0; 
-        int j=s.size()-1;
-        while (i<=j)
-        {
-            if (s[i]!=s[j])
-                return false;
-            i++;
-            j--;
-        }
-        return true;
-    }
-};
-::::::::::::::
-String/0336.Palindrome-Pairs/336.Palindrome-Pairs_v2.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(string a,string b)
-    {
-        return a.size()<b.size();
-    }
-public:
-    vector<vector<int>> palindromePairs(vector<string>& words) 
-    {
-        unordered_set<string>Set;
-        unordered_map<string,int>Map;
-        for (int i=0; i<words.size(); i++)
-            Map[words[i]]=i;
-
-        sort(words.begin(),words.end(),cmp);
-        
-        vector<vector<int>>results;
-        
-        for (int i=0; i<words.size(); i++)
-        {
-            string w = words[i];
-            for (int j=0; j<=w.size(); j++)
-            {
-                if (isPalindrome(w,0,j-1))
-                {
-                    string w2 = w.substr(j);
-                    reverse(w2.begin(),w2.end());
-                    if (Set.find(w2)!=Set.end())                    
-                        results.push_back({Map[w2],Map[words[i]]});                    
-                }                
-                if (isPalindrome(w,j,w.size()-1))
-                {
-                    string w2 = w.substr(0,j);
-                    reverse(w2.begin(),w2.end());
-                    if (Set.find(w2)!=Set.end())                    
-                        results.push_back({Map[words[i]],Map[w2]});                    
-                }   
-            }            
-            Set.insert(words[i]);
-        }        
-        return results;
-    }
-    
-    bool isPalindrome(string &w, int a, int b)
-    {
-        while (a<b)
-        {
-            if (w[a]!=w[b]) return false;
-            a++;
-            b--;
-        }
-        return true;
-    }    
-};
-::::::::::::::
-String/0336.Palindrome-Pairs/Readme.md
-::::::::::::::
-### 336.Palindrome-Pairs
-
-最直观的想法是将数组里的字符串两两比较，o(n^2)的时间复杂度，每次比较需要遍历两个字符串拼接后的全部长度，所以会超时。
-
-AC的解法是构建一个集合，遍历字符串数组的过程中，将每个字符串与集合中已有的字符串进行考察，看是否有符合条件的配对。
-
-首先，将字符串数组按照字符串长度从小到大排列：
-```cpp
-    static bool cmp(string a, string b)
-    {
-        return (a.size()<b.size());
-    }
-
-    sort(words.begin(),words.end(),cmp);
-```
-在遍历的过程中，假设string t=words[i];    
-遍历t的长度，将t拆分为两部分s1和s2. 注意这样的拆分，可以使s1从空字符串一直变化到t。
-
-考虑两种情况是符合要求的：   
-1.s1的反序已经在集合中，并且s2本身就是回文，这样s1s2s1'构成回文；    
-2.s2的反序已经在集合中，并且s1本身就是回文，这样s2's1s2构成回文。
-
-然后就可以把t添加到集合中，考察下一个t。   
-```cpp
-        for (int i=0; i<words.size(); i++)
-        {
-            string t=words[i];
-
-            for (int k=0; k<=t.size(); k++)
-            {
-                string s1=t.substr(0,k);
-                reverse(s1.begin(),s1.end());
-                string s2=t.substr(k,t.size()-k);
-                if (Set.find(s1)!=Set.end() && palindrome(s2))
-                    result.push_back({Map[t],Map[s1]});
-                    
-                s1=t.substr(0,k);
-                s2=t.substr(k,t.size()-k);
-                reverse(s2.begin(),s2.end());                
-                if (Set.find(s2)!=Set.end() && palindrome(s1))
-                    result.push_back({Map[s2],Map[t]});
-                    
-            }
-            
-            Set.insert(t);
-        }
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/palindrome-pairs)::::::::::::::
-String/0388.Longest-Absolute-File-Path/388.Longest-Absolute-File-Path.cpp
-::::::::::::::
-class Solution {
-public:
-    int lengthLongestPath(string input) 
-    {
-        vector<string>files;
-        for (int i=0; i<input.size(); i++)
-        {
-            int i0=i;
-            while (i<input.size() && input[i]!='\n')
-                i++;
-            files.push_back(input.substr(i0,i-i0));
-        }
-                
-        vector<string>dir;
-        int result = 0;
-        
-        for (string str:files)
-        {
-            int k=0;
-            while (k<str.size() && str[k]=='\t')
-                k++;
-                  
-            if (dir.size()<=k) dir.resize(k+1);      
-            dir[k] = str.substr(k);
-                        
-            if (dir[k].find(".")!=-1)
-            {
-                int count = 0;
-                for (int i=0; i<=k; i++)
-                    count+=dir[i].size();
-                count+=k;
-                
-                result = max(count,result);
-            }
-        }
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-String/0388.Longest-Absolute-File-Path/Readme.md
-::::::::::::::
-### 388.Longest-Absolute-File-Path
-
-特别注意：'\n'，'\t' 这种转义字符被认为是一个字符！
-
-首先，根据'\n'将字符串拆分。然后，根据每个子字串前的'\t'的数目来确定它是第几级的。设置一个vector<vector<string>>dirs，比如第三级的字串就加入dirs[3]里面。
-
-如果遇到一个字串表示的是文件名，则往前推其第i级的目录名，就对应了dirs[i]里面的最后一个字串。
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-absolute-file-path)::::::::::::::
-String/0408.Valid-Word-Abbreviation/408.Valid Word Abbreviation.cpp
-::::::::::::::
-class Solution {
-public:
-    bool validWordAbbreviation(string word, string abbr) 
-    {
-        int i=0;
-        int j=0;
-        
-        while (j<abbr.size())
-        {
-            if (i>=word.size()) return false;
-            
-            if (abbr[j]=='0')
-                return false;
-            else if (abbr[j]>='0' && abbr[j]<='9')
-            {
-                int num=0;
-                while (j<abbr.size() && abbr[j]>='0' && abbr[j]<='9')
-                {
-                    num=num*10+abbr[j]-'0';
-                    j++;
-                }
-                i+=num;
-            }
-            else if (abbr[j]>='a' && abbr[j]<='z')
-            {
-                if (abbr[j]!=word[i])
-                    return false;
-                else
-                {
-                    i++;
-                    j++;
-                }
-            }
-        }
-        
-        if (i!=word.size()) 
-            return false;
-        else
-            return true;
-        
-    }
-};
-::::::::::::::
-String/0408.Valid-Word-Abbreviation/Readme.md
-::::::::::::::
-### 408.Valid-Word-Abbreviation
-
-典型的双指针。遍历一遍abbr，移动abbr的指针的同时，也相应地移动word的指针，看看每一步都是否对应。具体地说，就是abbr的字母和word字母对应，abbr的数字和word里相同数目的字母对应。
-
-需要注意的细节：
-1. 数字不能有前导0. 比如word=ab, abbr=02就应该输出false.
-2. abbr遍历完之后，word的遍历也应该恰好结束。即if (i!=word.size()) return false;
-
-
-[Leetcode Link](https://leetcode.com/problems/valid-word-abbreviation)
-::::::::::::::
-String/0411.Minimum-Unique-Word-Abbreviation/411.Minimum-Unique-Word-Abbreviation.cpp
-::::::::::::::
-class Solution {
-    int m;
-public:
-    string minAbbreviation(string target, vector<string>& dictionary) 
-    {
-        if (dictionary.size()==0)
-            return to_string(target.size());
-        this->m = target.size();
-        
-        unordered_set<string>Set;
-        for (auto word: dictionary)
-        {
-            if (word.size()==m)
-                Set.insert(word);
-        }
-        
-        vector<pair<int,int>>masks;
-        for (int state = 0; state < (1<<m); state++)        
-            masks.push_back({len(state), state});
-        sort(masks.begin(), masks.end());
-        
-        for (auto x: masks)
-        {
-            int mask = x.second;
-            string abbr = getAbbr(target, mask);
-            int flag = 1;
-            
-            for (auto word: Set)
-            {
-                string s = getAbbr(word, mask);
-                if (s==abbr)
-                {
-                    flag = 0;
-                    break;
-                }                
-            }
-            if (flag==1) return abbr;            
-        }
-        
-        return "";        
-    }
-    
-    string getAbbr(string& word, int mask)
-    {
-        string ret;
-        for (int i=0; i<m; i++)
-        {
-            if ((mask>>i)&1)
-                ret.push_back(word[i]);
-            else
-            {
-                int j = i;
-                while (j<m && ((mask>>j)&1)==0)
-                    j++;
-                ret  += to_string(j-i);
-                i = j-1;
-            }
-        }
-        return ret;
-    }
-    
-    int len(int mask)
-    {
-        int count = 0;
-        for (int i=0; i<m; i++)
-        {
-            if ((mask>>i)&1)
-                count++;
-            else
-            {
-                int j = i;
-                while (j<m && ((mask>>j)&1)==0)
-                    j++;
-                count += 1;
-                i = j-1;
-            }
-        }
-        return count;
-        
-    }
-};
-::::::::::::::
-String/0411.Minimum-Unique-Word-Abbreviation/Readme.md
-::::::::::::::
-### 411.Minimum-Unique-Word-Abbreviation
-
-此题不需要遍历所有的字典里的单词的缩写形式．
-
-首先，我们应该注意到，缩写不会改变长度，所以两个长度不同的单词，他们的任何形式的缩写都不可能相同。所以对于字典里的那些与target的长度不一致的单词，完全可以忽略。
-
-其次，targe的缩写方案有多少呢？不难判断，每一个字符只有两种选择：被缩写或者不被缩写。所以target的缩写形式只有2^m种可能。考虑到m是21，最多有2e6种缩写，是可以遍历过来的。对于无需剪枝的无脑遍历，使用bitmask来穷举所有缩写方式是最方便的，这与```LC 320.Generalized-Abbreviation```是一样的做法。当然，我们肯定先尝试长度短的缩写方法，再尝试长的缩写方法。所以需要将所有的缩写方法按照长度排序。
-
-最后，我们对于target的每一种缩写方式abbr，都要与字典里的每一个单词word进行匹配，看是否abbr是否也是word的一个缩写。这个算法和```LC 408.Valid-Word-Abbreviation```是一样的。
-
-所以总的时间复杂度是```o(2^m*n)```. 因为题目给出了m+log(n)<=21，所以```2^m*n<=2^21```，即时间复杂度是2e6级别，是可行的。
-
-[Leetcode Link](https://leetcode.com/problems/minimum-unique-word-abbreviation)
-::::::::::::::
-String/0418.Sentence-Screen-Fitting/418.Sentence-Screen-Fitting.cpp
-::::::::::::::
-class Solution {
-public:
-    int wordsTyping(vector<string>& sentence, int rows, int cols) 
-    {
-        string s;
-        for (auto str:sentence)
-        {
-            if (str.size()>cols) return 0;
-            s+= str+" ";
-        }   
-        
-        int i = 0;
-        int len = s.size();
-        
-        for (int k=0; k<rows; k++)
-        {
-            i+=cols;
-            while (s[i%len]!=' ')
-                i--;
-            i++;
-        }
-        return i/len;
-    }
-};
-::::::::::::::
-String/0418.Sentence-Screen-Fitting/Readme.md
-::::::::::::::
-### 418.Sentence-Screen-Fitting
-
-此题如果按照逐个单词去填充，那么如果单词长度都特别短的话，想要填充完rows x cols这么多位置就会TLE．本题更合理的方式是以cols的长度去处理。首先将sentence的所有单词用空格串联起来记做str：
-```cpp
-    for (auto str:sentence)
-        {
-            if (str.size()>cols) return 0;
-            s+= str+" ";
-        }   
-```      
-注意，这里可以提前处理不合法的例子．
-
-我们接下来的任务就是在一段```xxx xxx xx xxxx xx x xxxx ```里面试图以每cols的宽度去插板，要求板子只能插在空格里，不能分割任何单词本身。特别注意，最后我们特地留有一个空格，这是为了将前一个str与下一个str之间区分开来。
-
-具体的做法是，初始的指针index指向0，每处理一行，我们就把index+=cols，此时如果index落到了空格上，说明至此的所有字符都可以放在一个row里面，然后index指向空格后的第一个字符。如果没有落到空格上，说明某个单词没有写完就触碰了边界，这时候我们将index慢慢回退直至遇到了一个空格为止。
-
-注意到指针wrap的情况，所以我们对于index的处理永远都是考虑它对str长度的取余。
-
-重复以上过程，当处理完rows行之后，看看此刻的index是str长度的多少倍，就说明能重复多少个字符串．
-
-[Leetcode Link](https://leetcode.com/problems/sentence-screen-fitting)
-::::::::::::::
-String/0459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    bool repeatedSubstringPattern(string s) 
-    {
-        for (int i=s.size()/2; i>=1; i--)
-        {
-            if (s.size()%i!=0) continue;
-            
-            int flag=1;
-            string t = s.substr(0,i);
-            int j=i;
-            while (j<s.size())
-            {
-                if (t!=s.substr(j,i))
-                {
-                    flag=0;
-                    break;
-                }
-                j+=i;
-            }
-            
-            if (flag==1) return true;
-        }
-        
-        return false;
-        
-    }
-};
-::::::::::::::
-String/0459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    bool repeatedSubstringPattern(string s) 
-    {
-        int n = s.size();
-        vector<int>dp(n,0);
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];
-            while (j>0 && s[j]!=s[i])
-                j = dp[j-1];
-            dp[i] = j+(s[j]==s[i]);
-        }
-        int len = dp[n-1];
-        return (len>0 && n%(n-len)==0);       
-    }
-};
-::::::::::::::
-String/0459.Repeated-Substring-Pattern/Readme.md
-::::::::::::::
-### 459.Repeated-Substring-Pattern
-
-#### 解法1
-暴力尝试所有的循环节长度，查看是否是否每段循环节长度的区间都相等。
-
-#### 解法2
-我们计算字符串s的后缀数组suf[i]，得到长度len = suf[n-1]，这是s最长的前缀字符串使得期恰好也等于s的后缀字符串。
-
-如果我们得到了这样的len，会有什么性质呢？如下图，我们画出最长前缀/后缀字符串的范围（星号）
-```
-s: [* * *] [* * *] [* * *] [_____]
-      A           B           C
-      
-s: [_____] [* * *] [* * *] [* * *]
-      D           E           F
-
-```
-由最长前缀/后缀字符串的关系，我们知道B的后缀等于F.同时由于B的后缀就是E的后缀，所以得到E的后缀等于F。我们可以类似地一路向前推进。所以只要A+B的长度是F的长度（也就是n-len）的整数倍，那么A+B（或者D+E）就有F作为循环节。因此判断存在循环节的充要条件是```len>0 && （n-len）%len==0```.
-
-另外，n-len也一定是最小循环节长度。
-::::::::::::::
-String/0467.Unique-Substrings-in-Wraparound-String/467.Unique-Substrings-in-Wraparound-String.cpp
-::::::::::::::
-class Solution {
-public:
-    int findSubstringInWraproundString(string p) 
-    {
-        unordered_map<char,int>Map;
-        for (int i=0; i<p.size(); i++)
-        {
-            int j=i;
-            while (j+1<p.size() && (p[j+1]==p[j]+1 || p[j]=='z' && p[j+1]=='a'))
-                j++;
-            if (j-i+1>Map[p[i]])
-                Map[p[i]]=j-i+1;            
-        }
-        
-        int result=0;
-        for (auto a:Map)
-            result+=a.second;
-        return result;
-    }
-};
-::::::::::::::
-String/0467.Unique-Substrings-in-Wraparound-String/Readme.md
-::::::::::::::
-### 467.Unique-Substrings-in-Wraparound-String
-
-注意s串的性质，其子串必然是递增的。发现这一点后，只要是在p中的所有递增子串，都是s的字串。
-
-那么p中有多少不同的递增子串呢？任何不同的递增字串，只需要两个参数就能确定其独特性。一个是起始字符，另一个是字串的长度。于是只要遍历p的每一个字符，找出以其为开头的最长递增字串即可。比如说p中以'a'开头的递增字串的最大长度是n，那么就有n种不同的以'a'开头的递增字串。
-
-创建一个Hash表，遍历p[i]。以遍历的字符p[i]作为key，记录以p[i]开头的递增字串的最大长度（这个value会随着p的遍历而不断被更新）。最终结果就是把所有key的value都加起来。
-
-
-[Leetcode Link](https://leetcode.com/problems/unique-substrings-in-wraparound-string)::::::::::::::
-String/0527.Word-Abbreviation/527.Word Abbreviation.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> wordsAbbreviation(vector<string>& dict) 
-    {
-        unordered_map<string,int>Index;
-        for (int i=0; i<dict.size(); i++)
-            Index[dict[i]]=i;
-        
-        unordered_map<string,vector<string>>Map;
-        vector<string>results(dict.size());
-        int abbrNum=0;
-
-        unordered_set<string>Set;
-        for (int i=0; i<dict.size(); i++)
-            Set.insert(dict[i]);
-        
-        while (1)
-        {
-            Map.clear();
-            for (auto s:Set)
-            {
-                string abbr=getAbbr(s,abbrNum);
-                Map[abbr].push_back(s);
-            }
-            Set.clear();
-            
-            for (auto a:Map)
-            {
-                if (a.second.size()>1)
-                {
-                    for (int i=0; i<a.second.size(); i++)
-                        Set.insert(a.second[i]);
-                }
-                else
-                {
-                    results[Index[a.second[0]]]=a.first;
-                }
-            }
-            
-            if (Set.size()==0) break;
-            abbrNum++;
-        }
-        
-        return results;
-        
-    }
-    
-    string getAbbr(string s, int abbrNum)
-    {
-        string t;
-        if (s.size()<=2) 
-        {
-            t=s;
-            return t;
-        }
-        
-        t=s.substr(0,abbrNum+1);
-        t+=to_string(s.size()-abbrNum-2);
-        t+=s.back();
-        if (t.size()==s.size()) t=s;
-        return t;
-    }
-};
-::::::::::::::
-String/0527.Word-Abbreviation/Readme.md
-::::::::::::::
-### 527.Word-Abbreviation
-
-设置一个Map和一个Set。Map是从缩写到原单词(数组)的映射。Set盛装所有仍需要进一步求缩写的原单词，初始化的时候则装所有的原单词。
-
-在每次循环中，把Set里所有的单词都求其缩写加入Map，清空Set。然后查看Map的所有元素，对于那些仍然对应多个原单词的缩写，就把这些原单词加入Set。清空Map。
-
-重复这样的循环直至Set不再有元素。
-
-
-[Leetcode Link](https://leetcode.com/problems/word-abbreviation)::::::::::::::
-String/0556.Next-Greater-Element-III/556.Next-Greater-Element-III.cpp
-::::::::::::::
-class Solution {
-public:
-    int nextGreaterElement(int n) 
-    {
-        if (n==0) return -1;
-        
-        vector<int>num;
-        while (n>0)
-        {
-            num.push_back(n%10);
-            n=n/10;
-        }
-        
-        vector<int>p;
-        p.push_back(num[0]);
-        int i=1;
-        while (i<num.size() && num[i]>=num[i-1])
-        {
-            p.push_back(num[i]);
-            i++;
-        }
-        if (i==num.size()) return -1; // all the digits are descending
-        
-        int j=0;
-        while (p[j]<=num[i]) j++;
-        swap(num[i],p[j]);
-        
-        sort(p.begin(),p.end());
-        reverse(p.begin(),p.end());
-        
-        for (int k=0; k<p.size(); k++)
-            num[k]=p[k];
-        
-        long long result=0;
-        for (int i=num.size()-1; i>=0; i--)        
-            result = result*10+num[i];
-        
-        if (result>INT_MAX) 
-            return -1;
-        else
-            return result;                
-    }
-};
-::::::::::::::
-String/0556.Next-Greater-Element-III/Readme.md
-::::::::::::::
-### 556.Next-Greater-Element-III
-
-首先，从低位到高位找到第一个不满足升序的数字。显然，如果从低位到高位都是升序的话，那么找不到任何可以比这个数字更大的变换了。
-
-假设找到这样的数字在第n+1位（记做k），那么在1\~n这个n个低位数字中找到恰比k大的数字（记做m），交换k和m。于是变换后的第n+1位就这么定下来了（可以分析出这就是最小的改动）。剩下来的第1~n位（记得其中有一个是之前调换过来的k），我们让它们按照降序排列即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/next-greater-element-iii)::::::::::::::
-String/0564.Find-the-Closest-Palindrome/564.Find-the-Closest-Palindrome.cpp
-::::::::::::::
-class Solution {
-public:
-    string nearestPalindromic(string n) 
-    {
-        int N=n.size();
-        string s1,s2,s3;
-        
-        if (N%2==1)
-        {
-            string t=n.substr(0,N/2+1);
-            long long num=convert(t);
-            string t1,t2;
-            
-            // candidate 1
-            t1 = to_string(num);
-            t2 = t1;
-            reverse(t2.begin(),t2.end());
-            s1 = t1.substr(0,N/2)+t2;
-            
-            // candidate 2
-            t1 = to_string(num-1);
-            t2=t1;
-            reverse(t2.begin(),t2.end());
-            s2 = t1.substr(0,N/2)+t2;
-            
-            // candidate 3
-            t1 = to_string(num+1);
-            t2=t1;
-            reverse(t2.begin(),t2.end());
-            s3 = t1.substr(0,N/2)+t2;
-
-            cout<<s1<<" "<<s2<<" "<<s3<<endl;
-            
-            return pick(n,s1,s2,s3);
-        }
-        
-        if (N%2==0)
-        {
-            string t=n.substr(0,N/2);
-            long long num=convert(t);
-            string t1,t2;
-            
-            //candidate 1
-            t1 = n.substr(0,N/2);
-            reverse(t1.begin(),t1.end());
-            s1 = to_string(num)+t1;
-            
-            //candidate 2
-            t1 = to_string(num-1);
-            if (t1=="0")
-                s2="9";
-            else if (t1.size()==t.size())
-            {
-                t2=t1;
-                reverse(t2.begin(),t2.end());
-                s2=t1+t2;
-            }
-            else if (t1.size()!=t.size())
-            {
-                t2=t1;
-                reverse(t2.begin(),t2.end());
-                s2=t1+'9'+t2;
-            }
-            
-            //candidate 3
-            t1 = to_string(num+1);
-            if (t1.size()==t.size())
-            {
-                t2=t1;
-                reverse(t2.begin(),t2.end());
-                s3=t1+t2;
-            }
-            else if (t1.size()!=t.size())
-            {
-                t2=t1;
-                reverse(t2.begin(),t2.end());
-                t1.pop_back();
-                s3=t1+t2;
-            }
-            
-            cout<<s1<<" "<<s2<<" "<<s3<<endl;
-            
-            return pick(n,s1,s2,s3);
-        }        
-    }
-    
-    string pick(string n, string s1, string s2, string s3)
-    {
-        long long m= convert(n);
-        long long n1= convert(s1);
-        long long n2= convert(s2);
-        long long n3= convert(s3);
-        
-        if (n1==m)
-        {
-            return abs(n2-m)<=abs(n3-m)?s2:s3;
-        }
-        else
-        {
-            long long num_temp = abs(n1-m)<=abs(n3-m)?n1:n3;
-            string string_temp = abs(n1-m)<=abs(n3-m)?s1:s3;
-            
-            return abs(n2-m)<=abs(num_temp-m)?s2:string_temp;
-        }        
-    }    
-    
-    long long convert(string s)
-    {
-        long long result=0;
-        for (int i=0; i<s.size(); i++)
-        {
-            result = result*10 + s[i]-'0';
-        }
-        return result;
-    }    
-};
-::::::::::::::
-String/0564.Find-the-Closest-Palindrome/Readme.md
-::::::::::::::
-### 564.Find-the-Closest-Palindrome
-
-这是一道比较难的题目。
-
-看到题目最直观的想法是，将数字的前半部分翻转后拼接到后半部分，比如说12345，那么我们就找12321.
-
-但是这样的策略不是万能的，因为找到不一定是离原数最接近的。比如12399，如果我们选择直接翻转，12321就不是最优解，最优解应该是12421. 再比如19200,直接翻转的19291不是最优解，最优解是19191. 那么我们就可以见端倪了，对于形如ABCXX的形式，我们应该在ABCBA，AB(C+1)BA，AB(C-1)BA之间选择一个最接近原数的就可以了。同理，对于ABXX的形式，我们采用类似的加一减一再复制翻转的方式，于是就应该在ABBA，A(B+1)(B+1)A，A(B-1)(B-1)A之间选择一个最接近原数的。
-
-但这样的话，又会有个问题，例如12088，中间的0如果减去１的话就变成9了，翻转复制就成了12921和，这与原数相差也太大了．所以我们改进上面的方法，不再只对中间的数字加减，而是对前三位120整体做加减，然后复制翻转拼接（合并掉中间一位以保证仍然是奇数位），得到11911,12021,12121．那么我们对于偶数位也采取相同的方法，例如2088,我们对20整体进行加减操作，然后复制翻转拼接（不用合并掉中间一位，因为期望仍然是偶数位），得到1991,2002,2112.
-
-但是，如果遇到加减之后位数变化的情况怎么办呢？比如10001,我们对前三位100减１之后得到的99，复制翻转拼接之后得到的999，位数一下子就少了两位．类似的对于999，我们如果对于前两位99加一变成100,复制翻转拼接后变成10001,位数一下子就多了两位．类似的情况对于偶数位的数字也会出现．怎么办呢？方案是，我们照做不误，反正最后筛查所有候选答案的时候，这些偏差太大的候选人一定会被去掉的．但是，我们需要同时考虑到这种位数变化的情况，所以干脆也加入到候选者来．比如给出的某个n位数，那么我们就把n+1位数的100...0001直接放入候选，n-1位数的99...99也直接放入候选．
-
-综上，我们有了得到五个候选人的方案,最后筛查一下．去除不是回文数的（注意有可能候选人不是回文数），选取和原数最接近的就是答案了．
-
-
-[Leetcode Link](https://leetcode.com/problems/find-the-closest-palindrome)::::::::::::::
-String/0616.Add-Bold-Tag-in-String/616.Add-Bold-Tag-in-String.cpp
-::::::::::::::
-class Solution {
-public:
-    string addBoldTag(string s, vector<string>& dict) 
-    {
-        int N=s.size();
-        vector<int>p(N,0);
-        
-        for (int i=0; i<dict.size(); i++)
-        {
-            int len=dict[i].size();
-            string str=dict[i];
-            for (int j=0; j<=N-len; j++)
-            {
-                if (s.substr(j,len)==str)
-                {
-                    for (int k=j; k<j+len; k++)
-                        p[k]=1;
-                }
-            }
-        }
-        
-        /*
-        for (int i=0; i<p.size(); i++)
-            cout<<p[i];
-        */
-        
-        string result;
-        int i=0;
-        while (i<N)
-        {
-            while (i<N && p[i]==0)
-            {
-                result+=s[i];
-                i++;
-            }                
-            
-            if (i==N)            
-                return result;
-            else
-            {
-                result+="<b>";
-                int i0=i;
-                while (i<N && p[i]==1)
-                    i++;
-                result+=s.substr(i0,i-i0);
-                result+="</b>";
-            }
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-String/0647.Palindromic-Substrings/647.Palindromic-Substrings.cpp
-::::::::::::::
-class Solution {
-public:
-    int countSubstrings(string s) 
-    {
-        int count=0;
-        int n=s.size();
-        
-        for (int i=0; i<s.size(); i++)
-        {
-            int len=0;
-            while (i-len>=0 && i+len<n && s[i-len]==s[i+len])
-                len++;
-            count+=len;
-            
-            len=0;
-            while (i-len>=0 && i+1+len<n && s[i-len]==s[i+1+len])
-                len++;
-            count+=len;
-        }
-        return count;
-
-    }
-};
-::::::::::::::
-String/0647.Palindromic-Substrings/647.Palindromic-Substrings_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int countSubstrings(string s) 
-    {
-        string t = "#";
-        for (auto ch: s)
-        {
-            t.push_back(ch);
-            t.push_back('#');
-        }
-        
-        int n = t.size();
-        vector<int>P(n);
-        int maxCenter = -1;
-        int maxRight = -1;
-        for (int i=0; i<n; i++)
-        {
-            int r;
-            if (i <= maxRight)
-            {
-                int j = maxCenter*2-i;
-                r = min(P[j], maxRight-i);
-                while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
-                    r++;                
-            }
-            else
-            {
-                r = 0;
-                while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
-                    r++;  
-            }
-            P[i] = r-1;
-            if (i+P[i]>maxRight)
-            {
-                maxRight = i+P[i];
-                maxCenter = i;
-            }
-        }
-        
-        int ret = 0;
-        for (int i=0; i<n; i++)
-        {
-            ret += (P[i]+1)/2;
-        }
-        return ret;
-    }
-};
-::::::::::::::
-String/0647.Palindromic-Substrings/Readme.md
-::::::::::::::
-### 647.Palindromic-Substrings
-
-#### 解法1：暴力
-遍历 for (i=0; i<n; i++)，考察以i为中心的回文串个数（回文串长度为奇数）、i和i+1为中心的回文串个数（回文串长度为偶数），分别加入总的结果中。
-
-考察方法是以中心i往两边扩散。一旦发现无法实现中心对称，则可以跳过这个i。整体的时间复杂度是 o(n^2)
-
-#### 解法2：Manacher
-此题是Manacher的模板题。注意，求出T串的P[i]之后，每一个中心点的最长回文串半径（去除了#字符）其实是```(P[i]+1)/2```
-
-[Leetcode Link](https://leetcode.com/problems/palindromic-substrings)
-::::::::::::::
-String/0722.Remove-Comments/722.Remove-Comments.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> removeComments(vector<string>& source) 
-    {
-        vector<string>result;
-        bool comment=false;
-        string s;
-        
-        for (int i=0; i<source.size(); i++)
-        {
-            for (int j=0; j<source[i].size(); j++)
-            {
-                if (!comment && j+1<source[i].size() && source[i].substr(j,2)=="//")
-                    break;
-                else if (!comment && j+1<source[i].size() && source[i].substr(j,2)=="/*")
-                {
-                    comment=true;
-                    j++;
-                }
-                else if (comment && j+1<source[i].size() && source[i].substr(j,2)=="*/")
-                {
-                    comment=false;
-                    j++;
-                }
-                else if (!comment)
-                {
-                    s.push_back(source[i][j]);
-                }
-                    
-            }
-            
-            if (!comment && s.size()>0)
-            {
-                result.push_back(s);
-                s.clear();
-            }
-                
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-String/0722.Remove-Comments/Readme.md
-::::::::::::::
-### 722.Remove-Comments
-
-令s代表待输出的一行。此题考虑这么几个问题：
-
-1. 遇到"//"怎么办？ 这一行的字符就直接跳过，直接将s加入result（注意，此时必须是非comment模式）
-2. 遇到"/*"怎么办？ 进入了comment模式
-3. 遇到"*/"怎么办？ comment模式结束，可以将s加入result
-4. 普通字符？将字符加入s
-5. 始终在comment模式里？ 那么继续遍历字符
-6. 如果到了行结束，且不是comment模式，那么就可以将s加入result
-
-要能够和谐地处理以上这几种情况，我们可以设置一个bool变量comment。
-
-1. comment off && "//"怎么办？ 直接挑出该行
-2. comment off && "/*"怎么办？ 进入了comment模式
-3. comment on && "*/"怎么办？ 退出comment模式
-4. comment off && 普通字符？将字符加入s
-5. comment on && 普通字符？忽略该字符
-6. 到了行结束，&& comment off：那么就可以将s加入result，清空s
-
-
-[Leetcode Link](https://leetcode.com/problems/remove-comments)::::::::::::::
-String/0736.Parse-Lisp-Expression/736.Parse-Lisp-Expression.cpp
-::::::::::::::
-class Solution {
-public:
-    int evaluate(string expression) 
-    {
-        unordered_map<string,int>data;
-        return helper(expression, 1, expression.size()-2, data);
-    }
-    
-    int helper(string &s, int a, int b, unordered_map<string,int> data)
-    {       
-        if (a+3<=b && s.substr(a,3)=="add")
-        {            
-            vector<int>nums;
-            
-            for (int i=a+4; i<=b; i++)
-            {
-                if (s[i]=='(')
-                {
-                    int j = getRightParenthsis(s,i);
-                    int next = helper(s,i+1, j-1, data);
-                    nums.push_back(next);                    
-                    i = j;
-                }
-                else if (isalpha(s[i]))
-                {
-                    int j = getVar(s,i);
-                    string var = s.substr(i,j-i);
-                    nums.push_back(data[var]);
-                    i = j-1;
-                }
-                else if (isdigit(s[i])||s[i]=='-')
-                {
-                    int j= getDigit(s,i);
-                    nums.push_back(stoi(s.substr(i,j-i)));
-                    i = j-1;
-                }
-            }
-            return nums[0]+nums[1];
-        }
-        
-        else if (a+4<=b && s.substr(a,4)=="mult")
-        {            
-            vector<int>nums;
-            
-            for (int i=a+5; i<=b; i++)
-            {
-                if (s[i]=='(')
-                {
-                    int j = getRightParenthsis(s,i);
-                    int next = helper(s,i+1, j-1, data);
-                    nums.push_back(next);                    
-                    i = j;
-                }
-                else if (isalpha(s[i]))
-                {
-                    int j = getVar(s,i);
-                    string var = s.substr(i,j-i);
-                    nums.push_back(data[var]);
-                    i = j-1;
-                }
-                else if (isdigit(s[i])||s[i]=='-')
-                {
-                    int j= getDigit(s,i);
-                    nums.push_back(stoi(s.substr(i,j-i)));
-                    i = j-1;
-                }
-            }
-            return nums[0]*nums[1];
-        }
-        
-        else if (a+3<=b && s.substr(a,3)=="let")
-        {
-            int flag = 0;
-            string var;
-            int val;
-            for (int i=a+4; i<=b; i++)
-            {
-                if (s[i]==' ') continue;
-                                
-                if (flag==0)
-                {
-                    if (s[i]=='(')
-                    {
-                        return helper(s,i+1,b-1,data);
-                    }
-                    else if (isdigit(s[i])||s[i]=='-')
-                    {
-                        int j = getDigit(s,i);
-                        return stoi(s.substr(i,j-i));
-                    }
-                    
-                    int j = getVar(s, i);
-                    var = s.substr(i, j-i);   
-                    i = j-1;
-                    
-                    if (j==b+1)
-                        return data[var];                    
-                }
-                else 
-                {
-                    if (s[i] == '(')
-                    {
-                        int j = getRightParenthsis(s,i);
-                        val = helper(s,i+1, j-1, data);
-                        i = j;
-                    }
-                    else if (isdigit(s[i])||s[i]=='-')
-                    {
-                        int j = getDigit(s,i);
-                        val = stoi(s.substr(i,j-i));
-                        i = j-1;
-                    }
-                    else if (isalpha(s[i]))
-                    {
-                        int j = getVar(s,i);
-                        val = data[s.substr(i,j-i)];
-                        i = j-1;
-                    }
-                    data[var] = val;
-                }
-                                                
-                flag = 1-flag;
-                
-            }
-        }
-        
-        return -1;
-        
-        
-    }
-    
-    int getVar(string &s, int i)
-    {
-        while (isdigit(s[i])||isalpha(s[i]))
-            i++;
-        return i;
-    }
-    
-    int getDigit(string &s, int i)
-    {
-        while (isdigit(s[i])||s[i]=='-')
-            i++;
-        return i;
-    }
-    
-    int getRightParenthsis(string &s, int i)
-    {
-        int level = 1;
-        i++;
-        while (level>0)
-        {
-                        
-            level+=(s[i]=='(');                        
-            level-=(s[i]==')');
-            if (level==0)
-                break;
-            i++;
-        }        
-        return i;
-    }
-};
-::::::::::::::
-String/0736.Parse-Lisp-Expression/Readme.md
-::::::::::::::
-### 736.Parse-Lisp-Expression
-
-本题不难，有足够的耐心就能做出来。对于比较复杂的规则，我们用递归应该比用栈更容易。因为“括号”天然就提示了递归的层次，而且这种expression parse的题型，括号内外的规则都是完全一样的，非常适合用递归。
-
-注意一下对于let语句，后面会跟着总数为奇数个的参数。除了最后一个参数，第2k个参数一定是一个变量，第2k+1个参数则可以是变量/数值/递归式，这两种类型交替出现。而对于最后一个参数（注意它也是属于2k），则同样可能是变量/数值/递归式，这就需要额外进行判断。也就是说，在处理第2k个参数时，如果遇到了数值或者递归式，就意味着这个参数一定最后一个；如果遇到了变量但变量的结尾就是字符串的结尾，也意味着这个参数是最后一个。
-
-
-[Leetcode Link](https://leetcode.com/problems/parse-lisp-expression)::::::::::::::
-String/0816.Ambiguous-Coordinates/816.Ambiguous-Coordinates.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> ambiguousCoordinates(string s) 
-    {
-        s = s.substr(1, s.size()-2);
-        vector<string>rets;
-        for (int i=1; i<s.size(); i++)
-        {
-            vector<string> a = check(s.substr(0, i));
-            vector<string> b = check(s.substr(i));
-            if (!a.empty() && !b.empty())
-            {
-                for (auto x: a)
-                    for (auto y:b)
-                        rets.push_back("("+x+", "+y+")");                                                 
-            }                
-        }
-        return rets;        
-    }
-    
-    vector<string> check(string s)
-    {
-        vector<string>rets;
-        if (s.size()==1 || s[0]!='0')
-            rets.push_back(s);
-        
-        for (int i=1; i<s.size(); i++)
-        {
-            string a = s.substr(0, i);
-            string b = s.substr(i);
-            if (a.size()>1 && a[0]=='0') continue;
-            if (b.back()=='0') continue;            
-            rets.push_back(a+"."+b);
-        }
-        
-        return rets;
-    }
-};
-::::::::::::::
-String/0816.Ambiguous-Coordinates/Readme.md
-::::::::::::::
-### 816.Ambiguous-Coordinates
-
-本题考查如何将问题拆分。
-
-首先，遍历分割点，将字符串拆分成两个数字a与b。然后调用helper函数分别对a和b尝试加小数点。对于a可能有若干方案{x}，对于b也可能有若干方案{y}，那么x与y的两两组合（中间插入逗号）就是答案。
-
-其次，对于helpe函数而言，同样遍历分割点，将字符串拆分成整数部分a和小数部分b。对于a而言，要么只有一位，要么不能以零开头。对于b而言，结尾不能是零。如果a与b都合格，那么a与b的组合（中间插入小数点）就是答案。
-::::::::::::::
-String/0844.Backspace-String-Compare/844.Backspace-String-Compare.cpp
-::::::::::::::
-class Solution {
-public:
-    bool backspaceCompare(string S, string T) 
-    {
-        int i = convert(S);
-        int j = convert(T);
-        return S.substr(0,i)==T.substr(0,j);
-    }
-
-    int convert(string& str)
-    {
-        int i=0;
-        for (int j=0; j<str.size(); j++)
-        {
-            if (str[j]!='#')
-            {
-                str[i] = str[j];
-                i++;
-            }
-            else
-            {
-                i = max(0, i-1);
-            }                
-        }
-        return i;
-        
-    }
-};
-::::::::::::::
-String/0844.Backspace-String-Compare/Readme.md
-::::::::::::::
-### 844.Backspace-String-Compare
-
-此题的考点是用o(n)时间和o(1)空间．这就提示我们做in-place的修改．
-
-我们可以尝试用双指针的方法，将有效的字符都移动到字符串的前面去。具体的做法是快指针j扫每个元素，如果遇到了正常的字符，则str[i]=str[j]，同时慢指针i自增1。如果遇到了退格键，那么将慢指针i退一个即可。最终i指针的位置就代表了这个字符串最终有多长。
-
-
-[Leetcode Link](https://leetcode.com/problems/backspace-string-compare)
 ::::::::::::::
 String/1044.Longest-Duplicate-Substring/1044.Longest-Duplicate-Substring.cpp
 ::::::::::::::
@@ -2857,6 +1377,152 @@ Manacher算法的输出是数组P[i]，表示以i为中心，可以构造最长�
 
 类似地我们可以求出right[i]和最终的答案。
 ::::::::::::::
+String/214.Shortest-Palindrome/214.Shortest-Palindrome.cpp
+::::::::::::::
+class Solution {
+public:
+    string shortestPalindrome(string s) 
+    {
+        if (s=="") return s;
+        string t = s;
+        reverse(t.begin(),t.end());
+        
+        int N = s.size();
+        int len = N;
+        while (s.substr(0,len)!=t.substr(N-len,len))
+            len--;
+        
+        t = s.substr(len);
+        reverse(t.begin(),t.end());
+        return t+s;
+        
+    }
+};
+::::::::::::::
+String/214.Shortest-Palindrome/214.Shortest-Palindrome_KMP.cpp
+::::::::::::::
+class Solution {
+public:
+    string shortestPalindrome(string s) 
+    {
+        if (s=="") return s;
+        string r = s;
+        reverse(r.begin(), r.end());
+        vector<int>suf = preprocess(s);
+
+        // s = A'AB
+        // r = BA'A
+
+        int n = r.size();        
+        vector<int>dp(n,0);
+        dp[0] = (r[0]==s[0]);
+
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];
+            while (j>0 && s[j]!=r[i])
+                j = suf[j-1];
+            dp[i] = j + (s[j]==r[i]);
+        }
+
+        int len = dp[n-1];
+        string ret = s.substr(len);
+        reverse(ret.begin(), ret.end());
+        ret += s;
+        return ret;
+    }
+
+    vector<int> preprocess(string s)
+    {
+        int n = s.size();
+        vector<int>dp(n,0);
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];                       
+            while (j>=1 && s[j]!=s[i])
+            {
+                j = dp[j-1];
+            }          
+            dp[i] = j + (s[j]==s[i]);
+        }
+        return dp;
+    }
+};
+::::::::::::::
+String/214.Shortest-Palindrome/214.Shortest-Palindrome_Manacher.cpp
+::::::::::::::
+class Solution {
+public:
+    string shortestPalindrome(string s) 
+    {
+        string t = "#";
+        for (int i=0; i<s.size(); i++)
+        {            
+            t.push_back(s[i]);
+            t.push_back('#');
+        }
+
+        int n = t.size();
+        vector<int>P(n);
+        int maxCenter = -1, maxRight = -1;
+        int L = 1;
+        for (int i=0; i<n; i++)
+        {
+            int r;
+            if ( i < maxRight)
+            {
+                int j = maxCenter*2 - i;
+                r = min(P[j], maxRight - i);
+            }
+            else
+                r = 0;
+
+            while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
+                r++;
+
+            P[i] = r-1;
+            if (i+P[i]>maxRight)
+            {
+                maxRight = i+P[i];
+                maxCenter = i;
+            }
+
+            if (i-P[i]==0)
+                L = P[i];
+        }
+        
+        string temp = s.substr(L);
+        reverse(temp.begin(), temp.end());
+        return temp+s;
+        
+    }
+};
+::::::::::::::
+String/214.Shortest-Palindrome/Readme.md
+::::::::::::::
+### 214.Shortest-Palindrome
+
+#### 解法1：KMP
+此题的解法非常巧妙.首先,题意是试图将s分解为```s=A'AB```的形式,其中A'是A的逆序,求使得A'A最长的分解方式.
+
+如果我们将s整体逆序写成r,那么```r=B'A'A```.可以发现s的前段和r的后端恰好都是```A'A```.此外,反过来考虑,已知r是s的逆序,并且r的尾端等于s的首端,那么这段相同的字符串一定是个palindrome,即A'A的形式.
+
+有了以上两点证明,那么我们就只要找到最大的```i```,使得```s[0:i]==r[len(r)-i:]```，即在r中找到最长的后缀，使得其等于s的前缀。实现这个可以有两种方法：1. 暴力尝试这个长度。2. 类似KMP中求后缀数组的方法，计算数组r的suf[i]，即r中截止位置i的最长后缀字符串使得恰好是s的前缀字符串。
+
+最终suf[n-1]就是A'A的最大长度。因此B = s.substr(len). 返回的答案就是ret = B'+s.
+
+### 解法2：Manacher
+本题的本质就是在s中找一个最长的、起点在左端点的回文串。然后将s除去回文串的后端复制、翻转并拼接在原s串的前端，就是最优的答案。
+
+所以此题的本质就是Manacher的模板题```005.Longest-Palindromic-Substring```，求出每个位置作为中心能够构造的最长回文串，查看这个回文串是否能抵达s的最左端，是的话就记录下这个回文串的长度L。输出的答案是：
+```cpp
+string temp = s.substr(R);
+reverse(temp.begin(), temp.end());
+return temp+s;
+```
+
+[Leetcode Link](https://leetcode.com/problems/shortest-palindrome)
+::::::::::::::
 String/2156.Find-Substring-With-Given-Hash-Value/2156.Find-Substring-With-Given-Hash-Value.cpp
 ::::::::::::::
 using LL = long long;
@@ -2957,3 +1623,1337 @@ String/2168.Unique-Substrings-With-Equal-Digit-Frequency/Readme.md
 for (int j=i; j<n; j++)
   hash = hash * 11 + (s[j]-'a'+1);
 ```
+::::::::::::::
+String/320.Generalized-Abbreviation/320.Generalized-Abbreviation.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<string> generateAbbreviations(string word) 
+    {
+        int n = word.size();
+        vector<string>rets;
+        for (int state = 0; state < (1<<n); state++)
+        {
+            string s;
+            for (int i=0; i<n; i++)
+            {
+                if ((state>>i)&1)
+                {
+                    s.push_back(word[i]);
+                }
+                else
+                {
+                    int j = i;
+                    while (j<n && ((state>>j)&1)==0)
+                        j++;
+                    s += to_string(j-i);                    
+                    i = j-1;
+                }
+            }
+            rets.push_back(s);
+        }
+        return rets;
+    }
+};
+::::::::::::::
+String/320.Generalized-Abbreviation/Readme.md
+::::::::::::::
+### 320.Generalized-Abbreviation
+
+本题需要穷举所有的可能，可以考虑DFS用递归处理。但是因为本题不需要剪枝，并且每个位置上的字符都有且只有两种可能：要么被缩略，要么不被缩略。所以用bitmask来实现穷举写起来更方便。
+
+我们遍历```00..0```到```11..1```的所有n位二进制状态。如果某位上是1，那么对应位置的字符就保留。如果某位上是0，那么对应位置上的字符就要被缩略：具体所谓的方法就是查看周围是否有连续的0，将这些连续0的数目改写成数字串即可。
+::::::::::::::
+String/336.Palindrome-Pairs/336.Palindrome Pairs.cpp
+::::::::::::::
+class Solution {
+public:
+    static bool cmp(string a, string b)
+    {
+        return (a.size()<b.size());
+    }
+    
+    vector<vector<int>> palindromePairs(vector<string>& words) 
+    {
+        vector<vector<int>>result;
+        
+        unordered_set<string>Set;
+        unordered_map<string,int>Map;
+        for (int i=0; i<words.size(); i++)
+            Map[words[i]]=i;
+            
+        sort(words.begin(),words.end(),cmp);
+        
+        for (int i=0; i<words.size(); i++)
+        {
+            string t=words[i];
+
+            for (int k=0; k<=t.size(); k++)
+            {
+                string s1=t.substr(0,k);
+                reverse(s1.begin(),s1.end());
+                string s2=t.substr(k,t.size()-k);
+                if (Set.find(s1)!=Set.end() && palindrome(s2))
+                    result.push_back({Map[t],Map[s1]});
+                    
+                s1=t.substr(0,k);
+                s2=t.substr(k,t.size()-k);
+                reverse(s2.begin(),s2.end());                
+                if (Set.find(s2)!=Set.end() && palindrome(s1))
+                    result.push_back({Map[s2],Map[t]});
+                    
+            }
+            
+            Set.insert(t);
+        }
+        
+        return result;
+    }
+    
+    bool palindrome(string s)
+    {
+        int i=0; 
+        int j=s.size()-1;
+        while (i<=j)
+        {
+            if (s[i]!=s[j])
+                return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
+};
+::::::::::::::
+String/336.Palindrome-Pairs/336.Palindrome-Pairs_v2.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(string a,string b)
+    {
+        return a.size()<b.size();
+    }
+public:
+    vector<vector<int>> palindromePairs(vector<string>& words) 
+    {
+        unordered_set<string>Set;
+        unordered_map<string,int>Map;
+        for (int i=0; i<words.size(); i++)
+            Map[words[i]]=i;
+
+        sort(words.begin(),words.end(),cmp);
+        
+        vector<vector<int>>results;
+        
+        for (int i=0; i<words.size(); i++)
+        {
+            string w = words[i];
+            for (int j=0; j<=w.size(); j++)
+            {
+                if (isPalindrome(w,0,j-1))
+                {
+                    string w2 = w.substr(j);
+                    reverse(w2.begin(),w2.end());
+                    if (Set.find(w2)!=Set.end())                    
+                        results.push_back({Map[w2],Map[words[i]]});                    
+                }                
+                if (isPalindrome(w,j,w.size()-1))
+                {
+                    string w2 = w.substr(0,j);
+                    reverse(w2.begin(),w2.end());
+                    if (Set.find(w2)!=Set.end())                    
+                        results.push_back({Map[words[i]],Map[w2]});                    
+                }   
+            }            
+            Set.insert(words[i]);
+        }        
+        return results;
+    }
+    
+    bool isPalindrome(string &w, int a, int b)
+    {
+        while (a<b)
+        {
+            if (w[a]!=w[b]) return false;
+            a++;
+            b--;
+        }
+        return true;
+    }    
+};
+::::::::::::::
+String/336.Palindrome-Pairs/Readme.md
+::::::::::::::
+### 336.Palindrome-Pairs
+
+最直观的想法是将数组里的字符串两两比较，o(n^2)的时间复杂度，每次比较需要遍历两个字符串拼接后的全部长度，所以会超时。
+
+AC的解法是构建一个集合，遍历字符串数组的过程中，将每个字符串与集合中已有的字符串进行考察，看是否有符合条件的配对。
+
+首先，将字符串数组按照字符串长度从小到大排列：
+```cpp
+    static bool cmp(string a, string b)
+    {
+        return (a.size()<b.size());
+    }
+
+    sort(words.begin(),words.end(),cmp);
+```
+在遍历的过程中，假设string t=words[i];    
+遍历t的长度，将t拆分为两部分s1和s2. 注意这样的拆分，可以使s1从空字符串一直变化到t。
+
+考虑两种情况是符合要求的：   
+1.s1的反序已经在集合中，并且s2本身就是回文，这样s1s2s1'构成回文；    
+2.s2的反序已经在集合中，并且s1本身就是回文，这样s2's1s2构成回文。
+
+然后就可以把t添加到集合中，考察下一个t。   
+```cpp
+        for (int i=0; i<words.size(); i++)
+        {
+            string t=words[i];
+
+            for (int k=0; k<=t.size(); k++)
+            {
+                string s1=t.substr(0,k);
+                reverse(s1.begin(),s1.end());
+                string s2=t.substr(k,t.size()-k);
+                if (Set.find(s1)!=Set.end() && palindrome(s2))
+                    result.push_back({Map[t],Map[s1]});
+                    
+                s1=t.substr(0,k);
+                s2=t.substr(k,t.size()-k);
+                reverse(s2.begin(),s2.end());                
+                if (Set.find(s2)!=Set.end() && palindrome(s1))
+                    result.push_back({Map[s2],Map[t]});
+                    
+            }
+            
+            Set.insert(t);
+        }
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/palindrome-pairs)::::::::::::::
+String/388.Longest-Absolute-File-Path/388.Longest-Absolute-File-Path.cpp
+::::::::::::::
+class Solution {
+public:
+    int lengthLongestPath(string input) 
+    {
+        vector<string>files;
+        for (int i=0; i<input.size(); i++)
+        {
+            int i0=i;
+            while (i<input.size() && input[i]!='\n')
+                i++;
+            files.push_back(input.substr(i0,i-i0));
+        }
+                
+        vector<string>dir;
+        int result = 0;
+        
+        for (string str:files)
+        {
+            int k=0;
+            while (k<str.size() && str[k]=='\t')
+                k++;
+                  
+            if (dir.size()<=k) dir.resize(k+1);      
+            dir[k] = str.substr(k);
+                        
+            if (dir[k].find(".")!=-1)
+            {
+                int count = 0;
+                for (int i=0; i<=k; i++)
+                    count+=dir[i].size();
+                count+=k;
+                
+                result = max(count,result);
+            }
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+String/388.Longest-Absolute-File-Path/Readme.md
+::::::::::::::
+### 388.Longest-Absolute-File-Path
+
+特别注意：'\n'，'\t' 这种转义字符被认为是一个字符！
+
+首先，根据'\n'将字符串拆分。然后，根据每个子字串前的'\t'的数目来确定它是第几级的。设置一个vector<vector<string>>dirs，比如第三级的字串就加入dirs[3]里面。
+
+如果遇到一个字串表示的是文件名，则往前推其第i级的目录名，就对应了dirs[i]里面的最后一个字串。
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-absolute-file-path)::::::::::::::
+String/408.Valid-Word-Abbreviation/408.Valid Word Abbreviation.cpp
+::::::::::::::
+class Solution {
+public:
+    bool validWordAbbreviation(string word, string abbr) 
+    {
+        int i=0;
+        int j=0;
+        
+        while (j<abbr.size())
+        {
+            if (i>=word.size()) return false;
+            
+            if (abbr[j]=='0')
+                return false;
+            else if (abbr[j]>='0' && abbr[j]<='9')
+            {
+                int num=0;
+                while (j<abbr.size() && abbr[j]>='0' && abbr[j]<='9')
+                {
+                    num=num*10+abbr[j]-'0';
+                    j++;
+                }
+                i+=num;
+            }
+            else if (abbr[j]>='a' && abbr[j]<='z')
+            {
+                if (abbr[j]!=word[i])
+                    return false;
+                else
+                {
+                    i++;
+                    j++;
+                }
+            }
+        }
+        
+        if (i!=word.size()) 
+            return false;
+        else
+            return true;
+        
+    }
+};
+::::::::::::::
+String/408.Valid-Word-Abbreviation/Readme.md
+::::::::::::::
+### 408.Valid-Word-Abbreviation
+
+典型的双指针。遍历一遍abbr，移动abbr的指针的同时，也相应地移动word的指针，看看每一步都是否对应。具体地说，就是abbr的字母和word字母对应，abbr的数字和word里相同数目的字母对应。
+
+需要注意的细节：
+1. 数字不能有前导0. 比如word=ab, abbr=02就应该输出false.
+2. abbr遍历完之后，word的遍历也应该恰好结束。即if (i!=word.size()) return false;
+
+
+[Leetcode Link](https://leetcode.com/problems/valid-word-abbreviation)
+::::::::::::::
+String/411.Minimum-Unique-Word-Abbreviation/411.Minimum-Unique-Word-Abbreviation.cpp
+::::::::::::::
+class Solution {
+    int m;
+public:
+    string minAbbreviation(string target, vector<string>& dictionary) 
+    {
+        if (dictionary.size()==0)
+            return to_string(target.size());
+        this->m = target.size();
+        
+        unordered_set<string>Set;
+        for (auto word: dictionary)
+        {
+            if (word.size()==m)
+                Set.insert(word);
+        }
+        
+        vector<pair<int,int>>masks;
+        for (int state = 0; state < (1<<m); state++)        
+            masks.push_back({len(state), state});
+        sort(masks.begin(), masks.end());
+        
+        for (auto x: masks)
+        {
+            int mask = x.second;
+            string abbr = getAbbr(target, mask);
+            int flag = 1;
+            
+            for (auto word: Set)
+            {
+                string s = getAbbr(word, mask);
+                if (s==abbr)
+                {
+                    flag = 0;
+                    break;
+                }                
+            }
+            if (flag==1) return abbr;            
+        }
+        
+        return "";        
+    }
+    
+    string getAbbr(string& word, int mask)
+    {
+        string ret;
+        for (int i=0; i<m; i++)
+        {
+            if ((mask>>i)&1)
+                ret.push_back(word[i]);
+            else
+            {
+                int j = i;
+                while (j<m && ((mask>>j)&1)==0)
+                    j++;
+                ret  += to_string(j-i);
+                i = j-1;
+            }
+        }
+        return ret;
+    }
+    
+    int len(int mask)
+    {
+        int count = 0;
+        for (int i=0; i<m; i++)
+        {
+            if ((mask>>i)&1)
+                count++;
+            else
+            {
+                int j = i;
+                while (j<m && ((mask>>j)&1)==0)
+                    j++;
+                count += 1;
+                i = j-1;
+            }
+        }
+        return count;
+        
+    }
+};
+::::::::::::::
+String/411.Minimum-Unique-Word-Abbreviation/Readme.md
+::::::::::::::
+### 411.Minimum-Unique-Word-Abbreviation
+
+此题不需要遍历所有的字典里的单词的缩写形式．
+
+首先，我们应该注意到，缩写不会改变长度，所以两个长度不同的单词，他们的任何形式的缩写都不可能相同。所以对于字典里的那些与target的长度不一致的单词，完全可以忽略。
+
+其次，targe的缩写方案有多少呢？不难判断，每一个字符只有两种选择：被缩写或者不被缩写。所以target的缩写形式只有2^m种可能。考虑到m是21，最多有2e6种缩写，是可以遍历过来的。对于无需剪枝的无脑遍历，使用bitmask来穷举所有缩写方式是最方便的，这与```LC 320.Generalized-Abbreviation```是一样的做法。当然，我们肯定先尝试长度短的缩写方法，再尝试长的缩写方法。所以需要将所有的缩写方法按照长度排序。
+
+最后，我们对于target的每一种缩写方式abbr，都要与字典里的每一个单词word进行匹配，看是否abbr是否也是word的一个缩写。这个算法和```LC 408.Valid-Word-Abbreviation```是一样的。
+
+所以总的时间复杂度是```o(2^m*n)```. 因为题目给出了m+log(n)<=21，所以```2^m*n<=2^21```，即时间复杂度是2e6级别，是可行的。
+
+[Leetcode Link](https://leetcode.com/problems/minimum-unique-word-abbreviation)
+::::::::::::::
+String/418.Sentence-Screen-Fitting/418.Sentence-Screen-Fitting.cpp
+::::::::::::::
+class Solution {
+public:
+    int wordsTyping(vector<string>& sentence, int rows, int cols) 
+    {
+        string s;
+        for (auto str:sentence)
+        {
+            if (str.size()>cols) return 0;
+            s+= str+" ";
+        }   
+        
+        int i = 0;
+        int len = s.size();
+        
+        for (int k=0; k<rows; k++)
+        {
+            i+=cols;
+            while (s[i%len]!=' ')
+                i--;
+            i++;
+        }
+        return i/len;
+    }
+};
+::::::::::::::
+String/418.Sentence-Screen-Fitting/Readme.md
+::::::::::::::
+### 418.Sentence-Screen-Fitting
+
+此题如果按照逐个单词去填充，那么如果单词长度都特别短的话，想要填充完rows x cols这么多位置就会TLE．本题更合理的方式是以cols的长度去处理。首先将sentence的所有单词用空格串联起来记做str：
+```cpp
+    for (auto str:sentence)
+        {
+            if (str.size()>cols) return 0;
+            s+= str+" ";
+        }   
+```      
+注意，这里可以提前处理不合法的例子．
+
+我们接下来的任务就是在一段```xxx xxx xx xxxx xx x xxxx ```里面试图以每cols的宽度去插板，要求板子只能插在空格里，不能分割任何单词本身。特别注意，最后我们特地留有一个空格，这是为了将前一个str与下一个str之间区分开来。
+
+具体的做法是，初始的指针index指向0，每处理一行，我们就把index+=cols，此时如果index落到了空格上，说明至此的所有字符都可以放在一个row里面，然后index指向空格后的第一个字符。如果没有落到空格上，说明某个单词没有写完就触碰了边界，这时候我们将index慢慢回退直至遇到了一个空格为止。
+
+注意到指针wrap的情况，所以我们对于index的处理永远都是考虑它对str长度的取余。
+
+重复以上过程，当处理完rows行之后，看看此刻的index是str长度的多少倍，就说明能重复多少个字符串．
+
+[Leetcode Link](https://leetcode.com/problems/sentence-screen-fitting)
+::::::::::::::
+String/459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    bool repeatedSubstringPattern(string s) 
+    {
+        for (int i=s.size()/2; i>=1; i--)
+        {
+            if (s.size()%i!=0) continue;
+            
+            int flag=1;
+            string t = s.substr(0,i);
+            int j=i;
+            while (j<s.size())
+            {
+                if (t!=s.substr(j,i))
+                {
+                    flag=0;
+                    break;
+                }
+                j+=i;
+            }
+            
+            if (flag==1) return true;
+        }
+        
+        return false;
+        
+    }
+};
+::::::::::::::
+String/459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    bool repeatedSubstringPattern(string s) 
+    {
+        int n = s.size();
+        vector<int>dp(n,0);
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];
+            while (j>0 && s[j]!=s[i])
+                j = dp[j-1];
+            dp[i] = j+(s[j]==s[i]);
+        }
+        int len = dp[n-1];
+        return (len>0 && n%(n-len)==0);       
+    }
+};
+::::::::::::::
+String/459.Repeated-Substring-Pattern/Readme.md
+::::::::::::::
+### 459.Repeated-Substring-Pattern
+
+#### 解法1
+暴力尝试所有的循环节长度，查看是否是否每段循环节长度的区间都相等。
+
+#### 解法2
+我们计算字符串s的后缀数组suf[i]，得到长度len = suf[n-1]，这是s最长的前缀字符串使得期恰好也等于s的后缀字符串。
+
+如果我们得到了这样的len，会有什么性质呢？如下图，我们画出最长前缀/后缀字符串的范围（星号）
+```
+s: [* * *] [* * *] [* * *] [_____]
+      A           B           C
+      
+s: [_____] [* * *] [* * *] [* * *]
+      D           E           F
+
+```
+由最长前缀/后缀字符串的关系，我们知道B的后缀等于F.同时由于B的后缀就是E的后缀，所以得到E的后缀等于F。我们可以类似地一路向前推进。所以只要A+B的长度是F的长度（也就是n-len）的整数倍，那么A+B（或者D+E）就有F作为循环节。因此判断存在循环节的充要条件是```len>0 && （n-len）%len==0```.
+
+另外，n-len也一定是最小循环节长度。
+::::::::::::::
+String/467.Unique-Substrings-in-Wraparound-String/467.Unique-Substrings-in-Wraparound-String.cpp
+::::::::::::::
+class Solution {
+public:
+    int findSubstringInWraproundString(string p) 
+    {
+        unordered_map<char,int>Map;
+        for (int i=0; i<p.size(); i++)
+        {
+            int j=i;
+            while (j+1<p.size() && (p[j+1]==p[j]+1 || p[j]=='z' && p[j+1]=='a'))
+                j++;
+            if (j-i+1>Map[p[i]])
+                Map[p[i]]=j-i+1;            
+        }
+        
+        int result=0;
+        for (auto a:Map)
+            result+=a.second;
+        return result;
+    }
+};
+::::::::::::::
+String/467.Unique-Substrings-in-Wraparound-String/Readme.md
+::::::::::::::
+### 467.Unique-Substrings-in-Wraparound-String
+
+注意s串的性质，其子串必然是递增的。发现这一点后，只要是在p中的所有递增子串，都是s的字串。
+
+那么p中有多少不同的递增子串呢？任何不同的递增字串，只需要两个参数就能确定其独特性。一个是起始字符，另一个是字串的长度。于是只要遍历p的每一个字符，找出以其为开头的最长递增字串即可。比如说p中以'a'开头的递增字串的最大长度是n，那么就有n种不同的以'a'开头的递增字串。
+
+创建一个Hash表，遍历p[i]。以遍历的字符p[i]作为key，记录以p[i]开头的递增字串的最大长度（这个value会随着p的遍历而不断被更新）。最终结果就是把所有key的value都加起来。
+
+
+[Leetcode Link](https://leetcode.com/problems/unique-substrings-in-wraparound-string)::::::::::::::
+String/527.Word-Abbreviation/527.Word Abbreviation.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<string> wordsAbbreviation(vector<string>& dict) 
+    {
+        unordered_map<string,int>Index;
+        for (int i=0; i<dict.size(); i++)
+            Index[dict[i]]=i;
+        
+        unordered_map<string,vector<string>>Map;
+        vector<string>results(dict.size());
+        int abbrNum=0;
+
+        unordered_set<string>Set;
+        for (int i=0; i<dict.size(); i++)
+            Set.insert(dict[i]);
+        
+        while (1)
+        {
+            Map.clear();
+            for (auto s:Set)
+            {
+                string abbr=getAbbr(s,abbrNum);
+                Map[abbr].push_back(s);
+            }
+            Set.clear();
+            
+            for (auto a:Map)
+            {
+                if (a.second.size()>1)
+                {
+                    for (int i=0; i<a.second.size(); i++)
+                        Set.insert(a.second[i]);
+                }
+                else
+                {
+                    results[Index[a.second[0]]]=a.first;
+                }
+            }
+            
+            if (Set.size()==0) break;
+            abbrNum++;
+        }
+        
+        return results;
+        
+    }
+    
+    string getAbbr(string s, int abbrNum)
+    {
+        string t;
+        if (s.size()<=2) 
+        {
+            t=s;
+            return t;
+        }
+        
+        t=s.substr(0,abbrNum+1);
+        t+=to_string(s.size()-abbrNum-2);
+        t+=s.back();
+        if (t.size()==s.size()) t=s;
+        return t;
+    }
+};
+::::::::::::::
+String/527.Word-Abbreviation/Readme.md
+::::::::::::::
+### 527.Word-Abbreviation
+
+设置一个Map和一个Set。Map是从缩写到原单词(数组)的映射。Set盛装所有仍需要进一步求缩写的原单词，初始化的时候则装所有的原单词。
+
+在每次循环中，把Set里所有的单词都求其缩写加入Map，清空Set。然后查看Map的所有元素，对于那些仍然对应多个原单词的缩写，就把这些原单词加入Set。清空Map。
+
+重复这样的循环直至Set不再有元素。
+
+
+[Leetcode Link](https://leetcode.com/problems/word-abbreviation)::::::::::::::
+String/556.Next-Greater-Element-III/556.Next-Greater-Element-III.cpp
+::::::::::::::
+class Solution {
+public:
+    int nextGreaterElement(int n) 
+    {
+        if (n==0) return -1;
+        
+        vector<int>num;
+        while (n>0)
+        {
+            num.push_back(n%10);
+            n=n/10;
+        }
+        
+        vector<int>p;
+        p.push_back(num[0]);
+        int i=1;
+        while (i<num.size() && num[i]>=num[i-1])
+        {
+            p.push_back(num[i]);
+            i++;
+        }
+        if (i==num.size()) return -1; // all the digits are descending
+        
+        int j=0;
+        while (p[j]<=num[i]) j++;
+        swap(num[i],p[j]);
+        
+        sort(p.begin(),p.end());
+        reverse(p.begin(),p.end());
+        
+        for (int k=0; k<p.size(); k++)
+            num[k]=p[k];
+        
+        long long result=0;
+        for (int i=num.size()-1; i>=0; i--)        
+            result = result*10+num[i];
+        
+        if (result>INT_MAX) 
+            return -1;
+        else
+            return result;                
+    }
+};
+::::::::::::::
+String/556.Next-Greater-Element-III/Readme.md
+::::::::::::::
+### 556.Next-Greater-Element-III
+
+首先，从低位到高位找到第一个不满足升序的数字。显然，如果从低位到高位都是升序的话，那么找不到任何可以比这个数字更大的变换了。
+
+假设找到这样的数字在第n+1位（记做k），那么在1\~n这个n个低位数字中找到恰比k大的数字（记做m），交换k和m。于是变换后的第n+1位就这么定下来了（可以分析出这就是最小的改动）。剩下来的第1~n位（记得其中有一个是之前调换过来的k），我们让它们按照降序排列即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/next-greater-element-iii)::::::::::::::
+String/564.Find-the-Closest-Palindrome/564.Find-the-Closest-Palindrome.cpp
+::::::::::::::
+class Solution {
+public:
+    string nearestPalindromic(string n) 
+    {
+        int N=n.size();
+        string s1,s2,s3;
+        
+        if (N%2==1)
+        {
+            string t=n.substr(0,N/2+1);
+            long long num=convert(t);
+            string t1,t2;
+            
+            // candidate 1
+            t1 = to_string(num);
+            t2 = t1;
+            reverse(t2.begin(),t2.end());
+            s1 = t1.substr(0,N/2)+t2;
+            
+            // candidate 2
+            t1 = to_string(num-1);
+            t2=t1;
+            reverse(t2.begin(),t2.end());
+            s2 = t1.substr(0,N/2)+t2;
+            
+            // candidate 3
+            t1 = to_string(num+1);
+            t2=t1;
+            reverse(t2.begin(),t2.end());
+            s3 = t1.substr(0,N/2)+t2;
+
+            cout<<s1<<" "<<s2<<" "<<s3<<endl;
+            
+            return pick(n,s1,s2,s3);
+        }
+        
+        if (N%2==0)
+        {
+            string t=n.substr(0,N/2);
+            long long num=convert(t);
+            string t1,t2;
+            
+            //candidate 1
+            t1 = n.substr(0,N/2);
+            reverse(t1.begin(),t1.end());
+            s1 = to_string(num)+t1;
+            
+            //candidate 2
+            t1 = to_string(num-1);
+            if (t1=="0")
+                s2="9";
+            else if (t1.size()==t.size())
+            {
+                t2=t1;
+                reverse(t2.begin(),t2.end());
+                s2=t1+t2;
+            }
+            else if (t1.size()!=t.size())
+            {
+                t2=t1;
+                reverse(t2.begin(),t2.end());
+                s2=t1+'9'+t2;
+            }
+            
+            //candidate 3
+            t1 = to_string(num+1);
+            if (t1.size()==t.size())
+            {
+                t2=t1;
+                reverse(t2.begin(),t2.end());
+                s3=t1+t2;
+            }
+            else if (t1.size()!=t.size())
+            {
+                t2=t1;
+                reverse(t2.begin(),t2.end());
+                t1.pop_back();
+                s3=t1+t2;
+            }
+            
+            cout<<s1<<" "<<s2<<" "<<s3<<endl;
+            
+            return pick(n,s1,s2,s3);
+        }        
+    }
+    
+    string pick(string n, string s1, string s2, string s3)
+    {
+        long long m= convert(n);
+        long long n1= convert(s1);
+        long long n2= convert(s2);
+        long long n3= convert(s3);
+        
+        if (n1==m)
+        {
+            return abs(n2-m)<=abs(n3-m)?s2:s3;
+        }
+        else
+        {
+            long long num_temp = abs(n1-m)<=abs(n3-m)?n1:n3;
+            string string_temp = abs(n1-m)<=abs(n3-m)?s1:s3;
+            
+            return abs(n2-m)<=abs(num_temp-m)?s2:string_temp;
+        }        
+    }    
+    
+    long long convert(string s)
+    {
+        long long result=0;
+        for (int i=0; i<s.size(); i++)
+        {
+            result = result*10 + s[i]-'0';
+        }
+        return result;
+    }    
+};
+::::::::::::::
+String/564.Find-the-Closest-Palindrome/Readme.md
+::::::::::::::
+### 564.Find-the-Closest-Palindrome
+
+这是一道比较难的题目。
+
+看到题目最直观的想法是，将数字的前半部分翻转后拼接到后半部分，比如说12345，那么我们就找12321.
+
+但是这样的策略不是万能的，因为找到不一定是离原数最接近的。比如12399，如果我们选择直接翻转，12321就不是最优解，最优解应该是12421. 再比如19200,直接翻转的19291不是最优解，最优解是19191. 那么我们就可以见端倪了，对于形如ABCXX的形式，我们应该在ABCBA，AB(C+1)BA，AB(C-1)BA之间选择一个最接近原数的就可以了。同理，对于ABXX的形式，我们采用类似的加一减一再复制翻转的方式，于是就应该在ABBA，A(B+1)(B+1)A，A(B-1)(B-1)A之间选择一个最接近原数的。
+
+但这样的话，又会有个问题，例如12088，中间的0如果减去１的话就变成9了，翻转复制就成了12921和，这与原数相差也太大了．所以我们改进上面的方法，不再只对中间的数字加减，而是对前三位120整体做加减，然后复制翻转拼接（合并掉中间一位以保证仍然是奇数位），得到11911,12021,12121．那么我们对于偶数位也采取相同的方法，例如2088,我们对20整体进行加减操作，然后复制翻转拼接（不用合并掉中间一位，因为期望仍然是偶数位），得到1991,2002,2112.
+
+但是，如果遇到加减之后位数变化的情况怎么办呢？比如10001,我们对前三位100减１之后得到的99，复制翻转拼接之后得到的999，位数一下子就少了两位．类似的对于999，我们如果对于前两位99加一变成100,复制翻转拼接后变成10001,位数一下子就多了两位．类似的情况对于偶数位的数字也会出现．怎么办呢？方案是，我们照做不误，反正最后筛查所有候选答案的时候，这些偏差太大的候选人一定会被去掉的．但是，我们需要同时考虑到这种位数变化的情况，所以干脆也加入到候选者来．比如给出的某个n位数，那么我们就把n+1位数的100...0001直接放入候选，n-1位数的99...99也直接放入候选．
+
+综上，我们有了得到五个候选人的方案,最后筛查一下．去除不是回文数的（注意有可能候选人不是回文数），选取和原数最接近的就是答案了．
+
+
+[Leetcode Link](https://leetcode.com/problems/find-the-closest-palindrome)::::::::::::::
+String/616.Add-Bold-Tag-in-String/616.Add-Bold-Tag-in-String.cpp
+::::::::::::::
+class Solution {
+public:
+    string addBoldTag(string s, vector<string>& dict) 
+    {
+        int N=s.size();
+        vector<int>p(N,0);
+        
+        for (int i=0; i<dict.size(); i++)
+        {
+            int len=dict[i].size();
+            string str=dict[i];
+            for (int j=0; j<=N-len; j++)
+            {
+                if (s.substr(j,len)==str)
+                {
+                    for (int k=j; k<j+len; k++)
+                        p[k]=1;
+                }
+            }
+        }
+        
+        /*
+        for (int i=0; i<p.size(); i++)
+            cout<<p[i];
+        */
+        
+        string result;
+        int i=0;
+        while (i<N)
+        {
+            while (i<N && p[i]==0)
+            {
+                result+=s[i];
+                i++;
+            }                
+            
+            if (i==N)            
+                return result;
+            else
+            {
+                result+="<b>";
+                int i0=i;
+                while (i<N && p[i]==1)
+                    i++;
+                result+=s.substr(i0,i-i0);
+                result+="</b>";
+            }
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+String/647.Palindromic-Substrings/647.Palindromic-Substrings.cpp
+::::::::::::::
+class Solution {
+public:
+    int countSubstrings(string s) 
+    {
+        int count=0;
+        int n=s.size();
+        
+        for (int i=0; i<s.size(); i++)
+        {
+            int len=0;
+            while (i-len>=0 && i+len<n && s[i-len]==s[i+len])
+                len++;
+            count+=len;
+            
+            len=0;
+            while (i-len>=0 && i+1+len<n && s[i-len]==s[i+1+len])
+                len++;
+            count+=len;
+        }
+        return count;
+
+    }
+};
+::::::::::::::
+String/647.Palindromic-Substrings/647.Palindromic-Substrings_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int countSubstrings(string s) 
+    {
+        string t = "#";
+        for (auto ch: s)
+        {
+            t.push_back(ch);
+            t.push_back('#');
+        }
+        
+        int n = t.size();
+        vector<int>P(n);
+        int maxCenter = -1;
+        int maxRight = -1;
+        for (int i=0; i<n; i++)
+        {
+            int r;
+            if (i <= maxRight)
+            {
+                int j = maxCenter*2-i;
+                r = min(P[j], maxRight-i);
+                while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
+                    r++;                
+            }
+            else
+            {
+                r = 0;
+                while (i-r>=0 && i+r<n && t[i-r]==t[i+r])
+                    r++;  
+            }
+            P[i] = r-1;
+            if (i+P[i]>maxRight)
+            {
+                maxRight = i+P[i];
+                maxCenter = i;
+            }
+        }
+        
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            ret += (P[i]+1)/2;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+String/647.Palindromic-Substrings/Readme.md
+::::::::::::::
+### 647.Palindromic-Substrings
+
+#### 解法1：暴力
+遍历 for (i=0; i<n; i++)，考察以i为中心的回文串个数（回文串长度为奇数）、i和i+1为中心的回文串个数（回文串长度为偶数），分别加入总的结果中。
+
+考察方法是以中心i往两边扩散。一旦发现无法实现中心对称，则可以跳过这个i。整体的时间复杂度是 o(n^2)
+
+#### 解法2：Manacher
+此题是Manacher的模板题。注意，求出T串的P[i]之后，每一个中心点的最长回文串半径（去除了#字符）其实是```(P[i]+1)/2```
+
+[Leetcode Link](https://leetcode.com/problems/palindromic-substrings)
+::::::::::::::
+String/722.Remove-Comments/722.Remove-Comments.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<string> removeComments(vector<string>& source) 
+    {
+        vector<string>result;
+        bool comment=false;
+        string s;
+        
+        for (int i=0; i<source.size(); i++)
+        {
+            for (int j=0; j<source[i].size(); j++)
+            {
+                if (!comment && j+1<source[i].size() && source[i].substr(j,2)=="//")
+                    break;
+                else if (!comment && j+1<source[i].size() && source[i].substr(j,2)=="/*")
+                {
+                    comment=true;
+                    j++;
+                }
+                else if (comment && j+1<source[i].size() && source[i].substr(j,2)=="*/")
+                {
+                    comment=false;
+                    j++;
+                }
+                else if (!comment)
+                {
+                    s.push_back(source[i][j]);
+                }
+                    
+            }
+            
+            if (!comment && s.size()>0)
+            {
+                result.push_back(s);
+                s.clear();
+            }
+                
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+String/722.Remove-Comments/Readme.md
+::::::::::::::
+### 722.Remove-Comments
+
+令s代表待输出的一行。此题考虑这么几个问题：
+
+1. 遇到"//"怎么办？ 这一行的字符就直接跳过，直接将s加入result（注意，此时必须是非comment模式）
+2. 遇到"/*"怎么办？ 进入了comment模式
+3. 遇到"*/"怎么办？ comment模式结束，可以将s加入result
+4. 普通字符？将字符加入s
+5. 始终在comment模式里？ 那么继续遍历字符
+6. 如果到了行结束，且不是comment模式，那么就可以将s加入result
+
+要能够和谐地处理以上这几种情况，我们可以设置一个bool变量comment。
+
+1. comment off && "//"怎么办？ 直接挑出该行
+2. comment off && "/*"怎么办？ 进入了comment模式
+3. comment on && "*/"怎么办？ 退出comment模式
+4. comment off && 普通字符？将字符加入s
+5. comment on && 普通字符？忽略该字符
+6. 到了行结束，&& comment off：那么就可以将s加入result，清空s
+
+
+[Leetcode Link](https://leetcode.com/problems/remove-comments)::::::::::::::
+String/736.Parse-Lisp-Expression/736.Parse-Lisp-Expression.cpp
+::::::::::::::
+class Solution {
+public:
+    int evaluate(string expression) 
+    {
+        unordered_map<string,int>data;
+        return helper(expression, 1, expression.size()-2, data);
+    }
+    
+    int helper(string &s, int a, int b, unordered_map<string,int> data)
+    {       
+        if (a+3<=b && s.substr(a,3)=="add")
+        {            
+            vector<int>nums;
+            
+            for (int i=a+4; i<=b; i++)
+            {
+                if (s[i]=='(')
+                {
+                    int j = getRightParenthsis(s,i);
+                    int next = helper(s,i+1, j-1, data);
+                    nums.push_back(next);                    
+                    i = j;
+                }
+                else if (isalpha(s[i]))
+                {
+                    int j = getVar(s,i);
+                    string var = s.substr(i,j-i);
+                    nums.push_back(data[var]);
+                    i = j-1;
+                }
+                else if (isdigit(s[i])||s[i]=='-')
+                {
+                    int j= getDigit(s,i);
+                    nums.push_back(stoi(s.substr(i,j-i)));
+                    i = j-1;
+                }
+            }
+            return nums[0]+nums[1];
+        }
+        
+        else if (a+4<=b && s.substr(a,4)=="mult")
+        {            
+            vector<int>nums;
+            
+            for (int i=a+5; i<=b; i++)
+            {
+                if (s[i]=='(')
+                {
+                    int j = getRightParenthsis(s,i);
+                    int next = helper(s,i+1, j-1, data);
+                    nums.push_back(next);                    
+                    i = j;
+                }
+                else if (isalpha(s[i]))
+                {
+                    int j = getVar(s,i);
+                    string var = s.substr(i,j-i);
+                    nums.push_back(data[var]);
+                    i = j-1;
+                }
+                else if (isdigit(s[i])||s[i]=='-')
+                {
+                    int j= getDigit(s,i);
+                    nums.push_back(stoi(s.substr(i,j-i)));
+                    i = j-1;
+                }
+            }
+            return nums[0]*nums[1];
+        }
+        
+        else if (a+3<=b && s.substr(a,3)=="let")
+        {
+            int flag = 0;
+            string var;
+            int val;
+            for (int i=a+4; i<=b; i++)
+            {
+                if (s[i]==' ') continue;
+                                
+                if (flag==0)
+                {
+                    if (s[i]=='(')
+                    {
+                        return helper(s,i+1,b-1,data);
+                    }
+                    else if (isdigit(s[i])||s[i]=='-')
+                    {
+                        int j = getDigit(s,i);
+                        return stoi(s.substr(i,j-i));
+                    }
+                    
+                    int j = getVar(s, i);
+                    var = s.substr(i, j-i);   
+                    i = j-1;
+                    
+                    if (j==b+1)
+                        return data[var];                    
+                }
+                else 
+                {
+                    if (s[i] == '(')
+                    {
+                        int j = getRightParenthsis(s,i);
+                        val = helper(s,i+1, j-1, data);
+                        i = j;
+                    }
+                    else if (isdigit(s[i])||s[i]=='-')
+                    {
+                        int j = getDigit(s,i);
+                        val = stoi(s.substr(i,j-i));
+                        i = j-1;
+                    }
+                    else if (isalpha(s[i]))
+                    {
+                        int j = getVar(s,i);
+                        val = data[s.substr(i,j-i)];
+                        i = j-1;
+                    }
+                    data[var] = val;
+                }
+                                                
+                flag = 1-flag;
+                
+            }
+        }
+        
+        return -1;
+        
+        
+    }
+    
+    int getVar(string &s, int i)
+    {
+        while (isdigit(s[i])||isalpha(s[i]))
+            i++;
+        return i;
+    }
+    
+    int getDigit(string &s, int i)
+    {
+        while (isdigit(s[i])||s[i]=='-')
+            i++;
+        return i;
+    }
+    
+    int getRightParenthsis(string &s, int i)
+    {
+        int level = 1;
+        i++;
+        while (level>0)
+        {
+                        
+            level+=(s[i]=='(');                        
+            level-=(s[i]==')');
+            if (level==0)
+                break;
+            i++;
+        }        
+        return i;
+    }
+};
+::::::::::::::
+String/736.Parse-Lisp-Expression/Readme.md
+::::::::::::::
+### 736.Parse-Lisp-Expression
+
+本题不难，有足够的耐心就能做出来。对于比较复杂的规则，我们用递归应该比用栈更容易。因为“括号”天然就提示了递归的层次，而且这种expression parse的题型，括号内外的规则都是完全一样的，非常适合用递归。
+
+注意一下对于let语句，后面会跟着总数为奇数个的参数。除了最后一个参数，第2k个参数一定是一个变量，第2k+1个参数则可以是变量/数值/递归式，这两种类型交替出现。而对于最后一个参数（注意它也是属于2k），则同样可能是变量/数值/递归式，这就需要额外进行判断。也就是说，在处理第2k个参数时，如果遇到了数值或者递归式，就意味着这个参数一定最后一个；如果遇到了变量但变量的结尾就是字符串的结尾，也意味着这个参数是最后一个。
+
+
+[Leetcode Link](https://leetcode.com/problems/parse-lisp-expression)::::::::::::::
+String/816.Ambiguous-Coordinates/816.Ambiguous-Coordinates.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<string> ambiguousCoordinates(string s) 
+    {
+        s = s.substr(1, s.size()-2);
+        vector<string>rets;
+        for (int i=1; i<s.size(); i++)
+        {
+            vector<string> a = check(s.substr(0, i));
+            vector<string> b = check(s.substr(i));
+            if (!a.empty() && !b.empty())
+            {
+                for (auto x: a)
+                    for (auto y:b)
+                        rets.push_back("("+x+", "+y+")");                                                 
+            }                
+        }
+        return rets;        
+    }
+    
+    vector<string> check(string s)
+    {
+        vector<string>rets;
+        if (s.size()==1 || s[0]!='0')
+            rets.push_back(s);
+        
+        for (int i=1; i<s.size(); i++)
+        {
+            string a = s.substr(0, i);
+            string b = s.substr(i);
+            if (a.size()>1 && a[0]=='0') continue;
+            if (b.back()=='0') continue;            
+            rets.push_back(a+"."+b);
+        }
+        
+        return rets;
+    }
+};
+::::::::::::::
+String/816.Ambiguous-Coordinates/Readme.md
+::::::::::::::
+### 816.Ambiguous-Coordinates
+
+本题考查如何将问题拆分。
+
+首先，遍历分割点，将字符串拆分成两个数字a与b。然后调用helper函数分别对a和b尝试加小数点。对于a可能有若干方案{x}，对于b也可能有若干方案{y}，那么x与y的两两组合（中间插入逗号）就是答案。
+
+其次，对于helpe函数而言，同样遍历分割点，将字符串拆分成整数部分a和小数部分b。对于a而言，要么只有一位，要么不能以零开头。对于b而言，结尾不能是零。如果a与b都合格，那么a与b的组合（中间插入小数点）就是答案。
+::::::::::::::
+String/844.Backspace-String-Compare/844.Backspace-String-Compare.cpp
+::::::::::::::
+class Solution {
+public:
+    bool backspaceCompare(string S, string T) 
+    {
+        int i = convert(S);
+        int j = convert(T);
+        return S.substr(0,i)==T.substr(0,j);
+    }
+
+    int convert(string& str)
+    {
+        int i=0;
+        for (int j=0; j<str.size(); j++)
+        {
+            if (str[j]!='#')
+            {
+                str[i] = str[j];
+                i++;
+            }
+            else
+            {
+                i = max(0, i-1);
+            }                
+        }
+        return i;
+        
+    }
+};
+::::::::::::::
+String/844.Backspace-String-Compare/Readme.md
+::::::::::::::
+### 844.Backspace-String-Compare
+
+此题的考点是用o(n)时间和o(1)空间．这就提示我们做in-place的修改．
+
+我们可以尝试用双指针的方法，将有效的字符都移动到字符串的前面去。具体的做法是快指针j扫每个元素，如果遇到了正常的字符，则str[i]=str[j]，同时慢指针i自增1。如果遇到了退格键，那么将慢指针i退一个即可。最终i指针的位置就代表了这个字符串最终有多长。
+
+
+[Leetcode Link](https://leetcode.com/problems/backspace-string-compare)

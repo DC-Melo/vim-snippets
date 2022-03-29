@@ -1,5 +1,5 @@
 ::::::::::::::
-Priority_Queue/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays.cpp
+Priority_Queue/004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -35,7 +35,7 @@ public:
     }
 };
 ::::::::::::::
-Priority_Queue/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays_PQ.cpp
+Priority_Queue/004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays_PQ.cpp
 ::::::::::::::
 class Solution {
     struct cmp
@@ -96,7 +96,7 @@ public:
     }
 };
 ::::::::::::::
-Priority_Queue/0004.Median-of-Two-Sorted-Arrays/Readme.md
+Priority_Queue/004.Median-of-Two-Sorted-Arrays/Readme.md
 ::::::::::::::
 ### 4. Median of Two Sorted Arrays  
 ### 1 二分法
@@ -121,423 +121,6 @@ Update: 因为priority_queue默认是大顶堆，优先出列大数，所以可�
 
 
 [Leetcode Link](https://leetcode.com/problems/median-of-two-sorted-arrays)::::::::::::::
-Priority_Queue/0358.Rearrange-String-k-Distance-Apart/358.Rearrange-String-k-Distance-Apart.cpp
-::::::::::::::
-class Solution {
-public:
-    string rearrangeString(string s, int k) 
-    {
-        if (k==0) return s;
-        unordered_map<char, int>Map;
-        for (auto ch:s)
-            Map[ch]+=1;
-        priority_queue<pair<int,char>>pq; // freq, character
-        for (auto x: Map)
-            pq.push({x.second, x.first});
-        
-        string ret;
-        while (!pq.empty())
-        {
-            if (pq.size() < k && pq.top().first > 1)
-                return "";
-            
-            int n = min(k, (int)pq.size());
-            vector<pair<int,char>>temp;
-            
-            for (int i=0; i<n; i++)
-            {
-                ret.push_back(pq.top().second);
-                temp.push_back(pq.top());
-                pq.pop();                
-            }
-            
-            for (auto x: temp)
-            {
-                if (x.first > 1)
-                    pq.push({x.first-1, x.second});
-            }
-        }
-        return ret;
-        
-    }
-};
-
-
-
-::::::::::::::
-Priority_Queue/0358.Rearrange-String-k-Distance-Apart/Readme.md
-::::::::::::::
-### 358.Rearrange-String-k-Distance-Apart
-
-构建priority_queue<pair<int,char>>q; q的元素表示字符及其频次。注意到priority_queue默认大顶堆，自动按照频次从大到小排列。
-```cpp
-        unordered_map<char,int>Map;
-        for (int i=0; i<s.size(); i++)
-            Map[s[i]]++;
-        
-        priority_queue<pair<int,char>>q;
-        for (auto a:Map)
-            q.push({a.second,a.first});
-```            
-每次取q中的前K个元素（每个元素代表不同的字符）加入临时数组temp；取完后将这些temp里的元素的个数减一后再放回q中。直至某一回合，如果pq的字符种类个数小于K，但是该轮结束后temp非空，说明我们还需要往result里加字符，这样就会违法K个相邻字符不能有相同字符的规则，返回空。
-```cpp
-        while (!pq.empty())
-        {
-            int n = min(k, (int)pq.size());
-            vector<pair<int,char>>temp;
-            
-            for (int i=0; i<n; i++)
-            {
-                int num = pq.top().first;
-                int ch = pq.top().second;
-                pq.pop();
-                result+=ch;
-                num--;
-                if (num!=0) temp.push_back({num,ch});
-            }
-            if (n<k && temp.size()>0) return "";
-            for (auto a:temp) pq.push(a);
-        }
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/rearrange-string-k-distance-apart)::::::::::::::
-Priority_Queue/0502.IPO/502.IPO.cpp
-::::::::::::::
-class Solution {
-public:
-    int findMaximizedCapital(int k, int W, vector<int>& Profits, vector<int>& Capital) 
-    {
-        vector<pair<int,int>>proj;
-        for (int i=0; i<Profits.size(); i++)
-            proj.push_back({Capital[i],Profits[i]});
-        sort(proj.begin(),proj.end());
-        
-        priority_queue<int>pq;
-        
-        int count = 0;
-        int i=0;
-        while (count<k)
-        {
-            while (i<proj.size() && proj[i].first<=W)
-            {
-                pq.push(proj[i].second);
-                i++;
-            }
-            if (pq.size()!=0)
-            {
-                W+=pq.top();
-                count++;
-                pq.pop();
-            }
-            else
-                break;
-        }        
-        return W;
-    }
-};
-::::::::::::::
-Priority_Queue/0502.IPO/Readme.md
-::::::::::::::
-### 502.IPO
-
-我们首先想到的自然是在初始条件W下，我们有哪些项目可以选择？我们将所有项目按照captital排序，所有小于W的都可以作为候选。自然，我们肯定会选择其中利润最大的。
-
-我们在收取了第一个项目的利润之后，手头的资本W是变大了。这意味着我们有了更多的选择余地。于是我们可以顺着已经按照capital排序的项目来看，将小于新W的都收入候选。同样，我们会选择其中利润最大的。于是我们发现，按照利润排序的大顶堆优先队列是最理想的数据结构。
-
-每个回合，从PQ里面取利润最大的项目，更新W（使之变大）；之后再把capital小于当前W的项目入列。以此类推可以得到所需要的K个项目。
-
-需要注意的细节是：如果PQ为空，说明当前的W太小，无法启动任何项目，就需要break。
-
-
-[Leetcode Link](https://leetcode.com/problems/ipo)
-::::::::::::::
-Priority_Queue/0621.Task-Scheduler/621.Task-Scheduler_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int leastInterval(vector<char>& tasks, int n) 
-    {
-        unordered_map<char,int>Map;
-        for (auto ch: tasks)
-            Map[ch]++;
-        priority_queue<int>pq;
-        for (auto a:Map) pq.push(a.second);
-        
-        n++;
-        int count = 0;
-        while (pq.size()>0)
-        {                            
-            int k = min(n, (int)pq.size());            
-            
-            vector<int>temp;
-            for (int i=0; i<k; i++)
-            {
-                int f = pq.top();
-                pq.pop();
-                f--;
-                if (f!=0) temp.push_back(f);
-            }
-            if (temp.size()>0)
-                count+=n;
-            else
-                count+=k;
-            
-            for (auto x: temp)
-                pq.push(x);
-        }
-        return count;        
-    }
-};
-::::::::::::::
-Priority_Queue/0621.Task-Scheduler/621.Task-Scheduler_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int leastInterval(vector<char>& tasks, int n) 
-    {
-        unordered_map<char,int>Map;
-        for (auto ch: tasks)
-            Map[ch]++;
-        
-        int maxFreq = 0;
-        for (auto a:Map)
-            maxFreq = max(maxFreq, a.second);
-        
-        int result = (maxFreq-1)*(n+1);
-        int count = 0;
-        for (auto a:Map)
-        {
-            if (a.second == maxFreq)
-                count++;
-        }
-        return max(result+count, (int)tasks.size());
-    }
-};
-::::::::::::::
-Priority_Queue/0621.Task-Scheduler/Readme.md
-::::::::::::::
-### 621.Task-Scheduler
-
-#### 解法１：模拟最优解的过程
-此题非常类似  358.Rearrange-String-k-Distance-Apart。我们令n自加１，这样题意要求每n个相邻的位置不能有重复的元素．
-
-设计一个大顶堆的priority_queue，PQ的元素是{freq,num}。每次取出权重最多的n种字符（除非PQ里面的元素个数少于n），将其freq减一后再放回队列中。
-
-需要注意的是，即使队列中的元素少于n，只要没有完成所有的任务，根据题意的idle设定，计数器仍需要count+=n. 只有最后一轮（弹出后队列为空）时，计数器才 count+= num，其中num是队列弹出前的元素个数。
-
-#### 解法２：贪心构造
-因为此题并不要求打印具体的实施方案，所以不需要像解法1那样完全地模拟这个流程。
-
-我们找出频次最高的字符A，假设它的频次是MaxFreq。那么我们就将全部的元素分成MaxFreq组，每组的第一个就是A。同时我们给每组预留至少N个位置。这样，我们就合法地处理完了所有的A。如果有其他字符的频次也是MaxFreq，那么我们类似处理。示意图如下，总共有maxFreq行，每行靠前的位置都填充频次为MaxFreq的元素。除最后一行外，每行有N个位置。
-```
-A B 。。。。。
-A B 。。。。。
-A B 。。。。。
-A B 。。。。。
-A B 
-```
-接下来我们按照从上到下、从左到右的顺序，依次在待定的位置上填充第二高频的字符、第三高频的字符... 因为其他字符的频次都不会超过maxFreq-1，而我们有MaxFreq-1行，说明同一行里不会出现两个相同的字符。最终填充的结果会有两种可能：一种是上述的格子没有被填满：第二种是上述的格子已经填满了，但是我们还有字符没有填充。
-
-对于第一种情况，如下图，我们将前MaxFreq-1行里没有被填充的位置都标记为idle，那么把这些行都拼接起来就是一个符合要求的方案。这个方案里，其实不管tasks具体的数目，总共的格子（也就是处理时间）是固定的，即```(MaxFreq-1) * N + 零头```，其中零头频次为MaxFreq的字符种数。
-```
-A B C D E H 。
-A B C D F 。。
-A B C D F 。。
-A B C E G 。。
-A B 
-```
-
-对于第二种情况，如下图，所有的idle位置都已经填满了，但是我们还有字符没填怎么办？这时候我们就可以打破每行只能填N个元素的限制，尽情地按照从上到下、从做到右的顺序继续填充在前MaxFreq-1行填充即可。这种方案的总格子数（即处理时间）其实就是tasks的大小。
-```
-A B C D E H L p t
-A B C D F I M q u
-A B C D F J N r
-A B C E G K O s
-A B 
-```
-显然，上述两种方案不可能共存。只要tasks的数目大于了规划的格子数```(MaxFreq-1) * N + 零头```，那么答案就是tasks.size()；否则答案就是第一种方案。
-
-[Leetcode Link](https://leetcode.com/problems/task-scheduler)
-::::::::::::::
-Priority_Queue/0630.Course-Schedule-III/630.Course-Schedule-III.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        return a[1]<b[1];
-    }
-public:
-    int scheduleCourse(vector<vector<int>>& courses) 
-    {
-        sort(courses.begin(),courses.end(),cmp);
-        priority_queue<int>pq;
-        
-        int cur = 0;
-        for (int i=0; i<courses.size(); i++)
-        {
-            pq.push(courses[i][0]);
-            cur += courses[i][0];
-            
-            if (cur>courses[i][1])
-            {
-                cur -= pq.top();
-                pq.pop();
-            }            
-        }
-        return pq.size();
-    }
-};
-::::::::::::::
-Priority_Queue/0630.Course-Schedule-III/Readme.md
-::::::::::::::
-### 630.Course-Schedule-III
-
-本题本质是贪心法，需要人工设计出最优策略。应用层面上用到了数组排序+PQ的组合，很像502.IPO，但是本题的最优策略要独立思考出来更有难度。
-
-我们尝试按照时间先后顺序来看这些课程．毕竟哪个deadline在前我们就先处理谁，也是非常合情合理的．我们假设在某个课程的deadline之前，手头有一堆的备选课程，我们做其中哪些呢？显然我们做哪些时长要求最少的，从最短的做起，做一个扔掉一个，能做多少做多少，做不完的就扔了，这就是最优的方案了．注意，做不完的不用保留在pool里，因为过了当前的这个deadline之后这些未做的课程就失效了．
-
-假设我们当前已经修了Ｎ门．那么接下来又到了下一个deadline，也就是deadline放宽了，但我们又新添了一门课变成N+1门．如果能赶在新deadline之前搞定这门新课，我们自然就是能上就上（那样就是N+1门）．如果不能呢？我们自然怪罪当前N+1课程列表里最长的那门，我们只要把那门最长的踢掉就一定满足deadline的要求．(为什么？因为我们之前保证了Ｎ门可以满足上一个deadline，那么现在的Ｎ门一定也可以满足当前的deadline．)于是，如今虽然同样还是只能修Ｎ门，但是踢掉了一个最长的课程，也算是把已修课程列表在时间上给优化了．
-
-于是我们一个接一个的处理deadline,这样得到的就是总的最优方案．
-
-
-[Leetcode Link](https://leetcode.com/problems/course-schedule-iii)::::::::::::::
-Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_binary.cpp
-::::::::::::::
-class Solution {
-public:
-    double minmaxGasDist(vector<int>& stations, int K) 
-    {
-        double left = 0;
-        double right = 0;
-        for (int i=1; i<stations.size(); i++)
-            right = fmax(right,stations[i]-stations[i-1]);
-        
-        double mid;
-        while (right-left>1e-6)
-        {
-            mid = (right+left)/2;
-            int count = 0;
-            for (int i=1; i<stations.size(); i++)
-            {
-                double k = (stations[i]-stations[i-1])/mid;
-                count+=  ceil(k)-1;               
-            }
-            if (count>K)
-                left = mid;
-            else
-                right = mid;            
-        }
-        return mid;
-    }
-};
-::::::::::::::
-Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_pq.cpp
-::::::::::::::
-class Solution {
-public:
-    double minmaxGasDist(vector<int>& stations, int K) 
-    {
-        priority_queue<pair<double,int>>pq;
-        for (int i=1; i<stations.size(); i++)
-            pq.push({stations[i]-stations[i-1],1});
-        
-        for (int i=0; i<K; i++)
-        {
-            double space = pq.top().first;
-            int insertNum = pq.top().second;
-            pq.pop();
-            
-            pq.push({space*insertNum/(insertNum+1),insertNum+1});            
-        }
-        
-        return pq.top().first;
-    }
-};
-::::::::::::::
-Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/Readme.md
-::::::::::::::
-### 774.Minimize-Max-Distance-to-Gas-Station
-
-#### 解法1：贪心法
-
-贪心法有非常巧妙的思想，这里用到了pq.
-
-首先我们将所有老加油站之间的间隔距离放入pq，默认是大顶堆，这些老加油站的间隔都没有新加油站插入。那么，对于队首的这个间距最大，说明我们要对其下手，先尝试将这个间距除以2，这里除以2表明原本是没有新加油站的，现在加入一个。然后将这个新间隔放入队列。
-
-每次我们取队首元素，总是得到的是（当前最大的）某两个老加油站之间的新间隔，以及这两个老加油站之间插入的新加油站数量m。我们需要做的，是重新规划这两个老加油站之间的间隔，改成插入的新加油站数量为m+1.
-
-重复上述过程，直至加入新加油站的总是达到了K。此时队首的老加油站之间的新间距，就是整体最大的间距。
-
-这个方法非常巧妙，只可惜仍然超时。
-
-#### 解法2：二分法
-
-可以得到的最大间距d，下限是0，上限是原本最大的老加油站之间的间距。
-
-不断二分尝试这个d，计算为了使得每个老加油站之间的新间距变为d，需要新加入多少新加油站。如果新加油站总数超过了K，说明这个d太小；否则可以继续尝试减小d，
-
-最后知道二分的搜索精度小于1e-6.
-
-
-[Leetcode Link](https://leetcode.com/problems/minimize-max-distance-to-gas-station)::::::::::::::
-Priority_Queue/0857.Minimum-Cost-to-Hire-K-Workers/857.Minimum-Cost-to-Hire-K-Workers.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(pair<int,int>&a, pair<int,int>&b)
-    {
-        return a.second*1.0 / a.first < b.second*1.0 / b.first; 
-    }
-public:
-    double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) 
-    {
-        vector<pair<int,int>>persons;
-        for (int i=0; i<quality.size(); i++)
-            persons.push_back({quality[i], wage[i]});
-
-        sort(persons.begin(), persons.end(), cmp);
-
-        priority_queue<int>pq_quality;
-        int sum_quality = 0;
-        double ret = 1e20;
-
-        for (int i=0; i<persons.size(); i++)
-        {
-            sum_quality += persons[i].first;
-            pq_quality.push(persons[i].first);
-            if (pq_quality.size() > k)
-            {
-                sum_quality -= pq_quality.top();
-                pq_quality.pop();
-            }
-            if (pq_quality.size() == k)
-            {
-                double unitWage = persons[i].second * 1.0 / persons[i].first;
-                ret = min(ret, unitWage * sum_quality);
-            }                
-        }
-
-        return ret;
-
-    }
-};
-::::::::::::::
-Priority_Queue/0857.Minimum-Cost-to-Hire-K-Workers/Readme.md
-::::::::::::::
-### 857.Minimum-Cost-to-Hire-K-Workers
-
-我们考虑如果将```wage[i]/quality[i]```作为评价指标来进行排序意味着什么？
-
-```wage[i]/quality[i]```最高的那位,意味着最不实惠的工人，它拉高了unitWage，使得其他工人都必须按照这个unitWage乘以各自的quality拿工资．但转念一想，如果我们必须雇佣这个最不实惠的工人的话，那么剩下的工人该如何选择呢？显然我们只要选K-1个quality最低的工人，他们可以拉高那个＂最不实惠工人＂的quality比重，从而减少其他工人的quality比重，从而降低总工资．
-
-我们再考虑，如果选择了```wage[i]/quality[i]```第二高的那位，那么我们就在接下来的N-2个人里面选择K-1个quality最底的工人即可．
-
-由此贪心法的最优策略就出来了．实际操作中，我们根据```wage[i]/quality[i]```从低到高进行处理．
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-cost-to-hire-k-workers)
-::::::::::::::
 Priority_Queue/1057.Campus-Bikes/1057.Campus-Bikes.cpp
 ::::::::::::::
 class Solution {
@@ -1293,3 +876,420 @@ Priority_Queue/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work/Readme.md
 其实本题有明显的贪心算法。我们可以想象，如果某个任务X的milestone特别多，超过了总体的半数（加1），那么根据抽屉原理，必然有两个相同的任务X会相邻。反之，我们必然可以让任务X彼此之间至少间隔一位，让其他任务填充其中，也就是能完成所有milestone的安排。
 
 对于前者，我们能安排的最多milestone数目的方案类似于```XOXOXOXOXOX XXXX....```，显然答案的长度取决于非X的任务的milestone有多少个。
+::::::::::::::
+Priority_Queue/358.Rearrange-String-k-Distance-Apart/358.Rearrange-String-k-Distance-Apart.cpp
+::::::::::::::
+class Solution {
+public:
+    string rearrangeString(string s, int k) 
+    {
+        if (k==0) return s;
+        unordered_map<char, int>Map;
+        for (auto ch:s)
+            Map[ch]+=1;
+        priority_queue<pair<int,char>>pq; // freq, character
+        for (auto x: Map)
+            pq.push({x.second, x.first});
+        
+        string ret;
+        while (!pq.empty())
+        {
+            if (pq.size() < k && pq.top().first > 1)
+                return "";
+            
+            int n = min(k, (int)pq.size());
+            vector<pair<int,char>>temp;
+            
+            for (int i=0; i<n; i++)
+            {
+                ret.push_back(pq.top().second);
+                temp.push_back(pq.top());
+                pq.pop();                
+            }
+            
+            for (auto x: temp)
+            {
+                if (x.first > 1)
+                    pq.push({x.first-1, x.second});
+            }
+        }
+        return ret;
+        
+    }
+};
+
+
+
+::::::::::::::
+Priority_Queue/358.Rearrange-String-k-Distance-Apart/Readme.md
+::::::::::::::
+### 358.Rearrange-String-k-Distance-Apart
+
+构建priority_queue<pair<int,char>>q; q的元素表示字符及其频次。注意到priority_queue默认大顶堆，自动按照频次从大到小排列。
+```cpp
+        unordered_map<char,int>Map;
+        for (int i=0; i<s.size(); i++)
+            Map[s[i]]++;
+        
+        priority_queue<pair<int,char>>q;
+        for (auto a:Map)
+            q.push({a.second,a.first});
+```            
+每次取q中的前K个元素（每个元素代表不同的字符）加入临时数组temp；取完后将这些temp里的元素的个数减一后再放回q中。直至某一回合，如果pq的字符种类个数小于K，但是该轮结束后temp非空，说明我们还需要往result里加字符，这样就会违法K个相邻字符不能有相同字符的规则，返回空。
+```cpp
+        while (!pq.empty())
+        {
+            int n = min(k, (int)pq.size());
+            vector<pair<int,char>>temp;
+            
+            for (int i=0; i<n; i++)
+            {
+                int num = pq.top().first;
+                int ch = pq.top().second;
+                pq.pop();
+                result+=ch;
+                num--;
+                if (num!=0) temp.push_back({num,ch});
+            }
+            if (n<k && temp.size()>0) return "";
+            for (auto a:temp) pq.push(a);
+        }
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/rearrange-string-k-distance-apart)::::::::::::::
+Priority_Queue/502.IPO/502.IPO.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMaximizedCapital(int k, int W, vector<int>& Profits, vector<int>& Capital) 
+    {
+        vector<pair<int,int>>proj;
+        for (int i=0; i<Profits.size(); i++)
+            proj.push_back({Capital[i],Profits[i]});
+        sort(proj.begin(),proj.end());
+        
+        priority_queue<int>pq;
+        
+        int count = 0;
+        int i=0;
+        while (count<k)
+        {
+            while (i<proj.size() && proj[i].first<=W)
+            {
+                pq.push(proj[i].second);
+                i++;
+            }
+            if (pq.size()!=0)
+            {
+                W+=pq.top();
+                count++;
+                pq.pop();
+            }
+            else
+                break;
+        }        
+        return W;
+    }
+};
+::::::::::::::
+Priority_Queue/502.IPO/Readme.md
+::::::::::::::
+### 502.IPO
+
+我们首先想到的自然是在初始条件W下，我们有哪些项目可以选择？我们将所有项目按照captital排序，所有小于W的都可以作为候选。自然，我们肯定会选择其中利润最大的。
+
+我们在收取了第一个项目的利润之后，手头的资本W是变大了。这意味着我们有了更多的选择余地。于是我们可以顺着已经按照capital排序的项目来看，将小于新W的都收入候选。同样，我们会选择其中利润最大的。于是我们发现，按照利润排序的大顶堆优先队列是最理想的数据结构。
+
+每个回合，从PQ里面取利润最大的项目，更新W（使之变大）；之后再把capital小于当前W的项目入列。以此类推可以得到所需要的K个项目。
+
+需要注意的细节是：如果PQ为空，说明当前的W太小，无法启动任何项目，就需要break。
+
+
+[Leetcode Link](https://leetcode.com/problems/ipo)
+::::::::::::::
+Priority_Queue/621.Task-Scheduler/621.Task-Scheduler_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) 
+    {
+        unordered_map<char,int>Map;
+        for (auto ch: tasks)
+            Map[ch]++;
+        priority_queue<int>pq;
+        for (auto a:Map) pq.push(a.second);
+        
+        n++;
+        int count = 0;
+        while (pq.size()>0)
+        {                            
+            int k = min(n, (int)pq.size());            
+            
+            vector<int>temp;
+            for (int i=0; i<k; i++)
+            {
+                int f = pq.top();
+                pq.pop();
+                f--;
+                if (f!=0) temp.push_back(f);
+            }
+            if (temp.size()>0)
+                count+=n;
+            else
+                count+=k;
+            
+            for (auto x: temp)
+                pq.push(x);
+        }
+        return count;        
+    }
+};
+::::::::::::::
+Priority_Queue/621.Task-Scheduler/621.Task-Scheduler_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) 
+    {
+        unordered_map<char,int>Map;
+        for (auto ch: tasks)
+            Map[ch]++;
+        
+        int maxFreq = 0;
+        for (auto a:Map)
+            maxFreq = max(maxFreq, a.second);
+        
+        int result = (maxFreq-1)*(n+1);
+        int count = 0;
+        for (auto a:Map)
+        {
+            if (a.second == maxFreq)
+                count++;
+        }
+        return max(result+count, (int)tasks.size());
+    }
+};
+::::::::::::::
+Priority_Queue/621.Task-Scheduler/Readme.md
+::::::::::::::
+### 621.Task-Scheduler
+
+#### 解法１：模拟最优解的过程
+此题非常类似  358.Rearrange-String-k-Distance-Apart。我们令n自加１，这样题意要求每n个相邻的位置不能有重复的元素．
+
+设计一个大顶堆的priority_queue，PQ的元素是{freq,num}。每次取出权重最多的n种字符（除非PQ里面的元素个数少于n），将其freq减一后再放回队列中。
+
+需要注意的是，即使队列中的元素少于n，只要没有完成所有的任务，根据题意的idle设定，计数器仍需要count+=n. 只有最后一轮（弹出后队列为空）时，计数器才 count+= num，其中num是队列弹出前的元素个数。
+
+#### 解法２：贪心构造
+因为此题并不要求打印具体的实施方案，所以不需要像解法1那样完全地模拟这个流程。
+
+我们找出频次最高的字符A，假设它的频次是MaxFreq。那么我们就将全部的元素分成MaxFreq组，每组的第一个就是A。同时我们给每组预留至少N个位置。这样，我们就合法地处理完了所有的A。如果有其他字符的频次也是MaxFreq，那么我们类似处理。示意图如下，总共有maxFreq行，每行靠前的位置都填充频次为MaxFreq的元素。除最后一行外，每行有N个位置。
+```
+A B 。。。。。
+A B 。。。。。
+A B 。。。。。
+A B 。。。。。
+A B 
+```
+接下来我们按照从上到下、从左到右的顺序，依次在待定的位置上填充第二高频的字符、第三高频的字符... 因为其他字符的频次都不会超过maxFreq-1，而我们有MaxFreq-1行，说明同一行里不会出现两个相同的字符。最终填充的结果会有两种可能：一种是上述的格子没有被填满：第二种是上述的格子已经填满了，但是我们还有字符没有填充。
+
+对于第一种情况，如下图，我们将前MaxFreq-1行里没有被填充的位置都标记为idle，那么把这些行都拼接起来就是一个符合要求的方案。这个方案里，其实不管tasks具体的数目，总共的格子（也就是处理时间）是固定的，即```(MaxFreq-1) * N + 零头```，其中零头频次为MaxFreq的字符种数。
+```
+A B C D E H 。
+A B C D F 。。
+A B C D F 。。
+A B C E G 。。
+A B 
+```
+
+对于第二种情况，如下图，所有的idle位置都已经填满了，但是我们还有字符没填怎么办？这时候我们就可以打破每行只能填N个元素的限制，尽情地按照从上到下、从做到右的顺序继续填充在前MaxFreq-1行填充即可。这种方案的总格子数（即处理时间）其实就是tasks的大小。
+```
+A B C D E H L p t
+A B C D F I M q u
+A B C D F J N r
+A B C E G K O s
+A B 
+```
+显然，上述两种方案不可能共存。只要tasks的数目大于了规划的格子数```(MaxFreq-1) * N + 零头```，那么答案就是tasks.size()；否则答案就是第一种方案。
+
+[Leetcode Link](https://leetcode.com/problems/task-scheduler)
+::::::::::::::
+Priority_Queue/630.Course-Schedule-III/630.Course-Schedule-III.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[1]<b[1];
+    }
+public:
+    int scheduleCourse(vector<vector<int>>& courses) 
+    {
+        sort(courses.begin(),courses.end(),cmp);
+        priority_queue<int>pq;
+        
+        int cur = 0;
+        for (int i=0; i<courses.size(); i++)
+        {
+            pq.push(courses[i][0]);
+            cur += courses[i][0];
+            
+            if (cur>courses[i][1])
+            {
+                cur -= pq.top();
+                pq.pop();
+            }            
+        }
+        return pq.size();
+    }
+};
+::::::::::::::
+Priority_Queue/630.Course-Schedule-III/Readme.md
+::::::::::::::
+### 630.Course-Schedule-III
+
+本题本质是贪心法，需要人工设计出最优策略。应用层面上用到了数组排序+PQ的组合，很像502.IPO，但是本题的最优策略要独立思考出来更有难度。
+
+我们尝试按照时间先后顺序来看这些课程．毕竟哪个deadline在前我们就先处理谁，也是非常合情合理的．我们假设在某个课程的deadline之前，手头有一堆的备选课程，我们做其中哪些呢？显然我们做哪些时长要求最少的，从最短的做起，做一个扔掉一个，能做多少做多少，做不完的就扔了，这就是最优的方案了．注意，做不完的不用保留在pool里，因为过了当前的这个deadline之后这些未做的课程就失效了．
+
+假设我们当前已经修了Ｎ门．那么接下来又到了下一个deadline，也就是deadline放宽了，但我们又新添了一门课变成N+1门．如果能赶在新deadline之前搞定这门新课，我们自然就是能上就上（那样就是N+1门）．如果不能呢？我们自然怪罪当前N+1课程列表里最长的那门，我们只要把那门最长的踢掉就一定满足deadline的要求．(为什么？因为我们之前保证了Ｎ门可以满足上一个deadline，那么现在的Ｎ门一定也可以满足当前的deadline．)于是，如今虽然同样还是只能修Ｎ门，但是踢掉了一个最长的课程，也算是把已修课程列表在时间上给优化了．
+
+于是我们一个接一个的处理deadline,这样得到的就是总的最优方案．
+
+
+[Leetcode Link](https://leetcode.com/problems/course-schedule-iii)::::::::::::::
+Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_binary.cpp
+::::::::::::::
+class Solution {
+public:
+    double minmaxGasDist(vector<int>& stations, int K) 
+    {
+        double left = 0;
+        double right = 0;
+        for (int i=1; i<stations.size(); i++)
+            right = fmax(right,stations[i]-stations[i-1]);
+        
+        double mid;
+        while (right-left>1e-6)
+        {
+            mid = (right+left)/2;
+            int count = 0;
+            for (int i=1; i<stations.size(); i++)
+            {
+                double k = (stations[i]-stations[i-1])/mid;
+                count+=  ceil(k)-1;               
+            }
+            if (count>K)
+                left = mid;
+            else
+                right = mid;            
+        }
+        return mid;
+    }
+};
+::::::::::::::
+Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_pq.cpp
+::::::::::::::
+class Solution {
+public:
+    double minmaxGasDist(vector<int>& stations, int K) 
+    {
+        priority_queue<pair<double,int>>pq;
+        for (int i=1; i<stations.size(); i++)
+            pq.push({stations[i]-stations[i-1],1});
+        
+        for (int i=0; i<K; i++)
+        {
+            double space = pq.top().first;
+            int insertNum = pq.top().second;
+            pq.pop();
+            
+            pq.push({space*insertNum/(insertNum+1),insertNum+1});            
+        }
+        
+        return pq.top().first;
+    }
+};
+::::::::::::::
+Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/Readme.md
+::::::::::::::
+### 774.Minimize-Max-Distance-to-Gas-Station
+
+#### 解法1：贪心法
+
+贪心法有非常巧妙的思想，这里用到了pq.
+
+首先我们将所有老加油站之间的间隔距离放入pq，默认是大顶堆，这些老加油站的间隔都没有新加油站插入。那么，对于队首的这个间距最大，说明我们要对其下手，先尝试将这个间距除以2，这里除以2表明原本是没有新加油站的，现在加入一个。然后将这个新间隔放入队列。
+
+每次我们取队首元素，总是得到的是（当前最大的）某两个老加油站之间的新间隔，以及这两个老加油站之间插入的新加油站数量m。我们需要做的，是重新规划这两个老加油站之间的间隔，改成插入的新加油站数量为m+1.
+
+重复上述过程，直至加入新加油站的总是达到了K。此时队首的老加油站之间的新间距，就是整体最大的间距。
+
+这个方法非常巧妙，只可惜仍然超时。
+
+#### 解法2：二分法
+
+可以得到的最大间距d，下限是0，上限是原本最大的老加油站之间的间距。
+
+不断二分尝试这个d，计算为了使得每个老加油站之间的新间距变为d，需要新加入多少新加油站。如果新加油站总数超过了K，说明这个d太小；否则可以继续尝试减小d，
+
+最后知道二分的搜索精度小于1e-6.
+
+
+[Leetcode Link](https://leetcode.com/problems/minimize-max-distance-to-gas-station)::::::::::::::
+Priority_Queue/857.Minimum-Cost-to-Hire-K-Workers/857.Minimum-Cost-to-Hire-K-Workers.cpp
+::::::::::::::
+class Solution {
+    static bool cmp(pair<int,int>&a, pair<int,int>&b)
+    {
+        return a.second*1.0 / a.first < b.second*1.0 / b.first; 
+    }
+public:
+    double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) 
+    {
+        vector<pair<int,int>>persons;
+        for (int i=0; i<quality.size(); i++)
+            persons.push_back({quality[i], wage[i]});
+
+        sort(persons.begin(), persons.end(), cmp);
+
+        priority_queue<int>pq_quality;
+        int sum_quality = 0;
+        double ret = 1e20;
+
+        for (int i=0; i<persons.size(); i++)
+        {
+            sum_quality += persons[i].first;
+            pq_quality.push(persons[i].first);
+            if (pq_quality.size() > k)
+            {
+                sum_quality -= pq_quality.top();
+                pq_quality.pop();
+            }
+            if (pq_quality.size() == k)
+            {
+                double unitWage = persons[i].second * 1.0 / persons[i].first;
+                ret = min(ret, unitWage * sum_quality);
+            }                
+        }
+
+        return ret;
+
+    }
+};
+::::::::::::::
+Priority_Queue/857.Minimum-Cost-to-Hire-K-Workers/Readme.md
+::::::::::::::
+### 857.Minimum-Cost-to-Hire-K-Workers
+
+我们考虑如果将```wage[i]/quality[i]```作为评价指标来进行排序意味着什么？
+
+```wage[i]/quality[i]```最高的那位,意味着最不实惠的工人，它拉高了unitWage，使得其他工人都必须按照这个unitWage乘以各自的quality拿工资．但转念一想，如果我们必须雇佣这个最不实惠的工人的话，那么剩下的工人该如何选择呢？显然我们只要选K-1个quality最低的工人，他们可以拉高那个＂最不实惠工人＂的quality比重，从而减少其他工人的quality比重，从而降低总工资．
+
+我们再考虑，如果选择了```wage[i]/quality[i]```第二高的那位，那么我们就在接下来的N-2个人里面选择K-1个quality最底的工人即可．
+
+由此贪心法的最优策略就出来了．实际操作中，我们根据```wage[i]/quality[i]```从低到高进行处理．
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-cost-to-hire-k-workers)

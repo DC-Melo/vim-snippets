@@ -1,5 +1,5 @@
 ::::::::::::::
-Recursion/0087.Scramble-String/087.Scramble-String.cpp
+Recursion/087.Scramble-String/087.Scramble-String.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -27,7 +27,7 @@ public:
     }
 };
 ::::::::::::::
-Recursion/0087.Scramble-String/Readme.md
+Recursion/087.Scramble-String/Readme.md
 ::::::::::::::
 ### 087.Scramble-String
 
@@ -41,1134 +41,6 @@ Recursion/0087.Scramble-String/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/scramble-string)::::::::::::::
-Recursion/0133.Clone-Graph/133.Clone Graph_BFS.cpp
-::::::::::::::
-/**
- * Definition for undirected graph.
- * struct UndirectedGraphNode {
- *     int label;
- *     vector<UndirectedGraphNode *> neighbors;
- *     UndirectedGraphNode(int x) : label(x) {};
- * };
- */
-class Solution {
-public:
-    UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) 
-    {
-        if (node==NULL) return NULL;
-        
-        unordered_map<UndirectedGraphNode*,UndirectedGraphNode*>Map;
-        queue<UndirectedGraphNode*>q;
-        q.push(node);
-        Map[node] = new UndirectedGraphNode(node->label);
-        
-        while (!q.empty())
-        {
-            UndirectedGraphNode* root = q.front();
-            q.pop();
-            for (int i=0; i<root->neighbors.size(); i++)
-            {
-                if (Map.find(root->neighbors[i])==Map.end())
-                {
-                    UndirectedGraphNode* temp = new UndirectedGraphNode(root->neighbors[i]->label);
-                    Map[root->neighbors[i]] = temp;
-                    Map[root]->neighbors.push_back(temp);
-                    q.push(root->neighbors[i]);
-                }
-                else
-                {
-                    Map[root]->neighbors.push_back(Map[root->neighbors[i]]);
-                }
-            }
-            
-        }        
-        return Map[node];
-    }
-};
-::::::::::::::
-Recursion/0133.Clone-Graph/133.Clone Graph_DFS.cpp
-::::::::::::::
-/*
-// Definition for a Node.
-class Node {
-public:
-    int val;
-    vector<Node*> neighbors;
-
-    Node() {}
-
-    Node(int _val, vector<Node*> _neighbors) {
-        val = _val;
-        neighbors = _neighbors;
-    }
-};
-*/
-class Solution {
-    unordered_map<Node*,Node*>Map;
-public:
-    Node* cloneGraph(Node* oldNode) 
-    {
-        if (Map.find(oldNode)!=Map.end())
-            return Map[oldNode];
-            
-        Node* newNode = new Node(oldNode->val);
-        Map[oldNode] = newNode;
-        
-        for (int i=0; i<oldNode->neighbors.size(); i++)
-        {
-            newNode->neighbors.push_back(cloneGraph(oldNode->neighbors[i]));
-        }
-        
-        return newNode;
-    }
-    
-};
-::::::::::::::
-Recursion/0133.Clone-Graph/Readme.md
-::::::::::::::
-### 133.Clone-Graph  
-对于图的copy，必用Map建立原图和新图之间节点的对应。
-
-#### DFS 
-DFS时，递归函数作用于原图root所有的邻接节点adjacent。如果邻接节点adjacent已经存在于Map的映射里（说明已经访问过），则只需建立root和adjacent各自对应的两个节点在新图里的邻里关系。否则，邻接节点adjacent不存在于Map的映射里，说明它未曾被考虑过，则需要先在新图里建立一个adjacent的对应节点，再建立邻里关系。
-
-#### BFS 
-BFS一般都是用队列。对于队首的原图节点root，查看其所有邻接节点adjacent。如果adjacent在Map中没有建立其映射关系，则将adjacent入列，并且新建adjacent在新图中的对应节点，并建立在新图中的邻里关系。反之，邻接节点adjacent存在于Map的映射里，说明它已经被考虑过，则只需要建立root和adjacent对应节点的邻里关系，不需要入列任何节点。
-
-
-[Leetcode Link](https://leetcode.com/problems/clone-graph)::::::::::::::
-Recursion/0241.Different-Ways-to-Add-Parentheses/241.Different-Ways-to-Add-Parentheses.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> diffWaysToCompute(string input) 
-    {
-        vector<int>results;
-        vector<int>vals1;
-        vector<int>vals2;
-        for (int i=0; i<input.size(); i++)
-        {
-            if (input[i]!='+' && input[i]!='-' && input[i]!='*')
-                continue;
-            vals1 = diffWaysToCompute(input.substr(0,i));
-            vals2 = diffWaysToCompute(input.substr(i+1));
-            for (int a : vals1)
-                for (int b: vals2)
-                {
-                    if (input[i]=='+') results.push_back(a+b);
-                    else if (input[i]=='-') results.push_back(a-b);
-                    else if (input[i]=='*') results.push_back(a*b);
-                }
-        }
-        if (results.empty())
-            results.push_back(stoi(input));
-        return results;
-    }
-};
-::::::::::::::
-Recursion/0241.Different-Ways-to-Add-Parentheses/241.Different-Ways-to-Add-Parentheses_v2.cpp
-::::::::::::::
-class Solution {
-    vector<int>nums;
-    vector<char>ops;
-    vector<int> dp[21][21];
-public:
-    vector<int> diffWaysToCompute(string input) 
-    {
-        for (int i=0; i<input.size(); i++)
-        {
-            int j = i;
-            while (j<input.size() && isdigit(input[j]))
-                j++;
-            nums.push_back(stoi(input.substr(i, j-i)));
-            if (j<input.size()) ops.push_back(input[j]);
-            i = j;            
-        }
-        
-        int n = nums.size();
-        helper(0, n-1);
-        return dp[0][n-1];        
-    }
-    
-    void helper(int a, int b)
-    {
-        if (!dp[a][b].empty())
-            return;
-        if (a==b)
-        {
-            dp[a][b] = {nums[a]};
-            return;
-        }
-        
-        for (int i=a; i<b; i++)
-        {
-            helper(a,i);
-            helper(i+1,b);
-            for (int x: dp[a][i])
-                for (int y: dp[i+1][b])
-                {
-                    if (ops[i]=='+')
-                        dp[a][b].push_back(x+y);
-                    else if (ops[i]=='-')
-                        dp[a][b].push_back(x-y);
-                    else if (ops[i]=='*')
-                        dp[a][b].push_back(x*y);
-                }
-        }
-    }    
-};
-::::::::::::::
-Recursion/0241.Different-Ways-to-Add-Parentheses/Readme.md
-::::::::::::::
-### 241.Different-Ways-to-Add-Parentheses
-
-此题的突破口：任何多项式运算最终可以化简为最后的双目运算。只要遍历这个“最终的”双目运算符的位置,其将运算符前后两部分都用递归处理，然后这两部分的结果再两两组合即可.
-
-
-[Leetcode Link](https://leetcode.com/problems/different-ways-to-add-parentheses)
-::::::::::::::
-Recursion/0337.House-Robber-III/337.House-Robber-III.cpp
-::::::::::::::
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
-class Solution {
-    unordered_map<TreeNode*,int>Rob;
-    unordered_map<TreeNode*,int>noRob;
-public:
-    int rob(TreeNode* root) 
-    {
-        return DFS(root,1);
-    }
-
-    int DFS(TreeNode* node, int flag)
-    {
-        if (node==NULL) return 0;
-        if (flag==0 && noRob.find(node)!=noRob.end())
-            return noRob[node];
-        if (flag==1 && Rob.find(node)!=Rob.end())
-            return Rob[node];
-
-        int ret;
-        if (flag==0)
-            ret = DFS(node->left, 1) + DFS(node->right,1);
-        else
-            ret = max(node->val + DFS(node->left, 0) + DFS(node->right,0), DFS(node->left,1)+DFS(node->right,1));
-
-        if (flag==0) noRob[node] = ret;
-        else Rob[node] = ret;
-
-        return ret;
-    }
-};
-::::::::::::::
-Recursion/0337.House-Robber-III/Readme.md
-::::::::::::::
-### 337.House-Robber-III
-
-此题和其他House Robber系列不同，House的排列不是序列的数组，并不适合DP算法．这是因为left的最佳策略，不仅取决于它的上级parent的策略，而且还要取决于right的策略．动态转移方程很难确定．
-
-如果用常规的DFS就很简单明了．每一个node的策略(rob or not)都尝试一遍并向下延伸，最终取两者之间的最优．
-
-注意的是，肯定会有很多重复搜索的情况．比如说节点A取rob并向下dfs的过程中，后续的节点Ｂ需要考察rob的决策；而Ａ取not rob并向下dfs的过程中，后续的B可能也需要考察rob的决策．所以需要记忆化，将每个节点的决策及其价值都记录下来．
-
-
-[Leetcode Link](https://leetcode.com/problems/house-robber-iii)::::::::::::::
-Recursion/0390.Elimination-Game/390.Elimination-Game.cpp
-::::::::::::::
-class Solution {
-public:
-    int lastRemaining(int n) 
-    {
-        if (n==1) return 1;
-        
-        return (n/2+1 - lastRemaining(n/2))*2;
-    }
-};
-::::::::::::::
-Recursion/0390.Elimination-Game/Readme.md
-::::::::::::::
-###  390.Elimination-Game
-
-考虑第一轮：从序列 1，2，3，4，5，6，7，8，9，10，11 这11个数里面找最终存留的数的位置,定义为f(11),
-
-第二轮之后：转换为从序列 2,4,6,8,10 这5个数里面找最终存留的数的位置,定义为f(5),那么得到的结果(那个位置)其实放在第一轮而言,我们要把这个index乘以2.不仅如此,因为第二轮我们其实需要从右往左找数,所以说按照从左往右的找到的数,我们应该镜像一下才行.也就是说 f(11) = (5+1-f(5))\*2 (这是因为1对应5,2对应4,...,所以用6去减)
-
-因此我们可以得到递推公式
-```
-f(n) = (n/2+1-f(n/2)) *2 
-```
-边界条件是 n==1时，f(1)=1.
-
-
-[Leetcode Link](https://leetcode.com/problems/elimination-game)::::::::::::::
-Recursion/0395.Longest-Substring-with-At-Least-K-Repeating-Characters/395.Longest-Substring-with-At-Least-K-Repeating-Characters_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestSubstring(string s, int k) 
-    {
-        unordered_map<char,int>Map;
-        for (auto ch: s)
-            Map[ch]++;
-        
-        int flag = 1;
-        for (auto x: Map)
-            if (x.second < k)
-            {
-                flag = 0;
-                break;
-            }
-        if (flag) return s.size();
-                
-        int ret = 0;
-        for (int i=0; i<s.size(); i++)
-        {
-            if (Map[s[i]]<k) continue;
-            int j = i;
-            while (j<s.size() && Map[s[j]]>=k)
-                j++;
-            ret = max(ret, longestSubstring(s.substr(i,j-i), k));
-            i = j;
-        }
-        
-        return ret;        
-    }
-};
-::::::::::::::
-Recursion/0395.Longest-Substring-with-At-Least-K-Repeating-Characters/395.Longest-Substring-with-At-Least-K-Repeating-Characters_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int helper(string& s, int t, int k)
-    {
-        int j = 0;
-        unordered_map<char, int>Map;
-        int count = 0;
-        int ret = 0;
-        for (int i=0; i<s.size(); i++)
-        {
-            while (j<s.size() && Map.size() <= t)
-            {
-                Map[s[j]]++;
-                if (Map[s[j]]==k)
-                    count++;
-                j++;
-
-                if (Map.size()==t && count == t)
-                    ret = max(ret, j-i);
-            }
-            
-            Map[s[i]]--;
-            if (Map[s[i]]==k-1)
-                count--;
-            if (Map[s[i]]==0)
-                Map.erase(s[i]);
-        }
-        return ret;
-    }
-
-    int longestSubstring(string s, int k) 
-    {
-        int ret = 0;
-        for (int t=1; t<=26; t++)
-            ret = max(ret, helper(s, t, k));
-        return ret;
-    }
-};
-::::::::::::::
-Recursion/0395.Longest-Substring-with-At-Least-K-Repeating-Characters/Readme.md
-::::::::::::::
-### 395.Longest-Substring-with-At-Least-K-Repeating-Characters
-
-此题其实并不容易。首先常规的双指针并不适用，假设我们固定左指针是第一个元素，那么右指针最远能移动到哪里呢？我们无法确定。其次，也无法用二分搜值的方法，因为并不是越长的substring就越容易满足条件，反而可能会因为更容易掺入“杂质”而无法满足条件。
-
-#### 解法1：递归
-如果把整个序列遍历完，那么我们就得到了所有字符和它出现的频次。对于那些出现次数少于k的字符，是“害群之马”，它们放在任何一个子序列中都会违反题意的。所以一个直观的想法是，将那些“害群之马”作为splitor，将原序列分割成若干子序列，然后递归调用函数本身，找到最长的有效子序列。递归的边界是，如果整个序列所有的字符频次都大于等于k，就可以返回序列的长度；如果整个序列的总长度都小于k，那么就返回零。
-
-注意，这种写法的时间复杂度其实是o(N^2)。虽然有o(N)的分治（递归）写法，但是不是很容易想到，这里省略。
-
-#### 解法2：双指针
-本题其实确实有双指针的方法，但是比较特殊。那就是这个滑窗需要固定“不同字母的个数”，这个数目m可以从1遍历到26。只要固定了左指针和区间不同字母的个数，那么我们就可以确定右指针最远的位置，然后查看区间内是否每个字母出现的频次都大于k。可以想见，左指针的移动，必然也会导致右指针的单向移动。
-
-最后的答案就是遍历所有m时能够得到的最大滑窗长度。这种算法的时间复杂度是o(26N).
-
-[Leetcode Link](https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters)
-::::::::::::::
-Recursion/0397.Integer-Replacement/397.Integer-Replacement.cpp
-::::::::::::::
-class Solution {
-public:
-    int integerReplacement(int n) 
-    {
-        return DFS(n);
-    }
-    
-    long long DFS(long long n) 
-    {
-        if (n==1) return 0;
-        
-        if (n%2==0)
-            return DFS(n/2)+1;
-        else
-            return min(DFS(n+1),DFS(n-1))+1;
-    }
-};
-::::::::::::::
-Recursion/0397.Integer-Replacement/Readme.md
-::::::::::::::
-### 397.Integer-Replacement
-
-仔细分析一下就能发现，这题无法用DP做，因为对DP数组无法找到合适的遍历顺序。
-
-用递归做就能通过，也非常简单。但要注意 n=INT_MAX时的越界问题。
-
-
-[Leetcode Link](https://leetcode.com/problems/integer-replacement)::::::::::::::
-Recursion/0440.K-th-Smallest-in-Lexicographical-Order/440.K-th-Smallest-in-Lexicographical-Order.cpp
-::::::::::::::
-class Solution {
-    
-public:
-    int findKthNumber(int n, int k) 
-    {        
-        return FindKthNumberBeginWith(0,n,k);
-    }
-    
-    // return the Lexicographically Kth element that begin with the prefix
-    // excluding the prefix itself
-    int FindKthNumberBeginWith(int prefix, int n, int k)
-    {       
-        if (k==0) return prefix;        
-        
-        for (int i=(prefix==0?1:0); i<=9; i++)
-        {
-            int count = TotalNumbersBeginWith(prefix*10+i,n);
-            if (count<k)
-                k-=count;
-            else
-                return FindKthNumberBeginWith(prefix*10+i,n,k-1);
-        }
-    }
-    
-    // return how many numbers that begin with the prefix and within the range of n 
-    // including the prefix itself
-    int TotalNumbersBeginWith(long long prefix, int n)
-    {
-        long long fac = 1;
-        int count = 0;
-        
-        for(int digit = 1; digit <= 9; digit++) 
-        {
-            long long min = prefix*fac;
-            long long max = prefix*fac+fac-1;
-            if(n < min)
-                break;
-            else if(min <= n && n <= max) 
-            {
-                count += (n-min+1);
-                break;
-            }
-            else  
-                count += fac;
-            fac *= 10;
-        }
-        return count;
-    }    
-};
-::::::::::::::
-Recursion/0440.K-th-Smallest-in-Lexicographical-Order/Readme.md
-::::::::::::::
-### 440.K-th-Smallest-in-Lexicographical-Order
-
-本题初看和```386.Lexicographical-Numbers```非常相似，但解法大不相同．在３８６题中，因为需要将按照字典序从小到大所有的元素打印出来，所以可以用构造法把这些数都找出来．但本题中，如果Ｋ很大，要将从１到Ｋ个的字典序元素都生成是很费时的．
-
-此题的解法很巧妙．举个例子，假设n=23456,k=10000，我们期待的结果是Ｒ．我们如何找到Ｒ呢？我们肯定会先尝试Ｒ的第一个数字是否会是１．此时，一个快速的筛选准则是：考察所有小于ｎ的１ｘｘｘｘ（ｘ的个数随意），可以计算总共有几个这样的数，我们假设是Ｍ．我们应该发现，这Ｍ个数其实就是字典序里的前Ｍ个（因为首元素是１，字典序最小）．如果Ｍ<k的话，那么我们就不用考虑所有的1xxxx，只需要从２xxxx开始寻找第k-M个字典序的数．如果M>k的话，我们就确定了首元素必须是１，进而考虑第二个数字，也是从１的可能性考虑起－－我们发现，这就是在递归重复之前的步骤．
-
-代码的流程大致如下：
-```cpp
-int FindKthNumberBeginWith(prefix,k)
-{
-    if (k==0) return prefix;
-    
-    for i=0 to 9
-    {
-        count = TotalNumbersBeginWith(prefix+[i]);
-        if (count<k)
-            k -= count;
-        else 
-            return FindKthNumberBeginWith(prefix+[i],k-1)
-    }
-}
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/k-th-smallest-in-lexicographical-order)::::::::::::::
-Recursion/0464.Can-I-Win/464.Can-I-Win.cpp
-::::::::::::::
-class Solution {
-    int visited[1<<21];
-public:
-    bool canIWin(int maxChoosableInteger, int desiredTotal) 
-    {
-        int totalSum = (1+maxChoosableInteger)*maxChoosableInteger/2;
-        if (totalSum < desiredTotal) return false;
-        return dfs(0, 0, maxChoosableInteger, desiredTotal);
-    }
-
-    bool dfs(int state, int sum, int maxChoosableInteger, int desiredTotal)
-    {
-        if (visited[state]==2)
-            return true;
-        if (visited[state]==1)
-            return false;
-
-        for (int i=1; i<=maxChoosableInteger; i++)
-        {
-            if ((state>>i)&1) continue;
-            if (sum+i >= desiredTotal) return true;
-            
-            if (dfs(state+(1<<i), sum+i, maxChoosableInteger, desiredTotal)==false)
-            {
-                visited[state] = 2;
-                return true;
-            }                
-        }
-        visited[state] = 1;
-        return false;
-    }
-};
-::::::::::::::
-Recursion/0464.Can-I-Win/Readme.md
-::::::::::::::
-### 464.Can-I-Win
-
-本题最关键的一点是想到要用递归。如果列举自己的所有决策，对手都是mustWin==true，那么自己的mustWin就是false；反之，自己的某一个决策能够使得对手的mustWin==false，那么就是自己mustWin就是true。想到这一点的话，大致的代码如下：
-```cpp
-for (int i=1; i<=maxChoosableInteger; i++)
-{
-    if (used[i]==1) continue;  // 跳过已经使用过的数字
-    used[i]=1;
-    if (DFS(maxChoosableInteger,desiredTotal-i)==false)  // 如果下一轮（注意是对手轮）是必输决策，那么说明本轮该决策必赢
-       return true;
-    used[i]=0;
-}
-return false; // 遍历了本轮所有的决策后都没有跳出，说明对方都有必赢决策，那么本轮对自己而言就是必输。
-```
-但不幸的是，以上的代码会超时。原因是每轮的决策都是近乎随机的，N轮之后会造成大量重复的决策。比如对于第三轮（我方）而言：第一轮（我方）取1，第二轮（对方）取2；这个完全等效于第一轮（我方）取2、第二轮（对方）取1。如果对于前者DFS完毕之后，其实就不需要再对后者进行相同的DFS了。所以很明显，需要利用到记忆化搜索，也就是把之前DFS得到的一些中间结果存储下来。
-
-本题的“中间结果”是指：在已经取走一些数字的情况下，自己做决策是会必输还是有办法包赢。所以我们需要一个Hash表，key应该是已经取数的状态，val就是bool型表明对于这种状态本方是赢还是输。怎么将已经取了哪些数的“状态”作为一个key呢？考虑到最多只有20个数，用一个20位的二进制数字就可以表示所有取数状态了。
-```cpp
-int status=0;
-for (int i=1; i<=maxChoosableInteger; i++)
-{
-  if (((status>>i)&1)==1) continue; // 跳过已经使用过的数字
-  if (DFS(maxChoosableInteger,desiredTotal-i, status|(1<<i))==false) // 如果下一轮（注意是对手轮）是必输决策，那么说明本轮该决策必赢
-  {
-     Map[status]=true;
-     return true;
-  }    
-}
-Map[status]=false; // 遍历了本轮所有的决策后都没有跳出，说明对方都有必赢决策，那么本轮对自己而言就是必输。需要记录下来，免除后续的重复搜索。
-return false; 
-```
-
-上面这种每一轮互相易手的游戏规则，求最终必胜或必输策略的问题，常常被称为minMax问题。基本思路就是：当前状态下，列举自己的每一种策略，如果对方都有必胜的应手，那么本方的这个状态就是必输。如果自己有一手策略，会导致对方必输，那么本方的这个状态就是必赢。
-
-
-[Leetcode Link](https://leetcode.com/problems/can-i-win)::::::::::::::
-Recursion/0679.24-Game/679.24-Game_v1.cpp
-::::::::::::::
-#include <algorithm> 
-
-class Solution {
-    vector<vector<vector<int>>>AllPermuations;
-public:
-    bool judgePoint24(vector<int>& nums) 
-    {
-        vector<double>Nums;
-        for (auto x:nums) Nums.push_back(x*1.0);
-        return DFS(Nums);
-    }
-    
-    bool DFS(vector<double>& nums)
-    {
-        int m = nums.size();
-        if (m==1) return (abs(nums[0]-24.0)<1e-6);
-            
-        for (int i=0; i<m; i++)
-            for (int j=0; j<m; j++)
-            {
-                if (i==j) continue;
-                
-                vector<double>newNums;
-                for (int k=0; k<m; k++)
-                    if (k!=i && k!=j) newNums.push_back(nums[k]);
-                newNums.push_back(-1);
-                
-                double a = nums[i];
-                double b = nums[j];
-                
-                newNums.back() = a+b;
-                if (DFS(newNums)) return true;
-            
-                newNums.back() = a-b;
-                if (DFS(newNums)) return true;
-            
-                newNums.back() = a*b;
-                if (DFS(newNums)) return true;
-            
-                if (b!=0.0)
-                {
-                    newNums.back() = a/b;
-                    if (DFS(newNums)) return true;
-                }            
-            }        
-        
-            return false;
-    }
-    
-};
-::::::::::::::
-Recursion/0679.24-Game/679.24-Game_v2.cpp
-::::::::::::::
-#include <algorithm> 
-
-class Solution {
-    vector<vector<vector<int>>>AllPermuations;
-public:
-    bool judgePoint24(vector<int>& nums) 
-    {
-        vector<double>Nums;
-        for (auto x:nums) Nums.push_back(x*1.0);
-        
-        AllPermuations.resize(5);
-        AllPermuations[4] = CalPermutation(4);
-        AllPermuations[3] = CalPermutation(3);
-        AllPermuations[2] = CalPermutation(2);
-        
-        return DFS(Nums);
-    }
-    
-    bool DFS(vector<double>& nums)
-    {
-        int k = nums.size();
-        if (k==1) return (abs(nums[0]-24.0)<1e-6);
-            
-        vector<vector<int>>permutations = AllPermuations[k];
-        
-        for (int i=0; i<permutations.size(); i++)
-        {
-            vector<double>newNums(k-1);
-            for (int j=0; j<k-2; j++)
-                newNums[j] = nums[permutations[i][j]];
-            
-            double a = nums[permutations[i][k-2]];
-            double b = nums[permutations[i][k-1]];
-            
-            newNums.back() = a+b;
-            if (DFS(newNums)) return true;
-            
-            newNums.back() = a-b;
-            if (DFS(newNums)) return true;
-            
-            newNums.back() = a*b;
-            if (DFS(newNums)) return true;
-            
-            if (b!=0.0)
-            {
-                newNums.back() = a/b;
-                if (DFS(newNums)) return true;
-            }            
-        }
-        
-        return false;
-    }
-    
-    vector<vector<int>>CalPermutation(int k)
-    {
-        vector<vector<int>>results;
-        vector<int>nums;
-        for (int i=0; i<k; i++) nums.push_back(i);
-        do
-        {
-            results.push_back(nums);
-        }while (next_permutation(nums.begin(),nums.end()));
-        
-        return results;        
-    }
-    
-};
-::::::::::::::
-Recursion/0679.24-Game/679.24-Game_v3.cpp
-::::::::::::::
-class Solution {
-public:
-    bool judgePoint24(vector<int>& cards) 
-    {
-        vector<double>nums(4);
-        for (int i=0; i<4; i++) nums[i] = cards[i];
-        sort(nums.begin(), nums.end());
-                
-        while (1)
-        {
-            unordered_set<double> results = DFS(nums,0,3);
-            for (auto a:results)
-            {
-                if (abs(a-24)<1e-10)
-                    return true;
-            }
-            if (next_permutation(nums.begin(), nums.end()) == false) 
-                break;
-        }
-        return false;
-    }
-    
-    unordered_set<double> DFS(vector<double> &nums, int a, int b)
-    {
-        if (a==b) return {nums[a]};
-        
-        unordered_set<double>results;
-        
-        for (int i=a; i<b; i++)
-        {
-            unordered_set<double>A = DFS(nums,a,i);
-            unordered_set<double>B = DFS(nums,i+1,b);
-            for (double x:A)
-                for (double y:B)
-                {
-                    results.insert(x+y);
-                    results.insert(x-y);
-                    results.insert(x*y);
-                    if (y!=0)
-                        results.insert(x/y);
-                }
-        }
-        return results;
-    }
-};
-::::::::::::::
-Recursion/0679.24-Game/Readme.md
-::::::::::::::
-### 679.24-Game
-
-此题和```LC 241 Different Ways to Add Parentheses```与```LC 2019 The Score of Students Solving Math Expression```类似的套路。
-
-我们遍历这个四个数字的permutaion。对于任意一种permuation ```A B C D```，我们本质上需要做的就是任意添加运算符（加减乘除）和括号（改变运算顺序），查看整个式子eval的结果是否包含24. 
-
-具体的做法就是递归。我们将某个permutation拆解为两部分分别递归处理，再将两个部分eval出来的结果两两组合，配上加减乘除，就得到对于这个permutation我们所能计算出的所有可能值。大致的代码是
-``` 
-for x: eval(AB)
-  for y: eval(CD)
-    rets.insert({x+y, x-y, x*y, x/y});
-```
-
-需要注意，所有的牌必须处理成浮点，因为涉及到除法。
-
-
-[Leetcode Link](https://leetcode.com/problems/24-game)
-::::::::::::::
-Recursion/0779.K-th-Symbol-in-Grammar/Readme.md
-::::::::::::::
-### 779.K-th-Symbol-in-Grammar
-
-此题是典型的递归解法。第N行的第K个，取决于第N-1行的第(K+1)/2个。于是依次往上回溯，直至追踪到第N==1行的元素是0.
-
-
-[Leetcode Link](https://leetcode.com/problems/k-th-symbol-in-grammar)::::::::::::::
-Recursion/0780.Reaching-Points/780.Reaching-Points.cpp
-::::::::::::::
-class Solution {
-public:
-    bool reachingPoints(int sx, int sy, int tx, int ty) 
-    {
-        if (sx>tx || sy>ty) return false;
-        if (sx==tx) return (ty-sy)%sx==0;
-        if (sy==ty) return (tx-sx)%sy==0;
-        
-        if (tx>ty) return reachingPoints(sx,sy,tx%ty,ty);
-        else if (tx<ty) return reachingPoints(sx,sy,tx,ty%tx);
-        else return false;
-    }
-};
-::::::::::::::
-Recursion/0780.Reaching-Points/Readme.md
-::::::::::::::
-### 780.Reaching-Points
-
-本题的突破点在于，x和y都是正数！于是，当我们发现tx>ty时，我们一定可以推断出，其之前的状态必须是(tx-ty,ty)并且执行了(x+y,y)的操作；这是因为如果执行了另一种操作，其结果不可能使得第一个分量大于第二个分量。同理，如果我们发现tx<ty时，我们一定可以推断出，其之前的状态必须是(tx,ty-tx)并且执行了(x,y+x)的操作。那么如果tx==ty呢？这是不可能的，因为(x,x+y)或者(x+y,y)都不可能有两个相等的分量。
-
-于是我们可以写出如下的递归方法：
-```cpp
-  if (tx>ty) return reachingPoints(sx,sy,tx-ty,ty);
-  else if (tx<ty) return reachingPoints(sx,sy,tx,ty-tx);
-  else return false;
-```
-我们可以再做进一步的优化。当```tx>ty```时，我们知道其之前的状态是```(tx-ty,ty)```。那么如果此时依然有```tx-ty>ty```呢？同理推出，再之前的状态就是```(tx-2ty,ty)```。那么如果此时依然有```tx-2ty>ty```呢？同理推出，再之前的状态就是```(tx-3ty,ty)```...我们就可以一直进行下去，直至第一个分量小于第二个分量。而这个终结的状态，其实就是```(tx%ty,ty)```!
-
-于是效率更高的递归方法是：
-```cpp
-  if (tx>ty) return reachingPoints(sx,sy,tx%ty,ty);
-  else if (tx<ty) return reachingPoints(sx,sy,tx,ty%tx);
-  else return false;
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/reaching-points)::::::::::::::
-Recursion/0808.Soup-Servings/808.Soup-Servings.cpp
-::::::::::::::
-class Solution {
-    map<pair<int,int>,double>dp;
-public:
-    double soupServings(int N) 
-    {
-        if (N>5000) return 1;
-        return DFS(N,N);
-    }
-    
-    double DFS(int A, int B)
-    {
-        if (A<=0 && B>0) return 1;
-        if (A<=0 && B<=0) return 0.5;
-        if (A>0 && B<=0) return 0;
-        
-        if (dp.find(pair<int,int>(A,B))!=dp.end()) return dp[pair<int,int>(A,B)];
-        
-        dp[pair<int,int>(A,B)] = 0.25*(DFS(A-100,B)+DFS(A-75,B-25)+DFS(A-50,B-50)+DFS(A-25,B-75));
-        return dp[pair<int,int>(A,B)];
-    }
-};
-::::::::::::::
-Recursion/0808.Soup-Servings/Readme.md
-::::::::::::::
-### 808.Soup-Servings
-
-此题很好地考察了概率的概念。
-
-不要被题目中“the probability that soup A will be empty first, plus half the probability that A and B become empty at the same time” 里面的这个plus所迷惑。其实这是一个or的关系。
-
-也就是说，当 soup A will be empty first 时，返回概率值1；当 A and B become empty at the same time 时，返回概率值0.5。如果这两种情况在各个分支中都出现过，那么就把这些条件概率值累加起来。
-
-所以在递归函数中应该写成：
-```cpp
-double DFS(int A,int B)
-{
-  if (A<=0 && B>0) return 1;    // 边界条件：A先倒完
-  if (A<=0 && B<=0) return 0.5; // 边界条件：AB同时倒完
-  if (A>0 && B<=0) return 0;    // 边界条件：B先倒完
-  return 0.25*(DFS(A-100,B)+DFS(A-75,B-25)+DFS(A-50,B-50)+DFS(A-25,B-75));
-}
-```
-特别注意，第三个边界条件很重要。很多人根据题意，以为只要```A<=0||B<0```意味着A或B无法满足任何操作的时候才返回0。其实这个条件太宽松，隐藏着隐患。比如当```A==75,B==0```的时候，这个时候B已经先于A清空，两个胜利的条件（即AB同时清空或者A比B先清空）都肯定再无法满足，这个时候就应该即使返回0，否则放任下一步操作的话，依然可以合法地通过操作1在下一轮得到```A==0, B==0```，而这个状态是会被判定为胜利条件之一的，于是这部分概率就被误叠加到最终结果了。
-
-
-[Leetcode Link](https://leetcode.com/problems/soup-servings)::::::::::::::
-Recursion/0877.Stone-Game/877.Stone-Game.cpp
-::::::::::::::
-class Solution {
-    int dp[501][501];
-public:
-    bool stoneGame(vector<int>& piles) 
-    {
-        int myBest = solve(0, piles.size()-1, piles);
-        int total = accumulate(piles.begin(), piles.end(), 0);
-        return (myBest>total-myBest);
-    }
-
-    int solve(int a, int b, vector<int>& piles)
-    {
-        if (a==b) return piles[a];
-        if (dp[a][b]!=0) return dp[a][b];
-        dp[a][b] = max(piles[a]+solve(a+1,b, piles), piles[b]+solve(a,b-1, piles));
-        return dp[a][b];
-    }
-};
-::::::::::::::
-Recursion/0877.Stone-Game/Readme.md
-::::::::::::::
-### 877.Stone-Game
-
-#### 解法1：
-因为此题的N为偶数，且不会有平局。说明奇数堆的总和，必然与偶数堆的总和不一样。先手玩家可以总是取奇数堆（或者总是取偶数堆），因此可以必胜。
-
-#### 解法2：
-当N为奇数时，就没有上述的巧解。对于这种策略型的题目，递归是比较常见的解法。我们设计递归函数```int solve(a,b)```表示先手玩家来当前面对[a,b]区间时可以得到的最大收益。因为这个游戏的得分是此消彼长的关系，所以先手玩家最终取得胜利的条件就是：
-```
-solve(1,n) > total - solve(1,n);
-```
-那么这个递归函数怎么往下拆解呢？无非就是遵循游戏规则，有两种决策：
-1. 如果我选择了最左边的石头堆（也就是a），那么对手面临也是同一个最优化的问题，只不过范围不同，即```solve(a+1,b)```，对手需要在[a+1,b]这个区间内最大化自己的收益。因此我方在[a,b]区间最终能够得到的收益就是```sum[a:b] - solve(a+1,b)```.
-2. 如果我选择了最右边的石头堆（也就是b），那么对手面临也是同一个最优化的问题，只不过范围不同，即```solve(a,b-1)```，对手需要在[a,b-1]这个区间内最大化自己的收益。因此我方在[a,b]区间最终能够得到的收益就是```sum[a:b] - solve(a,b-1)```.
-
-综上，我方必定会在这两个决策中选择一个能够在[a,b]区间收益更多的方案。这就实现了solve(a,b)的递归。无论是我方还是对方，递归的拆解思路总是相同的。递归的边界条件就是a==b时，这堆石头直接拿走。
-
-[Leetcode Link](https://leetcode.com/problems/stone-game)
-::::::::::::::
-Recursion/0880.Decoded-String-at-Index/880.Decoded-String-at-Index.cpp
-::::::::::::::
-class Solution {
-public:
-    string decodeAtIndex(string S, int K) 
-    {
-        long long count = 0;
-        for (int i=0; i<S.size(); i++)
-        {
-            char ch = S[i];
-            if (isalpha(ch))
-            {
-                count++;
-                if (count==K)
-                {
-                    string ret;
-                    ret.push_back(ch);
-                    return ret;
-                }
-            }
-            else
-            {
-                long long times = ch-'0';
-                if (count * times < K)
-                    count = count * times;
-                else if (K % count == 0)
-                    return decodeAtIndex(S.substr(0,i), count);
-                else 
-                    return decodeAtIndex(S.substr(0,i), K % count);
-            }
-        }
-        
-        return "";
-        
-    }
-};
-::::::::::::::
-Recursion/0880.Decoded-String-at-Index/Readme.md
-::::::::::::::
-### 880.Decoded-String-at-Index
-
-假设我们当前的容器里面有一串已经解码的字符串t，其字符的长度是count。
-
-这个时候如果我们接下来处理的是一个字符ch，那么显然，说明第count+1个字符一定就是ch。特别地，如果```count+1==K```，那么ch就是答案，否则我们还会继续往后扫描S。
-
-这个时候如果我们接下来处理的是一个数字num，那么说明解码容器里的字符串t要增加num倍的长度。如果```count*num < K```，说明还没有走到第K个字符，我们还需要继续往后扫描S。反之```count*num >= K```的话，说明这么多字符串t的串联用力过猛，我们可能只需要部分t的串联即可到达K。考虑到t就是“循环节”，所求的第K个字符，其实就是在这个循环节里找第```K%count```元素即可。至此，我们发现，```decodeAtIndex(S,K)```此时变成了```decodeAtIndex(t,K%count)```，原来这题就是一个递归的解法。
-
-特别注意，如果```K%num==0```的话，我们需要输出的是循环节里最后一个字符。
-
-
-[Leetcode Link](https://leetcode.com/problems/decoded-string-at-index)::::::::::::::
-Recursion/0902.Numbers-At-Most-N-Given-Digit-Set/902.Numbers-At-Most-N-Given-Digit-Set.cpp
-::::::::::::::
-class Solution {
-    int count = 0;
-    string num;
-    int K;
-    
-public:
-    int atMostNGivenDigitSet(vector<string>& D, int N) 
-    {
-        num = to_string(N);
-        K = num.size();
-        
-        for (int i=1; i<=K-1; i++)
-            count += pow(D.size(), i);
-        
-        DFS(0, D);
-        
-        return count;
-    }
-    
-    void DFS(int pos, vector<string>& D)
-    {
-        if (pos==K)
-        {
-            count+=1;
-            return;
-        }
-        
-        for (string s: D)
-        {
-            if ('0'+stoi(s) < num[pos])
-                count += pow( D.size(), K-1-pos);
-            else if ('0'+stoi(s) == num[pos])
-                DFS(pos+1, D);            
-        }               
-    }
-};
-::::::::::::::
-Recursion/0902.Numbers-At-Most-N-Given-Digit-Set/Readme.md
-::::::::::::::
-### 902.Numbers-At-Most-N-Given-Digit-Set
-
-可以用常规的DFS的方法将所有小于N的数都访问（构造）一遍，但是当N很大的时候就很低效。
-
-比较高效的解法是多利用数学计算。假设数字N的位数是K，那么意味着任何小于K位的整数都不可能大于N，我们可以直接累加小于K位的整数的个数。
-
-然后我们只需考虑K位的整数里有多少小于N的。我们可以从最高位开始递归构造。当选择的第i位上的数字小于num[i]的时候，剩余的K-i位数字可以任取，总数肯定不会超过N，因此可以直接加上```count+=pow(D.size(), K-i)```。当选择的第i位上的数字确定为num[i]的时候，我们就递归处理下一位即可。
-
-注意在边界条件，当处理完所有的K位之后，这意味一路都是贴着上限走过来的，必须还要```count+=1```。这个代表着恰好所构造出来的上限N。
-
-
-[Leetcode Link](https://leetcode.com/problems/numbers-at-most-n-given-digit-set)::::::::::::::
-Recursion/0964.Least-Operators-to-Express-Number/964.Least-Operators-to-Express-Number_v1.cpp
-::::::::::::::
-class Solution {
-    map<vector<long>,int>Map;
-public:
-    int leastOpsExpressTarget(int x, int target) 
-    {
-        int T = log(target)/log(x)+1;
-        return DFS(x, target, T)-1;
-    }
-
-    int DFS(long x, long target, int k)
-    {
-        if (k==0)
-            return target*2;
-        
-        if (Map.find({target,k})!=Map.end())
-            return Map[{target,k}];
-
-        int a = target / pow(x, k);
-        int ans1 = a*k + DFS(x, target-a*pow(x,k), k-1);
-        int ans2 = (a+1)*k + DFS(x, (a+1)*pow(x,k)-target, k-1);
-        
-        Map[{target,k}] = min(ans1,ans2);
-        return min(ans1, ans2);
-
-    }
-};
-::::::::::::::
-Recursion/0964.Least-Operators-to-Express-Number/964.Least-Operators-to-Express-Number_v2.cpp
-::::::::::::::
-class Solution {    
-public:
-    int leastOpsExpressTarget(int x, int target) 
-    {
-        int T = log(target)/log(x)+1;
-        vector<int>f(T+1,0);
-        vector<int>g(T+1,0);
-        vector<int>a(T+1,0);
-        
-        int i = 0;
-        while (target>0)
-        {
-            a[i] = target%x;
-            target /= x;
-            i++;
-        }
-        
-        for (int i=T; i>=0; i--)
-        {
-            if (i==T)
-            {
-                f[i] = a[i]*i;
-                g[i] = (a[i]+1)*i;                
-            }
-            else
-            {
-                int s = (i==0)?2:i;
-                f[i] = min(f[i+1]+a[i]*s,  g[i+1]+abs(a[i]-x)*s);
-                g[i] = min(f[i+1]+(a[i]+1)*s, g[i+1]+abs(a[i]+1-x)*s);
-            }
-        }
-        return f[0]-1;
-        
-    }
-      
-};
-::::::::::::::
-Recursion/0964.Least-Operators-to-Express-Number/Readme.md
-::::::::::::::
-### 964.Least-Operators-to-Express-Number
-
-#### 解法1：递归
-这道题还是很有难度的。
-
-首先我们要厘清本题的实质。根据四则混合运算的性质，我们可以将一串表达式看成是若干个乘除项的加减。对于所有的乘除项，其实无非就是那么几种：```x/x```,```x```,```x*x```,```x*x*x```,...其他的都不可能。为什么呢？首先，类似于```x*x/x*x**x/x/x```这种乘除混搭的形式，明显可以合并精简，这样设计显然浪费了操作。其次，类似于```x/x/x/x/x```这种除法操作多于乘法操作的形式，得到的结果一定是小数，如果整个表达式里包含了小数项，那么无论怎么操作都不可能得到最终target为整数的答案。
-
-所以综上，本题的目的其实就是将target写成 ```a0*x^0 + a1*x^1 + a2*x^2 + ... ak*x^k```的形式，要使得总操作符的数目最小。其中```a0,a1,a2,...,ak```都是整系数，但是可正可负。
-
-我们容易知道，如果想要得到```3*x^4```,就是写成```+x*x*x*x+x*x*x*x+x*x*x*x```的形式，需要```3*4=12```个操作符（包括队首的那个正号）。如果想要得到```2*x^5```,就是写成```+x*x*x*x*x+x*x*x*x*x```的形式，需要```2*5=10```个操作符（因为要包括每个乘除项队首的那个正号）。总的来说，要得到```ai*x^i```，需要用到```ai*i```个操作符。唯一例外的就是i==0的时候，我们要得到一个```x^0```，反而需要两个字符+x/x。
-
-OK，有了以上的铺垫，那么我们进入正题：如何确定ak呢？上面的分解形式```target = a0*x^0 + a1*x^1 + a2*x^2 + ... ak*x^k```，这与把一个数进行x进制分解何其相似。于是，我们应该想到会不会 ```ak = target / x^k```，确定了ak之后，我们可以得到剩下的部分 ```remainder = target - ak*x^k```，而这部分的最高次只能是k-1. 于是，递归的算法 ```helper(remainder,k-1)``` 就呼之欲出了。
-
-显然，以上想法得到的是一个固定的分解方式，因为这种方法我们强制使得所有的```ai>0```。我们还可以怎么做呢？我们还可以尝试x^k的系数设置为(ak+1)，这样我们多出了```remainder = (ak+1)*x^k-target```这部分，没关系，我们依然可以一样递归处理，即处理 ```helper(remainder,k-1)```即可，只不过得到的a_(k-1)需要反个符号就行了。
-
-所以，我们可以设计递归函数 helper(target,k)，确定ak的系数（有两种方案，分别是```a_k1 = target/x^k```, ```a_k2=a_k1+1```），然后剩下的部分继续调用 helper(remainder,k-1)，直至```k==0```为止。
-
-最大的k是什么呢？注意应该是```(int)log(target)/log(x)+1```。也就是说x^k完全可能比target还大。比如 ```helper(75,11)```的最佳方案就是 ```1*11^2 - 4*11^1 - 2*x^0```.
-
-另外，我们需要记忆化手段记录每次得到的```helper(target,k)```以缩短递归时间。此题的时间复杂度是```2^{log(N)/log(x)}=O(N)```，其中N是target的大小。
-
-还有，最终答案要减去1，这是因为第一个乘除项的队首其实不需要正号。
-
-#### 解法2：DP
-解法1中的一个缺陷是无法优化和剪枝，当所尝试的ai已经偏离“最优解”非常遥远时，整个递归过程仍然会持续进行到最低位（即i=0）。
-
-如果结合一个数学结论，那么就可以进一步化解解法。那就是将target做标准的x进制分解：
-
-```target = am*x^m + ... ak*x^k + ... + a2*x^2 + a1*x^1 + a0*x^0  ```，
-
-假设本题最优的分解方式是：
-
-```target = bm*x^m + ... bk*x^k + ... + b2*x^2 + b1*x^1 + b0*x^0  ```，
-
-这个数学结论是：每一位上“真实”的最优系数只可能是ai或者ai+1。（证明略）
-
-举个例子，如果第六位上b6=a6，那么我们认为其对第五位没有影响，第五位上b5可以根据上面的结论，放心取a5或者a5+1。如果第六位上b6=a6+1，那么第六位可以分解成```a6*x^6+x*x^6```，我们将后者的影响放在下一位上，使得第五位上的等效系数其实是```b5+x```。根据我们之前claim：第五位上的等效系数的最优解只能a5或者a5+1，因此可知b5的解只能是a5-x或者a5+1-x.
-
-所以我们定义f[i]表示第i位上的等效系数是ai时（从最高位开始到第i位，下同）所需要的操作数；定义g[i]表示第i位上的等效系数是ai+1时所需要的操作数。我们有如下的递推关系：
-```
-f[i] = min(f[i+1]+a[i]*s,  g[i+1]+abs(a[i]-x)*s);
-g[i] = min(f[i+1]+(a[i]+1)*s, g[i+1]+abs(a[i]+1-x)*s);
-```
-其中s表示第i位（也就是x^i）每一个单项式所需要的符号数：```s=(i==0)?2:i```。
-
-最终的输出结果是f[0]，因为g[0]还需要后续的操作才能满足target，但是当前已经是最低位了。
-
-这种方法的时间复杂度是log(N)，只需要从高到低one pass每一位的两种选择即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/least-operators-to-express-number)::::::::::::::
-Recursion/0991.Broken-Calculator/991.Broken-Calculator.cpp
-::::::::::::::
-class Solution {
-public:
-    int brokenCalc(int X, int Y) 
-    {
-        if (X>=Y)
-            return X-Y;
-        else if (Y%2==1)
-            return brokenCalc(X,Y+1)+1;
-        else
-            return brokenCalc(X,Y/2)+1;
-    }
-};
-::::::::::::::
-Recursion/0991.Broken-Calculator/Readme.md
-::::::::::::::
-### 991.Broken-Calculator
-
-首先，当X>Y时，容易判断出我们只有对X持续地减一才能实现Y。
-
-当X<Y时，我们也容易判断出，如果Y是奇数，那么最后一步操作一定是-1（否则x2是得不到奇数的），所以我们只需要递归考虑```brokenCalc(X,Y+1)```即可。
-
-那么如果Y是偶数呢？我们将任意从X变换成Y的过程，可以分为两个大类：第一类是最后若干步是-1，第二类是最后若干步是x2。这两类方法可以分别写作：
-```
-(a) X ... [x2 x2 ... x2][-1 -1 ... -1] = Y
-(b) X ... [-1 -1 ... -1][x2 x2 ... x2] = Y
-```
-注意，我们并不关心“最后若干步”具体是有多少步。所以上面的两种方法就可以代表任意从X到Y的变换过程。其中，第一种方法最后的若干步-1一定是偶数次，假设是2k。我们容易看出第一种方法其实是不高效的，因为通过简单的分解就可以看出```X ... [x2 x2 ... x2][-1 -1 ... -1]{2k个}```等效于```X ... [x2 x2 ...][-1 -1 ... -1]{k个} x2```。而前者最后需要1+2k步，而后者只需要k+1步。
-
-所以结论是，当Y>X并且Y是偶数的时候，方法(a)是不高效的，不如等效的方法(b)。也就是说，从X到Y最高效的变化方法，最后一步应该是x2而不是-1.因此下一步我们只需要递归考虑```brokenCalc(X,Y/2)```即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/broken-calculator)::::::::::::::
 Recursion/1088.Confusing-Number-II/1088.Confusing-Number-II_v1.cpp
 ::::::::::::::
 class Solution {
@@ -1453,6 +325,102 @@ Recursion/1274.Number-of-Ships-in-a-Rectangle/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/number-of-ships-in-a-rectangle)::::::::::::::
+Recursion/133.Clone-Graph/133.Clone Graph_BFS.cpp
+::::::::::::::
+/**
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
+class Solution {
+public:
+    UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) 
+    {
+        if (node==NULL) return NULL;
+        
+        unordered_map<UndirectedGraphNode*,UndirectedGraphNode*>Map;
+        queue<UndirectedGraphNode*>q;
+        q.push(node);
+        Map[node] = new UndirectedGraphNode(node->label);
+        
+        while (!q.empty())
+        {
+            UndirectedGraphNode* root = q.front();
+            q.pop();
+            for (int i=0; i<root->neighbors.size(); i++)
+            {
+                if (Map.find(root->neighbors[i])==Map.end())
+                {
+                    UndirectedGraphNode* temp = new UndirectedGraphNode(root->neighbors[i]->label);
+                    Map[root->neighbors[i]] = temp;
+                    Map[root]->neighbors.push_back(temp);
+                    q.push(root->neighbors[i]);
+                }
+                else
+                {
+                    Map[root]->neighbors.push_back(Map[root->neighbors[i]]);
+                }
+            }
+            
+        }        
+        return Map[node];
+    }
+};
+::::::::::::::
+Recursion/133.Clone-Graph/133.Clone Graph_DFS.cpp
+::::::::::::::
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+
+    Node() {}
+
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+class Solution {
+    unordered_map<Node*,Node*>Map;
+public:
+    Node* cloneGraph(Node* oldNode) 
+    {
+        if (Map.find(oldNode)!=Map.end())
+            return Map[oldNode];
+            
+        Node* newNode = new Node(oldNode->val);
+        Map[oldNode] = newNode;
+        
+        for (int i=0; i<oldNode->neighbors.size(); i++)
+        {
+            newNode->neighbors.push_back(cloneGraph(oldNode->neighbors[i]));
+        }
+        
+        return newNode;
+    }
+    
+};
+::::::::::::::
+Recursion/133.Clone-Graph/Readme.md
+::::::::::::::
+### 133.Clone-Graph  
+对于图的copy，必用Map建立原图和新图之间节点的对应。
+
+#### DFS 
+DFS时，递归函数作用于原图root所有的邻接节点adjacent。如果邻接节点adjacent已经存在于Map的映射里（说明已经访问过），则只需建立root和adjacent各自对应的两个节点在新图里的邻里关系。否则，邻接节点adjacent不存在于Map的映射里，说明它未曾被考虑过，则需要先在新图里建立一个adjacent的对应节点，再建立邻里关系。
+
+#### BFS 
+BFS一般都是用队列。对于队首的原图节点root，查看其所有邻接节点adjacent。如果adjacent在Map中没有建立其映射关系，则将adjacent入列，并且新建adjacent在新图中的对应节点，并建立在新图中的邻里关系。反之，邻接节点adjacent存在于Map的映射里，说明它已经被考虑过，则只需要建立root和adjacent对应节点的邻里关系，不需要入列任何节点。
+
+
+[Leetcode Link](https://leetcode.com/problems/clone-graph)::::::::::::::
 Recursion/1406.Stone-Game-III/1406.Stone-Game-III.cpp
 ::::::::::::::
 class Solution {
@@ -2172,3 +1140,1036 @@ Recursion/2060.Check-if-an-Original-String-Exists-Given-Two-Encoded-Strings/Read
 3. 如果num1和num2只有一个为零，那么说明一方的字母可以匹配另一方的待定。
 4. 如果num1和num2都为零，说明我们必须比较两个字母。如果匹配就继续，否则就返回false
 5. 只有t1和t2都恰好对消完全（包括待定），才能说明二者匹配。
+::::::::::::::
+Recursion/241.Different-Ways-to-Add-Parentheses/241.Different-Ways-to-Add-Parentheses.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> diffWaysToCompute(string input) 
+    {
+        vector<int>results;
+        vector<int>vals1;
+        vector<int>vals2;
+        for (int i=0; i<input.size(); i++)
+        {
+            if (input[i]!='+' && input[i]!='-' && input[i]!='*')
+                continue;
+            vals1 = diffWaysToCompute(input.substr(0,i));
+            vals2 = diffWaysToCompute(input.substr(i+1));
+            for (int a : vals1)
+                for (int b: vals2)
+                {
+                    if (input[i]=='+') results.push_back(a+b);
+                    else if (input[i]=='-') results.push_back(a-b);
+                    else if (input[i]=='*') results.push_back(a*b);
+                }
+        }
+        if (results.empty())
+            results.push_back(stoi(input));
+        return results;
+    }
+};
+::::::::::::::
+Recursion/241.Different-Ways-to-Add-Parentheses/241.Different-Ways-to-Add-Parentheses_v2.cpp
+::::::::::::::
+class Solution {
+    vector<int>nums;
+    vector<char>ops;
+    vector<int> dp[21][21];
+public:
+    vector<int> diffWaysToCompute(string input) 
+    {
+        for (int i=0; i<input.size(); i++)
+        {
+            int j = i;
+            while (j<input.size() && isdigit(input[j]))
+                j++;
+            nums.push_back(stoi(input.substr(i, j-i)));
+            if (j<input.size()) ops.push_back(input[j]);
+            i = j;            
+        }
+        
+        int n = nums.size();
+        helper(0, n-1);
+        return dp[0][n-1];        
+    }
+    
+    void helper(int a, int b)
+    {
+        if (!dp[a][b].empty())
+            return;
+        if (a==b)
+        {
+            dp[a][b] = {nums[a]};
+            return;
+        }
+        
+        for (int i=a; i<b; i++)
+        {
+            helper(a,i);
+            helper(i+1,b);
+            for (int x: dp[a][i])
+                for (int y: dp[i+1][b])
+                {
+                    if (ops[i]=='+')
+                        dp[a][b].push_back(x+y);
+                    else if (ops[i]=='-')
+                        dp[a][b].push_back(x-y);
+                    else if (ops[i]=='*')
+                        dp[a][b].push_back(x*y);
+                }
+        }
+    }    
+};
+::::::::::::::
+Recursion/241.Different-Ways-to-Add-Parentheses/Readme.md
+::::::::::::::
+### 241.Different-Ways-to-Add-Parentheses
+
+此题的突破口：任何多项式运算最终可以化简为最后的双目运算。只要遍历这个“最终的”双目运算符的位置,其将运算符前后两部分都用递归处理，然后这两部分的结果再两两组合即可.
+
+
+[Leetcode Link](https://leetcode.com/problems/different-ways-to-add-parentheses)
+::::::::::::::
+Recursion/337.House-Robber-III/337.House-Robber-III.cpp
+::::::::::::::
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    unordered_map<TreeNode*,int>Rob;
+    unordered_map<TreeNode*,int>noRob;
+public:
+    int rob(TreeNode* root) 
+    {
+        return DFS(root,1);
+    }
+
+    int DFS(TreeNode* node, int flag)
+    {
+        if (node==NULL) return 0;
+        if (flag==0 && noRob.find(node)!=noRob.end())
+            return noRob[node];
+        if (flag==1 && Rob.find(node)!=Rob.end())
+            return Rob[node];
+
+        int ret;
+        if (flag==0)
+            ret = DFS(node->left, 1) + DFS(node->right,1);
+        else
+            ret = max(node->val + DFS(node->left, 0) + DFS(node->right,0), DFS(node->left,1)+DFS(node->right,1));
+
+        if (flag==0) noRob[node] = ret;
+        else Rob[node] = ret;
+
+        return ret;
+    }
+};
+::::::::::::::
+Recursion/337.House-Robber-III/Readme.md
+::::::::::::::
+### 337.House-Robber-III
+
+此题和其他House Robber系列不同，House的排列不是序列的数组，并不适合DP算法．这是因为left的最佳策略，不仅取决于它的上级parent的策略，而且还要取决于right的策略．动态转移方程很难确定．
+
+如果用常规的DFS就很简单明了．每一个node的策略(rob or not)都尝试一遍并向下延伸，最终取两者之间的最优．
+
+注意的是，肯定会有很多重复搜索的情况．比如说节点A取rob并向下dfs的过程中，后续的节点Ｂ需要考察rob的决策；而Ａ取not rob并向下dfs的过程中，后续的B可能也需要考察rob的决策．所以需要记忆化，将每个节点的决策及其价值都记录下来．
+
+
+[Leetcode Link](https://leetcode.com/problems/house-robber-iii)::::::::::::::
+Recursion/390.Elimination-Game/390.Elimination-Game.cpp
+::::::::::::::
+class Solution {
+public:
+    int lastRemaining(int n) 
+    {
+        if (n==1) return 1;
+        
+        return (n/2+1 - lastRemaining(n/2))*2;
+    }
+};
+::::::::::::::
+Recursion/390.Elimination-Game/Readme.md
+::::::::::::::
+###  390.Elimination-Game
+
+考虑第一轮：从序列 1，2，3，4，5，6，7，8，9，10，11 这11个数里面找最终存留的数的位置,定义为f(11),
+
+第二轮之后：转换为从序列 2,4,6,8,10 这5个数里面找最终存留的数的位置,定义为f(5),那么得到的结果(那个位置)其实放在第一轮而言,我们要把这个index乘以2.不仅如此,因为第二轮我们其实需要从右往左找数,所以说按照从左往右的找到的数,我们应该镜像一下才行.也就是说 f(11) = (5+1-f(5))\*2 (这是因为1对应5,2对应4,...,所以用6去减)
+
+因此我们可以得到递推公式
+```
+f(n) = (n/2+1-f(n/2)) *2 
+```
+边界条件是 n==1时，f(1)=1.
+
+
+[Leetcode Link](https://leetcode.com/problems/elimination-game)::::::::::::::
+Recursion/395.Longest-Substring-with-At-Least-K-Repeating-Characters/395.Longest-Substring-with-At-Least-K-Repeating-Characters_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestSubstring(string s, int k) 
+    {
+        unordered_map<char,int>Map;
+        for (auto ch: s)
+            Map[ch]++;
+        
+        int flag = 1;
+        for (auto x: Map)
+            if (x.second < k)
+            {
+                flag = 0;
+                break;
+            }
+        if (flag) return s.size();
+                
+        int ret = 0;
+        for (int i=0; i<s.size(); i++)
+        {
+            if (Map[s[i]]<k) continue;
+            int j = i;
+            while (j<s.size() && Map[s[j]]>=k)
+                j++;
+            ret = max(ret, longestSubstring(s.substr(i,j-i), k));
+            i = j;
+        }
+        
+        return ret;        
+    }
+};
+::::::::::::::
+Recursion/395.Longest-Substring-with-At-Least-K-Repeating-Characters/395.Longest-Substring-with-At-Least-K-Repeating-Characters_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int helper(string& s, int t, int k)
+    {
+        int j = 0;
+        unordered_map<char, int>Map;
+        int count = 0;
+        int ret = 0;
+        for (int i=0; i<s.size(); i++)
+        {
+            while (j<s.size() && Map.size() <= t)
+            {
+                Map[s[j]]++;
+                if (Map[s[j]]==k)
+                    count++;
+                j++;
+
+                if (Map.size()==t && count == t)
+                    ret = max(ret, j-i);
+            }
+            
+            Map[s[i]]--;
+            if (Map[s[i]]==k-1)
+                count--;
+            if (Map[s[i]]==0)
+                Map.erase(s[i]);
+        }
+        return ret;
+    }
+
+    int longestSubstring(string s, int k) 
+    {
+        int ret = 0;
+        for (int t=1; t<=26; t++)
+            ret = max(ret, helper(s, t, k));
+        return ret;
+    }
+};
+::::::::::::::
+Recursion/395.Longest-Substring-with-At-Least-K-Repeating-Characters/Readme.md
+::::::::::::::
+### 395.Longest-Substring-with-At-Least-K-Repeating-Characters
+
+此题其实并不容易。首先常规的双指针并不适用，假设我们固定左指针是第一个元素，那么右指针最远能移动到哪里呢？我们无法确定。其次，也无法用二分搜值的方法，因为并不是越长的substring就越容易满足条件，反而可能会因为更容易掺入“杂质”而无法满足条件。
+
+#### 解法1：递归
+如果把整个序列遍历完，那么我们就得到了所有字符和它出现的频次。对于那些出现次数少于k的字符，是“害群之马”，它们放在任何一个子序列中都会违反题意的。所以一个直观的想法是，将那些“害群之马”作为splitor，将原序列分割成若干子序列，然后递归调用函数本身，找到最长的有效子序列。递归的边界是，如果整个序列所有的字符频次都大于等于k，就可以返回序列的长度；如果整个序列的总长度都小于k，那么就返回零。
+
+注意，这种写法的时间复杂度其实是o(N^2)。虽然有o(N)的分治（递归）写法，但是不是很容易想到，这里省略。
+
+#### 解法2：双指针
+本题其实确实有双指针的方法，但是比较特殊。那就是这个滑窗需要固定“不同字母的个数”，这个数目m可以从1遍历到26。只要固定了左指针和区间不同字母的个数，那么我们就可以确定右指针最远的位置，然后查看区间内是否每个字母出现的频次都大于k。可以想见，左指针的移动，必然也会导致右指针的单向移动。
+
+最后的答案就是遍历所有m时能够得到的最大滑窗长度。这种算法的时间复杂度是o(26N).
+
+[Leetcode Link](https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters)
+::::::::::::::
+Recursion/397.Integer-Replacement/397.Integer-Replacement.cpp
+::::::::::::::
+class Solution {
+public:
+    int integerReplacement(int n) 
+    {
+        return DFS(n);
+    }
+    
+    long long DFS(long long n) 
+    {
+        if (n==1) return 0;
+        
+        if (n%2==0)
+            return DFS(n/2)+1;
+        else
+            return min(DFS(n+1),DFS(n-1))+1;
+    }
+};
+::::::::::::::
+Recursion/397.Integer-Replacement/Readme.md
+::::::::::::::
+### 397.Integer-Replacement
+
+仔细分析一下就能发现，这题无法用DP做，因为对DP数组无法找到合适的遍历顺序。
+
+用递归做就能通过，也非常简单。但要注意 n=INT_MAX时的越界问题。
+
+
+[Leetcode Link](https://leetcode.com/problems/integer-replacement)::::::::::::::
+Recursion/440.K-th-Smallest-in-Lexicographical-Order/440.K-th-Smallest-in-Lexicographical-Order.cpp
+::::::::::::::
+class Solution {
+    
+public:
+    int findKthNumber(int n, int k) 
+    {        
+        return FindKthNumberBeginWith(0,n,k);
+    }
+    
+    // return the Lexicographically Kth element that begin with the prefix
+    // excluding the prefix itself
+    int FindKthNumberBeginWith(int prefix, int n, int k)
+    {       
+        if (k==0) return prefix;        
+        
+        for (int i=(prefix==0?1:0); i<=9; i++)
+        {
+            int count = TotalNumbersBeginWith(prefix*10+i,n);
+            if (count<k)
+                k-=count;
+            else
+                return FindKthNumberBeginWith(prefix*10+i,n,k-1);
+        }
+    }
+    
+    // return how many numbers that begin with the prefix and within the range of n 
+    // including the prefix itself
+    int TotalNumbersBeginWith(long long prefix, int n)
+    {
+        long long fac = 1;
+        int count = 0;
+        
+        for(int digit = 1; digit <= 9; digit++) 
+        {
+            long long min = prefix*fac;
+            long long max = prefix*fac+fac-1;
+            if(n < min)
+                break;
+            else if(min <= n && n <= max) 
+            {
+                count += (n-min+1);
+                break;
+            }
+            else  
+                count += fac;
+            fac *= 10;
+        }
+        return count;
+    }    
+};
+::::::::::::::
+Recursion/440.K-th-Smallest-in-Lexicographical-Order/Readme.md
+::::::::::::::
+### 440.K-th-Smallest-in-Lexicographical-Order
+
+本题初看和```386.Lexicographical-Numbers```非常相似，但解法大不相同．在３８６题中，因为需要将按照字典序从小到大所有的元素打印出来，所以可以用构造法把这些数都找出来．但本题中，如果Ｋ很大，要将从１到Ｋ个的字典序元素都生成是很费时的．
+
+此题的解法很巧妙．举个例子，假设n=23456,k=10000，我们期待的结果是Ｒ．我们如何找到Ｒ呢？我们肯定会先尝试Ｒ的第一个数字是否会是１．此时，一个快速的筛选准则是：考察所有小于ｎ的１ｘｘｘｘ（ｘ的个数随意），可以计算总共有几个这样的数，我们假设是Ｍ．我们应该发现，这Ｍ个数其实就是字典序里的前Ｍ个（因为首元素是１，字典序最小）．如果Ｍ<k的话，那么我们就不用考虑所有的1xxxx，只需要从２xxxx开始寻找第k-M个字典序的数．如果M>k的话，我们就确定了首元素必须是１，进而考虑第二个数字，也是从１的可能性考虑起－－我们发现，这就是在递归重复之前的步骤．
+
+代码的流程大致如下：
+```cpp
+int FindKthNumberBeginWith(prefix,k)
+{
+    if (k==0) return prefix;
+    
+    for i=0 to 9
+    {
+        count = TotalNumbersBeginWith(prefix+[i]);
+        if (count<k)
+            k -= count;
+        else 
+            return FindKthNumberBeginWith(prefix+[i],k-1)
+    }
+}
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/k-th-smallest-in-lexicographical-order)::::::::::::::
+Recursion/464.Can-I-Win/464.Can-I-Win.cpp
+::::::::::::::
+class Solution {
+    int visited[1<<21];
+public:
+    bool canIWin(int maxChoosableInteger, int desiredTotal) 
+    {
+        int totalSum = (1+maxChoosableInteger)*maxChoosableInteger/2;
+        if (totalSum < desiredTotal) return false;
+        return dfs(0, 0, maxChoosableInteger, desiredTotal);
+    }
+
+    bool dfs(int state, int sum, int maxChoosableInteger, int desiredTotal)
+    {
+        if (visited[state]==2)
+            return true;
+        if (visited[state]==1)
+            return false;
+
+        for (int i=1; i<=maxChoosableInteger; i++)
+        {
+            if ((state>>i)&1) continue;
+            if (sum+i >= desiredTotal) return true;
+            
+            if (dfs(state+(1<<i), sum+i, maxChoosableInteger, desiredTotal)==false)
+            {
+                visited[state] = 2;
+                return true;
+            }                
+        }
+        visited[state] = 1;
+        return false;
+    }
+};
+::::::::::::::
+Recursion/464.Can-I-Win/Readme.md
+::::::::::::::
+### 464.Can-I-Win
+
+本题最关键的一点是想到要用递归。如果列举自己的所有决策，对手都是mustWin==true，那么自己的mustWin就是false；反之，自己的某一个决策能够使得对手的mustWin==false，那么就是自己mustWin就是true。想到这一点的话，大致的代码如下：
+```cpp
+for (int i=1; i<=maxChoosableInteger; i++)
+{
+    if (used[i]==1) continue;  // 跳过已经使用过的数字
+    used[i]=1;
+    if (DFS(maxChoosableInteger,desiredTotal-i)==false)  // 如果下一轮（注意是对手轮）是必输决策，那么说明本轮该决策必赢
+       return true;
+    used[i]=0;
+}
+return false; // 遍历了本轮所有的决策后都没有跳出，说明对方都有必赢决策，那么本轮对自己而言就是必输。
+```
+但不幸的是，以上的代码会超时。原因是每轮的决策都是近乎随机的，N轮之后会造成大量重复的决策。比如对于第三轮（我方）而言：第一轮（我方）取1，第二轮（对方）取2；这个完全等效于第一轮（我方）取2、第二轮（对方）取1。如果对于前者DFS完毕之后，其实就不需要再对后者进行相同的DFS了。所以很明显，需要利用到记忆化搜索，也就是把之前DFS得到的一些中间结果存储下来。
+
+本题的“中间结果”是指：在已经取走一些数字的情况下，自己做决策是会必输还是有办法包赢。所以我们需要一个Hash表，key应该是已经取数的状态，val就是bool型表明对于这种状态本方是赢还是输。怎么将已经取了哪些数的“状态”作为一个key呢？考虑到最多只有20个数，用一个20位的二进制数字就可以表示所有取数状态了。
+```cpp
+int status=0;
+for (int i=1; i<=maxChoosableInteger; i++)
+{
+  if (((status>>i)&1)==1) continue; // 跳过已经使用过的数字
+  if (DFS(maxChoosableInteger,desiredTotal-i, status|(1<<i))==false) // 如果下一轮（注意是对手轮）是必输决策，那么说明本轮该决策必赢
+  {
+     Map[status]=true;
+     return true;
+  }    
+}
+Map[status]=false; // 遍历了本轮所有的决策后都没有跳出，说明对方都有必赢决策，那么本轮对自己而言就是必输。需要记录下来，免除后续的重复搜索。
+return false; 
+```
+
+上面这种每一轮互相易手的游戏规则，求最终必胜或必输策略的问题，常常被称为minMax问题。基本思路就是：当前状态下，列举自己的每一种策略，如果对方都有必胜的应手，那么本方的这个状态就是必输。如果自己有一手策略，会导致对方必输，那么本方的这个状态就是必赢。
+
+
+[Leetcode Link](https://leetcode.com/problems/can-i-win)::::::::::::::
+Recursion/679.24-Game/679.24-Game_v1.cpp
+::::::::::::::
+#include <algorithm> 
+
+class Solution {
+    vector<vector<vector<int>>>AllPermuations;
+public:
+    bool judgePoint24(vector<int>& nums) 
+    {
+        vector<double>Nums;
+        for (auto x:nums) Nums.push_back(x*1.0);
+        return DFS(Nums);
+    }
+    
+    bool DFS(vector<double>& nums)
+    {
+        int m = nums.size();
+        if (m==1) return (abs(nums[0]-24.0)<1e-6);
+            
+        for (int i=0; i<m; i++)
+            for (int j=0; j<m; j++)
+            {
+                if (i==j) continue;
+                
+                vector<double>newNums;
+                for (int k=0; k<m; k++)
+                    if (k!=i && k!=j) newNums.push_back(nums[k]);
+                newNums.push_back(-1);
+                
+                double a = nums[i];
+                double b = nums[j];
+                
+                newNums.back() = a+b;
+                if (DFS(newNums)) return true;
+            
+                newNums.back() = a-b;
+                if (DFS(newNums)) return true;
+            
+                newNums.back() = a*b;
+                if (DFS(newNums)) return true;
+            
+                if (b!=0.0)
+                {
+                    newNums.back() = a/b;
+                    if (DFS(newNums)) return true;
+                }            
+            }        
+        
+            return false;
+    }
+    
+};
+::::::::::::::
+Recursion/679.24-Game/679.24-Game_v2.cpp
+::::::::::::::
+#include <algorithm> 
+
+class Solution {
+    vector<vector<vector<int>>>AllPermuations;
+public:
+    bool judgePoint24(vector<int>& nums) 
+    {
+        vector<double>Nums;
+        for (auto x:nums) Nums.push_back(x*1.0);
+        
+        AllPermuations.resize(5);
+        AllPermuations[4] = CalPermutation(4);
+        AllPermuations[3] = CalPermutation(3);
+        AllPermuations[2] = CalPermutation(2);
+        
+        return DFS(Nums);
+    }
+    
+    bool DFS(vector<double>& nums)
+    {
+        int k = nums.size();
+        if (k==1) return (abs(nums[0]-24.0)<1e-6);
+            
+        vector<vector<int>>permutations = AllPermuations[k];
+        
+        for (int i=0; i<permutations.size(); i++)
+        {
+            vector<double>newNums(k-1);
+            for (int j=0; j<k-2; j++)
+                newNums[j] = nums[permutations[i][j]];
+            
+            double a = nums[permutations[i][k-2]];
+            double b = nums[permutations[i][k-1]];
+            
+            newNums.back() = a+b;
+            if (DFS(newNums)) return true;
+            
+            newNums.back() = a-b;
+            if (DFS(newNums)) return true;
+            
+            newNums.back() = a*b;
+            if (DFS(newNums)) return true;
+            
+            if (b!=0.0)
+            {
+                newNums.back() = a/b;
+                if (DFS(newNums)) return true;
+            }            
+        }
+        
+        return false;
+    }
+    
+    vector<vector<int>>CalPermutation(int k)
+    {
+        vector<vector<int>>results;
+        vector<int>nums;
+        for (int i=0; i<k; i++) nums.push_back(i);
+        do
+        {
+            results.push_back(nums);
+        }while (next_permutation(nums.begin(),nums.end()));
+        
+        return results;        
+    }
+    
+};
+::::::::::::::
+Recursion/679.24-Game/679.24-Game_v3.cpp
+::::::::::::::
+class Solution {
+public:
+    bool judgePoint24(vector<int>& cards) 
+    {
+        vector<double>nums(4);
+        for (int i=0; i<4; i++) nums[i] = cards[i];
+        sort(nums.begin(), nums.end());
+                
+        while (1)
+        {
+            unordered_set<double> results = DFS(nums,0,3);
+            for (auto a:results)
+            {
+                if (abs(a-24)<1e-10)
+                    return true;
+            }
+            if (next_permutation(nums.begin(), nums.end()) == false) 
+                break;
+        }
+        return false;
+    }
+    
+    unordered_set<double> DFS(vector<double> &nums, int a, int b)
+    {
+        if (a==b) return {nums[a]};
+        
+        unordered_set<double>results;
+        
+        for (int i=a; i<b; i++)
+        {
+            unordered_set<double>A = DFS(nums,a,i);
+            unordered_set<double>B = DFS(nums,i+1,b);
+            for (double x:A)
+                for (double y:B)
+                {
+                    results.insert(x+y);
+                    results.insert(x-y);
+                    results.insert(x*y);
+                    if (y!=0)
+                        results.insert(x/y);
+                }
+        }
+        return results;
+    }
+};
+::::::::::::::
+Recursion/679.24-Game/Readme.md
+::::::::::::::
+### 679.24-Game
+
+此题和```LC 241 Different Ways to Add Parentheses```与```LC 2019 The Score of Students Solving Math Expression```类似的套路。
+
+我们遍历这个四个数字的permutaion。对于任意一种permuation ```A B C D```，我们本质上需要做的就是任意添加运算符（加减乘除）和括号（改变运算顺序），查看整个式子eval的结果是否包含24. 
+
+具体的做法就是递归。我们将某个permutation拆解为两部分分别递归处理，再将两个部分eval出来的结果两两组合，配上加减乘除，就得到对于这个permutation我们所能计算出的所有可能值。大致的代码是
+``` 
+for x: eval(AB)
+  for y: eval(CD)
+    rets.insert({x+y, x-y, x*y, x/y});
+```
+
+需要注意，所有的牌必须处理成浮点，因为涉及到除法。
+
+
+[Leetcode Link](https://leetcode.com/problems/24-game)
+::::::::::::::
+Recursion/779.K-th-Symbol-in-Grammar/Readme.md
+::::::::::::::
+### 779.K-th-Symbol-in-Grammar
+
+此题是典型的递归解法。第N行的第K个，取决于第N-1行的第(K+1)/2个。于是依次往上回溯，直至追踪到第N==1行的元素是0.
+
+
+[Leetcode Link](https://leetcode.com/problems/k-th-symbol-in-grammar)::::::::::::::
+Recursion/780.Reaching-Points/780.Reaching-Points.cpp
+::::::::::::::
+class Solution {
+public:
+    bool reachingPoints(int sx, int sy, int tx, int ty) 
+    {
+        if (sx>tx || sy>ty) return false;
+        if (sx==tx) return (ty-sy)%sx==0;
+        if (sy==ty) return (tx-sx)%sy==0;
+        
+        if (tx>ty) return reachingPoints(sx,sy,tx%ty,ty);
+        else if (tx<ty) return reachingPoints(sx,sy,tx,ty%tx);
+        else return false;
+    }
+};
+::::::::::::::
+Recursion/780.Reaching-Points/Readme.md
+::::::::::::::
+### 780.Reaching-Points
+
+本题的突破点在于，x和y都是正数！于是，当我们发现tx>ty时，我们一定可以推断出，其之前的状态必须是(tx-ty,ty)并且执行了(x+y,y)的操作；这是因为如果执行了另一种操作，其结果不可能使得第一个分量大于第二个分量。同理，如果我们发现tx<ty时，我们一定可以推断出，其之前的状态必须是(tx,ty-tx)并且执行了(x,y+x)的操作。那么如果tx==ty呢？这是不可能的，因为(x,x+y)或者(x+y,y)都不可能有两个相等的分量。
+
+于是我们可以写出如下的递归方法：
+```cpp
+  if (tx>ty) return reachingPoints(sx,sy,tx-ty,ty);
+  else if (tx<ty) return reachingPoints(sx,sy,tx,ty-tx);
+  else return false;
+```
+我们可以再做进一步的优化。当```tx>ty```时，我们知道其之前的状态是```(tx-ty,ty)```。那么如果此时依然有```tx-ty>ty```呢？同理推出，再之前的状态就是```(tx-2ty,ty)```。那么如果此时依然有```tx-2ty>ty```呢？同理推出，再之前的状态就是```(tx-3ty,ty)```...我们就可以一直进行下去，直至第一个分量小于第二个分量。而这个终结的状态，其实就是```(tx%ty,ty)```!
+
+于是效率更高的递归方法是：
+```cpp
+  if (tx>ty) return reachingPoints(sx,sy,tx%ty,ty);
+  else if (tx<ty) return reachingPoints(sx,sy,tx,ty%tx);
+  else return false;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/reaching-points)::::::::::::::
+Recursion/808.Soup-Servings/808.Soup-Servings.cpp
+::::::::::::::
+class Solution {
+    map<pair<int,int>,double>dp;
+public:
+    double soupServings(int N) 
+    {
+        if (N>5000) return 1;
+        return DFS(N,N);
+    }
+    
+    double DFS(int A, int B)
+    {
+        if (A<=0 && B>0) return 1;
+        if (A<=0 && B<=0) return 0.5;
+        if (A>0 && B<=0) return 0;
+        
+        if (dp.find(pair<int,int>(A,B))!=dp.end()) return dp[pair<int,int>(A,B)];
+        
+        dp[pair<int,int>(A,B)] = 0.25*(DFS(A-100,B)+DFS(A-75,B-25)+DFS(A-50,B-50)+DFS(A-25,B-75));
+        return dp[pair<int,int>(A,B)];
+    }
+};
+::::::::::::::
+Recursion/808.Soup-Servings/Readme.md
+::::::::::::::
+### 808.Soup-Servings
+
+此题很好地考察了概率的概念。
+
+不要被题目中“the probability that soup A will be empty first, plus half the probability that A and B become empty at the same time” 里面的这个plus所迷惑。其实这是一个or的关系。
+
+也就是说，当 soup A will be empty first 时，返回概率值1；当 A and B become empty at the same time 时，返回概率值0.5。如果这两种情况在各个分支中都出现过，那么就把这些条件概率值累加起来。
+
+所以在递归函数中应该写成：
+```cpp
+double DFS(int A,int B)
+{
+  if (A<=0 && B>0) return 1;    // 边界条件：A先倒完
+  if (A<=0 && B<=0) return 0.5; // 边界条件：AB同时倒完
+  if (A>0 && B<=0) return 0;    // 边界条件：B先倒完
+  return 0.25*(DFS(A-100,B)+DFS(A-75,B-25)+DFS(A-50,B-50)+DFS(A-25,B-75));
+}
+```
+特别注意，第三个边界条件很重要。很多人根据题意，以为只要```A<=0||B<0```意味着A或B无法满足任何操作的时候才返回0。其实这个条件太宽松，隐藏着隐患。比如当```A==75,B==0```的时候，这个时候B已经先于A清空，两个胜利的条件（即AB同时清空或者A比B先清空）都肯定再无法满足，这个时候就应该即使返回0，否则放任下一步操作的话，依然可以合法地通过操作1在下一轮得到```A==0, B==0```，而这个状态是会被判定为胜利条件之一的，于是这部分概率就被误叠加到最终结果了。
+
+
+[Leetcode Link](https://leetcode.com/problems/soup-servings)::::::::::::::
+Recursion/877.Stone-Game/877.Stone-Game.cpp
+::::::::::::::
+class Solution {
+    int dp[501][501];
+public:
+    bool stoneGame(vector<int>& piles) 
+    {
+        int myBest = solve(0, piles.size()-1, piles);
+        int total = accumulate(piles.begin(), piles.end(), 0);
+        return (myBest>total-myBest);
+    }
+
+    int solve(int a, int b, vector<int>& piles)
+    {
+        if (a==b) return piles[a];
+        if (dp[a][b]!=0) return dp[a][b];
+        dp[a][b] = max(piles[a]+solve(a+1,b, piles), piles[b]+solve(a,b-1, piles));
+        return dp[a][b];
+    }
+};
+::::::::::::::
+Recursion/877.Stone-Game/Readme.md
+::::::::::::::
+### 877.Stone-Game
+
+#### 解法1：
+因为此题的N为偶数，且不会有平局。说明奇数堆的总和，必然与偶数堆的总和不一样。先手玩家可以总是取奇数堆（或者总是取偶数堆），因此可以必胜。
+
+#### 解法2：
+当N为奇数时，就没有上述的巧解。对于这种策略型的题目，递归是比较常见的解法。我们设计递归函数```int solve(a,b)```表示先手玩家来当前面对[a,b]区间时可以得到的最大收益。因为这个游戏的得分是此消彼长的关系，所以先手玩家最终取得胜利的条件就是：
+```
+solve(1,n) > total - solve(1,n);
+```
+那么这个递归函数怎么往下拆解呢？无非就是遵循游戏规则，有两种决策：
+1. 如果我选择了最左边的石头堆（也就是a），那么对手面临也是同一个最优化的问题，只不过范围不同，即```solve(a+1,b)```，对手需要在[a+1,b]这个区间内最大化自己的收益。因此我方在[a,b]区间最终能够得到的收益就是```sum[a:b] - solve(a+1,b)```.
+2. 如果我选择了最右边的石头堆（也就是b），那么对手面临也是同一个最优化的问题，只不过范围不同，即```solve(a,b-1)```，对手需要在[a,b-1]这个区间内最大化自己的收益。因此我方在[a,b]区间最终能够得到的收益就是```sum[a:b] - solve(a,b-1)```.
+
+综上，我方必定会在这两个决策中选择一个能够在[a,b]区间收益更多的方案。这就实现了solve(a,b)的递归。无论是我方还是对方，递归的拆解思路总是相同的。递归的边界条件就是a==b时，这堆石头直接拿走。
+
+[Leetcode Link](https://leetcode.com/problems/stone-game)
+::::::::::::::
+Recursion/880.Decoded-String-at-Index/880.Decoded-String-at-Index.cpp
+::::::::::::::
+class Solution {
+public:
+    string decodeAtIndex(string S, int K) 
+    {
+        long long count = 0;
+        for (int i=0; i<S.size(); i++)
+        {
+            char ch = S[i];
+            if (isalpha(ch))
+            {
+                count++;
+                if (count==K)
+                {
+                    string ret;
+                    ret.push_back(ch);
+                    return ret;
+                }
+            }
+            else
+            {
+                long long times = ch-'0';
+                if (count * times < K)
+                    count = count * times;
+                else if (K % count == 0)
+                    return decodeAtIndex(S.substr(0,i), count);
+                else 
+                    return decodeAtIndex(S.substr(0,i), K % count);
+            }
+        }
+        
+        return "";
+        
+    }
+};
+::::::::::::::
+Recursion/880.Decoded-String-at-Index/Readme.md
+::::::::::::::
+### 880.Decoded-String-at-Index
+
+假设我们当前的容器里面有一串已经解码的字符串t，其字符的长度是count。
+
+这个时候如果我们接下来处理的是一个字符ch，那么显然，说明第count+1个字符一定就是ch。特别地，如果```count+1==K```，那么ch就是答案，否则我们还会继续往后扫描S。
+
+这个时候如果我们接下来处理的是一个数字num，那么说明解码容器里的字符串t要增加num倍的长度。如果```count*num < K```，说明还没有走到第K个字符，我们还需要继续往后扫描S。反之```count*num >= K```的话，说明这么多字符串t的串联用力过猛，我们可能只需要部分t的串联即可到达K。考虑到t就是“循环节”，所求的第K个字符，其实就是在这个循环节里找第```K%count```元素即可。至此，我们发现，```decodeAtIndex(S,K)```此时变成了```decodeAtIndex(t,K%count)```，原来这题就是一个递归的解法。
+
+特别注意，如果```K%num==0```的话，我们需要输出的是循环节里最后一个字符。
+
+
+[Leetcode Link](https://leetcode.com/problems/decoded-string-at-index)::::::::::::::
+Recursion/902.Numbers-At-Most-N-Given-Digit-Set/902.Numbers-At-Most-N-Given-Digit-Set.cpp
+::::::::::::::
+class Solution {
+    int count = 0;
+    string num;
+    int K;
+    
+public:
+    int atMostNGivenDigitSet(vector<string>& D, int N) 
+    {
+        num = to_string(N);
+        K = num.size();
+        
+        for (int i=1; i<=K-1; i++)
+            count += pow(D.size(), i);
+        
+        DFS(0, D);
+        
+        return count;
+    }
+    
+    void DFS(int pos, vector<string>& D)
+    {
+        if (pos==K)
+        {
+            count+=1;
+            return;
+        }
+        
+        for (string s: D)
+        {
+            if ('0'+stoi(s) < num[pos])
+                count += pow( D.size(), K-1-pos);
+            else if ('0'+stoi(s) == num[pos])
+                DFS(pos+1, D);            
+        }               
+    }
+};
+::::::::::::::
+Recursion/902.Numbers-At-Most-N-Given-Digit-Set/Readme.md
+::::::::::::::
+### 902.Numbers-At-Most-N-Given-Digit-Set
+
+可以用常规的DFS的方法将所有小于N的数都访问（构造）一遍，但是当N很大的时候就很低效。
+
+比较高效的解法是多利用数学计算。假设数字N的位数是K，那么意味着任何小于K位的整数都不可能大于N，我们可以直接累加小于K位的整数的个数。
+
+然后我们只需考虑K位的整数里有多少小于N的。我们可以从最高位开始递归构造。当选择的第i位上的数字小于num[i]的时候，剩余的K-i位数字可以任取，总数肯定不会超过N，因此可以直接加上```count+=pow(D.size(), K-i)```。当选择的第i位上的数字确定为num[i]的时候，我们就递归处理下一位即可。
+
+注意在边界条件，当处理完所有的K位之后，这意味一路都是贴着上限走过来的，必须还要```count+=1```。这个代表着恰好所构造出来的上限N。
+
+
+[Leetcode Link](https://leetcode.com/problems/numbers-at-most-n-given-digit-set)::::::::::::::
+Recursion/964.Least-Operators-to-Express-Number/964.Least-Operators-to-Express-Number_v1.cpp
+::::::::::::::
+class Solution {
+    map<vector<long>,int>Map;
+public:
+    int leastOpsExpressTarget(int x, int target) 
+    {
+        int T = log(target)/log(x)+1;
+        return DFS(x, target, T)-1;
+    }
+
+    int DFS(long x, long target, int k)
+    {
+        if (k==0)
+            return target*2;
+        
+        if (Map.find({target,k})!=Map.end())
+            return Map[{target,k}];
+
+        int a = target / pow(x, k);
+        int ans1 = a*k + DFS(x, target-a*pow(x,k), k-1);
+        int ans2 = (a+1)*k + DFS(x, (a+1)*pow(x,k)-target, k-1);
+        
+        Map[{target,k}] = min(ans1,ans2);
+        return min(ans1, ans2);
+
+    }
+};
+::::::::::::::
+Recursion/964.Least-Operators-to-Express-Number/964.Least-Operators-to-Express-Number_v2.cpp
+::::::::::::::
+class Solution {    
+public:
+    int leastOpsExpressTarget(int x, int target) 
+    {
+        int T = log(target)/log(x)+1;
+        vector<int>f(T+1,0);
+        vector<int>g(T+1,0);
+        vector<int>a(T+1,0);
+        
+        int i = 0;
+        while (target>0)
+        {
+            a[i] = target%x;
+            target /= x;
+            i++;
+        }
+        
+        for (int i=T; i>=0; i--)
+        {
+            if (i==T)
+            {
+                f[i] = a[i]*i;
+                g[i] = (a[i]+1)*i;                
+            }
+            else
+            {
+                int s = (i==0)?2:i;
+                f[i] = min(f[i+1]+a[i]*s,  g[i+1]+abs(a[i]-x)*s);
+                g[i] = min(f[i+1]+(a[i]+1)*s, g[i+1]+abs(a[i]+1-x)*s);
+            }
+        }
+        return f[0]-1;
+        
+    }
+      
+};
+::::::::::::::
+Recursion/964.Least-Operators-to-Express-Number/Readme.md
+::::::::::::::
+### 964.Least-Operators-to-Express-Number
+
+#### 解法1：递归
+这道题还是很有难度的。
+
+首先我们要厘清本题的实质。根据四则混合运算的性质，我们可以将一串表达式看成是若干个乘除项的加减。对于所有的乘除项，其实无非就是那么几种：```x/x```,```x```,```x*x```,```x*x*x```,...其他的都不可能。为什么呢？首先，类似于```x*x/x*x**x/x/x```这种乘除混搭的形式，明显可以合并精简，这样设计显然浪费了操作。其次，类似于```x/x/x/x/x```这种除法操作多于乘法操作的形式，得到的结果一定是小数，如果整个表达式里包含了小数项，那么无论怎么操作都不可能得到最终target为整数的答案。
+
+所以综上，本题的目的其实就是将target写成 ```a0*x^0 + a1*x^1 + a2*x^2 + ... ak*x^k```的形式，要使得总操作符的数目最小。其中```a0,a1,a2,...,ak```都是整系数，但是可正可负。
+
+我们容易知道，如果想要得到```3*x^4```,就是写成```+x*x*x*x+x*x*x*x+x*x*x*x```的形式，需要```3*4=12```个操作符（包括队首的那个正号）。如果想要得到```2*x^5```,就是写成```+x*x*x*x*x+x*x*x*x*x```的形式，需要```2*5=10```个操作符（因为要包括每个乘除项队首的那个正号）。总的来说，要得到```ai*x^i```，需要用到```ai*i```个操作符。唯一例外的就是i==0的时候，我们要得到一个```x^0```，反而需要两个字符+x/x。
+
+OK，有了以上的铺垫，那么我们进入正题：如何确定ak呢？上面的分解形式```target = a0*x^0 + a1*x^1 + a2*x^2 + ... ak*x^k```，这与把一个数进行x进制分解何其相似。于是，我们应该想到会不会 ```ak = target / x^k```，确定了ak之后，我们可以得到剩下的部分 ```remainder = target - ak*x^k```，而这部分的最高次只能是k-1. 于是，递归的算法 ```helper(remainder,k-1)``` 就呼之欲出了。
+
+显然，以上想法得到的是一个固定的分解方式，因为这种方法我们强制使得所有的```ai>0```。我们还可以怎么做呢？我们还可以尝试x^k的系数设置为(ak+1)，这样我们多出了```remainder = (ak+1)*x^k-target```这部分，没关系，我们依然可以一样递归处理，即处理 ```helper(remainder,k-1)```即可，只不过得到的a_(k-1)需要反个符号就行了。
+
+所以，我们可以设计递归函数 helper(target,k)，确定ak的系数（有两种方案，分别是```a_k1 = target/x^k```, ```a_k2=a_k1+1```），然后剩下的部分继续调用 helper(remainder,k-1)，直至```k==0```为止。
+
+最大的k是什么呢？注意应该是```(int)log(target)/log(x)+1```。也就是说x^k完全可能比target还大。比如 ```helper(75,11)```的最佳方案就是 ```1*11^2 - 4*11^1 - 2*x^0```.
+
+另外，我们需要记忆化手段记录每次得到的```helper(target,k)```以缩短递归时间。此题的时间复杂度是```2^{log(N)/log(x)}=O(N)```，其中N是target的大小。
+
+还有，最终答案要减去1，这是因为第一个乘除项的队首其实不需要正号。
+
+#### 解法2：DP
+解法1中的一个缺陷是无法优化和剪枝，当所尝试的ai已经偏离“最优解”非常遥远时，整个递归过程仍然会持续进行到最低位（即i=0）。
+
+如果结合一个数学结论，那么就可以进一步化解解法。那就是将target做标准的x进制分解：
+
+```target = am*x^m + ... ak*x^k + ... + a2*x^2 + a1*x^1 + a0*x^0  ```，
+
+假设本题最优的分解方式是：
+
+```target = bm*x^m + ... bk*x^k + ... + b2*x^2 + b1*x^1 + b0*x^0  ```，
+
+这个数学结论是：每一位上“真实”的最优系数只可能是ai或者ai+1。（证明略）
+
+举个例子，如果第六位上b6=a6，那么我们认为其对第五位没有影响，第五位上b5可以根据上面的结论，放心取a5或者a5+1。如果第六位上b6=a6+1，那么第六位可以分解成```a6*x^6+x*x^6```，我们将后者的影响放在下一位上，使得第五位上的等效系数其实是```b5+x```。根据我们之前claim：第五位上的等效系数的最优解只能a5或者a5+1，因此可知b5的解只能是a5-x或者a5+1-x.
+
+所以我们定义f[i]表示第i位上的等效系数是ai时（从最高位开始到第i位，下同）所需要的操作数；定义g[i]表示第i位上的等效系数是ai+1时所需要的操作数。我们有如下的递推关系：
+```
+f[i] = min(f[i+1]+a[i]*s,  g[i+1]+abs(a[i]-x)*s);
+g[i] = min(f[i+1]+(a[i]+1)*s, g[i+1]+abs(a[i]+1-x)*s);
+```
+其中s表示第i位（也就是x^i）每一个单项式所需要的符号数：```s=(i==0)?2:i```。
+
+最终的输出结果是f[0]，因为g[0]还需要后续的操作才能满足target，但是当前已经是最低位了。
+
+这种方法的时间复杂度是log(N)，只需要从高到低one pass每一位的两种选择即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/least-operators-to-express-number)::::::::::::::
+Recursion/991.Broken-Calculator/991.Broken-Calculator.cpp
+::::::::::::::
+class Solution {
+public:
+    int brokenCalc(int X, int Y) 
+    {
+        if (X>=Y)
+            return X-Y;
+        else if (Y%2==1)
+            return brokenCalc(X,Y+1)+1;
+        else
+            return brokenCalc(X,Y/2)+1;
+    }
+};
+::::::::::::::
+Recursion/991.Broken-Calculator/Readme.md
+::::::::::::::
+### 991.Broken-Calculator
+
+首先，当X>Y时，容易判断出我们只有对X持续地减一才能实现Y。
+
+当X<Y时，我们也容易判断出，如果Y是奇数，那么最后一步操作一定是-1（否则x2是得不到奇数的），所以我们只需要递归考虑```brokenCalc(X,Y+1)```即可。
+
+那么如果Y是偶数呢？我们将任意从X变换成Y的过程，可以分为两个大类：第一类是最后若干步是-1，第二类是最后若干步是x2。这两类方法可以分别写作：
+```
+(a) X ... [x2 x2 ... x2][-1 -1 ... -1] = Y
+(b) X ... [-1 -1 ... -1][x2 x2 ... x2] = Y
+```
+注意，我们并不关心“最后若干步”具体是有多少步。所以上面的两种方法就可以代表任意从X到Y的变换过程。其中，第一种方法最后的若干步-1一定是偶数次，假设是2k。我们容易看出第一种方法其实是不高效的，因为通过简单的分解就可以看出```X ... [x2 x2 ... x2][-1 -1 ... -1]{2k个}```等效于```X ... [x2 x2 ...][-1 -1 ... -1]{k个} x2```。而前者最后需要1+2k步，而后者只需要k+1步。
+
+所以结论是，当Y>X并且Y是偶数的时候，方法(a)是不高效的，不如等效的方法(b)。也就是说，从X到Y最高效的变化方法，最后一步应该是x2而不是-1.因此下一步我们只需要递归考虑```brokenCalc(X,Y/2)```即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/broken-calculator)

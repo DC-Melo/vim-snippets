@@ -1,5 +1,5 @@
 ::::::::::::::
-Others/0007.Reverse-Integer/007.Reverse-Integer.cpp
+Others/007.Reverse-Integer/007.Reverse-Integer.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -26,7 +26,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0007.Reverse-Integer/Readme.md
+Others/007.Reverse-Integer/Readme.md
 ::::::::::::::
 ### 007.Reverse-Integer
 
@@ -38,7 +38,7 @@ Others/0007.Reverse-Integer/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/reverse-integer)::::::::::::::
-Others/0031.Next-Permutation/031.Next-Permutation.cpp
+Others/031.Next-Permutation/031.Next-Permutation.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -65,7 +65,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0042.Trapping-Rain-Water/042.Trapping-Rain-Water.cpp
+Others/042.Trapping-Rain-Water/042.Trapping-Rain-Water.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -94,7 +94,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0042.Trapping-Rain-Water/042.Trapping-Rain-Water_stack.cpp
+Others/042.Trapping-Rain-Water/042.Trapping-Rain-Water_stack.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -120,7 +120,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0042.Trapping-Rain-Water/Readme.md
+Others/042.Trapping-Rain-Water/Readme.md
 ::::::::::::::
 ### 42. Trapping Rain Water 
 
@@ -151,7 +151,7 @@ RightMost[i]的定义同理。
 
 [Leetcode Link](https://leetcode.com/problems/trapping-rain-water)
 ::::::::::::::
-Others/0048.Rotate-Image/048.Rotate-Image_v2.cpp
+Others/048.Rotate-Image/048.Rotate-Image_v2.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -173,7 +173,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0048.Rotate-Image/Readme.md
+Others/048.Rotate-Image/Readme.md
 ::::::::::::::
 ### 048.Rotate-Image
 
@@ -199,7 +199,7 @@ for (int i=0; i<N/2; i++)
 
 [Leetcode Link](https://leetcode.com/problems/rotate-image)
 ::::::::::::::
-Others/0056.Merge-Intervals/056.Merge-Intervals.cpp
+Others/056.Merge-Intervals/056.Merge-Intervals.cpp
 ::::::::::::::
 /**
  * Definition for an interval.
@@ -245,7 +245,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0056.Merge-Intervals/Readme.md
+Others/056.Merge-Intervals/Readme.md
 ::::::::::::::
 ### 056.Merge-Intervals
 
@@ -255,7 +255,7 @@ Others/0056.Merge-Intervals/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/merge-intervals)::::::::::::::
-Others/0057.Insert-Interval/057.Insert Interval_s1.cpp
+Others/057.Insert-Interval/057.Insert Interval_s1.cpp
 ::::::::::::::
 /**
  * Definition for an interval.
@@ -299,7 +299,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0057.Insert-Interval/057.Insert Interval_s2.cpp
+Others/057.Insert-Interval/057.Insert Interval_s2.cpp
 ::::::::::::::
 /**
  * Definition for an interval.
@@ -353,7 +353,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0057.Insert-Interval/Readme.md
+Others/057.Insert-Interval/Readme.md
 ::::::::::::::
 ### 057.Insert-Interval
 
@@ -377,7 +377,7 @@ Others/0057.Insert-Interval/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/insert-interval)::::::::::::::
-Others/0065.Valid-Number/065.Valid-Number.cpp
+Others/065.Valid-Number/065.Valid-Number.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -426,7 +426,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0065.Valid-Number/Readme.md
+Others/065.Valid-Number/Readme.md
 ::::::::::::::
 ### 065.Valid-Number
 
@@ -440,7 +440,7 @@ Others/0065.Valid-Number/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/valid-number)::::::::::::::
-Others/0090.Subsets-II/090.Subsets-II.cpp
+Others/090.Subsets-II/090.Subsets-II.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -481,7 +481,7 @@ public:
     }
 };
 ::::::::::::::
-Others/0090.Subsets-II/Readme.md
+Others/090.Subsets-II/Readme.md
 ::::::::::::::
 ### 090.Subsets-II
 
@@ -512,2273 +512,6 @@ else if (nums[i]==nums[i-1])
 
 
 [Leetcode Link](https://leetcode.com/problems/subsets-ii)::::::::::::::
-Others/0158.Read-N-Characters-Given-Read4-II-Call-multiple-times/158.Read-N-Characters-Given-Read4-II-Call-multiple-times.cpp
-::::::::::::::
-// Forward declaration of the read4 API.
-int read4(char *readBuf);
-
-class Solution {
-public:
-    /**
-     * @param buf Destination buffer
-     * @param n   Maximum number of characters to read
-     * @return    The number of characters read
-     */
-    char ReadBuf[4];
-    int i = 0;  // read buf pointer
-    int count = 0;  // read buf counter
-    
-    int read(char *buf, int n) 
-    {
-        int j;
-        for (j=0; j<n; j++)
-        {
-            if (count==0)
-            {
-                count = read4(ReadBuf);
-                i = 0;
-                if (count==0) break;
-            }
-            buf[j] = ReadBuf[i];
-            i++;
-            count--;
-        }
-        
-        return j;        
-    }
-};
-::::::::::::::
-Others/0158.Read-N-Characters-Given-Read4-II-Call-multiple-times/Readme.md
-::::::::::::::
-### 158.Read-N-Characters-Given-Read4-II-Call-multiple-times
-
-此题对于系统设计的考察非常巧妙．
-
-首先要理清题意．题目所要求设计的```int read(char *buf, int n)```，是说期望你从某个地方（你不用关心）读进n个字符，写进题目所指定的buf。这只是一个形式上的任务，但是真正实现读的工作函数是题目所给的API read4，它一次读取最多4个放在缓存里（ReadBuf），但是也可能一次读取的个数少于4（比如说已经读到底了），这可以从它的返回值来判断。
-
-本题的核心思想是，用指针j来控制我们要读取、写出n次字符。每次需要读取一个字符时，都试图从缓存ReadBuf里拿。如果ReadBuf里为空，就调用一次read4来填充ReadBuf，多数情况下一次能填充4个字符。如果ReadBuf不为空，那么我们就从ReadBuf里拿出下一个字符即可，直至ReadBuf里都取完。
-
-所以我们需要一个指针i来指向ReadBuf里待读的字符，同时用count来标记ReadBuf里还有多少未读。每次从缓存里成功读取一个，那么就i++且count--。当遇到count==0时，就需要调用read4()，将i重置为0，并且count重置为实际获取的字符个数（通常为4，但也可能更少）。
-
-```cpp
-int j;
-for (j=0; j<n; j++)
-{
-    if (count==0)
-    {
-         count = read4(ReadBuf);
-         i = 0;
-         if (count==0) break;
-    }
-    buf[j] = ReadBuf[i];
-    i++;
-    count--;
-}
-
-return j;   
-```
-
-[Leetcode Link](https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times)
-::::::::::::::
-Others/0168.Excel-Sheet-Column-Title/168.Excel-Sheet-Column-Title.cpp
-::::::::::::::
-class Solution {
-public:
-    string convertToTitle(int n) 
-    {
-        string result;               
-                
-        while (n>0)
-        {            
-            n--;
-            result=char('A'+(n%26))+result;
-            n=n/26;
-        }
-        return result;
-    }
-};
-::::::::::::::
-Others/0240.Search-a-2D-Matrix-II/240.Search a 2D Matrix II.cpp
-::::::::::::::
-class Solution {
-public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) 
-    {
-        int M=matrix.size();
-        if (M==0) return false;
-        int N=matrix[0].size();
-        
-        int i=M-1;
-        int j=0;
-        while (i>=0 && j<=N-1)
-        {
-            if (matrix[i][j]==target)
-                return true;
-            else if (matrix[i][j]<target)
-                j++;
-            else if (matrix[i][j]>target)
-                i--;
-        }
-        
-        if (i>=0 && j<=N-1)
-            return true;
-        else
-            return false;
-    }
-};
-::::::::::::::
-Others/0240.Search-a-2D-Matrix-II/Readme.md
-::::::::::::::
-### 240.Search-a-2D-Matrix-II
-非常巧妙的解法：从矩阵的左下角出发，如果比target小则右移，如果比target大则上移，直至找到target或者出界。
-
-这个方法可以用到所有基于这种矩阵的题目，比如373和378，就是配合二分法可以得到更高效的解。
-
-
-[Leetcode Link](https://leetcode.com/problems/search-a-2d-matrix-ii)::::::::::::::
-Others/0252.Meeting-Rooms/252.Meeting-Rooms.cpp
-::::::::::::::
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
-class Solution {
-public:
-    bool canAttendMeetings(vector<Interval>& intervals) 
-    {
-        vector<pair<int,int>>q;
-        for (int i=0; i<intervals.size(); i++)
-        {
-            q.push_back({intervals[i].start,1});
-            q.push_back({intervals[i].end,-1});
-        }
-        
-        sort(q.begin(),q.end());
-        
-        int count = 0;
-        for (int i=0; i<q.size(); i++)
-        {
-            count+=q[i].second;
-            if (count>1) return false;
-        }
-        return true;
-            
-    }
-};
-::::::::::::::
-Others/0252.Meeting-Rooms/Readme.md
-::::::::::::::
-### 252.Meeting-Rooms
-
-遍历所有的ｉｎｔｅｒｖａｌ，将这样所有的{start,1}和{end,-1}加入一个数组ｑ．然后将ｑ排序．注意，对于同一个时刻，{end,-1}会比{start,1}先处理．这在本题是合理的，因为所有的有效区间的长度都至少为１，这样的话类似[t,t]这样的区间就不会被包括进来．
-
-我们依次遍历这个ｑ的元素，将第二个ｌａｂｅｌ的值累加进ｃｏｕｎｔ．发现当count>1时，即说明有两个重合的区间，返回ｆａｌｓｅ
-
-
-[Leetcode Link](https://leetcode.com/problems/meeting-rooms)::::::::::::::
-Others/0253.Meeting-Rooms-II/253.Meeting-Rooms-II.cpp
-::::::::::::::
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
-class Solution {
-    static bool cmp1(Interval a, Interval b)
-    {
-        return a.start<b.start;
-    }
-    struct cmp2
-    {
-        bool operator()(Interval a, Interval b)
-        {
-            return a.end>b.end;
-        }            
-    };
-    
-public:
-    int minMeetingRooms(vector<Interval>& intervals) 
-    {
-        sort(intervals.begin(),intervals.end(),cmp1);
-        
-        priority_queue<Interval,vector<Interval>,cmp2>pq;
-        
-        int count=0;
-        int i=0;
-        while (i<intervals.size())
-        {
-            while (pq.empty() || i<intervals.size() && pq.top().end>intervals[i].start)
-            {
-                pq.push(intervals[i]);
-                i++;
-            }                
-            int n=pq.size();
-            count=max(count,n);
-            pq.pop();
-        }
-        return count;
-    }
-};
-::::::::::::::
-Others/0253.Meeting-Rooms-II/253.Meeting-Rooms-II_v2.cpp
-::::::::::::::
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
-class Solution {
-    static bool cmp1(Interval a, Interval b)
-    {
-        return a.start<b.start;
-    }
-public:
-    int minMeetingRooms(vector<Interval>& intervals) 
-    {
-        sort(intervals.begin(),intervals.end(),cmp1);
-        multiset<int>Set;
-        int count=0;
-        int i=0;
-        while (i<intervals.size())
-        {            
-            while (Set.size()==0 || i<intervals.size() && *Set.begin()>intervals[i].start)    
-            {
-                Set.insert(intervals[i].end);
-                count = max(count,int(Set.size()));
-                i++;                                
-            }                                    
-            Set.erase(Set.begin());                                     
-        }
-        return count;
-    }
-};
-::::::::::::::
-Others/0253.Meeting-Rooms-II/Readme.md
-::::::::::::::
-### 253.Meeting-Rooms-II
-
-#### 解法1:
-
-此题用到了sort和pq的组合拳，是一类题目的典型。
-
-先将intervals按照start进行从先到后排序。注意，这是解此类问题的一个常见步骤。
-
-然后我们构建一个pq，这个队列里按照end自动排序，end小的排在栈顶。我们令pq里面存装的是当前正在同时进行的会议。
-
-在遍历intervals元素的过程中，如果pq.top().end>intervals[i].start，说明正在进行的会议里，即使最早结束的那个，也都晚于当前考虑的会议intervals[i]的开始时间。没办法，但当前会议必须开，所以要将intervals[i]加入pq里面。pq的size因此变大。然后考虑下一个i，直至pq.top().end<=intervals[i].start。
-
-然后将pq弹出最早结束的一个会议，重复之前的操作，会有新的会议加入需要同时举行。
-
-输出结果就是pq在整个遍历过程中的最大size。
-
-对于pq的数据结构，我们在C++中还可以用multiset来实现，因为它也是自动有序的。
-
-#### 解法2:
-
-将所有{startTime,1}和{endTime,-1}加入一个数组,然后将这个数组按照时间戳排序.注意,本题中所有的有效区间的长度必须大于0,所以,{time,-1}要比{time,1}排序更靠前.
-
-使用一个count依时间顺序将所有的+1/-1进行累加.当count>0的时候标志着一个会议的开始,重新归为0的时候标着一个会议的结束.
-
-
-[Leetcode Link](https://leetcode.com/problems/meeting-rooms-ii)::::::::::::::
-Others/0277.Find-the-Celebrity/277.Find-the-Celebrity.cpp
-::::::::::::::
-/* The knows API is defined for you.
-      bool knows(int a, int b); */
-
-class Solution {
-public:
-    int findCelebrity(int n) 
-    {        
-        int candidate = 0;
-        for (int i=1; i<n; i++)
-        {
-            if (knows(candidate, i))
-                candidate = i;
-        }
-        
-        for (int i=0; i<n; i++)
-        {
-            if (i==candidate) continue;
-            if (knows(candidate, i) || !knows(i, candidate))
-                return -1;
-        }
-        return candidate;
-    }
-};
-::::::::::::::
-Others/0277.Find-the-Celebrity/Readme.md
-::::::::::::::
-### 277.Find-the-Celebrity
-
-我们讨论knows(i,j)的结果。如果结果是true，那么i肯定不是明星。如果结果是false，那么j肯定不是明星。可见每一次调用knows，就可以筛除一个人。因此我们可以设计“打擂台”的机制，将所有的人轮转一遍，赢的人留下来，输的人淘汰，那么最终我们只会存留一个人。
-
-但是对于这个最终存留的人我们还需要再次验证它是不是明星。所以还需要再调用将所有人轮转一遍，如果```knows(candidate,i)||!knows(i,candidate)```，那么这个候选人也不是明星。
-::::::::::::::
-Others/0311.Sparse-Matrix-Multiplication/311.Sparse Matrix Multiplication.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) 
-    {
-        int M=A.size();
-        int N=B[0].size();
-        int K=A[0].size();
-        
-        auto result = vector<vector<int>>(M,vector<int>(N,0));
-        
-        for (int i=0; i<M; i++)
-         for (int k=0; k<K; k++)
-         {
-             if (A[i][k]==0) continue;
-             
-             for (int j=0; j<N; j++)
-                result[i][j]+=A[i][k]*B[k][j];
-         }
-        
-        return result;
-    }
-};
-::::::::::::::
-Others/0311.Sparse-Matrix-Multiplication/Readme.md
-::::::::::::::
-### 311.Sparse-Matrix-Multiplication
-
-传统的矩阵乘法的写法是：
-```cpp
-        int M=A.size();
-        int N=B[0].size();
-        int K=A[0].size();
-        
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             for (int k=0; k<K; k++)
-                result[i][j]+=A[i][k]*B[k][j];
-         }
-```
-观察可以发现，第二层和第三层循环之间没有其他语句，完全可以对调。对调之后，等于是给定了i和k再遍历j，就可以提前判断A[i][k]的性质，如果是零的话就可以跳过第三个循环。
-```cpp
-        for (int i=0; i<M; i++)
-         for (int k=0; k<K; k++)
-         {
-             if (A[i][k]==0) continue;
-             
-             for (int j=0; j<N; j++)
-                result[i][j]+=A[i][k]*B[k][j];
-         }
-```         
-
-
-[Leetcode Link](https://leetcode.com/problems/sparse-matrix-multiplication)::::::::::::::
-Others/0324.Wiggle-Sort-II/324.Wiggle-Sort-II.cpp
-::::::::::::::
-class Solution {
-public:
-    void wiggleSort(vector<int>& nums) 
-    {
-        int n = nums.size();
-        auto sorted = nums;
-        sort(sorted.begin(), sorted.end());
-        int i = (n-1)/2, j = n-1;
-
-        int sign = 1;
-        for (int k=0; k<n; k++)
-        {
-            if (sign==1)
-            {
-                nums[k] = sorted[i];
-                i--; 
-            }
-            else
-            {
-                nums[k] = sorted[j];
-                j--; 
-            }
-            sign = 1-sign;
-        }
-        
-    }
-};
-::::::::::::::
-Others/0324.Wiggle-Sort-II/Readme.md
-::::::::::::::
-### 324.Wiggle-Sort-II
-
-此题是一道智力题。很明显我们会先排序，利用已知的大小关系来排列数组的元素。一个简单的方法就是用双指针，一个指向末尾（最大的数），另一个指向中间（中位数）。每次取数的时候大小交错，取完一个分别将各自的指针往前移动一次。这样一定能保证是大小交错的。
-
-另外有一种解法，从中位数往两边取，虽然也可能保证大小交错，但是最开始选中的两个数因为是相邻的，有可能相等，不符合题意。所以这种解法是错误的。
-
-
-[Leetcode Link](https://leetcode.com/problems/wiggle-sort-ii)::::::::::::::
-Others/0347.Top-K-Frequent-Elements/347.Top-K-Frequent-Elements_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> topKFrequent(vector<int>& nums, int k) 
-    {
-        unordered_map<int,int>freq;
-        for (auto x: nums)
-            freq[x]++;
-
-        int left = 0, right = INT_MAX;
-        while (left < right)
-        {
-            int mid = right - (right-left)/2;
-            if (count(freq, mid)>=k)
-                left = mid;
-            else
-                right = mid-1;
-        }
-
-        int f = left;
-
-        vector<int>rets;
-        for (auto x: freq)
-        {
-            if (x.second >= f)
-                rets.push_back(x.first);
-        }
-        return rets;
-    }
-
-    int count(unordered_map<int,int>&freq, int th)
-    {
-        int ret = 0;
-        for (auto x: freq)
-            ret += x.second >=th;
-        return ret;
-    }
-};
-::::::::::::::
-Others/0347.Top-K-Frequent-Elements/347.Top-K-Frequent-Elements_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> topKFrequent(vector<int>& nums, int k) 
-    {
-        unordered_map<int,int>freq;
-        for (auto x: nums)
-            freq[x]++;
-
-        vector<pair<int,int>>arr;
-        for (auto x: freq)
-            arr.push_back(x);
-
-        int f = quickselect(arr, 0, arr.size()-1, k);
-
-        vector<int>rets;
-        for (auto x: arr)
-        {
-            if (x.second >= f)
-                rets.push_back(x.first);
-        }
-        return rets;
-    }
-
-    int quickselect(vector<pair<int,int>>arr, int a, int b, int k)
-    {
-        int pivot = arr[(a+b)/2].second;
-        int i=a, j=b, t=a;
-        while (t<=j)
-        {
-            if (arr[t].second > pivot)
-            {
-                swap(arr[j], arr[t]);
-                j--;
-            }
-            else if (arr[t].second < pivot)
-            {
-                swap(arr[i], arr[t]);
-                i++;
-                t++;
-            }
-            else
-            {
-                t++;
-            }
-        }
-
-        if (b-j>=k) return quickselect(arr, j+1, b, k);
-        else if (b-i+1>=k) return pivot;
-        else return quickselect(arr, a, i-1, k-(b-i+1));
-    }
-};
-::::::::::::::
-Others/0347.Top-K-Frequent-Elements/Readme.md
-::::::::::::::
-### 347.Top-K-Frequent-Elements
-
-#### 解法1： 二分搜值
-
-#### 解法2： qucik select
-此题另外一种常见做法是quick select，用o(N)的时间来实现寻找第k大元素（即频率）。具体的思想和quick sort很像，每次找一个pivot，根据pivot的值用三指针算法把整个arr重新调整为三部分（小于pivot、等于pivot、大于pivot）。然后根据各部分数量与k的关系，选择下一步递归需要处理哪个部分。
-
-找到这个频率值f之后，再扫一遍全部所有的频次，凡是频次大于f的元素就是答案。
-::::::::::::::
-Others/0348.Design-Tic-Tac-Toe/348.Design-Tic-Tac-Toe.cpp
-::::::::::::::
-class TicTacToe {
-    int Row[100];
-    int Col[100];
-    int Diag[2];
-public:
-    /** Initialize your data structure here. */
-    int n;
-    TicTacToe(int n) {        
-        this->n = n;
-        memset(Row, 0, sizeof(Row));
-        memset(Col, 0, sizeof(Col));
-        memset(Diag, 0, sizeof(Diag));
-    }
-    
-    /** Player {player} makes a move at ({row}, {col}).
-        @param row The row of the board.
-        @param col The column of the board.
-        @param player The player, can be either 1 or 2.
-        @return The current winning condition, can be either:
-                0: No one wins.
-                1: Player 1 wins.
-                2: Player 2 wins. */
-    int move(int row, int col, int player) 
-    {       
-        if (player==1)
-        {
-            Row[row]++;
-            Col[col]++;
-            if (row==col)
-                Diag[0]++;
-            if (row+col==n-1)
-                Diag[1]++;
-            
-            if (Row[row]==n || Col[col]==n || Diag[0]==n || Diag[1]==n)
-                return 1;            
-        }
-        if (player==2)
-        {
-            Row[row]--;
-            Col[col]--;
-            if (row==col)
-                Diag[0]--;
-            if (row+col==n-1)
-                Diag[1]--;
-            
-            if (Row[row]==-n || Col[col]==-n || Diag[0]==-n || Diag[1]==-n)
-                return 2;            
-        }        
-        // cout<<Row[row]<<" "<<Col[col]<<" "<<Diag[0]<<" "<<Diag[1]<<endl;
-        return 0;
-    }
-};
-
-/**
- * Your TicTacToe object will be instantiated and called as such:
- * TicTacToe* obj = new TicTacToe(n);
- * int param_1 = obj->move(row,col,player);
- */
-::::::::::::::
-Others/0348.Design-Tic-Tac-Toe/Readme.md
-::::::::::::::
-### 348.Design-Tic-Tac-Toe
-
-因为题目保证了每个落子都是有效的，我们只需要给每行/列/对角做一个计数器即可。如果是player落子，则该行/列/对角增一，反之则该行/列/对角减一。如果某次落子后，任意行/列/对角达到n或者-n，即说明有人获胜。
-::::::::::::::
-Others/0420.Strong-Password-Checker/Readme.md
-::::::::::::::
-### 420.Strong-Password-Checker
-
-此题感觉比较难.这里,我们约定MissingType表示缺了几种类型的字符(大写,小写,数字),取值范围是[0,3].另外约定change表示我们最终方案里需要替换的次数.deleted表示我们最终方案里需要删除的次数.
-
-当```len(s)<6```时,需要添加6-len(s)个字符.注意到,此中情况下没有重复序列的问题,并且add的操作同时可以解决MissingType的问题.所以最终答案是```max(MissingType,6-len(s))```
-
-当```6<=len(s)<=20```时,只存在MissingType和重复序列的问题,而没有需要删除字符的问题.我们容易计算出最高效的"替换"操作方案,也就是每遇到aaa的情况就将第三个元素替换成别的,计做一次change.这样所需的change是最少.同时,考虑到"替换"也可以解决MissingType的问题.所以最终答案是```max(MissingType,change)```
-
-当```len(s)>20```时,会同时存在MissingType,重复序列,删除字符的问题,情况最为复杂.我们慢慢分析.
-
-首先我们考虑最高效的"替换"操作,如前,我们容易计算出所需要的最少的change.完成这套操作之后,消灭了重复序列的问题.
-
-然后考虑字符串过长的问题,共有to_delete个元素需要删除.如果我们简单地再删除这么多字符,总计change+to_delete个操作,这是不高效的.因为我们可以用一些"删除"操作来等效之前的"替换"操作.
-
-举个例子来看,如果```...aaa...```,我们采用"替换"操作的话,需要一次change(替换最后一个a);而如果我们"删除"最后一个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行一次必要的"删除"操作(为什么说是必要,是因为总共有to_delete这么多元素等待删除),而之前进行的"替换"操作就不必要了,也就是change可以减一.
-
-再举个例子来看,如果```...aaaa...```,我们采用"替换"操作的话,需要一次change(替换第三个a);而如果我们"删除"两个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行两次必要的"删除"操作,而之前进行的"替换"操作就不必要了,即change同样可以减一.
-
-再举个例子来看,如果```...aaaaa...```,我们采用"替换"操作的话,需要一次change(替换第三个a);而如果我们"删除"三个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行三次必要的"删除"操作,而之前进行的"替换"操作就不必要了,即change同样可以减一.
-
-以上这些例子说明什么意思?因为删除to_delete个字符是"必选动作",如果我们在做这些必选动作的时候,能够代替掉越多的change的话,那就是最高效的方案.再分析一下,第一个例子代表了连续重复字串长度```len%3==0```,第二个例子代表了连续重复字串长度```len%3==1```,第三个例子代表了其他情况.我们在遍历s的时候,可以统计这些情况出现的频次,按照优先级的顺序,每做一次(或者两次,三次)"删除"操作,可以避免一次"替换"操作.
-
-最终的结果就是,总共进行的"删除"操作(deleted),加上没有被抵消的"替换"操作(change).注意,change操作可以抵消MissingType,不够抵消的话,需要额外考虑MissingType的个数.
-
-
-[Leetcode Link](https://leetcode.com/problems/strong-password-checker)
-::::::::::::::
-Others/0423.Reconstruct-Original-Digits-from-English/423.Reconstruct-Original-Digits-from-English.cpp
-::::::::::::::
-class Solution {
-public:
-    string originalDigits(string s) 
-    {
-        vector<string>words={"zero","two","four","six","eight","five","seven","one","three","nine"};
-        vector<int>nums={0,2,4,6,8,5,7,1,3,9};
-        vector<int>distinct={'z','w','u','x','g','f','v','o','h','i'};
-        vector<int>str(26,0);
-        string result;
-        
-        for (auto ch:s) str[ch-'a']++;
-        for (int i=0; i<10; i++)
-        {
-            int k = str[distinct[i]-'a'];            
-            for (int j=0; j<k; j++)
-                result+=to_string(nums[i]);
-            for (auto ch: words[i])            
-                str[ch-'a']-=k;
-        }
-        
-        sort(result.begin(),result.end());
-        
-        return result;
-    }
-};
-::::::::::::::
-Others/0423.Reconstruct-Original-Digits-from-English/Readme.md
-::::::::::::::
-### 423.Reconstruct-Original-Digits-from-English
-
-此题不必用DFS蛮干，有非常巧妙的解法。
-
-观察0,2,4,6,8,对应的单词zero,two,four,six,eight. 可以发现对应的z,w,r,x,g这个五个字母都是各自独有的（考虑全部十个单词）。 所有在一个长字符串中，有多少z,w,r,x,g,就说明了正好有多少个0,2,4,6,8. 
-
-那剩下的五个单词数目如何确定呢？其实，在长字符串中刨除了之前说的这五个单词之后，"five","seven","one","three","nine" 又“依次”“分别”有各自的特征字母f,v,o,h,i。也就是说除去这个单词后，剩下的有多少个字母f，就说明有多少个5；再除去所有5之后，剩下的有多少v，就说明有多少个7，依次类推。
-
-
-[Leetcode Link](https://leetcode.com/problems/reconstruct-original-digits-from-english)::::::::::::::
-Others/0453.Minimum-Moves-to-Equal-Array-Elements/453.Minimum-Moves-to-Equal-Array-Elements.cpp
-::::::::::::::
-class Solution {
-public:
-    int minMoves(vector<int>& nums) 
-    {
-        int MIN=INT_MAX;
-        for (int i=0; i<nums.size(); i++)        
-            MIN=min(nums[i],MIN);
-        
-        int result=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            result+=nums[i]-MIN;
-        }
-        
-        return result;        
-    }
-};
-::::::::::::::
-Others/0453.Minimum-Moves-to-Equal-Array-Elements/Readme.md
-::::::::::::::
-#### 453.Minimum-Moves-to-Equal-Array-Elements
-
-将n-1个数全部加一，等效于将剩下的那个数减一。所以，只要累加所有元素与数列最小值之差就是最终答案。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-moves-to-equal-array-elements)::::::::::::::
-Others/0466.Count-The-Repetitions/466.Count-The-Repetitions.cpp
-::::::::::::::
-class Solution {
-public:
-    int getMaxRepetitions(string s1, int n1, string s2, int n2) 
-    {
-        int L1=s1.size();
-        int L2=s2.size();
-        auto PairPos=vector<vector<int>>(L2,vector<int>(L1,-1));
-        auto PairCount=vector<vector<int>>(L2,vector<int>(L1,-1));
-        
-        int y = 0;        
-        int x;
-        int count=0;
-        for (int i=0; i<L1*n1; i++)
-        {
-            x = i%L1;
-            y = y%L2;
-            if (s1[x]==s2[y])
-            {
-                if (y==L2-1) count++;
-                
-                if (PairPos[y][x]!=-1 && i+(i-PairPos[y][x])<L1*n1)
-                {                    
-                    i+=i-PairPos[y][x];
-                    count+=count-PairCount[y][x];
-                }                
-                
-                PairPos[y][x]=i;
-                PairCount[y][x]=count;
-                y++;                
-            }                
-        }
-        return count/n2;
-    }
-};
-::::::::::::::
-Others/0466.Count-The-Repetitions/Readme.md
-::::::::::::::
-### 466.Count-The-Repetitions/
-
-此题要找到第一个突破口．题意要求将s2重复n2次后再最多重复M次，使得其结果能够contained in S1．由此可以迅速反应到，本质就是求s2能重复多少次使得contained in S1．如果s2能最多重复Ｒ次使得contained in S1，显然```M=R/n2```
-
-于是接下来考虑S1=s1*n1里有多少个重复的s2．原则上，这只要顺着S1过一遍就得到答案了．另外，因为S1本质是n1个s1串联，我们不需要显式地存储下整个S1，只需要一个指针不断地在s1里循环即可．于是第一个版本很容易写出来．这里用i表示S1里的index，x和y表示在s1和s2里面的index.
-```cpp
-    int getMaxRepetitions(string s1, int n1, string s2, int n2) 
-    {
-        int L1=s1.size();
-        int L2=s2.size();        
-        int y = 0;        
-        int x;
-        int count=0;
-        for (int i=0; i<L1*n1; i++)
-        {
-            x = i%L1;
-            y = y%L2;
-            if (s1[x]==s2[y])
-            {                
-                if (y==L2-1)
-                count++;
-                y++;
-            }                
-        }
-        return count/n2;
-    }
-```
-上面的这个版本会超时．很容易看出，因为S1是有很多相同的s1串联组成的，所以Ｓ1里面极有可能有许多连续循环出现的片段，而这些片段本身已经是s2（或连续的几个s2）的一个扩集．如果我们重复对这些每个片段再进行逐一扫描，而没有充分利用这些重复信息，就会有不必要的计算．
-
-于是我们考虑应该如何找出这些＂连续循环出现的基本片段＂．如前所述，每个片段应该恰好对应s2（或连续的几个s2）的一个扩集．在S1里这个片段不断循环，对应s2也不断地循环．于是我们考虑追踪一个从s2到s1的映射．如果```s2[y]==s1[x]```（表示这对字符匹配）并且这个映射之前曾经出现过，那么我们就可以认为从上次出现映射的位置ｉ开始，到现在的位置ｉ，这之间经过了S1的一个＂循环片段＂，相应地对应于经历了若干个s2．由此我们可以知道S1的这个循环片段的长度，以及这个长度内对应有几个s2的出现．我们在之后直接利用这个循环片段的长度为单位来往后推进，而不用再逐字地分析．
-
-我设置了这个映射所需要保留的两个信息．第一个```PairPos[y][x]```表示出现```s2[y]==s1[x]```这个映射时的```i```，即对应的S1的index；第二个```PairCount[y][x]```表示出现```s2[y]==s1[x]```这个映射时总共计数了多少个s2．于是，当我们发现这个映射第二次出现时，说明这个＂循环片段＂的长度就是```p=i-PairPos[y][x]```，在这个循环长度里出现了```t=count-PairCount[y][x]```个s2．此后，我们对于i的推进，就以＂循环片段＂的长度为p单位，而count的增长也就以t为单位．
-
-
-
-[Leetcode Link](https://leetcode.com/problems/count-the-repetitions)::::::::::::::
-Others/0479.Largest-Palindrome-Product/479.Largest-Palindrome-Product.cpp
-::::::::::::::
-class Solution {
-public:
-    // Rank: 34.85% -> 81.82%
-    int largestPalindrome(int n) 
-    {
-        if (n==1) return 9;
-        int lower = pow(10,n-1), upper = lower * 10 - 1;
-        
-        for (int i=upper; i>=lower; i--)
-        {
-            long long palindrome = i;
-            for (int j = i; j > 0; j /= 10) 
-            {
-                palindrome = palindrome * 10 + j % 10;
-            }
-            
-            for (int j=sqrt(palindrome); j <= upper; j++)
-            {
-                if (palindrome%j==0 && palindrome/j<=upper)
-                    return palindrome%1337;
-            }
-        }
-        
-        return -1;
-    }
-};
-::::::::::::::
-Others/0479.Largest-Palindrome-Product/Readme.md
-::::::::::::::
-### 479.Largest-Palindrome-Product
-
-两个n位数的数字相乘，得到的最大是2n位数，最小的2n-1位数。但是2n-1位数的数值明显要比2n位数要小，所以有一定的理由相信，答案应该在2n位数里面找。
-
-对于所有2n位数的回文数，怎么列举出来？一种方法是：列出所有2n位数，判断是否是回文数；第二种方法，列出所有n位数，构造出对应的2n位数的回文数。显然，后者更加高效。当n最大为8时，回文数是16位，10^16<(2^4)^16<2^64，所以用int64可以装下。
-
-有了一个2n位的回文数，再一一尝试所有的n位数（从大往小尝试），如果能除尽，且商仍是n位数，那么这个回文数就是符合题意的。
-
-本题的时间复杂度理论上是NlogN，但是考虑到我们从大到小遍历回文数，遇到true就返回，所以实际所用的时间并没有那么高。
-
-
-[Leetcode Link](https://leetcode.com/problems/largest-palindrome-product)
-::::::::::::::
-Others/0689.Maximum-Sum-of-3-Non-Overlapping-Subarrays/689.Maximum-Sum-of-3-Non-Overlapping-Subarrays.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) 
-    {
-        int N=nums.size();
-        
-        vector<int>Sum(N);
-        Sum[0]=nums[0];
-        for (int i=1; i<N; i++)
-            Sum[i]=Sum[i-1]+nums[i];        
-        
-        vector<int>LeftSum(N);
-        vector<int>LeftIdx(N);
-        int Ksum=0;
-        for (int i=0; i<k; i++)
-            Ksum+=nums[i];
-        LeftSum[k-1]=Ksum;
-        LeftIdx[k-1]=k-1;
-        for (int i=k; i<N; i++)
-        {
-            Ksum+=nums[i];
-            Ksum-=nums[i-k];
-            if (Ksum>LeftSum[i-1])
-            {
-                LeftSum[i]=Ksum;
-                LeftIdx[i]=i;
-            }                
-            else
-            {
-                LeftSum[i]=LeftSum[i-1];
-                LeftIdx[i]=LeftIdx[i-1];
-            }                
-        }
-        
-        vector<int>RightSum(N);
-        vector<int>RightIdx(N);
-        Ksum=0;
-        for (int i=N-1; i>=N-k; i--)
-            Ksum+=nums[i];
-        RightSum[N-k]=Ksum;
-        RightIdx[N-k]=N-k;
-        for (int i=N-k-1; i>=0; i--)
-        {
-            Ksum+=nums[i];
-            Ksum-=nums[i+k];
-            if (Ksum>RightSum[i+1])
-            {
-                RightSum[i]=Ksum;
-                RightIdx[i]=i;
-            }                
-            else
-            {
-                RightSum[i]=RightSum[i+1];
-                RightIdx[i]=RightIdx[i+1];
-            }                
-        }
-        
-        int temp=INT_MIN;
-        vector<int>result(3);
-        for (int i=k; i<=N-k-1; i++)
-        {
-            if (LeftSum[i-1]+Sum[i+k-1]-Sum[i-1]+RightSum[i+k]>temp)
-            {
-                temp = LeftSum[i-1]+Sum[i+k-1]-Sum[i-1]+RightSum[i+k];
-                result = {LeftIdx[i-1]-k+1,i,RightIdx[i+k]};
-            }
-        }
-        
-        return result;        
-    }
-};
-::::::::::::::
-Others/0689.Maximum-Sum-of-3-Non-Overlapping-Subarrays/Readme.md
-::::::::::::::
-### 689.Maximum-Sum-of-3-Non-Overlapping-Subarrays
-
-构建累加和数组LeftKSum[i]，表示在索引i左边（包括i）加和最大的连续k个数字；同理，rightKSum[i]表示索引i右边（包括i）加和最大的连续k个数字。这两个累加和数组都只要各扫一遍nums得到，是o(n)的计算量。
-
-最终我们只要遍历第k到第N-2k-1个元素作为中间一个subarray的起始点，查看leftKSum[i-1]+sum(i~i+k-1)+rightKsum[i+k]的最大值即可。
-
-因为此题还需要说出三个subarray的位置，所以我们多设一个LeftIdx和RightIdx，记录对应的索引位置，同构建LeftSum和RightSum的时候一起更新。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-sum-of-3-non-overlapping-subarrays)::::::::::::::
-Others/0723.Candy-Crush/723.Candy-Crush.cpp
-::::::::::::::
-class Solution {
-    int M,N;
-public:
-    vector<vector<int>> candyCrush(vector<vector<int>>& board) 
-    {
-        vector<vector<int>>newboard = board;
-        
-        M=board.size();
-        N=board[0].size();
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
-        auto visited=vector<vector<int>>(M,vector<int>(N,0));
-        int flag=0;
-        
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (board[i][j]==0 || visited[i][j]==1) continue;
-             
-             int x1=i;
-             int x2=i;
-             while (x1-1>=0 && board[x1-1][j]==board[i][j])
-                 x1--;
-             while (x2+1<M && board[x2+1][j]==board[i][j])
-                 x2++;
-             if (x2-x1+1>=3)
-             {
-                 flag=1;
-                 for (int ii=x1; ii<=x2; ii++)
-                 {
-                     visited[ii][j]=1;
-                     newboard[ii][j]=0;
-                 }
-             }
-             
-             int y1=j;
-             int y2=j;
-             while (y1-1>=0 && board[i][y1-1]==board[i][j])
-                 y1--;
-             while (y2+1<N && board[i][y2+1]==board[i][j])
-                 y2++;
-             if (y2-y1+1>=3)
-             {
-                 flag=1;
-                 for (int jj=y1; jj<=y2; jj++)
-                 {
-                     visited[i][jj]=1;
-                     newboard[i][jj]=0;
-                 }
-             }             
-         }
-                        
-        /*
-        for (int i=0; i<M; i++)
-        {
-            for (int j=0; j<N; j++)
-                cout<<newboard[i][j]<<" ";
-            cout<<endl;
-        }
-        */
-        
-        for (int j=0; j<N; j++)
-        {
-            int a=M-1;
-            int b=M-1;
-            while (b>=0)
-            {
-                if (newboard[b][j]!=0)
-                {
-                   newboard[a][j]=newboard[b][j];
-                    b--;
-                    a--;
-                }
-                else
-                    b--;
-            }
-            for (int i=a; i>=0; i--)
-                newboard[i][j]=0;            
-        }        
-        
-        if (flag==0)
-            return board;
-        else
-            return candyCrush(newboard);        
-    }        
-};
-::::::::::::::
-Others/0723.Candy-Crush/Readme.md
-::::::::::::::
-### 723.Candy-Crush
-
-基本思想是，对于每一个不存遍历过的、非零的board[i][j]，往上下、左右两个方向搜索：如果同一直线上有超过三个相同的格子就将他们标记为已经遍历。最终所有遍历过的格子置零，然后在纵方向上塌落。
-
-注意，如果有塌落的话，就需要再次递归调用自身，直至某回合的遍历之后board没有任何改动为止。
-
-
-[Leetcode Link](https://leetcode.com/problems/candy-crush)::::::::::::::
-Others/0732.My-Calendar-III/732.My-Calendar-III.cpp
-::::::::::::::
-class MyCalendarThree {
-public:
-    multiset<pair<int,int>>Set;
-    
-    MyCalendarThree() 
-    {
-        
-    }
-    
-    int book(int start, int end) 
-    {
-        Set.insert({start,1});
-        Set.insert({end,-1});
-        
-        int count=0;
-        int result=0;
-        for (auto a: Set)
-        {
-            count+=a.second;
-            result = max(result,count);
-        }
-        return result;
-        
-    }
-};
-
-/**
- * Your MyCalendarThree object will be instantiated and called as such:
- * MyCalendarThree obj = new MyCalendarThree();
- * int param_1 = obj.book(start,end);
- */
-::::::::::::::
-Others/0732.My-Calendar-III/Readme.md
-::::::::::::::
-### 732.My-Calendar-III
-
-此题有奇思妙解. 
-
-我们设计一个顺序的multiset<pair<int,int>>Set,每次调用我们就往里面放置{start,1}和{end,-1}.然后遍历这个集合,按照从小到大的顺序更新一个计数器,遇到1就加一,遇到-1就减一.
-
-奇妙的就是,你这样可以实时得到的,就是当前k booking的状态.遍历完之后这个计数器的历史最大值就是答案.
-
-
-[Leetcode Link](https://leetcode.com/problems/my-calendar-iii)::::::::::::::
-Others/0759.Employee-Free-Time/759.Employee-Free-Time.cpp
-::::::::::::::
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
-class Solution {
-    static bool cmp(pair<int,int>&a, pair<int,int>&b)
-    {
-        if (a.first!=b.first)
-            return a.first < b.first;
-        else
-            return a.second > b.second;
-    }
-public:
-    vector<Interval> employeeFreeTime(vector<vector<Interval>>& schedule) 
-    {
-        vector<pair<int,int>>diff;
-        for (int i=0; i<schedule.size(); i++)
-        {
-            for (auto range: schedule[i])
-            {
-                diff.push_back({range.start, +1});
-                diff.push_back({range.end, -1});                                
-            }
-        }
-        
-        sort(diff.begin(),diff.end(), cmp);
-        
-        int count = 0;        
-        vector<Interval>rets;
-        int start = -1, end = -1;
-                        
-        for (auto d: diff)
-        {
-            count += d.second;
-            if (d.second==-1 && count==0)
-                start = d.first;
-            else if (d.second==1 && count==1 && start!=-1)
-            {
-                end = d.first;
-                rets.push_back({start,end});
-            }                
-        }
-        
-        return rets;
-    }
-};
-::::::::::::::
-Others/0759.Employee-Free-Time/Readme.md
-::::::::::::::
-### 759.Employee-Free-Time
-
-此题看上去像是merge sorted list，但是用扫描线解法更简单。
-
-令count表示当前时刻有几个员工在工作。我们只考虑每个员工区间的两个端点，分别会造成计数器的增1和减1. 当我们将这些端点时刻从早到晚遍历一遍之后，观察如果计数器为0的这段时间，就是题目所需要的区间。
-
-注意每段free time interval的起点和终点如何判定。只有当count从1跳转为0的时候，是起点；当count从0跳转到1的时刻是终点。
-
-另外对端点排序的时候，对于相同时刻的端点，优先处理增1，这样会消除free time的误判
-::::::::::::::
-Others/0775.Global-and-Local-Inversions/775.Global-and-Local-Inversions.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isIdealPermutation(vector<int>& A) 
-    {
-        int curMax = -1;
-        for (int i=1; i<A.size(); i++)
-        {
-            if (i>=2)
-                curMax = max(curMax, A[i-2]);
-            if (curMax > A[i])
-                    return false;
-            
-        }
-        return true;        
-    }
-};
-::::::::::::::
-Others/0775.Global-and-Local-Inversions/Readme.md
-::::::::::::::
-### 775.Global-and-Local-Inversions
-
-对于A[i]而言，它不在乎A[i-1]是否比它大。即使比它大，也只是引入了一个local inversion，而不会有额外的global inversion。而要避免牵扯更多的global inversion，唯一的要求就是第i-2个元素及之前的所有元素都要比A[i]小。于是我们可以在遍历元素i的过程中，维护一个curMax，记录的是从第0个元素到第i-2个元素的最大值。只要出现```curMax > A[i]```即返回false。
-
-
-[Leetcode Link](https://leetcode.com/problems/global-and-local-inversions)::::::::::::::
-Others/0782.Transform-to-Chessboard/782.Transform-to-Chessboard.cpp
-::::::::::::::
-class Solution {
-public:
-    int movesToChessboard(vector<vector<int>>& board) 
-    {        
-        int N=board.size();
-        
-        for (int i=0; i<N; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (board[0][0]^board[i][0]!=board[0][j]^board[i][j]) return -1;
-                if (board[0][0]^board[0][j]!=board[i][0]^board[i][j]) return -1;
-            }
-                
-        int row1=0;
-        for (int i=0; i<N; i++)
-            if (board[i][0]==1) row1++;
-        if (abs(N-row1*2)>1) return -1;
-        
-        int col1=0;
-        for (int j=0; j<N; j++)
-            if (board[0][j]==1) col1++;
-        if (abs(N-col1*2)>1) return -1;        
-        
-        /****/
-        
-        int result=0;
-        
-        int countDiff1=0;
-        for (int i=0; i<N; i++)
-            if (board[i][0]!=i%2) countDiff1++;
-                
-        int countDiff2=0;
-        for (int j=0; j<N; j++)
-            if (board[0][j]!=j%2) countDiff2++;
-        
-        if (N%2==0)
-        {
-            result+=min(countDiff1,N-countDiff1)/2;
-            result+=min(countDiff2,N-countDiff2)/2;
-        }
-        else
-        {
-            if (countDiff1%2==1) countDiff1=N-countDiff1;
-            result+=countDiff1/2;
-            if (countDiff2%2==1) countDiff2=N-countDiff2;
-            result+=countDiff2/2;
-        }
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-Others/0782.Transform-to-Chessboard/Readme.md
-::::::::::::::
-### 782.Transform-to-Chessboard
-
-此题有比较大的难度。
-
-我们来思考，交换矩阵的列、行会带来什么影响？那就是，无论怎么变化之后，任意两列相对的same/different关系是不会变的，同理任意两行之间的same/different关系也不会变。考虑最后的棋盘图案，行只有两种模式，列也只有两种模式。这就意味着在初始状态，所有的列必须也只有两种模式，同理，所有的行也是只有两种模式。不满足这两种条件的，都不能通过变换得到棋盘图案。
-
-可行性的另外一个必要条件是：初始图案中，列的两种模式必须在数量上大体一致。也就是说，如果Ｎ是偶数，则两种数量一样；如果Ｎ是奇数，那么只可能一种比另一种多１个。同理，对于行方向也是如此。
-
-以上的两个判定条件用代码实现起来比较麻烦。这里有一种比较巧妙的方法来实现第一个判定条件：
-```cpp
-        for (int i=0; i<N; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (board[0][0]^board[i][0]!=board[0][j]^board[i][j]) return -1;
-                if (board[0][0]^board[0][j]!=board[i][0]^board[i][j]) return -1;
-            }
-```
-我们可以这么理解，对于图案中任意的一个矩形ＲＯＩ：
-```
-AXXXXXB
-XXXXXXX
-CXXXXXD
-```
-因为所有的列只可能有两种模式，所以如果A=B，那么必须C=D（这两列是同一模式）；或者如果A!=B，那么必须C!=D（这两列是不同模式）。合并起来：```if (board[0][0]^board[i][0]!=board[0][j]^board[i][j])```。这样遍历所有的Ｄ的位置```(i,j)```之后，就能检验所有的列是否只有两种模式（相对于第０列）。
-
-同理，```if (board[0][0]^board[0][j]!=board[i][0]^board[i][j])```可以判断所有的行是否只有两种模式。
-
-接下来，因为所有的列都只有两种模式，所以我们只要考察每列的首位作为该列的代表，来判断所有的列的这两种模式在数量上是否大体一致。说明白了，就是抽取第一行，看０和１的数目是否大体相当。同理我们再抽取第一列，看０和１的数目是否大体相当。这两个条件也满足之后，说明本题是solvable.
-
-此题的第二部分就是考虑交换多少次实现棋盘图案。首先，要明白一个特点，所有的行交换和列交换都不会互相冲突。我们可以先实现所有的行交换，再实现所有的列交换。注意，行交换（或者列交换）之间的顺序显然是不能随意变化的。
-
-对于任意一个形如```0010100110```的数列，如果最少交换次数地变成一个０１交叉数列呢？
-
-如果Ｎ是偶数，那么最终的目标是```01010101```或者```10101010```均可．只要将目标数列与原数列比较，假设有m位不一样，那么只要交换m/2次就可以了。比较两个目标数列中取得到结果最小的那个。
-
-如果N是奇数，那么最终的目标必然是```101010101```（或者相反，但注意，两者只能有其一，这与N为偶数的情况不同！）。同上，我们将目标数列与原数列比较，假设有m位不一样，那么只要交换m/2次就可以了。注意，这里m必定会是偶数，如果m不是偶数，说明最终的目标模式不对，我们需要转而取N-m。
-
-最终的答案就是将调整行的次数加上调整列的次数之和。
-
-
-[Leetcode Link](https://leetcode.com/problems/transform-to-chessboard)::::::::::::::
-Others/0794.Valid-Tic-Tac-Toe-State/794.Valid-Tic-Tac-Toe-State.cpp
-::::::::::::::
-class Solution {
-public:
-    bool validTicTacToe(vector<string>& board) 
-    {
-        int O=0;
-        int X=0;
-        for (int i=0; i<3; i++)
-            for (int j=0; j<3; j++)
-            {
-                if (board[i][j]=='O')
-                    O++;
-                else if (board[i][j]=='X')
-                    X++;
-            }
-        if (!(X==O || X-O==1)) return false;
-        if (X==O && win(board,'X')) return false;
-        if (X-O==1 && win(board,'O')) return false;
-        return true;
-    }
-    
-    bool win(vector<string>& board, char ch)
-    {
-        for (int i=0; i<3; i++)        
-            if (board[i][0]==ch && board[i][1]==ch && board[i][2]==ch)
-                return true;        
-        for (int j=0; j<3; j++)        
-            if (board[0][j]==ch && board[1][j]==ch && board[2][j]==ch)
-                return true;        
-        if (board[0][0]==ch && board[1][1]==ch && board[2][2]==ch)
-            return true;
-        if (board[2][0]==ch && board[1][1]==ch && board[0][2]==ch)
-            return true;
-        return false;
-    }
-};
-::::::::::::::
-Others/0794.Valid-Tic-Tac-Toe-State/Readme.md
-::::::::::::::
-### 794.Valid-Tic-Tac-Toe-State
-
-此题乍看会觉得是DFS或BFS,从一个空棋盘开始进行搜索,查看是否能够搜索到需要的状态.其实有更巧妙的解法.
-
-首先,对于一个棋盘状态,X的数目只可能比O的数目多1,或者两者相等.除此之外的可以排除.
-
-其次,当X的数目比O的数目多1时,说明最后一步是X落子,那么O不可能此时在盘面上获胜.故如果发现win('O')就返回false
-
-类似的,当X的数目与O的数目相等时,说明最后一步是O落子,那么X不可能此时在盘面上获胜.故如果发现win('X')就返回false
-
-至于其他情况,不管两边棋子怎么摆放,都是可能的.
-
-
-[Leetcode Link](https://leetcode.com/problems/valid-tic-tac-toe-state)::::::::::::::
-Others/0795.Number-of-Subarrays-with-Bounded-Maximum/795.Number-of-Subarrays-with-Bounded-Maximum_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int numSubarrayBoundedMax(vector<int>& nums, int left, int right) 
-    {
-        int n = nums.size();
-        vector<int>prevGreaterOrEqual(n,-1);
-        vector<int>nextGreater(n,n);
-
-        stack<int>Stack;
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[Stack.top()] < nums[i])
-            {
-                nextGreater[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        while (!Stack.empty()) Stack.pop();
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[Stack.top()] <= nums[i])
-            {
-                prevGreaterOrEqual[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        int ret = 0;
-        for (int i=0; i<n; i++)
-        {
-            if (nums[i]>=left && nums[i]<=right)
-            {
-                ret += (i-prevGreaterOrEqual[i])*(nextGreater[i]-i);
-            }            
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Others/0795.Number-of-Subarrays-with-Bounded-Maximum/795.Number-of-Subarrays-with-Bounded-Maximum_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int numSubarrayBoundedMax(vector<int>& A, int L, int R) 
-    {
-        long ret = 0;
-        int start = -1, validMax = -1;
-     
-        for (int i = 0; i < A.size(); i++) 
-        { 
-            if (A[i] > R) 
-            {                
-                start = -1;
-                validMax = -1;
-            }
-            else
-            {
-                if (start == -1)
-                    start = i;
-                if (A[i]<=R && A[i]>=L)
-                    validMax = i;                                
-                
-                if (start!=-1 && validMax!=-1)
-                    ret += (validMax-start+1);                
-            }
-        }
- 
-        return ret;
-    }
-};
-::::::::::::::
-Others/0795.Number-of-Subarrays-with-Bounded-Maximum/Readme.md
-::::::::::::::
-### 795.Number-of-Subarrays-with-Bounded-Maximum
-
-#### 解法1：
-我们枚举每个数值范围在[L,R]之间的数nums[i]，考虑如果它是subarray的最大值，那么这样的subarray有几个？很显然，我们只需要找到```j = prevGreater[i]```以及```k = nextGreater[i]```，那么这样的subarray的左边界可以到达j+1，右边界可以到达k-1，那么这样的subarray的个数就是```(i-j)*(k-i)```. 
-
-这样的做法需要three pass，并且要注意这种情况:[8,5,5,5,5,8]，且[L,R]=[4,6]，那么每个5作为最大值的时候可能会把区间[5,5,5,5]考虑进去，造成重复计数。一个解决方法就是我们规定，如果一个区间内如果有多个最大值，我们约定最靠左边的那个是“真正的”最大值。因此j的计算应该改为```j = previGreaterOrEqual[i]```.
-
-#### 解法2：
-首先，我们需要观察到，这个数组被大于R的元素分割成了若干段。任何subarray不能包含大于R的元素。所以我们只需要在每个片段里考察。
-
-假设这个片段的起点位置是start。本题枚举的技巧是：如果A[i]作为subarray的最后一个，那么这个subarray的第一个元素可以取在哪里？显然我们只要找左边最接近的、数值落在[L,R]区间的那个位置lastLR，那么只要subarray包含它，就是一个合法的subarray。所以以A[i]为结尾的合法subarray的个数就是```lastLR-start+1```.
-
-最终的答案就是遍历A[i]，累加以其为结尾的subarray的个数。
-::::::::::::::
-Others/0798.Smallest-Rotation-with-Highest-Score/798.Smallest-Rotation-with-Highest-Score_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int bestRotation(vector<int>& A) 
-    {
-        int N = A.size();
-        vector<int>diff(N,0);
-        for (int i=0; i<N; i++)
-        {
-            if (A[i]<=i)
-            {
-                diff[0] += 1;
-                diff[(i-A[i]+1)%N]-=1;
-                diff[(i+1)%N]+=1;
-            }
-            else
-            {
-                diff[0] += 0;
-                diff[(i+1)%N] +=1;
-                diff[(i+1 + N-A[i]) % N] -= 1;
-            }            
-        }
-        
-        int sum = 0;
-        int ret = 0;
-        int K = 0;
-        for (int i=1; i<N; i++)
-        {
-            sum += diff[i];
-            if (sum > ret)
-            {
-                ret = sum;
-                K = i;
-            }
-        }
-        return K;
-    }
-};
-::::::::::::::
-Others/0798.Smallest-Rotation-with-Highest-Score/798.Smallest-Rotation-with-Highest-Score_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int bestRotation(vector<int>& A) 
-    {
-        int N = A.size();
-        vector<int>diff(N,0);
-        for (int i=0; i<N; i++)
-        {
-            diff[(i-A[i]+1+N)%N]-=1;
-            diff[(i+1)%N]+=1;
-        }
-        
-        int sum = 0;
-        int ret = 0;
-        int K = 0;
-        for (int i=1; i<N; i++)
-        {
-            sum += diff[i];
-            if (sum > ret)
-            {
-                ret = sum;
-                K = i;
-            }
-        }
-        return K;
-    }
-};
-::::::::::::::
-Others/0798.Smallest-Rotation-with-Highest-Score/Readme.md
-::::::::::::::
-### 798.Smallest-Rotation-with-Highest-Score
-
-我们考虑某一个数的A[i]和它对应的index i。
-
-我们先考虑```A[i]<=i```,此时根据规则我们知道A[i]对应的得分已经是1。 我们可以知道，每做一次左移，A[i]对应的index就会减1。所以当左移```i-A[i]+1```次之后，此时的元素位置变成A[i]-1，根据规则得分变为0. 如果将原始数组左移```i+1```次，那么元素会跑到数组的最后位置（即N-1），根据规则，得分又变成了1。举个例子，如果A="XXXX2XX"，那么左移0次到n-1次，分别对应的得分就是1110011。
-
-我们设立一个差分数组diff，其中diff[k]表示在左移k次之后A[i]对应的得分变化。于是我们就有
-```
-diff[0] += 1;
-diff[i-A[i]+1] -= 1;
-diff[i+1] += 1;
-```
-
-对于```A[i]>i```，根据规则，初始状态是得0分。当左移i+1次之后，元素跑到了数组的最后一个，一定小于index（即N-1），故得分开始变成1. 当再左移N-A[i]次后，元素跑到了A[i]的位置，此时得分开始变成0.举个例子，如果A="XX4XXXX"，那么左移0次到n-1次，分别对应的得分就是0001110。我们不难总结出：
-```
-diff[0] += 0;
-diff[i+1] += 1;
-diff[i+1+N-A[i]] -= 1;
-```
-
-有了上面两种情况，我们可以处理每个A[i]，计算它所贡献的diff[k]，其中k=0,1,2...,N-1表示左移的次数。
-
-最后在diff数组里找到最大的diff[k]，其中k就对应着rotate多少次能使所有A[i]的得分总和最大。
-
-另外，两种情况也可以统一写成
-```
-diff[(i-A[i]+1+N)%N] -= 1;
-diff[i+1] += 1;
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/smallest-rotation-with-highest-score)
-::::::::::::::
-Others/0810.Chalkboard-XOR-Game/810.Chalkboard-XOR-Game.cpp
-::::::::::::::
-class Solution {
-public:
-    bool xorGame(vector<int>& nums) 
-    {
-        int x=0;
-        for (int i=0; i<nums.size(); i++)
-            x^=nums[i];
-        return (x==0 || nums.size()%2==0);
-    }
-};
-::::::::::::::
-Others/0810.Chalkboard-XOR-Game/Readme.md
-::::::::::::::
-### 810.Chalkboard-XOR-Game
-
-对于Alice而言，如果手头的```X=x1^x2^x3^...^xn=0```，那么算赢．
-
-如果```X!=0```,因为XOR的运算具有交换律，所以最后必然可以化简为```ai^Ai!=0```的形式．其中ai是其中的某个元素xi，而Ai是除了xi以外所有元素的亦或和．如果Ai不是零的话，那么Alice取ai就可以了(因为留给对手的是Ai)．如果这个Ai是零的话，那么我们试图重新找一个a/A的组合，直到找到一个非零的Ai，于是Alice就可以取相应的ai．
-
-那么会不会所有的Ai都是零呢？我们来分析一下．假设所有的Ai都是零．那么```A1^A2^...^An=X^X^..^X (共n-1次)＝０```．由此推出ｎ必须是奇数．根据逆否的性质，如果n是偶数的话，那么不可能所有的Ai都是零，于是Alice必然有此轮不输策略．
-
-于是有意思的事情来了．如果n是偶数，Alice有不输的策略；轮到Bob的时候，n就是奇数；如果他侥幸能存活那一轮，再轮到Alice的时候，她面对的依然是n是偶数的情况，又有了不输的策略．这个轮回最多一直持续到Bob只剩下一个数可选，也就必输了．
-
-所以，如果数列的总个数是偶数的话，对于先手（Alice)必赢．反之，Bob面对的总是偶数的情况，他就能必赢．
-
-
-[Leetcode Link](https://leetcode.com/problems/chalkboard-xor-game)::::::::::::::
-Others/0825.Friends-Of-Appropriate-Ages/825.Friends-Of-Appropriate-Ages.cpp
-::::::::::::::
-class Solution {
-public:
-    int numFriendRequests(vector<int>& ages) 
-    {
-        sort(ages.begin(),ages.end());
-        
-        vector<int>Map(121,0);
-        vector<int>sums(121,0);
-        
-        for (auto age:ages)
-            Map[age]++;
-        
-        for (int i=1; i<=120; i++)
-            sums[i] = sums[i-1]+Map[i];
-        
-        int count = 0;
-        for (int i=0; i<ages.size(); i++)
-        {
-            int lower = 0.5*ages[i]+7;
-            int upper = ages[i];
-            if (lower>=upper) continue;
-            count += sums[upper]-sums[lower]-1;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Others/0825.Friends-Of-Appropriate-Ages/Readme.md
-::::::::::::::
-### 825.Friends-Of-Appropriate-Ages
-
-此题非常像中学时代的线性规划。我们通过三个方程在二维坐标上的区域，可以发现第三个条件完全包含在前两个里，可以不用考虑。
-
-一个常规的方法是，遍历每个元素作为A来考虑，然后计算B的取值范围（上下界），然后用二分法在数组中找出上下界的位置，就能得到符合要求的B的个数。这是O(NlogN)的解法，N是元素的个数。
-
-这里推荐另外一种更好的解法。因为元素的范围是固定的1-120，所以我们开辟一个含120个元素的数组count，其中count[i]就代表了岁数为i的人的个数。这样，当我们计算得到B的取值范围(a,b]之后，只要累加count数组在上下界范围(a,b]内的元素和就行了。显然，构造一个前缀和的方法是最高效的。
-
-
-[Leetcode Link](https://leetcode.com/problems/friends-of-appropriate-ages)::::::::::::::
-Others/0835.Image-Overlap/835.Image-Overlap.cpp
-::::::::::::::
-class Solution {
-public:
-    int largestOverlap(vector<vector<int>>& A, vector<vector<int>>& B) 
-    {
-        int N = A.size();
-        vector<pair<int,int>>LA;
-        vector<pair<int,int>>LB;
-        for (int i=0; i<N; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (A[i][j]==1) LA.push_back({i,j});
-                if (B[i][j]==1) LB.push_back({i,j});
-            }
-        map<pair<int,int>,int>count;        
-        for (int i=0; i<LA.size(); i++)
-            for (int j=0; j<LB.size(); j++)            
-                count[{LB[j].first-LA[i].first,LB[j].second-LA[i].second}]++;                
-        int result = 0;
-        for (auto a:count) result = max(result,a.second);
-        return result;
-    }
-};
-::::::::::::::
-Others/0835.Image-Overlap/Readme.md
-::::::::::::::
-### 835.Image-Overlap
-
-此题用o(N^4)暴力的解法可以通过．另外有一个更巧妙的解法，可以在矩阵稀疏的时候加快速度．
-
-我们将所有A中的非零元素的坐标存在LA中，将所有B中的非零元素的坐标存在LB中．我们考察所有LA和LB的配对，该配对的{横坐标差，纵坐标差｝其实就代表了在该位移条件下能够贡献的一对重合的非零元素．考察完所有配对之后，计数最多的{横坐标差，纵坐标差｝就代表了题目要求的矩阵位移．
-
-
-[Leetcode Link](https://leetcode.com/problems/image-overlap)::::::::::::::
-Others/0843.Guess-the-Word/843.Guess-the-Word.cpp
-::::::::::::::
-class Solution {
-public:
-    void findSecretWord(vector<string>& wordlist, Master& master) 
-    {
-        for (int i=0; i<10; i++)
-        {
-            srand(1);
-            int r = rand() % wordlist.size();
-            string x = wordlist[r];
-            int count = master.guess(x);
-            if (count==6) return;
-            
-            vector<string>temp;
-            for (auto s:wordlist)
-            {
-                if (s==x) continue;
-                if (sameCount(s,x)==count) temp.push_back(s);
-            }
-            wordlist = temp;
-        }
-    }
-    
-    int sameCount(string A, string B)
-    {
-        int count=0;
-        for (int i=0; i<6; i++)
-            if (A[i]==B[i]) count++;
-        return count;
-    }
-};
-::::::::::::::
-Others/0843.Guess-the-Word/Readme.md
-::::::::::::::
-### 843.Guess-the-Word
-
-此题的原理很简单：我们任取一个word，调用API查看它与secret的匹配度k。于是我们可知，任何与word匹配度不是k的单词，肯定都不会是secret，于是就可以从candidate中删除。
-
-一旦我们取到某个word，与secret的匹配度是6，那么就是答案。
-::::::::::::::
-Others/0850.Rectangle-Area-II/850.Rectangle-Area-II.cpp
-::::::::::::::
-class Solution {
-public:
-    int rectangleArea(vector<vector<int>>& rectangles) 
-    {
-        set<int>SetX;
-        set<int>SetY;
-        for (auto point: rectangles)
-        {
-            SetX.insert(point[0]);
-            SetX.insert(point[2]);
-            SetY.insert(point[1]);
-            SetY.insert(point[3]);
-        }
-        
-        vector<int>X(SetX.begin(),SetX.end());
-        vector<int>Y(SetY.begin(),SetY.end());
-        
-        int M = X.size();
-        int N = Y.size();
-        auto points = vector<vector<bool>>(M,vector<bool>(N,0));
-        
-        for (auto p: rectangles)
-        {
-            int x0 = lower_bound(X.begin(),X.end(),p[0])-X.begin();
-            int x1 = lower_bound(X.begin(),X.end(),p[2])-X.begin();
-            int y0 = lower_bound(Y.begin(),Y.end(),p[1])-Y.begin();
-            int y1 = lower_bound(Y.begin(),Y.end(),p[3])-Y.begin();
-            for (int i = x0; i<x1; i++)
-             for (int j = y0; j<y1; j++)
-               points[i][j]=1;
-        }
-        
-        long long result = 0;
-        int Mod = 1e9+7;
-        for (int i=0; i<M-1; i++)
-          for (int j=0; j<N-1; j++)
-          {
-             if (points[i][j]==0) continue;
-             result += (long long)(X[i+1]-X[i]) * (long long)(Y[j+1]-Y[j]);            
-             result = result%Mod;
-          }
-        return result;
-    }
-};
-::::::::::::::
-Others/0850.Rectangle-Area-II/850.Rectangle-Area-II_v2.cpp
-::::::::::::::
-using ll = long long;
-class Diff2d {    
-public:
-    vector<vector<int>>f;
-    vector<vector<int>>diff;    
-    int m,n;
-    Diff2d(int m, int n)
-    {
-        this->m = m;
-        this->n = n;
-        diff.resize(m+1);
-        f.resize(m+1);        
-        for (int i=0; i<m+1; i++)
-        {
-            diff[i].resize(n+1);
-            f[i].resize(n+1);
-        }            
-    }
-    void set(int x0, int y0, int x1, int y1, int val)
-    {
-        diff[x0][y0]+=val;
-        diff[x0][y1+1]-=val;
-        diff[x1+1][y0]-=val;
-        diff[x1+1][y1+1]+=val;
-    }
-    void compute()
-    {
-        f[0][0] = diff[0][0];
-        for (int i=0; i<m; i++)
-            for (int j=0; j<n; j++)
-            {
-                int a = i==0?0:f[i-1][j];
-                int b = j==0?0:f[i][j-1];
-                int c = (i==0||j==0)?0:f[i-1][j-1];                
-                f[i][j] = a + b - c + diff[i][j];
-            }
-    }    
-};
-
-class Solution {
-    ll M = 1e9+7;
-public:
-    int rectangleArea(vector<vector<int>>& rectangles) 
-    {
-        set<ll>pointX;
-        set<ll>pointY;
-        for (auto rect: rectangles)
-        {
-            pointX.insert(rect[0]);
-            pointY.insert(rect[1]);
-            pointX.insert(rect[2]);
-            pointY.insert(rect[3]);
-        }
-        
-        vector<ll>row(pointX.begin(), pointX.end());
-        vector<ll>col(pointY.begin(), pointY.end());
-        
-        unordered_map<ll,ll>X2idx;
-        unordered_map<ll,ll>Y2idx;
-        for (int i=0; i<row.size(); i++)
-            X2idx[row[i]] = i;
-        for (int i=0; i<col.size(); i++)
-            Y2idx[col[i]] = i;
-        
-        int m = row.size(), n = col.size();
-        Diff2d grid(m,n);
-
-        for (auto rect: rectangles)
-        {
-            int i = X2idx[rect[0]];
-            int j = Y2idx[rect[1]];
-            int x = X2idx[rect[2]]-1;
-            int y = Y2idx[rect[3]]-1;
-            grid.set(i,j,x,y,1);
-        }
-        grid.compute();
-
-        ll ret = 0;
-        for (int i=0; i<m-1; i++)
-            for (int j=0; j<n-1; j++)
-            {
-                if (grid.f[i][j]>0)
-                {
-                    ll dx = row[i+1]-row[i];
-                    ll dy = col[j+1]-col[j];
-                    ret += dx*dy%M;
-                    ret %= M;
-                }
-            }
-        return ret;
-    }
-};
-::::::::::::::
-Others/0850.Rectangle-Area-II/Readme.md
-::::::::::::::
-### 850.Rectangle-Area-II
-
-#### 解法1：暴力枚举网格
-此题的思路是，将题目所给的所有矩形的坐标点都集中起来组成一个网格。具体来说，将所有的X坐标集中起来（要去除重复），将所有的Y坐标集中起来，然后将其两两配对组成一个二维的网络。注意，这样的网格点之间的实际距离并不是均匀的，但是没有关系。
-
-我们再来遍历所有的矩形：在这个网络中找到每个矩形所框起来的范围（遵循左闭右开的原则），标记这个范围内的网格点为true，意味着这些网格点是落在被cover的面积里。遍历完所有的矩形后，所有标记为true的网格点都是要被算入面积的，而那些没有标记的说明不用被计算。
-
-可以知道，凡是被cover的网格点```(u,v)```，它所代表的面积就是```(x[u+1]-x[u])*(y[v+1]-x[v])```。我们只需要累加这些网格点所代表的面积即可。
-
-#### 解法2：二维差分数组
-
-我们先来学习基本的二维差分数组。假设有很多小矩阵(左上角x0,y0, 右下角x1,y1)，彼此之间可能互相覆盖。问整个盘面上每个格子是否有被任何矩阵覆盖。
-
-对于一个矩阵，如果遍历所有内部的格子做标记，显然是效率很低的。我们很容易想到，是否能有类似一维扫描线算法（只记录两端的差分值）。这就是二维差分数组的应用。这里我们需要记录四个差分值：
-```cpp
-diff[x0][y0]+=1;
-diff[x0][y1+1]-=1;
-diff[x1+1][y0]-=1;
-diff[x1+1][y1+1]+=1;
-```
-这个差分数组diff[x][y]可以理解为整个盘面f[x][y]的二维梯度。f[x][y]表示了该点被多少个小矩形覆盖。
-
-有了初始值，和差分数组diff[x][y]，我们可以通过二维积分反推出f[x][y]
-```cpp
-f[x][y] = f[x-1][y]+f[x][y-1]-f[x-1][y-1]+diff[x][y]
-```
-
-在本题中，我们需要将各个矩阵的边界（x值或y值）离散化为序号递增的网格（同解法1）。比如x=30可能对应着i=2，y=200可能对应着j=4.
-
-假设一个矩形的四条边离散化后对应的是(i0,j0,i1,j1)，需要注意到这四条行、列组成的矩形面积其实是比真实的矩形面积要大的（多算了一侧边界所占的“面积”）。所以我们约定靠右的列、靠上的行不算做该矩形的范围内。故差分数组的计算是：
-```cpp
-diff[i0][j0]+=1;
-diff[i0][j1]-=1;
-diff[i1][j0]-=1;
-diff[i1][j1]+=1;
-```
-我们利用以上的差分数组通过积分得到的f[i][j]表示的是: (i,j)所对应的(x0,y0)作为左下角、(i+1,j+1)所对应的(x1,y1)作为右上角的矩形被覆盖了几次。这个矩形的面积是```(x1-x0)*(y1-y0)```.
-
-我们需要累加所有f[i][j]>0的那些矩形的面积。
-
-[Leetcode Link](https://leetcode.com/problems/rectangle-area-ii)
-::::::::::::::
-Others/0855.Exam-Room/855.Exam-Room.cpp
-::::::::::::::
-class ExamRoom {
-    int N;
-    vector<int>L;
-public:
-    ExamRoom(int N) 
-    {
-        this->N = N;        
-    }
-    
-    int seat() 
-    {
-        if (L.size()==0)
-        {
-            L.push_back(0);
-            return 0;
-        }
-        
-        int maxGap = -1;
-        int pos;
-        
-        if (L[0]!=0)
-        {
-            pos = 0;
-            maxGap = L[0]-1;
-        }
-        for (int i=0; i<L.size()-1; i++)
-        {
-            if (L[i+1]!=L[i]+1 && (L[i+1]-L[i]-2)/2 > maxGap)
-            {
-                maxGap = (L[i+1]-L[i]-2)/2 ;
-                pos = L[i]+maxGap+1;
-            }
-        }
-        if (L.back()!=N-1 && N-1-L.back()-1>maxGap)
-        {
-            maxGap = N-1-L.back()-1;
-            pos = N-1;
-        }
-        
-        L.insert(lower_bound(L.begin(),L.end(),pos), pos);
-
-        return pos;
-    }
-    
-    void leave(int p) 
-    {
-        L.erase(lower_bound(L.begin(),L.end(),p));
-    }
-};
-
-/**
- * Your ExamRoom object will be instantiated and called as such:
- * ExamRoom obj = new ExamRoom(N);
- * int param_1 = obj.seat();
- * obj.leave(p);
- */
-::::::::::::::
-Others/0855.Exam-Room/Readme.md
-::::::::::::::
-### 855.Exam-Room.cpp
-
-此题考虑什么样的数据结构最合适。我们需要存放什么呢？其实只要存放每个人的位置就可以了。人与人的间隔要不要单独存储呢？其实可以不必。线性的数组在这里就足够用了。虽然每次插入位置的搜索是线性的，内存的移动也会费时间，但似乎实际的效率还不错。
-
-每次进来一个人，我们线性扫描现有人的位置，查找最大的间隔。另外，头和尾的间隔需要另行考虑。确定最大间隔，就能确定插入的位置，直接用数组的insert命令即可。
-
-在人离开的时候，也是直接用lower_bound确定位置的迭代器，再删除迭代器即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/exam-room)::::::::::::::
-Others/0866.Prime-Palindrome/866.Prime-Palindrome.cpp
-::::::::::::::
-class Solution {
-public:
-    int primePalindrome(int N) 
-    {
-        if (N>7 && N<=11) return 11;
-        
-        string M = to_string(N);
-        int n = M.size()/2;
-        
-        int a = pow(10,n);
-        
-        for (int i=a; i<=20000; i++)
-        {
-            string s = to_string(i);
-            string s1 = s.substr(0, s.size()-1);
-            reverse(s1.begin(),s1.end());
-            s = s+s1;
-            
-            int k = stoi(s);
-            if (k>=N && isPrime(k)) return k;
-        }
-        
-        return -1;
-    }
-    
-    bool isPrime(int k)
-    {
-        if (k==1) return false;
-        if (k%2==0) return k==2;
-        for (int i=3; i*i<=k; i+=2)
-        {
-            if (k%i==0) return false;
-        }
-        return true;
-    }
-};
-::::::::::::::
-Others/0866.Prime-Palindrome/Readme.md
-::::::::::::::
-### 866.Prime-Palindrome
-
-我们有两种思路，一种是搜寻所有大于N的质数，然后查看它们是否是回文数。另一种方案是反过来，搜寻所有大于N的回文数，然后查看它们是否是质数。显然后者更高效，因为我们只需要确定回文数的前缀，就能通过翻转构造出完整的回文数。考虑到答案的上限是2e8（也就是9位数字），说明我们可以直接遍历大约1e4种回文数（即确定回文数的前五个数字），时间复杂度是可以接受的。
-
-有一个需要注意的，假设我们确定了回文数的前半部分xyz，理论上我们可以构造出两种回文数:xyzzyx和xyzyx。但前者肯定不是质数，因为能被11整除。所以对于任意的前缀，我们只需要构造奇数位的回文数即可。因此搜索的时间复杂度可以进一步减半。
-
-因为答案上限是2e8，所以我们遍历的前缀可以从1（对应的回文数是1）到20000（对应的回文数是200000002）。或者我们可以将下限设置的更精确些。如果N的位数是n，那么我们可以从前缀为pow(10,n/2)开始搜索。
-
-但是有一个corner case，那么就是当N==11的时候，不能通过上面的步骤得到正确的答案。这是因为11虽然有偶数位，根据上面的分析可知它能被11整除，但恰好它本身就是质数。
-
-
-[Leetcode Link](https://leetcode.com/problems/prime-palindrome)::::::::::::::
-Others/0906.Super-Palindromes/906.Super-Palindromes.cpp
-::::::::::::::
-class Solution {
-public:
-    int superpalindromesInRange(string L, string R) 
-    {
-        long long a = stoll(L);
-        long long b = stoll(R);
-               
-        int start = pow(10, max(0, (int)L.size()/4-1));
-        int end = pow(10, max(0, (int)R.size()/4+1));
-        
-        int count = 0;
-        
-        for (int i=start; i<=end; i++)
-        {
-            for (int type = 0; type<=1; type++)
-            {
-                long long palin = constructPalin(i, type);
-                if (palin>1e9) continue;                
-                
-                long long superPalin = palin*palin;
-                if (superPalin>=a && superPalin<=b && isPalin(superPalin))
-                    count++;
-            }
-        }
-        
-        return count;
-    }
-    
-    long long constructPalin(long long x, int type)
-    {
-        long long y = x;
-        if (type==1) x/=10;
-        while (x>0)
-        {
-            y = y*10 + x%10;
-            x = x/10;
-        }
-        return y;        
-    }
-    
-    bool isPalin(long long x)
-    {
-        string s = to_string(x);
-        string t = s;
-        reverse(t.begin(),t.end());
-        return s==t;
-    }
-};
-::::::::::::::
-Others/0906.Super-Palindromes/Readme.md
-::::::::::::::
-### 906.Super-Palindromes
-
-对于最大值为1e18的super palindrome，其平方根最大为1e9。因为这个平方根也要求是回文数，因此我们通过“遍历回文数的前半部分再镜像”的方法，最多只需要遍历1\~1e5就可以构造出1~1e9范围内所有的回文数，继而检查一下它的平方是否是超级回文数即可。整个时间复杂度控制在1e5的数量级，是可以接受的。
-
-
-[Leetcode Link](https://leetcode.com/problems/super-palindromes)
-::::::::::::::
-Others/0918.Maximum-Sum-Circular-Subarray/918.Maximum-Sum-Circular-Subarray.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxSubarraySumCircular(vector<int>& A) 
-    {
-        int globalMax = INT_MIN;    // cannot be 0-element
-        int globalMin = 0;          // can be 0-elelment, but cannot cantain all elements
-        int N = A.size();
-        vector<int>LocalMin(N);
-        vector<int>LocalMax(N);
-        
-        int Sum = accumulate(A.begin(),A.end(),0);
-        
-        LocalMax[0] = A[0];
-        LocalMin[0] = min(0,A[0]);
-        
-        for (int i=1; i<A.size(); i++)
-        {
-            LocalMax[i] = max(LocalMax[i-1]+A[i],A[i]);
-            LocalMin[i] = min(LocalMin[i-1]+A[i],A[i]);
-            globalMax = max(globalMax,LocalMax[i]);
-            globalMin = min(globalMin,LocalMin[i]);
-        }
-        
-        if (Sum==globalMin)     // in this case, the minimum subarray contain all elements, which is invalid
-            return globalMax;
-        else
-            return max(globalMax,Sum-globalMin);
-        
-    }
-};
-::::::::::::::
-Others/0918.Maximum-Sum-Circular-Subarray/Readme.md
-::::::::::::::
-### 918.Maximum-Sum-Circular-Subarray
-
-遇到循环数组的问题，有三种套路：
-
-第一，分情况处理．类似的题有 213. House Robber II，分别考虑第一座房子是否抢劫．
-
-第二，倍增，将原数组补到２倍的长度．
-
-第三，取反．这样求跨越终端的maximum subarray，相当于求total sum - minimum subarray.
-
-本题需要注意，因为我们求maximum subarray至少包含一个元素，所以在计算minimum subarray时，它不能包含所有的元素，但是它允许包含０个元素．所以在globalMin的初始值可以是0而不是INT_MAX．
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-sum-circular-subarray)::::::::::::::
-Others/0927.Three-Equal-Parts/927.Three-Equal-Parts.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> threeEqualParts(vector<int>& A) 
-    {
-        vector<int> rets;
-        
-        int count = 0;
-        for (auto x: A)
-            if (x==1) count++;
-        if (count%3!=0) return {-1,-1};
-        if (count==0) return {0,A.size()-1};
-        count/=3;
-        
-        int j = A.size();
-        while (count)
-        {
-            j--;
-            if (A[j]==1) count--;
-        }
-        
-        int i = 0;
-        while (A[i]==0) i++;
-        int k = j;
-        while (k<A.size() && A[i]==A[k])
-        {
-            i++;
-            k++;
-        }
-        if (k!=A.size()) return {-1,-1};
-        rets.push_back(i-1);
-        
-        while (A[i]==0) i++;
-        k = j;
-        while (k<A.size() && A[i]==A[k])
-        {
-            i++;
-            k++;
-        }
-        if (k!=A.size()) return {-1,-1};
-        rets.push_back(i);
-        
-        return rets;
-    }
-};
-::::::::::::::
-Others/0927.Three-Equal-Parts/Readme.md
-::::::::::::::
-### 927.Three-Equal-Parts
-
-本题的突破口就是全局1的个数。首先，整个数组里面1的个数必须要能被3整除。其次，确定了每个part里面1的个数后（记为count），从后往前数count个1，就已经确定了这个数长什么样了（记为X）。
-
-然后我们从数组最前端开始忽略若干个先导零，从第一个出现1的地方开始判断这个subarray是否等于X。如果OK，那么我们再忽略若干个先导零，在从下一个出现1的地方开始判断这个subarray是否等于X。如果再OK，那么three equal parts就已经划分好了。
-
-
-[Leetcode Link](https://leetcode.com/problems/three-equal-parts)::::::::::::::
-Others/0973.K-Closest-Points-to-Origin/973.K-Closest-Points-to-Origin_v1.cpp
-::::::::::::::
-using LL = long long;
-using PLI = pair<LL, int>;
-class Solution {
-public:
-    vector<vector<int>> kClosest(vector<vector<int>>& points, int K) 
-    {
-        priority_queue<PLI>pq;
-        for (int i=0; i<points.size(); i++)
-        {
-            long long x1 = points[i][0];
-            long long x2 = points[i][1];
-            long long d = x1*x1+x2*x2;
-            pq.push({d, i});
-            
-            if (pq.size() > K)
-                pq.pop();
-        }
-        
-        vector<vector<int>>results;
-        while (!pq.empty())
-        {
-            int id = pq.top().second;
-            results.push_back(points[id]);
-            pq.pop();
-        }
-        return results;
-    }
-};
-::::::::::::::
-Others/0973.K-Closest-Points-to-Origin/973.K-Closest-Points-to-Origin_v2.cpp
-::::::::::::::
-using LL = long long;
-class Solution {
-    vector<pair<LL, int>>arr;
-public:
-    vector<vector<int>> kClosest(vector<vector<int>>& points, int K) 
-    {        
-        for (int i=0; i<points.size(); i++)
-        {
-            long long x1 = points[i][0];
-            long long x2 = points[i][1];
-            long long d = x1*x1+x2*x2;
-            arr.push_back({d, i});
-        }
-        
-        long long d = quickSelect(0, arr.size()-1, K);
-                
-        vector<vector<int>>rets;
-        for (auto x: arr)
-        {
-            if (x.first <= d)
-                rets.push_back(points[x.second]);
-        }
-        return rets;        
-    }
-    
-    long long quickSelect(int a, int b, int k)
-    {
-        long long pivot = arr[(a+b)/2].first;
-        
-        int i = a, j = b, t = a;
-        
-        while (t<=j)
-        {
-            if (arr[t].first < pivot)
-            {
-                swap(arr[i], arr[t]);
-                i++;
-                t++;
-            }
-            else if (arr[t].first > pivot)
-            {
-                swap(arr[j], arr[t]);
-                j--;
-            }
-            else
-                t++;
-        }
-        
-        if (i-a >= k) return quickSelect(a, i-1, k);
-        else if (j-a+1 >= k) return pivot;
-        else return quickSelect(j+1, b, k-(j-a+1));
-    }
-};
-::::::::::::::
-Others/0973.K-Closest-Points-to-Origin/Readme.md
-::::::::::::::
-### 973.K-Closest-Points-to-Origin
-
-#### 解法1：优先队列
-构造一个关于距离的大顶堆。将各个点逐个放入，一旦PQ的元素个数超过K个就弹出队首元素。这样最终留下来的就是K个距离最小的。时间复杂度 NlogK.
-
-#### 解法2：快速选择
-QucikSelect的模板题，时间复杂度的期望是o(N).
-::::::::::::::
-Others/0978.Longest-Turbulent-Subarray/978.Longest-Turbulent-Subarray.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxTurbulenceSize(vector<int>& A) 
-    {
-        int N = A.size();
-        vector<int>q(N,0);
-        for (int i=0; i<A.size()-1; i++)
-        {
-            if (A[i]>A[i+1])
-                q[i] = -1;
-            else if (A[i]<A[i+1])
-                q[i] = 1;
-        }
-        
-        if (A.size()==1) return 1;
-        if (A.size()==2) return q[0]==0? 1: 2;
-        
-        int count = 1;
-        int start = 0;
-        for (int i=0; i+1<A.size()-1; i++)
-        {
-            if (q[i]!=0)
-                count = max(count, 2);
-            
-            start = i;
-            while (i+1<A.size()-1 && q[i]*q[i+1]==-1)
-            {
-                i++;
-                count = max(count, i-start+2);
-            }
-        }
-        
-        return count;
-    }
-};
-::::::::::::::
-Others/0995.Minimum-Number-of-K-Consecutive-Bit-Flips/995.Minimum-Number-of-K-Consecutive-Bit-Flips.cpp
-::::::::::::::
-class Solution {
-public:
-    int minKBitFlips(vector<int>& A, int K) 
-    {
-        int n = A.size();
-        vector<int>diff(n+1);
-
-        int flips = 0;
-        int count = 0;
-        for (int i=0; i<n; i++)
-        {
-            flips+=diff[i];
-            if ((A[i]+flips)%2==1) continue;
-
-            if (i+K-1>=n) return -1;
-            flips++;
-            count++;
-            diff[i+K]-=1;
-        }
-
-        return count;
-    }
-};
-::::::::::::::
-Others/0995.Minimum-Number-of-K-Consecutive-Bit-Flips/Readme.md
-::::::::::::::
-### 995.Minimum-Number-of-K-Consecutive-Bit-Flips
-
-本题的最优策略其实很容易想到。我们从前往后依次查看A[i]：如果A[i]是1，那么我们就跳过；如果A[i]是0，那么我们就翻转A[i]，同时需要带着一起翻转A[i+1]~A[i+K-1]。这样一直查下去，看最后K个数是否都是1. 显然我们就有了O(NK)的解法。C++耗时5000多毫秒，竟然也给过了。
-
-很明显，上述解法的最大弊端是：当A[i]需要翻转时，我们还需要用for循环逐个翻转A[i+1]~A[i+K-1]，效率很差。很容易想到一个简单的改进的方法，用差分数组diff.差分数组diff[j]记录的是：A[j]经历的翻转次数要比A[j-1]经历的翻转次数多多少？比如说，我们将当前的A[i]翻转了，将会使得A[i+1]~A[i+K-1]整体的翻转次数提升一个，但是之后就又回落下去了。所以就记录下diff[i+1]+=1, diff[i+K]-=1，这样的话，对任意A[j]经历过的翻转总数是flipNum，那么A[j+1]需要经历的翻转总数就是flipNum+diff[j+1]。
-
-类似用到差分数组的题目还有：370.Range-Addition
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-number-of-k-consecutive-bit-flips)::::::::::::::
 Others/1067.Digit-Count-in-Range/1067.Digit-Count-in-Range.cpp
 ::::::::::::::
 class Solution {
@@ -3151,6 +884,74 @@ Others/1589.Maximum-Sum-Obtained-of-Any-Permutation/Readme.md
 ```
 显然最终得到的就是我们期望的每个元素的频率。
 ::::::::::::::
+Others/158.Read-N-Characters-Given-Read4-II-Call-multiple-times/158.Read-N-Characters-Given-Read4-II-Call-multiple-times.cpp
+::::::::::::::
+// Forward declaration of the read4 API.
+int read4(char *readBuf);
+
+class Solution {
+public:
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    char ReadBuf[4];
+    int i = 0;  // read buf pointer
+    int count = 0;  // read buf counter
+    
+    int read(char *buf, int n) 
+    {
+        int j;
+        for (j=0; j<n; j++)
+        {
+            if (count==0)
+            {
+                count = read4(ReadBuf);
+                i = 0;
+                if (count==0) break;
+            }
+            buf[j] = ReadBuf[i];
+            i++;
+            count--;
+        }
+        
+        return j;        
+    }
+};
+::::::::::::::
+Others/158.Read-N-Characters-Given-Read4-II-Call-multiple-times/Readme.md
+::::::::::::::
+### 158.Read-N-Characters-Given-Read4-II-Call-multiple-times
+
+此题对于系统设计的考察非常巧妙．
+
+首先要理清题意．题目所要求设计的```int read(char *buf, int n)```，是说期望你从某个地方（你不用关心）读进n个字符，写进题目所指定的buf。这只是一个形式上的任务，但是真正实现读的工作函数是题目所给的API read4，它一次读取最多4个放在缓存里（ReadBuf），但是也可能一次读取的个数少于4（比如说已经读到底了），这可以从它的返回值来判断。
+
+本题的核心思想是，用指针j来控制我们要读取、写出n次字符。每次需要读取一个字符时，都试图从缓存ReadBuf里拿。如果ReadBuf里为空，就调用一次read4来填充ReadBuf，多数情况下一次能填充4个字符。如果ReadBuf不为空，那么我们就从ReadBuf里拿出下一个字符即可，直至ReadBuf里都取完。
+
+所以我们需要一个指针i来指向ReadBuf里待读的字符，同时用count来标记ReadBuf里还有多少未读。每次从缓存里成功读取一个，那么就i++且count--。当遇到count==0时，就需要调用read4()，将i重置为0，并且count重置为实际获取的字符个数（通常为4，但也可能更少）。
+
+```cpp
+int j;
+for (j=0; j<n; j++)
+{
+    if (count==0)
+    {
+         count = read4(ReadBuf);
+         i = 0;
+         if (count==0) break;
+    }
+    buf[j] = ReadBuf[i];
+    i++;
+    count--;
+}
+
+return j;   
+```
+
+[Leetcode Link](https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times)
+::::::::::::::
 Others/1625.Lexicographically-Smallest-String-After-Applying-Operations/1625.Lexicographically-Smallest-String-After-Applying-Operations_v1.cpp
 ::::::::::::::
 class Solution {
@@ -3456,6 +1257,24 @@ X X X X, i-1, i, X X X X
 随着目标值的移动，原先目标值左边的元素（包括自身，即nums[0:i-1]）与新目标值的差值全部都增加了```nums[i]-nums[i-1]```，总共增加了```(nums[i]-nums[i-1])*i```. 随着目标值的移动，原先目标值右边的元素（即nums[i:n-1]）与新目标值的差值全部都减少了```nums[i]-nums[i-1]```，总共减少了```(nums[i]-nums[i-1])*(n-i)```. 
 
 可见我们有递推关系```sum[i] = sum[i-1]+(nums[i]-nums[i-1])*i-(nums[i]-nums[i-1])*(n-i)```.
+::::::::::::::
+Others/168.Excel-Sheet-Column-Title/168.Excel-Sheet-Column-Title.cpp
+::::::::::::::
+class Solution {
+public:
+    string convertToTitle(int n) 
+    {
+        string result;               
+                
+        while (n>0)
+        {            
+            n--;
+            result=char('A'+(n%26))+result;
+            n=n/26;
+        }
+        return result;
+    }
+};
 ::::::::::::::
 Others/1706.Where-Will-the-Ball-Fall/1706.Where-Will-the-Ball-Fall.cpp
 ::::::::::::::
@@ -5005,3 +2824,2185 @@ Others/2158.Amount-of-New-Area-Painted-Each-Day/Readme.md
 通常的扫描线算法跟踪的是每个分割区间的重叠数目（比如说这一段区间有三条线段重叠，下一个区间有两条线段重叠），但本题跟踪的是每个区间的重叠信息。我们可以用于扫描线一样的算法，用一个有序集合来跟踪在每个分割区间内，有哪些线段在此重叠：如果是线段开头就加入，如果是线段结尾就删除。显然，编号最小的线段最先拥有这个区间的打印权，故把这段分割区间的长度记在这条线段上即可。
 
 最终输出每条线段的打印总长度。
+::::::::::::::
+Others/240.Search-a-2D-Matrix-II/240.Search a 2D Matrix II.cpp
+::::::::::::::
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) 
+    {
+        int M=matrix.size();
+        if (M==0) return false;
+        int N=matrix[0].size();
+        
+        int i=M-1;
+        int j=0;
+        while (i>=0 && j<=N-1)
+        {
+            if (matrix[i][j]==target)
+                return true;
+            else if (matrix[i][j]<target)
+                j++;
+            else if (matrix[i][j]>target)
+                i--;
+        }
+        
+        if (i>=0 && j<=N-1)
+            return true;
+        else
+            return false;
+    }
+};
+::::::::::::::
+Others/240.Search-a-2D-Matrix-II/Readme.md
+::::::::::::::
+### 240.Search-a-2D-Matrix-II
+非常巧妙的解法：从矩阵的左下角出发，如果比target小则右移，如果比target大则上移，直至找到target或者出界。
+
+这个方法可以用到所有基于这种矩阵的题目，比如373和378，就是配合二分法可以得到更高效的解。
+
+
+[Leetcode Link](https://leetcode.com/problems/search-a-2d-matrix-ii)::::::::::::::
+Others/252.Meeting-Rooms/252.Meeting-Rooms.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    bool canAttendMeetings(vector<Interval>& intervals) 
+    {
+        vector<pair<int,int>>q;
+        for (int i=0; i<intervals.size(); i++)
+        {
+            q.push_back({intervals[i].start,1});
+            q.push_back({intervals[i].end,-1});
+        }
+        
+        sort(q.begin(),q.end());
+        
+        int count = 0;
+        for (int i=0; i<q.size(); i++)
+        {
+            count+=q[i].second;
+            if (count>1) return false;
+        }
+        return true;
+            
+    }
+};
+::::::::::::::
+Others/252.Meeting-Rooms/Readme.md
+::::::::::::::
+### 252.Meeting-Rooms
+
+遍历所有的ｉｎｔｅｒｖａｌ，将这样所有的{start,1}和{end,-1}加入一个数组ｑ．然后将ｑ排序．注意，对于同一个时刻，{end,-1}会比{start,1}先处理．这在本题是合理的，因为所有的有效区间的长度都至少为１，这样的话类似[t,t]这样的区间就不会被包括进来．
+
+我们依次遍历这个ｑ的元素，将第二个ｌａｂｅｌ的值累加进ｃｏｕｎｔ．发现当count>1时，即说明有两个重合的区间，返回ｆａｌｓｅ
+
+
+[Leetcode Link](https://leetcode.com/problems/meeting-rooms)::::::::::::::
+Others/253.Meeting-Rooms-II/253.Meeting-Rooms-II.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+    static bool cmp1(Interval a, Interval b)
+    {
+        return a.start<b.start;
+    }
+    struct cmp2
+    {
+        bool operator()(Interval a, Interval b)
+        {
+            return a.end>b.end;
+        }            
+    };
+    
+public:
+    int minMeetingRooms(vector<Interval>& intervals) 
+    {
+        sort(intervals.begin(),intervals.end(),cmp1);
+        
+        priority_queue<Interval,vector<Interval>,cmp2>pq;
+        
+        int count=0;
+        int i=0;
+        while (i<intervals.size())
+        {
+            while (pq.empty() || i<intervals.size() && pq.top().end>intervals[i].start)
+            {
+                pq.push(intervals[i]);
+                i++;
+            }                
+            int n=pq.size();
+            count=max(count,n);
+            pq.pop();
+        }
+        return count;
+    }
+};
+::::::::::::::
+Others/253.Meeting-Rooms-II/253.Meeting-Rooms-II_v2.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+    static bool cmp1(Interval a, Interval b)
+    {
+        return a.start<b.start;
+    }
+public:
+    int minMeetingRooms(vector<Interval>& intervals) 
+    {
+        sort(intervals.begin(),intervals.end(),cmp1);
+        multiset<int>Set;
+        int count=0;
+        int i=0;
+        while (i<intervals.size())
+        {            
+            while (Set.size()==0 || i<intervals.size() && *Set.begin()>intervals[i].start)    
+            {
+                Set.insert(intervals[i].end);
+                count = max(count,int(Set.size()));
+                i++;                                
+            }                                    
+            Set.erase(Set.begin());                                     
+        }
+        return count;
+    }
+};
+::::::::::::::
+Others/253.Meeting-Rooms-II/Readme.md
+::::::::::::::
+### 253.Meeting-Rooms-II
+
+#### 解法1:
+
+此题用到了sort和pq的组合拳，是一类题目的典型。
+
+先将intervals按照start进行从先到后排序。注意，这是解此类问题的一个常见步骤。
+
+然后我们构建一个pq，这个队列里按照end自动排序，end小的排在栈顶。我们令pq里面存装的是当前正在同时进行的会议。
+
+在遍历intervals元素的过程中，如果pq.top().end>intervals[i].start，说明正在进行的会议里，即使最早结束的那个，也都晚于当前考虑的会议intervals[i]的开始时间。没办法，但当前会议必须开，所以要将intervals[i]加入pq里面。pq的size因此变大。然后考虑下一个i，直至pq.top().end<=intervals[i].start。
+
+然后将pq弹出最早结束的一个会议，重复之前的操作，会有新的会议加入需要同时举行。
+
+输出结果就是pq在整个遍历过程中的最大size。
+
+对于pq的数据结构，我们在C++中还可以用multiset来实现，因为它也是自动有序的。
+
+#### 解法2:
+
+将所有{startTime,1}和{endTime,-1}加入一个数组,然后将这个数组按照时间戳排序.注意,本题中所有的有效区间的长度必须大于0,所以,{time,-1}要比{time,1}排序更靠前.
+
+使用一个count依时间顺序将所有的+1/-1进行累加.当count>0的时候标志着一个会议的开始,重新归为0的时候标着一个会议的结束.
+
+
+[Leetcode Link](https://leetcode.com/problems/meeting-rooms-ii)::::::::::::::
+Others/277.Find-the-Celebrity/277.Find-the-Celebrity.cpp
+::::::::::::::
+/* The knows API is defined for you.
+      bool knows(int a, int b); */
+
+class Solution {
+public:
+    int findCelebrity(int n) 
+    {        
+        int candidate = 0;
+        for (int i=1; i<n; i++)
+        {
+            if (knows(candidate, i))
+                candidate = i;
+        }
+        
+        for (int i=0; i<n; i++)
+        {
+            if (i==candidate) continue;
+            if (knows(candidate, i) || !knows(i, candidate))
+                return -1;
+        }
+        return candidate;
+    }
+};
+::::::::::::::
+Others/277.Find-the-Celebrity/Readme.md
+::::::::::::::
+### 277.Find-the-Celebrity
+
+我们讨论knows(i,j)的结果。如果结果是true，那么i肯定不是明星。如果结果是false，那么j肯定不是明星。可见每一次调用knows，就可以筛除一个人。因此我们可以设计“打擂台”的机制，将所有的人轮转一遍，赢的人留下来，输的人淘汰，那么最终我们只会存留一个人。
+
+但是对于这个最终存留的人我们还需要再次验证它是不是明星。所以还需要再调用将所有人轮转一遍，如果```knows(candidate,i)||!knows(i,candidate)```，那么这个候选人也不是明星。
+::::::::::::::
+Others/311.Sparse-Matrix-Multiplication/311.Sparse Matrix Multiplication.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) 
+    {
+        int M=A.size();
+        int N=B[0].size();
+        int K=A[0].size();
+        
+        auto result = vector<vector<int>>(M,vector<int>(N,0));
+        
+        for (int i=0; i<M; i++)
+         for (int k=0; k<K; k++)
+         {
+             if (A[i][k]==0) continue;
+             
+             for (int j=0; j<N; j++)
+                result[i][j]+=A[i][k]*B[k][j];
+         }
+        
+        return result;
+    }
+};
+::::::::::::::
+Others/311.Sparse-Matrix-Multiplication/Readme.md
+::::::::::::::
+### 311.Sparse-Matrix-Multiplication
+
+传统的矩阵乘法的写法是：
+```cpp
+        int M=A.size();
+        int N=B[0].size();
+        int K=A[0].size();
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             for (int k=0; k<K; k++)
+                result[i][j]+=A[i][k]*B[k][j];
+         }
+```
+观察可以发现，第二层和第三层循环之间没有其他语句，完全可以对调。对调之后，等于是给定了i和k再遍历j，就可以提前判断A[i][k]的性质，如果是零的话就可以跳过第三个循环。
+```cpp
+        for (int i=0; i<M; i++)
+         for (int k=0; k<K; k++)
+         {
+             if (A[i][k]==0) continue;
+             
+             for (int j=0; j<N; j++)
+                result[i][j]+=A[i][k]*B[k][j];
+         }
+```         
+
+
+[Leetcode Link](https://leetcode.com/problems/sparse-matrix-multiplication)::::::::::::::
+Others/324.Wiggle-Sort-II/324.Wiggle-Sort-II.cpp
+::::::::::::::
+class Solution {
+public:
+    void wiggleSort(vector<int>& nums) 
+    {
+        int n = nums.size();
+        auto sorted = nums;
+        sort(sorted.begin(), sorted.end());
+        int i = (n-1)/2, j = n-1;
+
+        int sign = 1;
+        for (int k=0; k<n; k++)
+        {
+            if (sign==1)
+            {
+                nums[k] = sorted[i];
+                i--; 
+            }
+            else
+            {
+                nums[k] = sorted[j];
+                j--; 
+            }
+            sign = 1-sign;
+        }
+        
+    }
+};
+::::::::::::::
+Others/324.Wiggle-Sort-II/Readme.md
+::::::::::::::
+### 324.Wiggle-Sort-II
+
+此题是一道智力题。很明显我们会先排序，利用已知的大小关系来排列数组的元素。一个简单的方法就是用双指针，一个指向末尾（最大的数），另一个指向中间（中位数）。每次取数的时候大小交错，取完一个分别将各自的指针往前移动一次。这样一定能保证是大小交错的。
+
+另外有一种解法，从中位数往两边取，虽然也可能保证大小交错，但是最开始选中的两个数因为是相邻的，有可能相等，不符合题意。所以这种解法是错误的。
+
+
+[Leetcode Link](https://leetcode.com/problems/wiggle-sort-ii)::::::::::::::
+Others/347.Top-K-Frequent-Elements/347.Top-K-Frequent-Elements_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) 
+    {
+        unordered_map<int,int>freq;
+        for (auto x: nums)
+            freq[x]++;
+
+        int left = 0, right = INT_MAX;
+        while (left < right)
+        {
+            int mid = right - (right-left)/2;
+            if (count(freq, mid)>=k)
+                left = mid;
+            else
+                right = mid-1;
+        }
+
+        int f = left;
+
+        vector<int>rets;
+        for (auto x: freq)
+        {
+            if (x.second >= f)
+                rets.push_back(x.first);
+        }
+        return rets;
+    }
+
+    int count(unordered_map<int,int>&freq, int th)
+    {
+        int ret = 0;
+        for (auto x: freq)
+            ret += x.second >=th;
+        return ret;
+    }
+};
+::::::::::::::
+Others/347.Top-K-Frequent-Elements/347.Top-K-Frequent-Elements_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) 
+    {
+        unordered_map<int,int>freq;
+        for (auto x: nums)
+            freq[x]++;
+
+        vector<pair<int,int>>arr;
+        for (auto x: freq)
+            arr.push_back(x);
+
+        int f = quickselect(arr, 0, arr.size()-1, k);
+
+        vector<int>rets;
+        for (auto x: arr)
+        {
+            if (x.second >= f)
+                rets.push_back(x.first);
+        }
+        return rets;
+    }
+
+    int quickselect(vector<pair<int,int>>arr, int a, int b, int k)
+    {
+        int pivot = arr[(a+b)/2].second;
+        int i=a, j=b, t=a;
+        while (t<=j)
+        {
+            if (arr[t].second > pivot)
+            {
+                swap(arr[j], arr[t]);
+                j--;
+            }
+            else if (arr[t].second < pivot)
+            {
+                swap(arr[i], arr[t]);
+                i++;
+                t++;
+            }
+            else
+            {
+                t++;
+            }
+        }
+
+        if (b-j>=k) return quickselect(arr, j+1, b, k);
+        else if (b-i+1>=k) return pivot;
+        else return quickselect(arr, a, i-1, k-(b-i+1));
+    }
+};
+::::::::::::::
+Others/347.Top-K-Frequent-Elements/Readme.md
+::::::::::::::
+### 347.Top-K-Frequent-Elements
+
+#### 解法1： 二分搜值
+
+#### 解法2： qucik select
+此题另外一种常见做法是quick select，用o(N)的时间来实现寻找第k大元素（即频率）。具体的思想和quick sort很像，每次找一个pivot，根据pivot的值用三指针算法把整个arr重新调整为三部分（小于pivot、等于pivot、大于pivot）。然后根据各部分数量与k的关系，选择下一步递归需要处理哪个部分。
+
+找到这个频率值f之后，再扫一遍全部所有的频次，凡是频次大于f的元素就是答案。
+::::::::::::::
+Others/348.Design-Tic-Tac-Toe/348.Design-Tic-Tac-Toe.cpp
+::::::::::::::
+class TicTacToe {
+    int Row[100];
+    int Col[100];
+    int Diag[2];
+public:
+    /** Initialize your data structure here. */
+    int n;
+    TicTacToe(int n) {        
+        this->n = n;
+        memset(Row, 0, sizeof(Row));
+        memset(Col, 0, sizeof(Col));
+        memset(Diag, 0, sizeof(Diag));
+    }
+    
+    /** Player {player} makes a move at ({row}, {col}).
+        @param row The row of the board.
+        @param col The column of the board.
+        @param player The player, can be either 1 or 2.
+        @return The current winning condition, can be either:
+                0: No one wins.
+                1: Player 1 wins.
+                2: Player 2 wins. */
+    int move(int row, int col, int player) 
+    {       
+        if (player==1)
+        {
+            Row[row]++;
+            Col[col]++;
+            if (row==col)
+                Diag[0]++;
+            if (row+col==n-1)
+                Diag[1]++;
+            
+            if (Row[row]==n || Col[col]==n || Diag[0]==n || Diag[1]==n)
+                return 1;            
+        }
+        if (player==2)
+        {
+            Row[row]--;
+            Col[col]--;
+            if (row==col)
+                Diag[0]--;
+            if (row+col==n-1)
+                Diag[1]--;
+            
+            if (Row[row]==-n || Col[col]==-n || Diag[0]==-n || Diag[1]==-n)
+                return 2;            
+        }        
+        // cout<<Row[row]<<" "<<Col[col]<<" "<<Diag[0]<<" "<<Diag[1]<<endl;
+        return 0;
+    }
+};
+
+/**
+ * Your TicTacToe object will be instantiated and called as such:
+ * TicTacToe* obj = new TicTacToe(n);
+ * int param_1 = obj->move(row,col,player);
+ */
+::::::::::::::
+Others/348.Design-Tic-Tac-Toe/Readme.md
+::::::::::::::
+### 348.Design-Tic-Tac-Toe
+
+因为题目保证了每个落子都是有效的，我们只需要给每行/列/对角做一个计数器即可。如果是player落子，则该行/列/对角增一，反之则该行/列/对角减一。如果某次落子后，任意行/列/对角达到n或者-n，即说明有人获胜。
+::::::::::::::
+Others/420.Strong-Password-Checker/Readme.md
+::::::::::::::
+### 420.Strong-Password-Checker
+
+此题感觉比较难.这里,我们约定MissingType表示缺了几种类型的字符(大写,小写,数字),取值范围是[0,3].另外约定change表示我们最终方案里需要替换的次数.deleted表示我们最终方案里需要删除的次数.
+
+当```len(s)<6```时,需要添加6-len(s)个字符.注意到,此中情况下没有重复序列的问题,并且add的操作同时可以解决MissingType的问题.所以最终答案是```max(MissingType,6-len(s))```
+
+当```6<=len(s)<=20```时,只存在MissingType和重复序列的问题,而没有需要删除字符的问题.我们容易计算出最高效的"替换"操作方案,也就是每遇到aaa的情况就将第三个元素替换成别的,计做一次change.这样所需的change是最少.同时,考虑到"替换"也可以解决MissingType的问题.所以最终答案是```max(MissingType,change)```
+
+当```len(s)>20```时,会同时存在MissingType,重复序列,删除字符的问题,情况最为复杂.我们慢慢分析.
+
+首先我们考虑最高效的"替换"操作,如前,我们容易计算出所需要的最少的change.完成这套操作之后,消灭了重复序列的问题.
+
+然后考虑字符串过长的问题,共有to_delete个元素需要删除.如果我们简单地再删除这么多字符,总计change+to_delete个操作,这是不高效的.因为我们可以用一些"删除"操作来等效之前的"替换"操作.
+
+举个例子来看,如果```...aaa...```,我们采用"替换"操作的话,需要一次change(替换最后一个a);而如果我们"删除"最后一个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行一次必要的"删除"操作(为什么说是必要,是因为总共有to_delete这么多元素等待删除),而之前进行的"替换"操作就不必要了,也就是change可以减一.
+
+再举个例子来看,如果```...aaaa...```,我们采用"替换"操作的话,需要一次change(替换第三个a);而如果我们"删除"两个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行两次必要的"删除"操作,而之前进行的"替换"操作就不必要了,即change同样可以减一.
+
+再举个例子来看,如果```...aaaaa...```,我们采用"替换"操作的话,需要一次change(替换第三个a);而如果我们"删除"三个a的话,同样也能使这个字符串合法.所以结论是,我们在这里可以进行三次必要的"删除"操作,而之前进行的"替换"操作就不必要了,即change同样可以减一.
+
+以上这些例子说明什么意思?因为删除to_delete个字符是"必选动作",如果我们在做这些必选动作的时候,能够代替掉越多的change的话,那就是最高效的方案.再分析一下,第一个例子代表了连续重复字串长度```len%3==0```,第二个例子代表了连续重复字串长度```len%3==1```,第三个例子代表了其他情况.我们在遍历s的时候,可以统计这些情况出现的频次,按照优先级的顺序,每做一次(或者两次,三次)"删除"操作,可以避免一次"替换"操作.
+
+最终的结果就是,总共进行的"删除"操作(deleted),加上没有被抵消的"替换"操作(change).注意,change操作可以抵消MissingType,不够抵消的话,需要额外考虑MissingType的个数.
+
+
+[Leetcode Link](https://leetcode.com/problems/strong-password-checker)
+::::::::::::::
+Others/423.Reconstruct-Original-Digits-from-English/423.Reconstruct-Original-Digits-from-English.cpp
+::::::::::::::
+class Solution {
+public:
+    string originalDigits(string s) 
+    {
+        vector<string>words={"zero","two","four","six","eight","five","seven","one","three","nine"};
+        vector<int>nums={0,2,4,6,8,5,7,1,3,9};
+        vector<int>distinct={'z','w','u','x','g','f','v','o','h','i'};
+        vector<int>str(26,0);
+        string result;
+        
+        for (auto ch:s) str[ch-'a']++;
+        for (int i=0; i<10; i++)
+        {
+            int k = str[distinct[i]-'a'];            
+            for (int j=0; j<k; j++)
+                result+=to_string(nums[i]);
+            for (auto ch: words[i])            
+                str[ch-'a']-=k;
+        }
+        
+        sort(result.begin(),result.end());
+        
+        return result;
+    }
+};
+::::::::::::::
+Others/423.Reconstruct-Original-Digits-from-English/Readme.md
+::::::::::::::
+### 423.Reconstruct-Original-Digits-from-English
+
+此题不必用DFS蛮干，有非常巧妙的解法。
+
+观察0,2,4,6,8,对应的单词zero,two,four,six,eight. 可以发现对应的z,w,r,x,g这个五个字母都是各自独有的（考虑全部十个单词）。 所有在一个长字符串中，有多少z,w,r,x,g,就说明了正好有多少个0,2,4,6,8. 
+
+那剩下的五个单词数目如何确定呢？其实，在长字符串中刨除了之前说的这五个单词之后，"five","seven","one","three","nine" 又“依次”“分别”有各自的特征字母f,v,o,h,i。也就是说除去这个单词后，剩下的有多少个字母f，就说明有多少个5；再除去所有5之后，剩下的有多少v，就说明有多少个7，依次类推。
+
+
+[Leetcode Link](https://leetcode.com/problems/reconstruct-original-digits-from-english)::::::::::::::
+Others/453.Minimum-Moves-to-Equal-Array-Elements/453.Minimum-Moves-to-Equal-Array-Elements.cpp
+::::::::::::::
+class Solution {
+public:
+    int minMoves(vector<int>& nums) 
+    {
+        int MIN=INT_MAX;
+        for (int i=0; i<nums.size(); i++)        
+            MIN=min(nums[i],MIN);
+        
+        int result=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            result+=nums[i]-MIN;
+        }
+        
+        return result;        
+    }
+};
+::::::::::::::
+Others/453.Minimum-Moves-to-Equal-Array-Elements/Readme.md
+::::::::::::::
+#### 453.Minimum-Moves-to-Equal-Array-Elements
+
+将n-1个数全部加一，等效于将剩下的那个数减一。所以，只要累加所有元素与数列最小值之差就是最终答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-moves-to-equal-array-elements)::::::::::::::
+Others/466.Count-The-Repetitions/466.Count-The-Repetitions.cpp
+::::::::::::::
+class Solution {
+public:
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) 
+    {
+        int L1=s1.size();
+        int L2=s2.size();
+        auto PairPos=vector<vector<int>>(L2,vector<int>(L1,-1));
+        auto PairCount=vector<vector<int>>(L2,vector<int>(L1,-1));
+        
+        int y = 0;        
+        int x;
+        int count=0;
+        for (int i=0; i<L1*n1; i++)
+        {
+            x = i%L1;
+            y = y%L2;
+            if (s1[x]==s2[y])
+            {
+                if (y==L2-1) count++;
+                
+                if (PairPos[y][x]!=-1 && i+(i-PairPos[y][x])<L1*n1)
+                {                    
+                    i+=i-PairPos[y][x];
+                    count+=count-PairCount[y][x];
+                }                
+                
+                PairPos[y][x]=i;
+                PairCount[y][x]=count;
+                y++;                
+            }                
+        }
+        return count/n2;
+    }
+};
+::::::::::::::
+Others/466.Count-The-Repetitions/Readme.md
+::::::::::::::
+### 466.Count-The-Repetitions/
+
+此题要找到第一个突破口．题意要求将s2重复n2次后再最多重复M次，使得其结果能够contained in S1．由此可以迅速反应到，本质就是求s2能重复多少次使得contained in S1．如果s2能最多重复Ｒ次使得contained in S1，显然```M=R/n2```
+
+于是接下来考虑S1=s1*n1里有多少个重复的s2．原则上，这只要顺着S1过一遍就得到答案了．另外，因为S1本质是n1个s1串联，我们不需要显式地存储下整个S1，只需要一个指针不断地在s1里循环即可．于是第一个版本很容易写出来．这里用i表示S1里的index，x和y表示在s1和s2里面的index.
+```cpp
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) 
+    {
+        int L1=s1.size();
+        int L2=s2.size();        
+        int y = 0;        
+        int x;
+        int count=0;
+        for (int i=0; i<L1*n1; i++)
+        {
+            x = i%L1;
+            y = y%L2;
+            if (s1[x]==s2[y])
+            {                
+                if (y==L2-1)
+                count++;
+                y++;
+            }                
+        }
+        return count/n2;
+    }
+```
+上面的这个版本会超时．很容易看出，因为S1是有很多相同的s1串联组成的，所以Ｓ1里面极有可能有许多连续循环出现的片段，而这些片段本身已经是s2（或连续的几个s2）的一个扩集．如果我们重复对这些每个片段再进行逐一扫描，而没有充分利用这些重复信息，就会有不必要的计算．
+
+于是我们考虑应该如何找出这些＂连续循环出现的基本片段＂．如前所述，每个片段应该恰好对应s2（或连续的几个s2）的一个扩集．在S1里这个片段不断循环，对应s2也不断地循环．于是我们考虑追踪一个从s2到s1的映射．如果```s2[y]==s1[x]```（表示这对字符匹配）并且这个映射之前曾经出现过，那么我们就可以认为从上次出现映射的位置ｉ开始，到现在的位置ｉ，这之间经过了S1的一个＂循环片段＂，相应地对应于经历了若干个s2．由此我们可以知道S1的这个循环片段的长度，以及这个长度内对应有几个s2的出现．我们在之后直接利用这个循环片段的长度为单位来往后推进，而不用再逐字地分析．
+
+我设置了这个映射所需要保留的两个信息．第一个```PairPos[y][x]```表示出现```s2[y]==s1[x]```这个映射时的```i```，即对应的S1的index；第二个```PairCount[y][x]```表示出现```s2[y]==s1[x]```这个映射时总共计数了多少个s2．于是，当我们发现这个映射第二次出现时，说明这个＂循环片段＂的长度就是```p=i-PairPos[y][x]```，在这个循环长度里出现了```t=count-PairCount[y][x]```个s2．此后，我们对于i的推进，就以＂循环片段＂的长度为p单位，而count的增长也就以t为单位．
+
+
+
+[Leetcode Link](https://leetcode.com/problems/count-the-repetitions)::::::::::::::
+Others/479.Largest-Palindrome-Product/479.Largest-Palindrome-Product.cpp
+::::::::::::::
+class Solution {
+public:
+    // Rank: 34.85% -> 81.82%
+    int largestPalindrome(int n) 
+    {
+        if (n==1) return 9;
+        int lower = pow(10,n-1), upper = lower * 10 - 1;
+        
+        for (int i=upper; i>=lower; i--)
+        {
+            long long palindrome = i;
+            for (int j = i; j > 0; j /= 10) 
+            {
+                palindrome = palindrome * 10 + j % 10;
+            }
+            
+            for (int j=sqrt(palindrome); j <= upper; j++)
+            {
+                if (palindrome%j==0 && palindrome/j<=upper)
+                    return palindrome%1337;
+            }
+        }
+        
+        return -1;
+    }
+};
+::::::::::::::
+Others/479.Largest-Palindrome-Product/Readme.md
+::::::::::::::
+### 479.Largest-Palindrome-Product
+
+两个n位数的数字相乘，得到的最大是2n位数，最小的2n-1位数。但是2n-1位数的数值明显要比2n位数要小，所以有一定的理由相信，答案应该在2n位数里面找。
+
+对于所有2n位数的回文数，怎么列举出来？一种方法是：列出所有2n位数，判断是否是回文数；第二种方法，列出所有n位数，构造出对应的2n位数的回文数。显然，后者更加高效。当n最大为8时，回文数是16位，10^16<(2^4)^16<2^64，所以用int64可以装下。
+
+有了一个2n位的回文数，再一一尝试所有的n位数（从大往小尝试），如果能除尽，且商仍是n位数，那么这个回文数就是符合题意的。
+
+本题的时间复杂度理论上是NlogN，但是考虑到我们从大到小遍历回文数，遇到true就返回，所以实际所用的时间并没有那么高。
+
+
+[Leetcode Link](https://leetcode.com/problems/largest-palindrome-product)
+::::::::::::::
+Others/689.Maximum-Sum-of-3-Non-Overlapping-Subarrays/689.Maximum-Sum-of-3-Non-Overlapping-Subarrays.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) 
+    {
+        int N=nums.size();
+        
+        vector<int>Sum(N);
+        Sum[0]=nums[0];
+        for (int i=1; i<N; i++)
+            Sum[i]=Sum[i-1]+nums[i];        
+        
+        vector<int>LeftSum(N);
+        vector<int>LeftIdx(N);
+        int Ksum=0;
+        for (int i=0; i<k; i++)
+            Ksum+=nums[i];
+        LeftSum[k-1]=Ksum;
+        LeftIdx[k-1]=k-1;
+        for (int i=k; i<N; i++)
+        {
+            Ksum+=nums[i];
+            Ksum-=nums[i-k];
+            if (Ksum>LeftSum[i-1])
+            {
+                LeftSum[i]=Ksum;
+                LeftIdx[i]=i;
+            }                
+            else
+            {
+                LeftSum[i]=LeftSum[i-1];
+                LeftIdx[i]=LeftIdx[i-1];
+            }                
+        }
+        
+        vector<int>RightSum(N);
+        vector<int>RightIdx(N);
+        Ksum=0;
+        for (int i=N-1; i>=N-k; i--)
+            Ksum+=nums[i];
+        RightSum[N-k]=Ksum;
+        RightIdx[N-k]=N-k;
+        for (int i=N-k-1; i>=0; i--)
+        {
+            Ksum+=nums[i];
+            Ksum-=nums[i+k];
+            if (Ksum>RightSum[i+1])
+            {
+                RightSum[i]=Ksum;
+                RightIdx[i]=i;
+            }                
+            else
+            {
+                RightSum[i]=RightSum[i+1];
+                RightIdx[i]=RightIdx[i+1];
+            }                
+        }
+        
+        int temp=INT_MIN;
+        vector<int>result(3);
+        for (int i=k; i<=N-k-1; i++)
+        {
+            if (LeftSum[i-1]+Sum[i+k-1]-Sum[i-1]+RightSum[i+k]>temp)
+            {
+                temp = LeftSum[i-1]+Sum[i+k-1]-Sum[i-1]+RightSum[i+k];
+                result = {LeftIdx[i-1]-k+1,i,RightIdx[i+k]};
+            }
+        }
+        
+        return result;        
+    }
+};
+::::::::::::::
+Others/689.Maximum-Sum-of-3-Non-Overlapping-Subarrays/Readme.md
+::::::::::::::
+### 689.Maximum-Sum-of-3-Non-Overlapping-Subarrays
+
+构建累加和数组LeftKSum[i]，表示在索引i左边（包括i）加和最大的连续k个数字；同理，rightKSum[i]表示索引i右边（包括i）加和最大的连续k个数字。这两个累加和数组都只要各扫一遍nums得到，是o(n)的计算量。
+
+最终我们只要遍历第k到第N-2k-1个元素作为中间一个subarray的起始点，查看leftKSum[i-1]+sum(i~i+k-1)+rightKsum[i+k]的最大值即可。
+
+因为此题还需要说出三个subarray的位置，所以我们多设一个LeftIdx和RightIdx，记录对应的索引位置，同构建LeftSum和RightSum的时候一起更新。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-sum-of-3-non-overlapping-subarrays)::::::::::::::
+Others/723.Candy-Crush/723.Candy-Crush.cpp
+::::::::::::::
+class Solution {
+    int M,N;
+public:
+    vector<vector<int>> candyCrush(vector<vector<int>>& board) 
+    {
+        vector<vector<int>>newboard = board;
+        
+        M=board.size();
+        N=board[0].size();
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        auto visited=vector<vector<int>>(M,vector<int>(N,0));
+        int flag=0;
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]==0 || visited[i][j]==1) continue;
+             
+             int x1=i;
+             int x2=i;
+             while (x1-1>=0 && board[x1-1][j]==board[i][j])
+                 x1--;
+             while (x2+1<M && board[x2+1][j]==board[i][j])
+                 x2++;
+             if (x2-x1+1>=3)
+             {
+                 flag=1;
+                 for (int ii=x1; ii<=x2; ii++)
+                 {
+                     visited[ii][j]=1;
+                     newboard[ii][j]=0;
+                 }
+             }
+             
+             int y1=j;
+             int y2=j;
+             while (y1-1>=0 && board[i][y1-1]==board[i][j])
+                 y1--;
+             while (y2+1<N && board[i][y2+1]==board[i][j])
+                 y2++;
+             if (y2-y1+1>=3)
+             {
+                 flag=1;
+                 for (int jj=y1; jj<=y2; jj++)
+                 {
+                     visited[i][jj]=1;
+                     newboard[i][jj]=0;
+                 }
+             }             
+         }
+                        
+        /*
+        for (int i=0; i<M; i++)
+        {
+            for (int j=0; j<N; j++)
+                cout<<newboard[i][j]<<" ";
+            cout<<endl;
+        }
+        */
+        
+        for (int j=0; j<N; j++)
+        {
+            int a=M-1;
+            int b=M-1;
+            while (b>=0)
+            {
+                if (newboard[b][j]!=0)
+                {
+                   newboard[a][j]=newboard[b][j];
+                    b--;
+                    a--;
+                }
+                else
+                    b--;
+            }
+            for (int i=a; i>=0; i--)
+                newboard[i][j]=0;            
+        }        
+        
+        if (flag==0)
+            return board;
+        else
+            return candyCrush(newboard);        
+    }        
+};
+::::::::::::::
+Others/723.Candy-Crush/Readme.md
+::::::::::::::
+### 723.Candy-Crush
+
+基本思想是，对于每一个不存遍历过的、非零的board[i][j]，往上下、左右两个方向搜索：如果同一直线上有超过三个相同的格子就将他们标记为已经遍历。最终所有遍历过的格子置零，然后在纵方向上塌落。
+
+注意，如果有塌落的话，就需要再次递归调用自身，直至某回合的遍历之后board没有任何改动为止。
+
+
+[Leetcode Link](https://leetcode.com/problems/candy-crush)::::::::::::::
+Others/732.My-Calendar-III/732.My-Calendar-III.cpp
+::::::::::::::
+class MyCalendarThree {
+public:
+    multiset<pair<int,int>>Set;
+    
+    MyCalendarThree() 
+    {
+        
+    }
+    
+    int book(int start, int end) 
+    {
+        Set.insert({start,1});
+        Set.insert({end,-1});
+        
+        int count=0;
+        int result=0;
+        for (auto a: Set)
+        {
+            count+=a.second;
+            result = max(result,count);
+        }
+        return result;
+        
+    }
+};
+
+/**
+ * Your MyCalendarThree object will be instantiated and called as such:
+ * MyCalendarThree obj = new MyCalendarThree();
+ * int param_1 = obj.book(start,end);
+ */
+::::::::::::::
+Others/732.My-Calendar-III/Readme.md
+::::::::::::::
+### 732.My-Calendar-III
+
+此题有奇思妙解. 
+
+我们设计一个顺序的multiset<pair<int,int>>Set,每次调用我们就往里面放置{start,1}和{end,-1}.然后遍历这个集合,按照从小到大的顺序更新一个计数器,遇到1就加一,遇到-1就减一.
+
+奇妙的就是,你这样可以实时得到的,就是当前k booking的状态.遍历完之后这个计数器的历史最大值就是答案.
+
+
+[Leetcode Link](https://leetcode.com/problems/my-calendar-iii)::::::::::::::
+Others/759.Employee-Free-Time/759.Employee-Free-Time.cpp
+::::::::::::::
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+    static bool cmp(pair<int,int>&a, pair<int,int>&b)
+    {
+        if (a.first!=b.first)
+            return a.first < b.first;
+        else
+            return a.second > b.second;
+    }
+public:
+    vector<Interval> employeeFreeTime(vector<vector<Interval>>& schedule) 
+    {
+        vector<pair<int,int>>diff;
+        for (int i=0; i<schedule.size(); i++)
+        {
+            for (auto range: schedule[i])
+            {
+                diff.push_back({range.start, +1});
+                diff.push_back({range.end, -1});                                
+            }
+        }
+        
+        sort(diff.begin(),diff.end(), cmp);
+        
+        int count = 0;        
+        vector<Interval>rets;
+        int start = -1, end = -1;
+                        
+        for (auto d: diff)
+        {
+            count += d.second;
+            if (d.second==-1 && count==0)
+                start = d.first;
+            else if (d.second==1 && count==1 && start!=-1)
+            {
+                end = d.first;
+                rets.push_back({start,end});
+            }                
+        }
+        
+        return rets;
+    }
+};
+::::::::::::::
+Others/759.Employee-Free-Time/Readme.md
+::::::::::::::
+### 759.Employee-Free-Time
+
+此题看上去像是merge sorted list，但是用扫描线解法更简单。
+
+令count表示当前时刻有几个员工在工作。我们只考虑每个员工区间的两个端点，分别会造成计数器的增1和减1. 当我们将这些端点时刻从早到晚遍历一遍之后，观察如果计数器为0的这段时间，就是题目所需要的区间。
+
+注意每段free time interval的起点和终点如何判定。只有当count从1跳转为0的时候，是起点；当count从0跳转到1的时刻是终点。
+
+另外对端点排序的时候，对于相同时刻的端点，优先处理增1，这样会消除free time的误判
+::::::::::::::
+Others/775.Global-and-Local-Inversions/775.Global-and-Local-Inversions.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isIdealPermutation(vector<int>& A) 
+    {
+        int curMax = -1;
+        for (int i=1; i<A.size(); i++)
+        {
+            if (i>=2)
+                curMax = max(curMax, A[i-2]);
+            if (curMax > A[i])
+                    return false;
+            
+        }
+        return true;        
+    }
+};
+::::::::::::::
+Others/775.Global-and-Local-Inversions/Readme.md
+::::::::::::::
+### 775.Global-and-Local-Inversions
+
+对于A[i]而言，它不在乎A[i-1]是否比它大。即使比它大，也只是引入了一个local inversion，而不会有额外的global inversion。而要避免牵扯更多的global inversion，唯一的要求就是第i-2个元素及之前的所有元素都要比A[i]小。于是我们可以在遍历元素i的过程中，维护一个curMax，记录的是从第0个元素到第i-2个元素的最大值。只要出现```curMax > A[i]```即返回false。
+
+
+[Leetcode Link](https://leetcode.com/problems/global-and-local-inversions)::::::::::::::
+Others/782.Transform-to-Chessboard/782.Transform-to-Chessboard.cpp
+::::::::::::::
+class Solution {
+public:
+    int movesToChessboard(vector<vector<int>>& board) 
+    {        
+        int N=board.size();
+        
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (board[0][0]^board[i][0]!=board[0][j]^board[i][j]) return -1;
+                if (board[0][0]^board[0][j]!=board[i][0]^board[i][j]) return -1;
+            }
+                
+        int row1=0;
+        for (int i=0; i<N; i++)
+            if (board[i][0]==1) row1++;
+        if (abs(N-row1*2)>1) return -1;
+        
+        int col1=0;
+        for (int j=0; j<N; j++)
+            if (board[0][j]==1) col1++;
+        if (abs(N-col1*2)>1) return -1;        
+        
+        /****/
+        
+        int result=0;
+        
+        int countDiff1=0;
+        for (int i=0; i<N; i++)
+            if (board[i][0]!=i%2) countDiff1++;
+                
+        int countDiff2=0;
+        for (int j=0; j<N; j++)
+            if (board[0][j]!=j%2) countDiff2++;
+        
+        if (N%2==0)
+        {
+            result+=min(countDiff1,N-countDiff1)/2;
+            result+=min(countDiff2,N-countDiff2)/2;
+        }
+        else
+        {
+            if (countDiff1%2==1) countDiff1=N-countDiff1;
+            result+=countDiff1/2;
+            if (countDiff2%2==1) countDiff2=N-countDiff2;
+            result+=countDiff2/2;
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Others/782.Transform-to-Chessboard/Readme.md
+::::::::::::::
+### 782.Transform-to-Chessboard
+
+此题有比较大的难度。
+
+我们来思考，交换矩阵的列、行会带来什么影响？那就是，无论怎么变化之后，任意两列相对的same/different关系是不会变的，同理任意两行之间的same/different关系也不会变。考虑最后的棋盘图案，行只有两种模式，列也只有两种模式。这就意味着在初始状态，所有的列必须也只有两种模式，同理，所有的行也是只有两种模式。不满足这两种条件的，都不能通过变换得到棋盘图案。
+
+可行性的另外一个必要条件是：初始图案中，列的两种模式必须在数量上大体一致。也就是说，如果Ｎ是偶数，则两种数量一样；如果Ｎ是奇数，那么只可能一种比另一种多１个。同理，对于行方向也是如此。
+
+以上的两个判定条件用代码实现起来比较麻烦。这里有一种比较巧妙的方法来实现第一个判定条件：
+```cpp
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (board[0][0]^board[i][0]!=board[0][j]^board[i][j]) return -1;
+                if (board[0][0]^board[0][j]!=board[i][0]^board[i][j]) return -1;
+            }
+```
+我们可以这么理解，对于图案中任意的一个矩形ＲＯＩ：
+```
+AXXXXXB
+XXXXXXX
+CXXXXXD
+```
+因为所有的列只可能有两种模式，所以如果A=B，那么必须C=D（这两列是同一模式）；或者如果A!=B，那么必须C!=D（这两列是不同模式）。合并起来：```if (board[0][0]^board[i][0]!=board[0][j]^board[i][j])```。这样遍历所有的Ｄ的位置```(i,j)```之后，就能检验所有的列是否只有两种模式（相对于第０列）。
+
+同理，```if (board[0][0]^board[0][j]!=board[i][0]^board[i][j])```可以判断所有的行是否只有两种模式。
+
+接下来，因为所有的列都只有两种模式，所以我们只要考察每列的首位作为该列的代表，来判断所有的列的这两种模式在数量上是否大体一致。说明白了，就是抽取第一行，看０和１的数目是否大体相当。同理我们再抽取第一列，看０和１的数目是否大体相当。这两个条件也满足之后，说明本题是solvable.
+
+此题的第二部分就是考虑交换多少次实现棋盘图案。首先，要明白一个特点，所有的行交换和列交换都不会互相冲突。我们可以先实现所有的行交换，再实现所有的列交换。注意，行交换（或者列交换）之间的顺序显然是不能随意变化的。
+
+对于任意一个形如```0010100110```的数列，如果最少交换次数地变成一个０１交叉数列呢？
+
+如果Ｎ是偶数，那么最终的目标是```01010101```或者```10101010```均可．只要将目标数列与原数列比较，假设有m位不一样，那么只要交换m/2次就可以了。比较两个目标数列中取得到结果最小的那个。
+
+如果N是奇数，那么最终的目标必然是```101010101```（或者相反，但注意，两者只能有其一，这与N为偶数的情况不同！）。同上，我们将目标数列与原数列比较，假设有m位不一样，那么只要交换m/2次就可以了。注意，这里m必定会是偶数，如果m不是偶数，说明最终的目标模式不对，我们需要转而取N-m。
+
+最终的答案就是将调整行的次数加上调整列的次数之和。
+
+
+[Leetcode Link](https://leetcode.com/problems/transform-to-chessboard)::::::::::::::
+Others/794.Valid-Tic-Tac-Toe-State/794.Valid-Tic-Tac-Toe-State.cpp
+::::::::::::::
+class Solution {
+public:
+    bool validTicTacToe(vector<string>& board) 
+    {
+        int O=0;
+        int X=0;
+        for (int i=0; i<3; i++)
+            for (int j=0; j<3; j++)
+            {
+                if (board[i][j]=='O')
+                    O++;
+                else if (board[i][j]=='X')
+                    X++;
+            }
+        if (!(X==O || X-O==1)) return false;
+        if (X==O && win(board,'X')) return false;
+        if (X-O==1 && win(board,'O')) return false;
+        return true;
+    }
+    
+    bool win(vector<string>& board, char ch)
+    {
+        for (int i=0; i<3; i++)        
+            if (board[i][0]==ch && board[i][1]==ch && board[i][2]==ch)
+                return true;        
+        for (int j=0; j<3; j++)        
+            if (board[0][j]==ch && board[1][j]==ch && board[2][j]==ch)
+                return true;        
+        if (board[0][0]==ch && board[1][1]==ch && board[2][2]==ch)
+            return true;
+        if (board[2][0]==ch && board[1][1]==ch && board[0][2]==ch)
+            return true;
+        return false;
+    }
+};
+::::::::::::::
+Others/794.Valid-Tic-Tac-Toe-State/Readme.md
+::::::::::::::
+### 794.Valid-Tic-Tac-Toe-State
+
+此题乍看会觉得是DFS或BFS,从一个空棋盘开始进行搜索,查看是否能够搜索到需要的状态.其实有更巧妙的解法.
+
+首先,对于一个棋盘状态,X的数目只可能比O的数目多1,或者两者相等.除此之外的可以排除.
+
+其次,当X的数目比O的数目多1时,说明最后一步是X落子,那么O不可能此时在盘面上获胜.故如果发现win('O')就返回false
+
+类似的,当X的数目与O的数目相等时,说明最后一步是O落子,那么X不可能此时在盘面上获胜.故如果发现win('X')就返回false
+
+至于其他情况,不管两边棋子怎么摆放,都是可能的.
+
+
+[Leetcode Link](https://leetcode.com/problems/valid-tic-tac-toe-state)::::::::::::::
+Others/795.Number-of-Subarrays-with-Bounded-Maximum/795.Number-of-Subarrays-with-Bounded-Maximum_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int numSubarrayBoundedMax(vector<int>& nums, int left, int right) 
+    {
+        int n = nums.size();
+        vector<int>prevGreaterOrEqual(n,-1);
+        vector<int>nextGreater(n,n);
+
+        stack<int>Stack;
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()] < nums[i])
+            {
+                nextGreater[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        while (!Stack.empty()) Stack.pop();
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[Stack.top()] <= nums[i])
+            {
+                prevGreaterOrEqual[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        int ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            if (nums[i]>=left && nums[i]<=right)
+            {
+                ret += (i-prevGreaterOrEqual[i])*(nextGreater[i]-i);
+            }            
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Others/795.Number-of-Subarrays-with-Bounded-Maximum/795.Number-of-Subarrays-with-Bounded-Maximum_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int numSubarrayBoundedMax(vector<int>& A, int L, int R) 
+    {
+        long ret = 0;
+        int start = -1, validMax = -1;
+     
+        for (int i = 0; i < A.size(); i++) 
+        { 
+            if (A[i] > R) 
+            {                
+                start = -1;
+                validMax = -1;
+            }
+            else
+            {
+                if (start == -1)
+                    start = i;
+                if (A[i]<=R && A[i]>=L)
+                    validMax = i;                                
+                
+                if (start!=-1 && validMax!=-1)
+                    ret += (validMax-start+1);                
+            }
+        }
+ 
+        return ret;
+    }
+};
+::::::::::::::
+Others/795.Number-of-Subarrays-with-Bounded-Maximum/Readme.md
+::::::::::::::
+### 795.Number-of-Subarrays-with-Bounded-Maximum
+
+#### 解法1：
+我们枚举每个数值范围在[L,R]之间的数nums[i]，考虑如果它是subarray的最大值，那么这样的subarray有几个？很显然，我们只需要找到```j = prevGreater[i]```以及```k = nextGreater[i]```，那么这样的subarray的左边界可以到达j+1，右边界可以到达k-1，那么这样的subarray的个数就是```(i-j)*(k-i)```. 
+
+这样的做法需要three pass，并且要注意这种情况:[8,5,5,5,5,8]，且[L,R]=[4,6]，那么每个5作为最大值的时候可能会把区间[5,5,5,5]考虑进去，造成重复计数。一个解决方法就是我们规定，如果一个区间内如果有多个最大值，我们约定最靠左边的那个是“真正的”最大值。因此j的计算应该改为```j = previGreaterOrEqual[i]```.
+
+#### 解法2：
+首先，我们需要观察到，这个数组被大于R的元素分割成了若干段。任何subarray不能包含大于R的元素。所以我们只需要在每个片段里考察。
+
+假设这个片段的起点位置是start。本题枚举的技巧是：如果A[i]作为subarray的最后一个，那么这个subarray的第一个元素可以取在哪里？显然我们只要找左边最接近的、数值落在[L,R]区间的那个位置lastLR，那么只要subarray包含它，就是一个合法的subarray。所以以A[i]为结尾的合法subarray的个数就是```lastLR-start+1```.
+
+最终的答案就是遍历A[i]，累加以其为结尾的subarray的个数。
+::::::::::::::
+Others/798.Smallest-Rotation-with-Highest-Score/798.Smallest-Rotation-with-Highest-Score_v1.cpp
+::::::::::::::
+class Solution {
+public:
+    int bestRotation(vector<int>& A) 
+    {
+        int N = A.size();
+        vector<int>diff(N,0);
+        for (int i=0; i<N; i++)
+        {
+            if (A[i]<=i)
+            {
+                diff[0] += 1;
+                diff[(i-A[i]+1)%N]-=1;
+                diff[(i+1)%N]+=1;
+            }
+            else
+            {
+                diff[0] += 0;
+                diff[(i+1)%N] +=1;
+                diff[(i+1 + N-A[i]) % N] -= 1;
+            }            
+        }
+        
+        int sum = 0;
+        int ret = 0;
+        int K = 0;
+        for (int i=1; i<N; i++)
+        {
+            sum += diff[i];
+            if (sum > ret)
+            {
+                ret = sum;
+                K = i;
+            }
+        }
+        return K;
+    }
+};
+::::::::::::::
+Others/798.Smallest-Rotation-with-Highest-Score/798.Smallest-Rotation-with-Highest-Score_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int bestRotation(vector<int>& A) 
+    {
+        int N = A.size();
+        vector<int>diff(N,0);
+        for (int i=0; i<N; i++)
+        {
+            diff[(i-A[i]+1+N)%N]-=1;
+            diff[(i+1)%N]+=1;
+        }
+        
+        int sum = 0;
+        int ret = 0;
+        int K = 0;
+        for (int i=1; i<N; i++)
+        {
+            sum += diff[i];
+            if (sum > ret)
+            {
+                ret = sum;
+                K = i;
+            }
+        }
+        return K;
+    }
+};
+::::::::::::::
+Others/798.Smallest-Rotation-with-Highest-Score/Readme.md
+::::::::::::::
+### 798.Smallest-Rotation-with-Highest-Score
+
+我们考虑某一个数的A[i]和它对应的index i。
+
+我们先考虑```A[i]<=i```,此时根据规则我们知道A[i]对应的得分已经是1。 我们可以知道，每做一次左移，A[i]对应的index就会减1。所以当左移```i-A[i]+1```次之后，此时的元素位置变成A[i]-1，根据规则得分变为0. 如果将原始数组左移```i+1```次，那么元素会跑到数组的最后位置（即N-1），根据规则，得分又变成了1。举个例子，如果A="XXXX2XX"，那么左移0次到n-1次，分别对应的得分就是1110011。
+
+我们设立一个差分数组diff，其中diff[k]表示在左移k次之后A[i]对应的得分变化。于是我们就有
+```
+diff[0] += 1;
+diff[i-A[i]+1] -= 1;
+diff[i+1] += 1;
+```
+
+对于```A[i]>i```，根据规则，初始状态是得0分。当左移i+1次之后，元素跑到了数组的最后一个，一定小于index（即N-1），故得分开始变成1. 当再左移N-A[i]次后，元素跑到了A[i]的位置，此时得分开始变成0.举个例子，如果A="XX4XXXX"，那么左移0次到n-1次，分别对应的得分就是0001110。我们不难总结出：
+```
+diff[0] += 0;
+diff[i+1] += 1;
+diff[i+1+N-A[i]] -= 1;
+```
+
+有了上面两种情况，我们可以处理每个A[i]，计算它所贡献的diff[k]，其中k=0,1,2...,N-1表示左移的次数。
+
+最后在diff数组里找到最大的diff[k]，其中k就对应着rotate多少次能使所有A[i]的得分总和最大。
+
+另外，两种情况也可以统一写成
+```
+diff[(i-A[i]+1+N)%N] -= 1;
+diff[i+1] += 1;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/smallest-rotation-with-highest-score)
+::::::::::::::
+Others/810.Chalkboard-XOR-Game/810.Chalkboard-XOR-Game.cpp
+::::::::::::::
+class Solution {
+public:
+    bool xorGame(vector<int>& nums) 
+    {
+        int x=0;
+        for (int i=0; i<nums.size(); i++)
+            x^=nums[i];
+        return (x==0 || nums.size()%2==0);
+    }
+};
+::::::::::::::
+Others/810.Chalkboard-XOR-Game/Readme.md
+::::::::::::::
+### 810.Chalkboard-XOR-Game
+
+对于Alice而言，如果手头的```X=x1^x2^x3^...^xn=0```，那么算赢．
+
+如果```X!=0```,因为XOR的运算具有交换律，所以最后必然可以化简为```ai^Ai!=0```的形式．其中ai是其中的某个元素xi，而Ai是除了xi以外所有元素的亦或和．如果Ai不是零的话，那么Alice取ai就可以了(因为留给对手的是Ai)．如果这个Ai是零的话，那么我们试图重新找一个a/A的组合，直到找到一个非零的Ai，于是Alice就可以取相应的ai．
+
+那么会不会所有的Ai都是零呢？我们来分析一下．假设所有的Ai都是零．那么```A1^A2^...^An=X^X^..^X (共n-1次)＝０```．由此推出ｎ必须是奇数．根据逆否的性质，如果n是偶数的话，那么不可能所有的Ai都是零，于是Alice必然有此轮不输策略．
+
+于是有意思的事情来了．如果n是偶数，Alice有不输的策略；轮到Bob的时候，n就是奇数；如果他侥幸能存活那一轮，再轮到Alice的时候，她面对的依然是n是偶数的情况，又有了不输的策略．这个轮回最多一直持续到Bob只剩下一个数可选，也就必输了．
+
+所以，如果数列的总个数是偶数的话，对于先手（Alice)必赢．反之，Bob面对的总是偶数的情况，他就能必赢．
+
+
+[Leetcode Link](https://leetcode.com/problems/chalkboard-xor-game)::::::::::::::
+Others/825.Friends-Of-Appropriate-Ages/825.Friends-Of-Appropriate-Ages.cpp
+::::::::::::::
+class Solution {
+public:
+    int numFriendRequests(vector<int>& ages) 
+    {
+        sort(ages.begin(),ages.end());
+        
+        vector<int>Map(121,0);
+        vector<int>sums(121,0);
+        
+        for (auto age:ages)
+            Map[age]++;
+        
+        for (int i=1; i<=120; i++)
+            sums[i] = sums[i-1]+Map[i];
+        
+        int count = 0;
+        for (int i=0; i<ages.size(); i++)
+        {
+            int lower = 0.5*ages[i]+7;
+            int upper = ages[i];
+            if (lower>=upper) continue;
+            count += sums[upper]-sums[lower]-1;
+        }
+        return count;
+    }
+};
+::::::::::::::
+Others/825.Friends-Of-Appropriate-Ages/Readme.md
+::::::::::::::
+### 825.Friends-Of-Appropriate-Ages
+
+此题非常像中学时代的线性规划。我们通过三个方程在二维坐标上的区域，可以发现第三个条件完全包含在前两个里，可以不用考虑。
+
+一个常规的方法是，遍历每个元素作为A来考虑，然后计算B的取值范围（上下界），然后用二分法在数组中找出上下界的位置，就能得到符合要求的B的个数。这是O(NlogN)的解法，N是元素的个数。
+
+这里推荐另外一种更好的解法。因为元素的范围是固定的1-120，所以我们开辟一个含120个元素的数组count，其中count[i]就代表了岁数为i的人的个数。这样，当我们计算得到B的取值范围(a,b]之后，只要累加count数组在上下界范围(a,b]内的元素和就行了。显然，构造一个前缀和的方法是最高效的。
+
+
+[Leetcode Link](https://leetcode.com/problems/friends-of-appropriate-ages)::::::::::::::
+Others/835.Image-Overlap/835.Image-Overlap.cpp
+::::::::::::::
+class Solution {
+public:
+    int largestOverlap(vector<vector<int>>& A, vector<vector<int>>& B) 
+    {
+        int N = A.size();
+        vector<pair<int,int>>LA;
+        vector<pair<int,int>>LB;
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (A[i][j]==1) LA.push_back({i,j});
+                if (B[i][j]==1) LB.push_back({i,j});
+            }
+        map<pair<int,int>,int>count;        
+        for (int i=0; i<LA.size(); i++)
+            for (int j=0; j<LB.size(); j++)            
+                count[{LB[j].first-LA[i].first,LB[j].second-LA[i].second}]++;                
+        int result = 0;
+        for (auto a:count) result = max(result,a.second);
+        return result;
+    }
+};
+::::::::::::::
+Others/835.Image-Overlap/Readme.md
+::::::::::::::
+### 835.Image-Overlap
+
+此题用o(N^4)暴力的解法可以通过．另外有一个更巧妙的解法，可以在矩阵稀疏的时候加快速度．
+
+我们将所有A中的非零元素的坐标存在LA中，将所有B中的非零元素的坐标存在LB中．我们考察所有LA和LB的配对，该配对的{横坐标差，纵坐标差｝其实就代表了在该位移条件下能够贡献的一对重合的非零元素．考察完所有配对之后，计数最多的{横坐标差，纵坐标差｝就代表了题目要求的矩阵位移．
+
+
+[Leetcode Link](https://leetcode.com/problems/image-overlap)::::::::::::::
+Others/843.Guess-the-Word/843.Guess-the-Word.cpp
+::::::::::::::
+class Solution {
+public:
+    void findSecretWord(vector<string>& wordlist, Master& master) 
+    {
+        for (int i=0; i<10; i++)
+        {
+            srand(1);
+            int r = rand() % wordlist.size();
+            string x = wordlist[r];
+            int count = master.guess(x);
+            if (count==6) return;
+            
+            vector<string>temp;
+            for (auto s:wordlist)
+            {
+                if (s==x) continue;
+                if (sameCount(s,x)==count) temp.push_back(s);
+            }
+            wordlist = temp;
+        }
+    }
+    
+    int sameCount(string A, string B)
+    {
+        int count=0;
+        for (int i=0; i<6; i++)
+            if (A[i]==B[i]) count++;
+        return count;
+    }
+};
+::::::::::::::
+Others/843.Guess-the-Word/Readme.md
+::::::::::::::
+### 843.Guess-the-Word
+
+此题的原理很简单：我们任取一个word，调用API查看它与secret的匹配度k。于是我们可知，任何与word匹配度不是k的单词，肯定都不会是secret，于是就可以从candidate中删除。
+
+一旦我们取到某个word，与secret的匹配度是6，那么就是答案。
+::::::::::::::
+Others/850.Rectangle-Area-II/850.Rectangle-Area-II.cpp
+::::::::::::::
+class Solution {
+public:
+    int rectangleArea(vector<vector<int>>& rectangles) 
+    {
+        set<int>SetX;
+        set<int>SetY;
+        for (auto point: rectangles)
+        {
+            SetX.insert(point[0]);
+            SetX.insert(point[2]);
+            SetY.insert(point[1]);
+            SetY.insert(point[3]);
+        }
+        
+        vector<int>X(SetX.begin(),SetX.end());
+        vector<int>Y(SetY.begin(),SetY.end());
+        
+        int M = X.size();
+        int N = Y.size();
+        auto points = vector<vector<bool>>(M,vector<bool>(N,0));
+        
+        for (auto p: rectangles)
+        {
+            int x0 = lower_bound(X.begin(),X.end(),p[0])-X.begin();
+            int x1 = lower_bound(X.begin(),X.end(),p[2])-X.begin();
+            int y0 = lower_bound(Y.begin(),Y.end(),p[1])-Y.begin();
+            int y1 = lower_bound(Y.begin(),Y.end(),p[3])-Y.begin();
+            for (int i = x0; i<x1; i++)
+             for (int j = y0; j<y1; j++)
+               points[i][j]=1;
+        }
+        
+        long long result = 0;
+        int Mod = 1e9+7;
+        for (int i=0; i<M-1; i++)
+          for (int j=0; j<N-1; j++)
+          {
+             if (points[i][j]==0) continue;
+             result += (long long)(X[i+1]-X[i]) * (long long)(Y[j+1]-Y[j]);            
+             result = result%Mod;
+          }
+        return result;
+    }
+};
+::::::::::::::
+Others/850.Rectangle-Area-II/850.Rectangle-Area-II_v2.cpp
+::::::::::::::
+using ll = long long;
+class Diff2d {    
+public:
+    vector<vector<int>>f;
+    vector<vector<int>>diff;    
+    int m,n;
+    Diff2d(int m, int n)
+    {
+        this->m = m;
+        this->n = n;
+        diff.resize(m+1);
+        f.resize(m+1);        
+        for (int i=0; i<m+1; i++)
+        {
+            diff[i].resize(n+1);
+            f[i].resize(n+1);
+        }            
+    }
+    void set(int x0, int y0, int x1, int y1, int val)
+    {
+        diff[x0][y0]+=val;
+        diff[x0][y1+1]-=val;
+        diff[x1+1][y0]-=val;
+        diff[x1+1][y1+1]+=val;
+    }
+    void compute()
+    {
+        f[0][0] = diff[0][0];
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                int a = i==0?0:f[i-1][j];
+                int b = j==0?0:f[i][j-1];
+                int c = (i==0||j==0)?0:f[i-1][j-1];                
+                f[i][j] = a + b - c + diff[i][j];
+            }
+    }    
+};
+
+class Solution {
+    ll M = 1e9+7;
+public:
+    int rectangleArea(vector<vector<int>>& rectangles) 
+    {
+        set<ll>pointX;
+        set<ll>pointY;
+        for (auto rect: rectangles)
+        {
+            pointX.insert(rect[0]);
+            pointY.insert(rect[1]);
+            pointX.insert(rect[2]);
+            pointY.insert(rect[3]);
+        }
+        
+        vector<ll>row(pointX.begin(), pointX.end());
+        vector<ll>col(pointY.begin(), pointY.end());
+        
+        unordered_map<ll,ll>X2idx;
+        unordered_map<ll,ll>Y2idx;
+        for (int i=0; i<row.size(); i++)
+            X2idx[row[i]] = i;
+        for (int i=0; i<col.size(); i++)
+            Y2idx[col[i]] = i;
+        
+        int m = row.size(), n = col.size();
+        Diff2d grid(m,n);
+
+        for (auto rect: rectangles)
+        {
+            int i = X2idx[rect[0]];
+            int j = Y2idx[rect[1]];
+            int x = X2idx[rect[2]]-1;
+            int y = Y2idx[rect[3]]-1;
+            grid.set(i,j,x,y,1);
+        }
+        grid.compute();
+
+        ll ret = 0;
+        for (int i=0; i<m-1; i++)
+            for (int j=0; j<n-1; j++)
+            {
+                if (grid.f[i][j]>0)
+                {
+                    ll dx = row[i+1]-row[i];
+                    ll dy = col[j+1]-col[j];
+                    ret += dx*dy%M;
+                    ret %= M;
+                }
+            }
+        return ret;
+    }
+};
+::::::::::::::
+Others/850.Rectangle-Area-II/Readme.md
+::::::::::::::
+### 850.Rectangle-Area-II
+
+#### 解法1：暴力枚举网格
+此题的思路是，将题目所给的所有矩形的坐标点都集中起来组成一个网格。具体来说，将所有的X坐标集中起来（要去除重复），将所有的Y坐标集中起来，然后将其两两配对组成一个二维的网络。注意，这样的网格点之间的实际距离并不是均匀的，但是没有关系。
+
+我们再来遍历所有的矩形：在这个网络中找到每个矩形所框起来的范围（遵循左闭右开的原则），标记这个范围内的网格点为true，意味着这些网格点是落在被cover的面积里。遍历完所有的矩形后，所有标记为true的网格点都是要被算入面积的，而那些没有标记的说明不用被计算。
+
+可以知道，凡是被cover的网格点```(u,v)```，它所代表的面积就是```(x[u+1]-x[u])*(y[v+1]-x[v])```。我们只需要累加这些网格点所代表的面积即可。
+
+#### 解法2：二维差分数组
+
+我们先来学习基本的二维差分数组。假设有很多小矩阵(左上角x0,y0, 右下角x1,y1)，彼此之间可能互相覆盖。问整个盘面上每个格子是否有被任何矩阵覆盖。
+
+对于一个矩阵，如果遍历所有内部的格子做标记，显然是效率很低的。我们很容易想到，是否能有类似一维扫描线算法（只记录两端的差分值）。这就是二维差分数组的应用。这里我们需要记录四个差分值：
+```cpp
+diff[x0][y0]+=1;
+diff[x0][y1+1]-=1;
+diff[x1+1][y0]-=1;
+diff[x1+1][y1+1]+=1;
+```
+这个差分数组diff[x][y]可以理解为整个盘面f[x][y]的二维梯度。f[x][y]表示了该点被多少个小矩形覆盖。
+
+有了初始值，和差分数组diff[x][y]，我们可以通过二维积分反推出f[x][y]
+```cpp
+f[x][y] = f[x-1][y]+f[x][y-1]-f[x-1][y-1]+diff[x][y]
+```
+
+在本题中，我们需要将各个矩阵的边界（x值或y值）离散化为序号递增的网格（同解法1）。比如x=30可能对应着i=2，y=200可能对应着j=4.
+
+假设一个矩形的四条边离散化后对应的是(i0,j0,i1,j1)，需要注意到这四条行、列组成的矩形面积其实是比真实的矩形面积要大的（多算了一侧边界所占的“面积”）。所以我们约定靠右的列、靠上的行不算做该矩形的范围内。故差分数组的计算是：
+```cpp
+diff[i0][j0]+=1;
+diff[i0][j1]-=1;
+diff[i1][j0]-=1;
+diff[i1][j1]+=1;
+```
+我们利用以上的差分数组通过积分得到的f[i][j]表示的是: (i,j)所对应的(x0,y0)作为左下角、(i+1,j+1)所对应的(x1,y1)作为右上角的矩形被覆盖了几次。这个矩形的面积是```(x1-x0)*(y1-y0)```.
+
+我们需要累加所有f[i][j]>0的那些矩形的面积。
+
+[Leetcode Link](https://leetcode.com/problems/rectangle-area-ii)
+::::::::::::::
+Others/855.Exam-Room/855.Exam-Room.cpp
+::::::::::::::
+class ExamRoom {
+    int N;
+    vector<int>L;
+public:
+    ExamRoom(int N) 
+    {
+        this->N = N;        
+    }
+    
+    int seat() 
+    {
+        if (L.size()==0)
+        {
+            L.push_back(0);
+            return 0;
+        }
+        
+        int maxGap = -1;
+        int pos;
+        
+        if (L[0]!=0)
+        {
+            pos = 0;
+            maxGap = L[0]-1;
+        }
+        for (int i=0; i<L.size()-1; i++)
+        {
+            if (L[i+1]!=L[i]+1 && (L[i+1]-L[i]-2)/2 > maxGap)
+            {
+                maxGap = (L[i+1]-L[i]-2)/2 ;
+                pos = L[i]+maxGap+1;
+            }
+        }
+        if (L.back()!=N-1 && N-1-L.back()-1>maxGap)
+        {
+            maxGap = N-1-L.back()-1;
+            pos = N-1;
+        }
+        
+        L.insert(lower_bound(L.begin(),L.end(),pos), pos);
+
+        return pos;
+    }
+    
+    void leave(int p) 
+    {
+        L.erase(lower_bound(L.begin(),L.end(),p));
+    }
+};
+
+/**
+ * Your ExamRoom object will be instantiated and called as such:
+ * ExamRoom obj = new ExamRoom(N);
+ * int param_1 = obj.seat();
+ * obj.leave(p);
+ */
+::::::::::::::
+Others/855.Exam-Room/Readme.md
+::::::::::::::
+### 855.Exam-Room.cpp
+
+此题考虑什么样的数据结构最合适。我们需要存放什么呢？其实只要存放每个人的位置就可以了。人与人的间隔要不要单独存储呢？其实可以不必。线性的数组在这里就足够用了。虽然每次插入位置的搜索是线性的，内存的移动也会费时间，但似乎实际的效率还不错。
+
+每次进来一个人，我们线性扫描现有人的位置，查找最大的间隔。另外，头和尾的间隔需要另行考虑。确定最大间隔，就能确定插入的位置，直接用数组的insert命令即可。
+
+在人离开的时候，也是直接用lower_bound确定位置的迭代器，再删除迭代器即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/exam-room)::::::::::::::
+Others/866.Prime-Palindrome/866.Prime-Palindrome.cpp
+::::::::::::::
+class Solution {
+public:
+    int primePalindrome(int N) 
+    {
+        if (N>7 && N<=11) return 11;
+        
+        string M = to_string(N);
+        int n = M.size()/2;
+        
+        int a = pow(10,n);
+        
+        for (int i=a; i<=20000; i++)
+        {
+            string s = to_string(i);
+            string s1 = s.substr(0, s.size()-1);
+            reverse(s1.begin(),s1.end());
+            s = s+s1;
+            
+            int k = stoi(s);
+            if (k>=N && isPrime(k)) return k;
+        }
+        
+        return -1;
+    }
+    
+    bool isPrime(int k)
+    {
+        if (k==1) return false;
+        if (k%2==0) return k==2;
+        for (int i=3; i*i<=k; i+=2)
+        {
+            if (k%i==0) return false;
+        }
+        return true;
+    }
+};
+::::::::::::::
+Others/866.Prime-Palindrome/Readme.md
+::::::::::::::
+### 866.Prime-Palindrome
+
+我们有两种思路，一种是搜寻所有大于N的质数，然后查看它们是否是回文数。另一种方案是反过来，搜寻所有大于N的回文数，然后查看它们是否是质数。显然后者更高效，因为我们只需要确定回文数的前缀，就能通过翻转构造出完整的回文数。考虑到答案的上限是2e8（也就是9位数字），说明我们可以直接遍历大约1e4种回文数（即确定回文数的前五个数字），时间复杂度是可以接受的。
+
+有一个需要注意的，假设我们确定了回文数的前半部分xyz，理论上我们可以构造出两种回文数:xyzzyx和xyzyx。但前者肯定不是质数，因为能被11整除。所以对于任意的前缀，我们只需要构造奇数位的回文数即可。因此搜索的时间复杂度可以进一步减半。
+
+因为答案上限是2e8，所以我们遍历的前缀可以从1（对应的回文数是1）到20000（对应的回文数是200000002）。或者我们可以将下限设置的更精确些。如果N的位数是n，那么我们可以从前缀为pow(10,n/2)开始搜索。
+
+但是有一个corner case，那么就是当N==11的时候，不能通过上面的步骤得到正确的答案。这是因为11虽然有偶数位，根据上面的分析可知它能被11整除，但恰好它本身就是质数。
+
+
+[Leetcode Link](https://leetcode.com/problems/prime-palindrome)::::::::::::::
+Others/906.Super-Palindromes/906.Super-Palindromes.cpp
+::::::::::::::
+class Solution {
+public:
+    int superpalindromesInRange(string L, string R) 
+    {
+        long long a = stoll(L);
+        long long b = stoll(R);
+               
+        int start = pow(10, max(0, (int)L.size()/4-1));
+        int end = pow(10, max(0, (int)R.size()/4+1));
+        
+        int count = 0;
+        
+        for (int i=start; i<=end; i++)
+        {
+            for (int type = 0; type<=1; type++)
+            {
+                long long palin = constructPalin(i, type);
+                if (palin>1e9) continue;                
+                
+                long long superPalin = palin*palin;
+                if (superPalin>=a && superPalin<=b && isPalin(superPalin))
+                    count++;
+            }
+        }
+        
+        return count;
+    }
+    
+    long long constructPalin(long long x, int type)
+    {
+        long long y = x;
+        if (type==1) x/=10;
+        while (x>0)
+        {
+            y = y*10 + x%10;
+            x = x/10;
+        }
+        return y;        
+    }
+    
+    bool isPalin(long long x)
+    {
+        string s = to_string(x);
+        string t = s;
+        reverse(t.begin(),t.end());
+        return s==t;
+    }
+};
+::::::::::::::
+Others/906.Super-Palindromes/Readme.md
+::::::::::::::
+### 906.Super-Palindromes
+
+对于最大值为1e18的super palindrome，其平方根最大为1e9。因为这个平方根也要求是回文数，因此我们通过“遍历回文数的前半部分再镜像”的方法，最多只需要遍历1\~1e5就可以构造出1~1e9范围内所有的回文数，继而检查一下它的平方是否是超级回文数即可。整个时间复杂度控制在1e5的数量级，是可以接受的。
+
+
+[Leetcode Link](https://leetcode.com/problems/super-palindromes)
+::::::::::::::
+Others/918.Maximum-Sum-Circular-Subarray/918.Maximum-Sum-Circular-Subarray.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxSubarraySumCircular(vector<int>& A) 
+    {
+        int globalMax = INT_MIN;    // cannot be 0-element
+        int globalMin = 0;          // can be 0-elelment, but cannot cantain all elements
+        int N = A.size();
+        vector<int>LocalMin(N);
+        vector<int>LocalMax(N);
+        
+        int Sum = accumulate(A.begin(),A.end(),0);
+        
+        LocalMax[0] = A[0];
+        LocalMin[0] = min(0,A[0]);
+        
+        for (int i=1; i<A.size(); i++)
+        {
+            LocalMax[i] = max(LocalMax[i-1]+A[i],A[i]);
+            LocalMin[i] = min(LocalMin[i-1]+A[i],A[i]);
+            globalMax = max(globalMax,LocalMax[i]);
+            globalMin = min(globalMin,LocalMin[i]);
+        }
+        
+        if (Sum==globalMin)     // in this case, the minimum subarray contain all elements, which is invalid
+            return globalMax;
+        else
+            return max(globalMax,Sum-globalMin);
+        
+    }
+};
+::::::::::::::
+Others/918.Maximum-Sum-Circular-Subarray/Readme.md
+::::::::::::::
+### 918.Maximum-Sum-Circular-Subarray
+
+遇到循环数组的问题，有三种套路：
+
+第一，分情况处理．类似的题有 213. House Robber II，分别考虑第一座房子是否抢劫．
+
+第二，倍增，将原数组补到２倍的长度．
+
+第三，取反．这样求跨越终端的maximum subarray，相当于求total sum - minimum subarray.
+
+本题需要注意，因为我们求maximum subarray至少包含一个元素，所以在计算minimum subarray时，它不能包含所有的元素，但是它允许包含０个元素．所以在globalMin的初始值可以是0而不是INT_MAX．
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-sum-circular-subarray)::::::::::::::
+Others/927.Three-Equal-Parts/927.Three-Equal-Parts.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> threeEqualParts(vector<int>& A) 
+    {
+        vector<int> rets;
+        
+        int count = 0;
+        for (auto x: A)
+            if (x==1) count++;
+        if (count%3!=0) return {-1,-1};
+        if (count==0) return {0,A.size()-1};
+        count/=3;
+        
+        int j = A.size();
+        while (count)
+        {
+            j--;
+            if (A[j]==1) count--;
+        }
+        
+        int i = 0;
+        while (A[i]==0) i++;
+        int k = j;
+        while (k<A.size() && A[i]==A[k])
+        {
+            i++;
+            k++;
+        }
+        if (k!=A.size()) return {-1,-1};
+        rets.push_back(i-1);
+        
+        while (A[i]==0) i++;
+        k = j;
+        while (k<A.size() && A[i]==A[k])
+        {
+            i++;
+            k++;
+        }
+        if (k!=A.size()) return {-1,-1};
+        rets.push_back(i);
+        
+        return rets;
+    }
+};
+::::::::::::::
+Others/927.Three-Equal-Parts/Readme.md
+::::::::::::::
+### 927.Three-Equal-Parts
+
+本题的突破口就是全局1的个数。首先，整个数组里面1的个数必须要能被3整除。其次，确定了每个part里面1的个数后（记为count），从后往前数count个1，就已经确定了这个数长什么样了（记为X）。
+
+然后我们从数组最前端开始忽略若干个先导零，从第一个出现1的地方开始判断这个subarray是否等于X。如果OK，那么我们再忽略若干个先导零，在从下一个出现1的地方开始判断这个subarray是否等于X。如果再OK，那么three equal parts就已经划分好了。
+
+
+[Leetcode Link](https://leetcode.com/problems/three-equal-parts)::::::::::::::
+Others/973.K-Closest-Points-to-Origin/973.K-Closest-Points-to-Origin_v1.cpp
+::::::::::::::
+using LL = long long;
+using PLI = pair<LL, int>;
+class Solution {
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int K) 
+    {
+        priority_queue<PLI>pq;
+        for (int i=0; i<points.size(); i++)
+        {
+            long long x1 = points[i][0];
+            long long x2 = points[i][1];
+            long long d = x1*x1+x2*x2;
+            pq.push({d, i});
+            
+            if (pq.size() > K)
+                pq.pop();
+        }
+        
+        vector<vector<int>>results;
+        while (!pq.empty())
+        {
+            int id = pq.top().second;
+            results.push_back(points[id]);
+            pq.pop();
+        }
+        return results;
+    }
+};
+::::::::::::::
+Others/973.K-Closest-Points-to-Origin/973.K-Closest-Points-to-Origin_v2.cpp
+::::::::::::::
+using LL = long long;
+class Solution {
+    vector<pair<LL, int>>arr;
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int K) 
+    {        
+        for (int i=0; i<points.size(); i++)
+        {
+            long long x1 = points[i][0];
+            long long x2 = points[i][1];
+            long long d = x1*x1+x2*x2;
+            arr.push_back({d, i});
+        }
+        
+        long long d = quickSelect(0, arr.size()-1, K);
+                
+        vector<vector<int>>rets;
+        for (auto x: arr)
+        {
+            if (x.first <= d)
+                rets.push_back(points[x.second]);
+        }
+        return rets;        
+    }
+    
+    long long quickSelect(int a, int b, int k)
+    {
+        long long pivot = arr[(a+b)/2].first;
+        
+        int i = a, j = b, t = a;
+        
+        while (t<=j)
+        {
+            if (arr[t].first < pivot)
+            {
+                swap(arr[i], arr[t]);
+                i++;
+                t++;
+            }
+            else if (arr[t].first > pivot)
+            {
+                swap(arr[j], arr[t]);
+                j--;
+            }
+            else
+                t++;
+        }
+        
+        if (i-a >= k) return quickSelect(a, i-1, k);
+        else if (j-a+1 >= k) return pivot;
+        else return quickSelect(j+1, b, k-(j-a+1));
+    }
+};
+::::::::::::::
+Others/973.K-Closest-Points-to-Origin/Readme.md
+::::::::::::::
+### 973.K-Closest-Points-to-Origin
+
+#### 解法1：优先队列
+构造一个关于距离的大顶堆。将各个点逐个放入，一旦PQ的元素个数超过K个就弹出队首元素。这样最终留下来的就是K个距离最小的。时间复杂度 NlogK.
+
+#### 解法2：快速选择
+QucikSelect的模板题，时间复杂度的期望是o(N).
+::::::::::::::
+Others/978.Longest-Turbulent-Subarray/978.Longest-Turbulent-Subarray.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxTurbulenceSize(vector<int>& A) 
+    {
+        int N = A.size();
+        vector<int>q(N,0);
+        for (int i=0; i<A.size()-1; i++)
+        {
+            if (A[i]>A[i+1])
+                q[i] = -1;
+            else if (A[i]<A[i+1])
+                q[i] = 1;
+        }
+        
+        if (A.size()==1) return 1;
+        if (A.size()==2) return q[0]==0? 1: 2;
+        
+        int count = 1;
+        int start = 0;
+        for (int i=0; i+1<A.size()-1; i++)
+        {
+            if (q[i]!=0)
+                count = max(count, 2);
+            
+            start = i;
+            while (i+1<A.size()-1 && q[i]*q[i+1]==-1)
+            {
+                i++;
+                count = max(count, i-start+2);
+            }
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Others/995.Minimum-Number-of-K-Consecutive-Bit-Flips/995.Minimum-Number-of-K-Consecutive-Bit-Flips.cpp
+::::::::::::::
+class Solution {
+public:
+    int minKBitFlips(vector<int>& A, int K) 
+    {
+        int n = A.size();
+        vector<int>diff(n+1);
+
+        int flips = 0;
+        int count = 0;
+        for (int i=0; i<n; i++)
+        {
+            flips+=diff[i];
+            if ((A[i]+flips)%2==1) continue;
+
+            if (i+K-1>=n) return -1;
+            flips++;
+            count++;
+            diff[i+K]-=1;
+        }
+
+        return count;
+    }
+};
+::::::::::::::
+Others/995.Minimum-Number-of-K-Consecutive-Bit-Flips/Readme.md
+::::::::::::::
+### 995.Minimum-Number-of-K-Consecutive-Bit-Flips
+
+本题的最优策略其实很容易想到。我们从前往后依次查看A[i]：如果A[i]是1，那么我们就跳过；如果A[i]是0，那么我们就翻转A[i]，同时需要带着一起翻转A[i+1]~A[i+K-1]。这样一直查下去，看最后K个数是否都是1. 显然我们就有了O(NK)的解法。C++耗时5000多毫秒，竟然也给过了。
+
+很明显，上述解法的最大弊端是：当A[i]需要翻转时，我们还需要用for循环逐个翻转A[i+1]~A[i+K-1]，效率很差。很容易想到一个简单的改进的方法，用差分数组diff.差分数组diff[j]记录的是：A[j]经历的翻转次数要比A[j-1]经历的翻转次数多多少？比如说，我们将当前的A[i]翻转了，将会使得A[i+1]~A[i+K-1]整体的翻转次数提升一个，但是之后就又回落下去了。所以就记录下diff[i+1]+=1, diff[i+K]-=1，这样的话，对任意A[j]经历过的翻转总数是flipNum，那么A[j+1]需要经历的翻转总数就是flipNum+diff[j+1]。
+
+类似用到差分数组的题目还有：370.Range-Addition
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-number-of-k-consecutive-bit-flips)
