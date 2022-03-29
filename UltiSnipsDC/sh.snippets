@@ -512,7 +512,7 @@ im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400
 # 通道选择
 im_miscellaneous_utilities_flickerchannel.sh -f -i infile
 
-strSize="\`file outfile00.png\`"
+strSize="\`file outfile.gif\`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
@@ -520,9 +520,11 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
-    convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
+    convert outfile.gif -resize 1000x  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
-    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
+    convert outfile.gif -resize x1000  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
     # convert -delay 200 outfile*.png -loop 0 outfile.gif
 fi
 $0
