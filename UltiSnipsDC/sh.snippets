@@ -282,6 +282,15 @@ fc-list
 $0
 endsnippet
 
+snippet gimpBatch "gimp bach mode" b
+PATH=$PATH:/Applications/GIMP-2.10.app/Contents/MacOS/
+gimp -idf --batch-interpreter python-fu-eval -b "import sys;sys.path=['.']+sys.path;import batch;batch.run('./images')" -b "pdb.gimp_quit(1)
+gimp-console -i -b '(batch-unsharp-mask "*.png" 5.0 0.5 0)' -b '(gimp-quit 0)'
+
+
+$0
+endsnippet
+
 snippet imGif4Text "Generates gif from " b
 text1="高梧百尺夜苍苍，"
 text2="乱扫秋星落晓霜。"
@@ -363,10 +372,11 @@ size3=120
 size4=200
 if [  -n "$(uname -a | grep -i darwin)" ]; then
 	font=~/Library/Fonts/印品抹茶体.ttf
+	trash outfile*.png
 else
 	font=~/.local/share/fonts/印品抹茶体.ttf
+	rm outfile*.png
 fi
-trash outfile*.png
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
