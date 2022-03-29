@@ -443,8 +443,9 @@ convert outfile20.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)
 convert outfile21.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile21.png
 convert outfile30.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile30.png
 convert outfile40.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile40.png
+convert -delay 200 outfile*.png -loop 0 outfile.gif
 
-strSize="\`file outfile00.png\`"
+strSize="\`file outfile.gif\`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
@@ -452,10 +453,11 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
-    convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
+    convert  outfile.gif -resize x1000  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
-    convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
-    # convert -delay 200 outfile*.png -loop 0 outfile.gif
+    convert  outfile.gif -resize 1000x  outfile.gif
+    # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
 fi
 
 
@@ -520,13 +522,13 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
-    convert outfile.gif -resize 1000x  outfile.gif
+    convert  outfile.gif -resize x1000  outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
-    convert outfile.gif -resize x1000  outfile.gif
+    convert  outfile.gif -resize 1000x  outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
-    # convert -delay 200 outfile*.png -loop 0 outfile.gif
 fi
+
 $0
 endsnippet
 
