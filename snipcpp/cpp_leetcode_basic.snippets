@@ -1,0 +1,912 @@
+# 2  sort
+# 3  search
+# 4  array
+# 5  string
+# 6  linknode
+# 7  tree
+# 7.1 
+snippet btMinDepth "Recursion=Given the root of a binary tree, return its maximum depth." b
+/* C++ implementation to find minimum depth of a given Binary tree */
+#include <iostream>
+#include<math.h>
+using namespace std;
+
+struct Node
+{
+int data;
+struct Node *left;
+struct Node *right;
+Node(int k){
+	data = k;
+	left = right = NULL;
+}
+};
+
+/* Function to calculate the minimum depth of the tree */
+int minimumDepth(Node *root, int level)
+{
+
+		if (root == NULL)
+			return level;
+		level++;
+
+		return min(minimumDepth(root->left, level),
+				minimumDepth(root->right, level));
+}
+
+/* Driver program to test above functions */
+int main()
+{
+
+	// Let us create binary tree shown in above diagram
+	Node *root = new Node(1);
+	root->left = new Node(2);
+	root->right = new Node(3);
+	root->left->left = new Node(4);
+	root->left->right = new Node(5);
+
+	cout << minimumDepth(root, 0);
+	return 0;
+}
+
+// This code is contributed by aafreen1804.
+
+$0
+endsnippet
+snippet btMaxDepth "Recursion=Given the root of a binary tree, return its maximum depth." b
+// C++ program to find height of tree
+#include <bits/stdc++.h>
+using namespace std;
+
+
+/* A binary tree node has data, pointer to left child
+and a pointer to right child */
+class node
+{
+	public:
+	int data;
+	node* left;
+	node* right;
+};
+
+/* Compute the "maxDepth" of a tree -- the number of
+	nodes along the longest path from the root node
+	down to the farthest leaf node.*/
+int maxDepth(node* node)
+{
+	if (node == NULL)
+		return -1;
+	else
+	{
+		/* compute the depth of each subtree */
+		int lDepth = maxDepth(node->left);
+		int rDepth = maxDepth(node->right);
+
+		/* use the larger one */
+		if (lDepth > rDepth)
+			return(lDepth + 1);
+		else return(rDepth + 1);
+	}
+}
+
+/* Helper function that allocates a new node with the
+given data and NULL left and right pointers. */
+node* newNode(int data)
+{
+	node* Node = new node();
+	Node->data = data;
+	Node->left = NULL;
+	Node->right = NULL;
+
+	return(Node);
+}
+
+// Driver code
+int main()
+{
+	node *root = newNode(1);
+
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
+
+	cout << "Height of tree is " << maxDepth(root);
+	return 0;
+}
+
+// This code is contributed by Amit Srivastav
+
+$0
+endsnippet
+snippet btMaxDepth "Level Order Traversal=Given the root of a binary tree, return its maximum depth." b
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+// A Tree node
+struct Node
+{
+	int key;
+	struct Node* left, *right;
+};
+
+// Utility function to create a new node
+Node* newNode(int key)
+{
+	Node* temp = new Node;
+	temp->key = key;
+	temp->left = temp->right = NULL;
+	return (temp);
+}
+
+/*Function to find the height(depth) of the tree*/
+int height(struct Node* root){
+
+	//Initialising a variable to count the
+	//height of tree
+	int depth = 0;
+
+	queue<Node*>q;
+
+	//Pushing first level element along with NULL
+	q.push(root);
+	q.push(NULL);
+	while(!q.empty()){
+		Node* temp = q.front();
+		q.pop();
+
+		//When NULL encountered, increment the value
+		if(temp == NULL){
+			depth++;
+		}
+
+		//If NULL not encountered, keep moving
+		if(temp != NULL){
+			if(temp->left){
+				q.push(temp->left);
+			}
+			if(temp->right){
+				q.push(temp->right);
+			}
+		}
+
+		//If queue still have elements left,
+		//push NULL again to the queue.
+		else if(!q.empty()){
+			q.push(NULL);
+		}
+	}
+	return depth;
+}
+
+// Driver program
+int main()
+{
+	// Let us create Binary Tree shown in above example
+	Node *root = newNode(1);
+	root->left = newNode(12);
+	root->right = newNode(13);
+
+	root->right->left = newNode(14);
+	root->right->right = newNode(15);
+
+	root->right->left->left = newNode(21);
+	root->right->left->right = newNode(22);
+	root->right->right->left = newNode(23);
+	root->right->right->right = newNode(24);
+
+	cout<<"Height(Depth) of tree is: "<<height(root);
+}
+
+$0
+endsnippet
+# 7.2 
+snippet isBinarySearchTree "Recursion = Given the root of a binary tree, determine if it is a valid binary search tree (BST)." b
+// C++ program to check if a given tree is BST.
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree node has data, pointer to
+left child and a pointer to right child */
+struct Node
+{
+	int data;
+	struct Node* left, *right;
+};
+
+// Returns true if given tree is BST.
+bool isBST(Node* root, Node* l=NULL, Node* r=NULL)
+{
+	// Base condition
+	if (root == NULL)
+		return true;
+
+	// if left node exist then check it has
+	// correct data or not i.e. left node's data
+	// should be less than root's data
+	if (l != NULL and root->data <= l->data)
+		return false;
+
+	// if right node exist then check it has
+	// correct data or not i.e. right node's data
+	// should be greater than root's data
+	if (r != NULL and root->data >= r->data)
+		return false;
+
+	// check recursively for every node.
+	return isBST(root->left, l, root) and
+		isBST(root->right, root, r);
+}
+
+/* Helper function that allocates a new node with the
+given data and NULL left and right pointers. */
+struct Node* newNode(int data)
+{
+	struct Node* node = new Node;
+	node->data = data;
+	node->left = node->right = NULL;
+	return (node);
+}
+
+/* Driver program to test above functions*/
+int main()
+{
+	struct Node *root = newNode(3);
+	root->left	 = newNode(2);
+	root->right	 = newNode(5);
+	root->left->left = newNode(1);
+	root->left->right = newNode(4);
+
+	if (isBST(root,NULL,NULL))
+		cout << "Is BST";
+	else
+		cout << "Not a BST";
+
+	return 0;
+}
+
+$0
+endsnippet
+snippet isBinarySearchTree "midOrderTraversal = Given the root of a binary tree, determine if it is a valid binary search tree (BST)." b
+// C++ program to check if a given tree is BST.
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree node has data, pointer to
+left child and a pointer to right child */
+struct Node
+{
+	int data;
+	struct Node* left, *right;
+
+	Node(int data)
+	{
+		this->data = data;
+		left = right = NULL;
+	}
+};
+
+
+bool isBSTUtil(struct Node* root, Node *&prev)
+{
+	// traverse the tree in inorder fashion and
+	// keep track of prev node
+	if (root)
+	{
+		if (!isBSTUtil(root->left, prev))
+		return false;
+
+		// Allows only distinct valued nodes
+		if (prev != NULL && root->data <= prev->data)
+		return false;
+
+		prev = root;
+
+		return isBSTUtil(root->right, prev);
+	}
+
+	return true;
+}
+
+bool isBST(Node *root)
+{
+Node *prev = NULL;
+return isBSTUtil(root, prev);
+}
+
+/* Driver program to test above functions*/
+int main()
+{
+	struct Node *root = new Node(3);
+	root->left	 = new Node(2);
+	root->right	 = new Node(5);
+	root->left->left = new Node(1);
+	root->left->right = new Node(4);
+
+	if (isBST(root))
+		cout << "Is BST";
+	else
+		cout << "Not a BST";
+
+	return 0;
+}
+
+$0
+endsnippet
+# 7.3 
+snippet btIsMirror "Recursion=Given a binary tree, check whether it is a mirror of itself." b
+// C++ program to check if a given
+// Binary Tree is symmetric or not
+#include <bits/stdc++.h>
+using namespace std;
+
+// A Binary Tree Node
+struct Node
+{
+	int key;
+	struct Node *left, *right;
+};
+
+// Utility function to create new Node
+Node* newNode(int key)
+{
+	Node* temp = new Node;
+	temp->key = key;
+	temp->left = temp->right = NULL;
+	return (temp);
+}
+
+// Returns true if trees
+// with roots as root1 and root2 are mirror
+bool isMirror(struct Node* root1, struct Node* root2)
+{
+	// If both trees are empty,
+	// then they are mirror images
+	if (root1 == NULL && root2 == NULL)
+		return true;
+
+	// For two trees to be mirror
+	// images, the following
+	// three conditions must be true
+	// 1 - Their root node's
+	// key must be same 2 - left
+	// subtree of left tree and right subtree
+	// of right tree have to be mirror images
+	// 3 - right subtree of left tree and left subtree
+	// of right tree have to be mirror images
+	if (root1 && root2 && root1->key == root2->key)
+		return isMirror(root1->left, root2->right)
+			&& isMirror(root1->right, root2->left);
+
+	// if none of above conditions is true then root1
+	// and root2 are not mirror images
+	return false;
+}
+
+// Returns true if a tree is
+// symmetric i.e. mirror image of itself
+bool isSymmetric(struct Node* root)
+{
+	// Check if tree is mirror of itself
+	return isMirror(root, root);
+}
+
+// Driver code
+int main()
+{
+	// Let us construct the Tree shown in the above figure
+	Node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(2);
+	root->left->left = newNode(3);
+	root->left->right = newNode(4);
+	root->right->left = newNode(4);
+	root->right->right = newNode(3);
+
+	if(isSymmetric(root))
+	cout<<"Symmetric";
+	else
+	cout<<"Not symmetric";
+	return 0;
+}
+
+$0
+endsnippet
+# 7.4 
+snippet btLevelOrderTraversal "printCurrentLevel(tree, level) = Level order traversal of a tree" b
+// Recursive CPP program for level
+// order traversal of Binary Tree
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree node has data,
+pointer to left child
+and a pointer to right child */
+class node {
+public:
+	int data;
+	node *left, *right;
+};
+
+/* Function prototypes */
+void printCurrentLevel(node* root, int level);
+int height(node* node);
+node* newNode(int data);
+
+/* Function to print level
+order traversal a tree*/
+void printLevelOrder(node* root)
+{
+	int h = height(root);
+	int i;
+	for (i = 1; i <= h; i++)
+		printCurrentLevel(root, i);
+}
+
+/* Print nodes at a current level */
+void printCurrentLevel(node* root, int level)
+{
+	if (root == NULL)
+		return;
+	if (level == 1)
+		cout << root->data << " ";
+	else if (level > 1) {
+		printCurrentLevel(root->left, level - 1);
+		printCurrentLevel(root->right, level - 1);
+	}
+}
+
+/* Compute the "height" of a tree -- the number of
+	nodes along the longest path from the root node
+	down to the farthest leaf node.*/
+int height(node* node)
+{
+	if (node == NULL)
+		return 0;
+	else {
+		/* compute the height of each subtree */
+		int lheight = height(node->left);
+		int rheight = height(node->right);
+
+		/* use the larger one */
+		if (lheight > rheight) {
+			return (lheight + 1);
+		}
+		else {
+			return (rheight + 1);
+		}
+	}
+}
+
+/* Helper function that allocates
+a new node with the given data and
+NULL left and right pointers. */
+node* newNode(int data)
+{
+	node* Node = new node();
+	Node->data = data;
+	Node->left = NULL;
+	Node->right = NULL;
+
+	return (Node);
+}
+
+/* Driver code*/
+int main()
+{
+	node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
+
+	cout << "Level Order traversal of binary tree is \n";
+	printLevelOrder(root);
+
+	return 0;
+}
+
+// This code is contributed by rathbhupendra
+
+$0
+endsnippet
+snippet btLevelOrderTraversal "Using queue = Level order traversal of a tree" b
+/* C++ program to print level
+	order traversal using STL */
+#include <bits/stdc++.h>
+using namespace std;
+
+// A Binary Tree Node
+struct Node {
+	int data;
+	struct Node *left, *right;
+};
+
+// Iterative method to find height of Binary Tree
+void printLevelOrder(Node* root)
+{
+	// Base Case
+	if (root == NULL)
+		return;
+
+	// Create an empty queue for level order traversal
+	queue<Node*> q;
+
+	// Enqueue Root and initialize height
+	q.push(root);
+
+	while (q.empty() == false) {
+		// Print front of queue and remove it from queue
+		Node* node = q.front();
+		cout << node->data << " ";
+		q.pop();
+
+		/* Enqueue left child */
+		if (node->left != NULL)
+			q.push(node->left);
+
+		/*Enqueue right child */
+		if (node->right != NULL)
+			q.push(node->right);
+	}
+}
+
+// Utility function to create a new tree node
+Node* newNode(int data)
+{
+	Node* temp = new Node;
+	temp->data = data;
+	temp->left = temp->right = NULL;
+	return temp;
+}
+
+// Driver program to test above functions
+int main()
+{
+	// Let us create binary tree shown in above diagram
+	Node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
+
+	cout << "Level Order traversal of binary tree is \n";
+	printLevelOrder(root);
+	return 0;
+}
+
+$0
+endsnippet
+# 7.5 
+snippet btSortArray2BalaneceBinaryTree "Given a sorted array convert  Balanced Binary Search Tree." b
+// C++ program to print BST in given range
+#include<bits/stdc++.h>
+using namespace std;
+
+/* A Binary Tree node */
+class TNode
+{
+	public:
+	int data;
+	TNode* left;
+	TNode* right;
+};
+
+TNode* newNode(int data);
+
+/* A function that constructs Balanced Binary Search Tree from a sorted array */
+TNode* sortedArrayToBST(int arr[],
+						int start, int end)
+{
+	/* Base Case */
+	if (start > end)
+	return NULL;
+
+	/* Get the middle element and make it root */
+	int mid = (start + end)/2;
+	TNode *root = newNode(arr[mid]);
+
+	/* Recursively construct the left subtree and make it left child of root */
+	root->left = sortedArrayToBST(arr, start,
+									mid - 1);
+
+	/* Recursively construct the right subtree and make it right child of root */
+	root->right = sortedArrayToBST(arr, mid + 1, end);
+
+	return root;
+}
+
+/* Helper function that allocates a new node
+with the given data and NULL left and right
+pointers. */
+TNode* newNode(int data)
+{
+	TNode* node = new TNode();
+	node->data = data;
+	node->left = NULL;
+	node->right = NULL;
+
+	return node;
+}
+
+/* A utility function to print
+preorder traversal of BST */
+void preOrder(TNode* node)
+{
+	if (node == NULL)
+		return;
+	cout << node->data << " ";
+	preOrder(node->left);
+	preOrder(node->right);
+}
+
+// Driver Code
+int main()
+{
+	int arr[] = {1, 2, 3, 4, 5, 6, 7};
+	int n = sizeof(arr) / sizeof(arr[0]);
+
+	/* Convert List to BST */
+	TNode *root = sortedArrayToBST(arr, 0, n-1);
+	cout << "PreOrder Traversal of constructed BST \n";
+	preOrder(root);
+
+	return 0;
+}
+
+// This code is contributed by rathbhupendra
+
+$0
+endsnippet
+# 8 design
+# 8.1
+# 8.2
+# 8.3
+# 8.4
+# 9  dp
+# 9.1
+
+snippet sumWayClimbStairs "dp = many distinct ways can you climb to the top?  " b
+// C++ program to count number of
+// ways to reach Nth stair
+#include <bits/stdc++.h>
+using namespace std;
+
+// A simple recursive program to
+// find N'th fibonacci number
+int fib(int n, int dp[])
+{
+	if (n <= 1)
+		return dp[n] = 1;
+
+	if(dp[n] != -1 ){
+		return dp[n] ;
+	}
+	dp[n] = fib(n - 1, dp) + fib(n - 2, dp);
+	return dp[n] ;
+}
+
+// Returns number of ways to
+// reach s'th stair
+int countWays(int n)
+{
+	int dp[n+1] ;
+	memset(dp, -1, sizeof dp) ;
+	fib(n, dp) ;
+	return dp[n] ;
+}
+
+// Driver C
+int main()
+{
+	int n = 4;
+
+	cout << "Number of ways = " << countWays(n);
+
+	return 0;
+}
+
+$0
+endsnippet
+# 9.2
+snippet maxProfitStock "dp = find the maximum profit possible for buying and selling the stock" b
+// C++ program for the above approach
+
+#include <bits/stdc++.h>
+#include <iostream>
+using namespace std;
+
+// Function to find the maximum
+// profit in the buy and sell stock
+int find(vector<int>& prices, int ind, bool buy, int c,
+		vector<vector<vector<int> > >& memo)
+{
+	// If buy =1 means buy now
+	// else sell
+	if (ind >= prices.size() || c >= 2)
+		return 0;
+	if (memo[ind][buy] != -1)
+		return memo[ind][buy];
+
+	// Already bought, sell now
+	if (buy) {
+		return memo[ind][buy]
+			= max(-prices[ind]
+						+ find(prices, ind + 1, !buy, c,
+								memo),
+					find(prices, ind + 1, buy, c, memo));
+	}
+
+	// Can buy stocks
+	else {
+		return memo[ind][buy]
+			= max(prices[ind]
+						+ find(prices, ind + 1, !buy,
+								c + 1, memo),
+					find(prices, ind + 1, buy, c, memo));
+	}
+}
+
+// Function to find the maximum
+// profit in the buy and sell stock
+int maxProfit(vector<int>& prices)
+{
+	// Here maximum two transaction are allowed
+
+	// Use 3-D vector because here
+	// three states are there: i,k,buy/sell
+	vector<vector<vector<int> > > memo(
+		prices.size(),
+		vector<vector<int> >(2, vector<int>(2, -1)));
+
+	// Answer
+	return find(prices, 0, 1, 0, memo);
+}
+
+// Driver Code
+int main()
+{
+
+	// Given prices
+	vector<int> prices = { 3, 3, 5, 0, 0, 3, 1, 4 };
+
+	// Function Call
+	int ans = maxProfit(prices);
+
+	// Answer
+	cout << ans << endl;
+	return 0;
+}
+
+
+$0
+endsnippet
+# 9.3
+snippet maxSumSubarray "dp = Maximum Subarray Sum" b
+// A Divide and Conquer based program for maximum subarray
+// sum problem
+#include <limits.h>
+#include <stdio.h>
+
+// A utility function to find maximum of two integers
+int max(int a, int b) { return (a > b) ? a : b; }
+
+// A utility function to find maximum of three integers
+int max(int a, int b, int c) { return max(max(a, b), c); }
+
+// Find the maximum possible sum in arr[] auch that arr[m]
+// is part of it
+int maxCrossingSum(int arr[], int l, int m, int h)
+{
+	// Include elements on left of mid.
+	int sum = 0;
+	int left_sum = INT_MIN;
+	for (int i = m; i >= l; i--) {
+		sum = sum + arr[i];
+		if (sum > left_sum)
+			left_sum = sum;
+	}
+
+	// Include elements on right of mid
+	sum = 0;
+	int right_sum = INT_MIN;
+	for (int i = m + 1; i <= h; i++) {
+		sum = sum + arr[i];
+		if (sum > right_sum)
+			right_sum = sum;
+	}
+
+	// Return sum of elements on left and right of mid
+	// returning only left_sum + right_sum will fail for
+	// [-2, 1]
+	return max(left_sum + right_sum, left_sum, right_sum);
+}
+
+// Returns sum of maximum sum subarray in aa[l..h]
+int maxSubArraySum(int arr[], int l, int h)
+{
+	// Base Case: Only one element
+	if (l == h)
+		return arr[l];
+
+	// Find middle point
+	int m = (l + h) / 2;
+
+	/* Return maximum of following three possible cases
+			a) Maximum subarray sum in left half
+			b) Maximum subarray sum in right half
+			c) Maximum subarray sum such that the subarray
+	crosses the midpoint */
+	return max(maxSubArraySum(arr, l, m),
+			maxSubArraySum(arr, m + 1, h),
+			maxCrossingSum(arr, l, m, h));
+}
+
+/*Driver program to test maxSubArraySum*/
+int main()
+{
+	int arr[] = { 2, 3, 4, 5, 7 };
+	int n = sizeof(arr) / sizeof(arr[0]);
+	int max_sum = maxSubArraySum(arr, 0, n - 1);
+	printf("Maximum contiguous sum is %d\n", max_sum);
+	getchar();
+	return 0;
+}
+
+$0
+endsnippet
+snippet minSumSubarray "contiguous subarray having the smallest(minimum) sum" b
+// C++ implementation to find the smallest sum
+// contiguous subarray
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// function to find the smallest sum contiguous subarray
+int smallestSumSubarr(int arr[], int n)
+{
+	// to store the minimum value that is ending
+	// up to the current index
+	int min_ending_here = INT_MAX;
+
+	// to store the minimum value encountered so far
+	int min_so_far = INT_MAX;
+
+	// traverse the array elements
+	for (int i=0; i<n; i++)
+	{
+		// if min_ending_here > 0, then it could not possibly
+		// contribute to the minimum sum further
+		if (min_ending_here > 0)
+			min_ending_here = arr[i];
+
+		// else add the value arr[i] to min_ending_here
+		else
+			min_ending_here += arr[i];
+
+		// update min_so_far
+		min_so_far = min(min_so_far, min_ending_here);
+	}
+
+	// required smallest sum contiguous subarray value
+	return min_so_far;
+}
+
+
+// Driver program to test above
+int main()
+{
+	int arr[] = {3, -4, 2, -3, -1, 7, -5};
+	int n = sizeof(arr) / sizeof(arr[0]);
+	cout << "Smallest sum: "
+		<< smallestSumSubarr(arr, n);
+	return 0;
+}
+
+$0
+endsnippet
+# 9.4
+
+# 10 math
+# 11 other

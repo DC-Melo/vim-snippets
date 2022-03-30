@@ -1,5 +1,5 @@
 ::::::::::::::
-Hash/0049.Group-Anagrams/49.Group Anagrams.cpp
+Hash/049.Group-Anagrams/49.Group Anagrams.cpp
 ::::::::::::::
 class Solution {
 public:
@@ -23,7 +23,7 @@ public:
     }
 };
 ::::::::::::::
-Hash/0049.Group-Anagrams/Readme.md
+Hash/049.Group-Anagrams/Readme.md
 ::::::::::::::
 ### 049.Group-Anagrams
 
@@ -31,1332 +31,6 @@ Hash/0049.Group-Anagrams/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/group-anagrams)::::::::::::::
-Hash/0149.Max-Points-on-a-Line/149.Max-Points-on-a-Line.cpp
-::::::::::::::
-/**
- * Definition for a point.
- * struct Point {
- *     int x;
- *     int y;
- *     Point() : x(0), y(0) {}
- *     Point(int a, int b) : x(a), y(b) {}
- * };
- */
-class Solution {
-public:
-    int maxPoints(vector<Point>& points) 
-    {
-        int result=0;
-        
-        for (int i=0; i<points.size(); i++)
-        {
-            unordered_map <int,int> Map;
-            int countSame=0;
-            
-            for (int j=0; j<points.size(); j++)
-            {
-                if (j==i) continue;
-                
-                if (points[i].x==points[j].x && points[i].y==points[j].y )
-                {
-                    countSame++;
-                    continue;
-                }
-                
-                int flag=0;
-                for (auto a:Map)
-                {
-                    Point p=points[a.first];
-                    if ( (long long)(p.y-points[i].y)*(points[j].x-points[i].x) == (long long)(points[j].y-points[i].y)*(p.x-points[i].x) )
-                    {
-                        flag=1;
-                        Map[a.first]++;
-                        break;
-                    }
-                }
-                
-                if (flag==0)                
-                    Map[j]=1;                               
-            }
-            
-            int temp=0;
-            for (auto a:Map)
-                temp = max(temp,a.second);
-            temp+=(countSame+1);
-            result=max(result,temp);
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-Hash/0149.Max-Points-on-a-Line/149.Max-Points-on-a-Line_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxPoints(vector<vector<int>>& points) 
-    {
-        int ret = 0;
-            
-        for (int i=0; i<points.size(); i++)
-        {
-            map<pair<int,int>, int>count;
-            int verticle = 0;
-            int same = 0;
-            
-            for (int j=0; j<points.size(); j++)
-            {
-                if (i==j)  continue;
-                if (points[i]==points[j])
-                {
-                    same++;
-                    continue;
-                }
-                
-                int dy = points[j][1]-points[i][1];
-                int dx = points[j][0]-points[i][0];
-                
-                if (dx==0)
-                {
-                    verticle ++;
-                    continue;
-                }
-                
-                int a = dy/gcd(dy,dx);
-                int b = dx/gcd(dy,dx);
-                
-                count[make_pair(a,b)] ++;
-            }
-            
-            ret = max(ret, same + 1);
-            ret = max(ret, verticle + same +1 );
-            for (auto x: count)
-                ret = max(ret, x.second + same + 1);
-        }
-        
-        return ret;
-    }
-};
-::::::::::::::
-Hash/0149.Max-Points-on-a-Line/Readme.md
-::::::::::::::
-### 149.Max-Points-on-a-Line
-
-#### 解法1
-此题不能试图固定一个点、再构建直线斜率的hash表 map<double,int>Map 来确定直线的种类。因为靠相除得到的斜率会有数值误差，在最新的测试样例中无法通过。  
-对于一个点 (x0,y0),判断是否和另外两点(x1,y1),(x2,y2)构成直线的判据是
-```cpp
-(y1-y0)*(x2-x0)==(y2-y0)*(x1-x0)
-```
-正确的思路：  
-遍历点P[i]. 对于固定的起始点P[i]，考虑会和剩下的点构成多少不同的直线。  
-
-于是遍历剩下的点，比如P[j]，看是否P[j]和P[i]能构成一个新的直线。建立一个Hash Map，如果在这个表中发现已经有一条直线P[k]，使得P[k],P[j],P[i]满足之前的那个关系，说明P[j]已经属于P[k]、P[i]构成的直线上，则Map[k]++. 如果遍历Map之后没有找到任何归属，就将这个点加入hash表作为新的key，即Map[j]=1，表示连接P[i]、P[j]所代表的一条新直线。遍历完所有的j之后，查看此时Map里面最多个数的那项，代表P[i]所能构建的最多点的直线。    
-
-最外边的大循环，遍历完P[i]之后，最大的结果就出来了。
-
-注意点：  
-1. 如果P[j]和P[i]重合，那么这些点可归属任意的直线，需要在Map里特殊处理。  
-2. 如果用C++，则在上述的判断三点共线的数学等式里，必须都转换为long long类型才能得到正确的比较结果。
-
-#### 解法2
-之前提到，如果计算斜率 k = (y1-y0)/(x1-x0)作为key的话，会因为精度不足而产生错误。
-
-一个巧妙的解决方法是，因为x0,y0,x1,y1都是整数，可以令 a=y1-y0, b=x1-x0, 那么一对tuple值 (a/gcd(a,b), b/gcd(a,b))则可以代表一条直线斜率的特征，成为可以信赖的key放入字典内统计该直线上的点的数目.
-
-
-[Leetcode Link](https://leetcode.com/problems/max-points-on-a-line)::::::::::::::
-Hash/0166.Fraction-to-Recurring-Decimal/166.Fraction-to-Recurring-Decimal.cpp
-::::::::::::::
-class Solution {
-public:
-    string fractionToDecimal(int numerator, int denominator) 
-    {
-        long A = numerator;
-        long B = denominator;
-        
-        if (A==0) return "0";
-        
-        int sign = 1;
-        if (A<0)
-        {
-            sign *= -1;
-            A = abs(A);
-        }
-        if (B<0)
-        {
-            sign *= -1;
-            B = abs(B);
-        }
-        
-        string ret;
-        if (sign==-1) ret = "-";
-        
-        ret += to_string(A/B);
-        
-        if (A%B==0) return ret;
-        else ret+=".";
-        
-        long C = A%B;
-        
-        unordered_map<int,int>Map;
-        
-        while (C!=0 && Map.find(C)==Map.end())
-        {
-            Map[C] = ret.size();
-            ret.push_back('0'+C*10/B);
-            C = C*10%B;
-        }
-        
-        if (C==0) return ret;
-        
-        ret.insert(ret.begin()+Map[C], '(');
-        ret.push_back(')');
-        
-        return ret;
-    }
-};
-::::::::::::::
-Hash/0166.Fraction-to-Recurring-Decimal/Readme.md
-::::::::::::::
-### 166.Fraction-to-Recurring-Decimal
-
-注意的几个细节：
-1. 被除数为0；
-2. 被除数或除数为负数；
-3. 遇到INT_MIN时的溢出;
-4. 整除的情况。
-
-
-需要一个set记录每次的余数t。如果某次的余数已经在集合中，则说明有循环。
-
-同时需要一个Map来记录每次的余数与对应的小数位置，当发现循环的起始位置时，便于插入‘(’。
-
-```cpp
-        while (t!=0 && Set.find(t)==Set.end())
-        {
-            Set.insert(t);
-            Map[t]=result.size();            
-            result.push_back((t*10/B)+'0');
-            t=t*10%B;
-        }
-        
-        if (t==0) return result; //整除：就直接输出
-        
-        int pos=Map[t]; // 非整除：找到循环体开始的位置
-        result.insert(result.begin()+pos,'(');
-        result.push_back(')');        
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/fraction-to-recurring-decimal)::::::::::::::
-Hash/0170.Two-Sum-III-Data-structure-design/170.Two Sum III - Data structure design.cpp
-::::::::::::::
-class TwoSum {
-    
-private:
-    unordered_map<int,int>Map;
-
-public:
-
-    // Add the number to an internal data structure.
-	void add(int number) 
-	{
-	    Map[number]++;   
-	}
-
-    // Find if there exists any pair of numbers which sum is equal to the value.
-	bool find(int value) 
-	{
-	    for (auto a:Map)
-	    {
-	        if (value-a.first!=a.first)
-	        {
-	           if (Map.find(value-a.first)!=Map.end())
-	                return true;;
-	        }
-	        else if (value-a.first==a.first)
-	        {
-	            if (a.second>1)
-	                return true;
-	        }
-	    }
-	    
-	    return false;
-	}
-};
-
-
-// Your TwoSum object will be instantiated and called as such:
-// TwoSum twoSum;
-// twoSum.add(number);
-// twoSum.find(value);
-::::::::::::::
-Hash/0170.Two-Sum-III-Data-structure-design/Readme.md
-::::::::::::::
-### 170.Two-Sum-III-Data-structure-design
-
-不要试图构建一个存放所有两两之和的Set，那样会超时。
-
-正确的思想应该是构建元素及其出现次数的映射 unordered_map<int,vector<int>>Map，因为这样的Map本身兼具Set的元素不相容的功能. 
-
-当find(val)时，遍历所有Map里的元素x，查找val-x是否也在Map里。同时需要考虑x=val-x的情况。
-
-
-[Leetcode Link](https://leetcode.com/problems/two-sum-iii-data-structure-design)::::::::::::::
-Hash/0204.Count-Primes/204.Count Primes.cpp
-::::::::::::::
-class Solution {
-public:
-    int countPrimes(int n) 
-    {
-        if (n<=2) return 0;
-        
-        vector<bool> num(n - 1, true);
-        
-        for (int x = 2; x <= sqrt(n); x++) 
-        {
-            if (num[x]==false) continue;
-            
-            for (int j=2; x*j < n; j++) 
-                num[x*j] = false;
-        }
-        
-        int count=0;
-        for (int j = 2; j < n; ++j) 
-        {
-            if (num[j]) count++;
-        }
-        
-        return count;
-    }
-};
-::::::::::::::
-Hash/0204.Count-Primes/Readme.md
-::::::::::::::
-### 204.Count-Primes
-
-用倍数筛除法去除所有已知质数的倍数。最高效的容器是bool型的vector
-```cpp
-vector<bool>q(n,true);
-for (x=2; x<=sqrt(n); x++)
-{
-   if (q[x]==false) continue; 
-   for (int i=2; x*i<n; i++)
-     q[x*i]=false;
-}
-```
-然后检查从2到n-1里仍然标记为true的元素数目。    
-
-注意，x的判断范围是从2到sqrt(n)即可，不需要遍历到n。
-
-
-[Leetcode Link](https://leetcode.com/problems/count-primes)::::::::::::::
-Hash/0274.H-Index/274.H-index_Binary.cpp
-::::::::::::::
-class Solution {
-public:
-    int hIndex(vector<int>& citations) 
-    {
-        int left=0;
-        int N=citations.size();
-        int right=N-1;
-        int mid;
-        
-        if (N==0) return 0;
-        
-        while (left<right)
-        {
-            int mid= left+(right-left)/2;
-            
-            if (N-mid==citations[mid])
-                return citations[mid];
-            else if (N-mid<citations[mid])
-                right = mid;
-            else
-                left= mid+1;
-        }
-        
-        return min(N-left,citations[left]);
-        
-    }
-};
-::::::::::::::
-Hash/0274.H-Index/274.H-Index_Hash.cpp
-::::::::::::::
-class Solution {
-public:
-    int hIndex(vector<int>& citations) 
-    {
-        if (citations.size()==0) return 0;
-        
-        map<int,int>Map;
-        for (int i=0; i<citations.size(); i++)
-            Map[citations[i]]++;
-        auto q = vector<pair<int,int>>(Map.begin(),Map.end());
-        
-        int sum=0;
-        
-        for (int i=q.size()-1; i>=0; i--)
-        {
-            if (q[i].first>sum+q[i].second)
-                sum+=q[i].second;
-            else if (q[i].first==sum+q[i].second)
-                return q[i].first;
-            else
-                return max(q[i].first,sum);
-        }
-        
-        return sum;        
-    }
-};
-::::::::::::::
-Hash/0274.H-Index/274.H-index_Pointer.cpp
-::::::::::::::
-class Solution {
-public:
-    int hIndex(vector<int>& citations) 
-    {
-        if (citations.size()==0) return 0;
-        
-        sort(citations.begin(),citations.end());
-        
-        int sum=0;
-        int i=citations.size()-1;
-        
-        while (i>=0)
-        {
-            sum++;
-            
-            if (citations[i]==sum)
-                return sum;
-            else if (citations[i]>sum)
-                i--;
-            else
-            {
-                return max(citations[i],sum-1);
-            }
-            
-        }
-        
-        return sum;
-        
-    }
-};
-::::::::::::::
-Hash/0274.H-Index/Readme.md
-::::::::::::::
-### 274.H-Index
-
-类似的题目里 275.H-Index II 给出排序后的citations，可以用双指针来做。本题中，考虑如果不先行排序的话，需要用到Hash表。
-
-首先遍历数组，建立映射：引用数 -> 符合该引用数的文章数目。然后把Map放进pair类型的数组中，方便用sort直接排序。
-```cpp
-        for (int i=0; i<citations.size(); i++)
-            Map[citations[i]]++;
-        auto q = vector<pair<int,int>>(Map.begin(),Map.end());
-        sort(q.begin(),q.end());
-```        
-然后对于q数组，从后往前考察：
-```cpp
-        int sum=0;        
-        for (int i=q.size()-1; i>=0; i--)
-        {
-            if (q[i].first>sum+q[i].second) // 文章总数还小于citation量，可以尝试进一步扩大范围（考虑引用量更少的文章）
-                sum+=q[i].second;
-            else if (q[i].first==sum+q[i].second) // 文章总数恰好等于citation量，可以证明这就是最优解
-                return q[i].first;
-            else if (q[i].first<sum+q[i].second)  // 文章总数已经大于citation量，说明q[i]不可完全列入考虑范围。
-                return max(q[i].first,sum);       // 这个操作非常关键！仔细思考。
-        }
-```
-
-
-
-[Leetcode Link](https://leetcode.com/problems/h-index)::::::::::::::
-Hash/0325.Maximum-Size-Subarray-Sum-Equals-k/325.Maximum Size Subarray Sum Equals k.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxSubArrayLen(vector<int>& nums, int k) 
-    {
-        unordered_map<int,vector<int>>Map;
-        int sum=0;
-        int result=INT_MIN;
-        
-        nums.insert(nums.begin(),0);
-        
-        for (int i=0; i<nums.size(); i++)
-        {
-            sum+=nums[i];
-            Map[sum].push_back(i);
-            
-            int temp = sum-k;
-            if (Map.find(temp)!=Map.end())
-            {
-                result = max(result, i-Map[temp][0]);
-            }
-        }
-        
-        if (result==INT_MIN) result=0;
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-Hash/0325.Maximum-Size-Subarray-Sum-Equals-k/Readme.md
-::::::::::::::
-### 325.Maximum-Size-Subarray-Sum-Equals-k
-
-在遍历元素的过程中，建立累加和sum，并建立映射Map:sum->i。对于每个元素i，找和为k的子数组，就是寻找之前的累加和序列里是否出现过 sum-k，显然，直接从Map中就可以找到。
-
-```cpp
-        for (int i=0; i<nums.size(); i++)
-        {
-            sum+=nums[i];
-            Map[sum].push_back(i);
-            
-            int temp = sum-k;
-            if (Map.find(temp)!=Map.end())
-            {
-                result = max(result, i-Map[temp][0]);
-            }
-        }
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-size-subarray-sum-equals-k)::::::::::::::
-Hash/0356.Line-Reflection/356.Line Reflection.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isReflected(vector<pair<int, int>>& points) 
-    {
-        
-        int N=points.size();
-        if (N==0) return true;
-        
-        unordered_map<int,set<int>>Map;
-        unordered_set<int>Set;
-        for (int i=0; i<N; i++)
-        {
-            Map[points[i].second].insert(points[i].first);
-            Set.insert(points[i].first);
-        }
-        
-        float x0=0;
-        for (auto a:Set)
-            x0+=a;
-        x0=x0/Set.size();
-        
-        for (auto a:Map)
-        {
-            vector<int>q(a.second.begin(),a.second.end());
-            int i=0;
-            int j=q.size()-1;
-            while (i<=j)
-            {
-                if (q[i]+q[j]!=x0*2)
-                    return false;
-                i++;
-                j--;
-            }
-        }
-        
-        return true;
-    }
-};
-::::::::::::::
-Hash/0356.Line-Reflection/Readme.md
-::::::::::::::
-### 356.Line-Reflection
-
-首先，需要确定这些点关于x的对称中心位置，即镜面位置。注意到重复点在本题只算一个点，所以需要借助Set排除重复的干扰。   
-根据数学关系，易知：x1,x2,...,x_n的对称中心，应该等于(x1+x2+...+x_n)/N
-```cpp
-        unordered_set<int>Set;
-        for (int i=0; i<N; i++)        
-            Set.insert(points[i].first);               
-        float x0=0;
-        for (auto a:Set)
-            x0+=a;
-        x0=x0/Set.size();
-```
-然后要判断这些点关于x=x0镜面对称，需要先保证对称点都在同一个y坐标上。所以利用Map来对这些点关于y的位置进行分类。
-```cpp
-        unordered_map<int,set<int>>Map;
-        for (int i=0; i<N; i++)
-        {
-            Map[points[i].second].insert(points[i].first);
-        }
-```
-对于每个y位置，都有一个集合包括了若干个不重复的x位置，我们需要保证它们两两关于x0对称。利用了set的自动排序特点，我们可以用双指针从两边往中间夹逼。
-```cpp
-        for (auto a:Map)
-        {
-            vector<int>q(a.second.begin(),a.second.end()); //因为set是有序的，直接导入一个数组中。
-            int i=0;
-            int j=q.size()-1;
-            while (i<=j)
-            {
-                if (q[i]+q[j]!=x0*2)  // 关于x0对称的判据
-                    return false;
-                i++;
-                j--;
-            }
-        }
-```        
-
-
-[Leetcode Link](https://leetcode.com/problems/line-reflection)::::::::::::::
-Hash/0392.Is-Subsequence/392.Is Subsequence_s1.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isSubsequence(string s, string t) 
-    {
-        int i=0;
-        int j=0;
-        while (i<s.size() && j<t.size())
-        {
-            if (s[i]!=t[j])
-                j++;
-            else
-            {
-                i++;
-                j++;
-            }
-        }
-        if (i<s.size())
-            return false;
-        else
-            return true;
-    }
-};
-::::::::::::::
-Hash/0392.Is-Subsequence/392.Is Subsequence_s2.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isSubsequence(string s, string t) 
-    {
-        unordered_map<char,vector<int>>Map;
-        for (int i=0; i<t.size(); i++)
-            Map[t[i]].push_back(i);
-            
-        int NextStart = -1;
-        for (int i=0; i<s.size(); i++)
-        {
-            char ch = s[i];
-            int flag=0;
-            
-            for (int j:Map[ch])
-            {
-                if (j>NextStart)
-                {
-                    flag = 1;
-                    NextStart = j;
-                    break;
-                }
-            }
-            if (flag==0) return false;
-        }
-        
-        return true;
-        
-    }
-};
-::::::::::::::
-Hash/0392.Is-Subsequence/Readme.md
-::::::::::::::
-### 392.Is-Subsequence
-
-普通的双指针解法就不再赘述。考虑follow up的问题。显然，需要提前建立关于t的一些信息的存储，方便s来查阅，用空间换时间嘛。
-
-结合双指针解法的思路，如果在t[pos]找到了s[i]，则只需要在pos之后去寻找s[i+1]。所以提前构建映射：t的每个字符和该字符出现位置:
-```cpp
-Map[s[i]].push_back(i);
-```
-建立pos的初始位置-1. 然后遍历s[i]：在Map[s[i]]里找第一个大于pos的位置并更新pos，则之后对于s[i+1]的查找必须从t的新pos位置开始。
-```
-int pos=-1;
-for (int i=0; i<s.size()-1; i++)
-{
-   int flag=0;
-   for (int j: Map[s[i]])
-   {
-      if (j>pos)
-      {
-         pos = j;
-         flag = 1;
-      }
-   }
-   if (flag==0) retrun false; // 对于s[i]，在t中没有找到合适的位置
-}
-return true;
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/is-subsequence)::::::::::::::
-Hash/0409.Longest-Palindrome/409.Longest Palindrome.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestPalindrome(string s) 
-    {
-        vector<int>Map(256,0);
-        for (int i=0; i<s.size(); i++)
-            Map[s[i]]++;
-        
-        int sum=0;
-        int flag=0;
-        for (auto a:Map)
-        {
-            if ((a % 2) ==1)
-            {
-                sum+=a-1;
-                flag=1;
-            }
-            else
-                sum+=a;
-        }
-        
-        return sum+flag;
-        
-    }
-};
-::::::::::::::
-Hash/0409.Longest-Palindrome/Readme.md
-::::::::::::::
-### 409.Longest-Palindrome
-
-注意，出现了奇数次的字符也可以参与构建回文串：其中一个可以全部采用；剩余的只需要取用其偶数次。
-
-所以，判定方法是：
-```cpp
-        int sum=0;
-        int flag=0;
-        for (auto a:Map)
-        {
-            if ((a % 2) ==1)
-            {
-                sum+=a-1;
-                flag=1;
-            }
-            else
-                sum+=a;
-        }        
-        return sum+flag;
-```        
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-palindrome)::::::::::::::
-Hash/0438.Find-All-Anagrams-in-a-String/438.Find All Anagrams in a String.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> findAnagrams(string s, string p) 
-    {
-        vector<int>P(255,0);
-        vector<int>S(255,0);
-        for (char ch:p) P[ch]++;
-        
-        vector<int>results;
-        for (int i=0; i<s.size(); i++)
-        {
-            S[s[i]]++;
-            if (i>=p.size()) S[s[i-p.size()]]--;            
-            if (S==P) results.push_back(i-p.size()+1);
-        }
-        return results;
-    }
-};
-::::::::::::::
-Hash/0438.Find-All-Anagrams-in-a-String/Readme.md
-::::::::::::::
-### 438.Find-All-Anagrams-in-a-String
-
-1. 注意到本题的查验子串的窗口长度是固定的s.size()，所以不需要双指针，单指针即可。
-2. 需要构造字符的哈希表时，用数组而不是map，效率更高。但记得一定要赋初值 vector<int>Map(256,0)
-3. 数组之间判断是否相等的比较，直接用 == 即可。
-4. 仔细考虑循环条件，不要遗漏最后一次比较。
-
-完全相同的问题有 567.Permutation in String
-
-
-[Leetcode Link](https://leetcode.com/problems/find-all-anagrams-in-a-string)::::::::::::::
-Hash/0446.Arithmetic-Slices-II-Subsequence/446.Arithmetic-Slices-II-Subsequence.cpp
-::::::::::::::
-class Solution {
-public:
-    int numberOfArithmeticSlices(vector<int>& A) 
-    {
-        int n = A.size();
-        unordered_map<long,int>dp[1000];
-        int count = 0;
-        
-        for (int i=1; i<A.size(); i++)
-        {
-            for (int j=i-1; j>=0; j--)
-            {
-                long diff = (long)A[i]-(long)A[j];
-                count += dp[j][diff];
-                
-                if (dp[j].find(diff)!=dp[j].end())
-                    dp[i][diff] += dp[j][diff]+1;                                    
-                else
-                    dp[i][diff] = 1;
-            }
-        }
-                    
-        return count;
-    }
-};
-::::::::::::::
-Hash/0446.Arithmetic-Slices-II-Subsequence/446.Arithmetic-Slices-II-Subsequence_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int numberOfArithmeticSlices(vector<int>& A) 
-    {
-        unordered_map<int,vector<int>>Map;
-        for (int i=0; i<A.size(); i++)
-            Map[A[i]].push_back(i);
-        
-        int N = A.size();
-        auto dp = vector<vector<int>>(N,vector<int>(N,0));
-        for (int i=0; i<N; i++)
-            for (int j=0; j<i; j++)
-            {
-                long m = A[j]*2L-A[i];
-                if (m>INT_MAX || m<INT_MIN) continue;
-                for (int k:Map[m])
-                {
-                    if (k<j)
-                        dp[j][i] += dp[k][j]+1;
-                }
-            }
-        int count = 0;
-        for (int j=0; j<N; j++)
-            for (int i=j+1; i<N; i++)
-                count+=dp[j][i];
-        return count;
-    }
-};
-::::::::::::::
-Hash/0446.Arithmetic-Slices-II-Subsequence/Readme.md
-::::::::::::::
-### 446.Arithmetic-Slices-II-Subsequence
-
-#### 解法1
-
-首先我们会想，如何能够确定一个等差数列．知道了首项，公差，就能往后推序列的其他元素．所以本题容易想到的一个思路就是正向地搜索．这样的话，光遍历首项和公差就是o(N^2)的复杂度，后续的DFS更是计算量巨大．
-
-搜索不成的话，DP是个很常规的替代方案．考虑到本题是求方案的数量，所以DP解法的嫌疑就更大了．最常见的DP套路，就是考察待求的状态量```DP[i]```与之前的状态量```DP[j]```之间的推导关系，这里的```DP[i]```不妨就设计为题意要求的以元素```j```结尾的的等差数列的个数．
-
-如果```i```是等差数列的最后一个，那么它之前的一个元素是什么呢？那么```j=0~i-1```都是有可能的，只要元素```j```是某个相同公差的等差数列的结尾元素．如果是的话，显然```DP[i]+=DP[j]```．由此，我们看到一个重要的因素，那就是公差```diff```．也就是说，判断```j```是否和```i```构成等差数列的条件，就是先计算```diff=A[j]-A[i]```，然后再考察```j```是否为一个公差为```diff```的等差数列的尾项．于是我们还需要在DP数组中给Ａ的每个元素开辟一个Hash，用来存储它所涉及的公差．
-
-我们令dp[i][diff]表示以元素i结尾、公差为diff的等差数列（长度>=2）有多少个。为什么我们会这么定义“长度>=2”？假设我们后面能接上一个元素k并保持这个公差diff的话，对于k而言，以其为结尾的长度>=3的等差数列那就是dp[i][diff]，恰好就是我们想统计的。可见这样定义dp[i][diff]能给我们带来极大的方便。
-
-当然，对于k而言，你也必须正确地更新dp[k][diff]。注意DP变量的定义，以k为结尾的长度>=2的等差数列应该有dp[i][diff]+1个，这“+1”就是代表着仅包含{i,k}两个元素的数列。
-
-核心代码如下：
-```cpp
-unorderd_map<int,int>DP[1000];
-int count = 0;
-for (int i=0; i<N; i++)
-  for (int j=0; j<i; j++)
-  {
-      diff = A[i]-A[j];
-      count += dp[j][diff]; // 构建了以j,i为倒数两位，且公差为diff的新等差数列(保证长度>=3)
-      
-      if (dp[j].find(diff)==dp[j].end())
-        dp[i][diff] = 1;
-      else
-        dp[i][diff] += dp[j][diff]+1;  // 更新以i为结尾，且公差为diff的等差数列(长度>=2)的个数。
-  }
-return count;  
-```
-
-这个思想和```1027.Longest-Arithmetic-Sequence```的解法一致，时间复杂度是o(N^2).
-
-#### 解法2
-
-一个等差数列,可以通过后两位元素就能唯一确定.所以另一个很常见的DP解法,就是定义状态变量DP[i][j]表示为以元素i,j结尾的等差数列的个数.
-
-我们通过i,j,查找之前是否存在一个索引k使得```A[i]*2=A[k]+A[j]```.如果找到的话那就说明```DP[i][j]+=DP[k][i]+1```。其中```DP[k][i]+1```的意思是：以i,j为结尾的等差数列，大部分可以由以k,i为结尾的等差数列延长而来（多加上一个A[i]而已），但还多出来的一个就是仅含有k,i,j三个元素的等差数列。另外，这里为什么是```+=```而不是```=```，那是因为这样的k可能会有好几个(对应相同的A[k]值).
-
-想通过A[k]值找到k,需要提前处理,用到一个一对应多的hash表unordered_map<int,vector<int>>Map. 注意这种解法的时间复杂度是o(N^3).
-
-
-[Leetcode Link](https://leetcode.com/problems/arithmetic-slices-ii-subsequence)
-::::::::::::::
-Hash/0447.Number-of-Boomerangs/447.Number of Boomerangs.cpp
-::::::::::::::
-class Solution {
-public:
-    int numberOfBoomerangs(vector<pair<int, int>>& points) 
-    {
-        int result=0;
-        for (int i=0; i<points.size(); i++)
-        {
-            unordered_map<int,int>Map;
-            for (int j=0; j<points.size(); j++)
-            {
-                int dis= (points[i].first-points[j].first)*(points[i].first-points[j].first)+(points[i].second-points[j].second)*(points[i].second-points[j].second);
-                Map[dis]++;
-            }
-            for (auto a:Map)
-            {
-                result+=a.second*(a.second-1);
-            }            
-        }
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-Hash/0447.Number-of-Boomerangs/Readme.md
-::::::::::::::
-### 447.Number-of-Boomerangs
-
-固定一个点i，查找其他所有点到该点的距离，存进一个Map。假设到i距离为d的点的数目有n个，说明有n*(n-1)个(i,j,k)配对。
-
-因为(i,j,k)的次序有关系，遍历其他点的时候，要考察所有点而不是仅仅从i+1开始。
-
-
-[Leetcode Link](https://leetcode.com/problems/number-of-boomerangs)::::::::::::::
-Hash/0525.Contiguous-Array/525.Contiguous Array.cpp
-::::::::::::::
-class Solution {
-public:
-    int findMaxLength(vector<int>& nums) 
-    {
-        int sum=0;
-        unordered_map<int,int>Map;
-        Map[0]=-1;
-        
-        int result=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            sum+=(nums[i]==1?1:-1);
-            if (Map.find(sum)==Map.end())
-                Map[sum]=i;
-            else
-            {
-                result = max(result, i-Map[sum]);
-            }
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-Hash/0525.Contiguous-Array/Readme.md
-::::::::::::::
-### 525.Contiguous-Array
-
-建立累加和sum，遍历所有元素，遇到1加1，遇到0减1. 如果两个位置的累加和相等，说明中间的元素和是0，即有相同数目的0和1.
-
-构造unordered_map<int,int>Map记录每个累加和sum出现的位置。注意，因为求的是最大长度，只需要存储第一次出现sum数值的位置即可。另外，需要考虑子串的首位置可以是0，故设置Map[0]=-1.
-
-```cpp
-        int result=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            sum+=(nums[i]==1?1:-1);
-            if (Map.find(sum)==Map.end())
-                Map[sum]=i;
-            else
-                result = max(result, i-Map[sum]);
-        }
-```        
-
-
-[Leetcode Link](https://leetcode.com/problems/contiguous-array)::::::::::::::
-Hash/0532.K-diff-Pairs-in-an-Array/532.K-diff Pairs in an Array_Hash.cpp
-::::::::::::::
-class Solution {
-public:
-    int findPairs(vector<int>& nums, int k) 
-    {
-        if (k<0) return 0;
-        unordered_set<int>Set;
-        unordered_set<int>minSet;
-        
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (Set.find(nums[i]-k)!=Set.end())
-                minSet.insert(nums[i]-k);
-            if (Set.find(nums[i]+k)!=Set.end())
-                minSet.insert(nums[i]);
-            Set.insert(nums[i]);
-        }
-        
-        return minSet.size();        
-    }
-};
-::::::::::::::
-Hash/0532.K-diff-Pairs-in-an-Array/532.K-diff Pairs in an Array_TwoPointer.cpp
-::::::::::::::
-class Solution {
-public:
-    int findPairs(vector<int>& nums, int k) 
-    {
-        sort(nums.begin(),nums.end());
-        
-        int i=0;
-        int j=1;
-        int result=0;
-        
-        while (j<nums.size())
-        {
-            while (nums[j]<nums[i]+k) j++;
-            if (nums[j]==nums[i]+k)
-                result++;
-            i++;
-            while (i<nums.size() && nums[i]==nums[i-1]) i++;
-            j=max(j,i+1);
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-Hash/0532.K-diff-Pairs-in-an-Array/Readme.md
-::::::::::::::
-### 532.K-diff-Pairs-in-an-Array
-
-#### 解法1：
-双指针，滑动窗口，时间复杂度o(nlogn)。需要注意的是，每移动一次左指针后，右指针的初始位置必须保证在左指针的右边。
-
-#### 解法2：
-Hash表。设置两个集合，遍历nums，用集合A装每次访问的元素nums[i]，用集合B装用nums[i]构成pair的较小的那个元素。最后数一下集合B中的元素个数就是答案。
-
-
-[Leetcode Link](https://leetcode.com/problems/k-diff-pairs-in-an-array)::::::::::::::
-Hash/0535.Encode-and-Decode-TinyURL/535.Encode and Decode TinyURL.cpp
-::::::::::::::
-class Solution {
-private:
-    unordered_map<string, string> short2long, long2short;
-    string dict;
-    
-public:
-    Solution()
-    {
-        dict = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        short2long.clear();
-        long2short.clear();
-        srand(time(NULL));
-    }
-    
-    // Encodes a URL to a shortened URL.
-    string encode(string longUrl) 
-    {
-        if (long2short.find(longUrl)!=long2short.end())
-            return "http://tinyurl.com/"+long2short[longUrl];
-        
-        string s;
-        for (int i=0; i<6; i++)
-            s+= dict[rand()%62];
-        
-        long2short[longUrl]=s;
-        short2long[s]=longUrl;
-        
-        return "http://tinyurl.com/"+s;
-    }
-
-    // Decodes a shortened URL to its original URL.
-    string decode(string shortUrl) 
-    {
-        string randStr = shortUrl.substr(shortUrl.find_last_of("/") + 1);
-        string longUrl;
-        
-        if (short2long.find(randStr)!=short2long.end())
-            longUrl = short2long[randStr];
-        else
-            longUrl = shortUrl;
-        
-        return longUrl;
-    }
-};
-
-// Your Solution object will be instantiated and called as such:
-// Solution solution;
-// solution.decode(solution.encode(url));
-::::::::::::::
-Hash/0535.Encode-and-Decode-TinyURL/Readme.md
-::::::::::::::
-### 535.Encode-and-Decode-TinyURL
-
-利用62位的dict随机生成一个6位的字符串来作为短链接
-```cpp
-dict=""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"";
-for (int i=0; i<6; i++) 
-   shortUrl+=dict[rand()%62];"
-```
-构建short2long和long2short两个Map来存储长短链接之间的互换.   
-
-编码：
-```cpp
-        if (long2short.find(longUrl)!=long2short.end())
-            return "http://tinyurl.com/"+long2short[longUrl];
-        else
-            return "http://tinyurl.com/"+shortUrl;
-```
-解码
-```cpp
-        string randStr = shortUrl.substr(shortUrl.find_last_of("/") + 1);        
-        if (short2long.find(randStr)!=short2long.end())
-            longUrl = short2long[randStr];
-        else
-            longUrl = shortUrl;
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/encode-and-decode-tinyurl)::::::::::::::
-Hash/0594.Longest-Harmonious-Subsequence/594.Longest Harmonious Subsequence.cpp
-::::::::::::::
-class Solution {
-public:
-    int findLHS(vector<int>& nums) 
-    {
-        map<int,int>Map;
-        for (int i=0; i<nums.size(); i++)
-            Map[nums[i]]++;
-        
-        int lastFreq=0;
-        int lastNum;
-        int result=0;
-        for (auto a:Map)
-        {
-            if (lastFreq==0)
-            {
-                lastNum=a.first;
-                lastFreq=a.second;
-            }
-            else
-            {
-                if (lastNum+1==a.first)
-                    result = max(result,lastFreq+a.second);
-                lastNum = a.first;
-                lastFreq = a.second;
-            }
-        }
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-Hash/0594.Longest-Harmonious-Subsequence/Readme.md
-::::::::::::::
-### 594.Longest-Harmonious-Subsequence
-
-首先要正确理解题意。subsequence不一定要求连续，只要是原数列的任意部分都符合要求。
-
-这样的话，我们可以遍历一遍整个数列，构造频次的Hash表，而且这个表是根据key有序排列的。那么我们可以依次考察任意相邻的两个频次，如果key值只相差1的话，那么这两个key对应的频次之和就是符合题意的一个方案。不断遍历这个Hash表、更新直到得到最大值。
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-harmonious-subsequence)::::::::::::::
-Hash/0753.Cracking-the-Safe/753.Cracking-the-Safe.cpp
-::::::::::::::
-class Solution {
-public:
-    string crackSafe(int n, int k) 
-    {
-        string ans;
-        ans.assign(n-1,'0');
-        unordered_map<string,int>record;
-        
-        int total = pow(k,n);
-        
-        for (int i=0; i<total; i++)
-        {
-            string temp = ans.substr(ans.size()-(n-1),(n-1));
-            record[temp] = (record[temp]+1)%k;;
-            ans+= '0'+record[temp];
-        }
-        return ans;        
-    }
-};
-::::::::::::::
-Hash/0753.Cracking-the-Safe/Readme.md
-::::::::::::::
-### 753.Cracking-the-Safe
-
-这道题是一个被研究过的经典问题，称为De Bruijin序列。Wikipedia有专门介绍的页面。这个问题可以转化为一个特定的有向图，求问是否有一条最短的路径使得能遍历所有的节点。答案是可以的，而且这个路径非常优秀，每个节点可以只需要访问一次，我们称这样的有向图是存在哈密尔顿路径的。
-
-注意，De Buijing序列并不是唯一的，有很多种生成方式。这里介绍一个比较简单的算法。就是将已经经历过的密码组合，取前n-1位作为key，最后一位作为val，放入哈希表中。当我们想在序列里添加一个新字符的时候，取当前序列的末尾n-1位作为哈希表的key，看看它对应的val是多少（注意val是之前已经尝试过的），那么这次我就在序列后添加val+1，这样就能生成一个新的n位的密码组合（记得同时更新哈希表的key-val）。依次重复下去，直到生成所有的k^n种密码组合为止。
-
-上面算法其实有个assumption，那就是任意的n-1位组成的key，恰好会在这个过程中出现k次，不会更多也不会更少。事实上这个assumption是满足的，但证明过程就不深究了。
-
-
-[Leetcode Link](https://leetcode.com/problems/cracking-the-safe)::::::::::::::
-Hash/0890.Find-and-Replace-Pattern/890.Find-and-Replace-Pattern.cpp
-::::::::::::::
-class Solution {
-public:
-    string encode(string s)
-    {
-        int num = 0;
-        unordered_map<char, int>Map;
-        string ret;
-        for (auto ch: s)
-        {
-            if (Map.find(ch)!=Map.end())
-                ret+=to_string(Map[ch]);
-            else
-            {
-                Map[ch] = num;
-                ret+=to_string(num);
-                num++;
-            }            
-        }
-        return ret;
-    }    
-    
-    vector<string> findAndReplacePattern(vector<string>& words, string pattern) 
-    {
-        string p = encode(pattern);
-        vector<string>rets;
-        
-        for (auto word: words)
-        {
-            string t = encode(word);
-            if(t==p)
-                rets.push_back(word);                
-        }
-        return rets;
-    }
-};
-::::::::::::::
-Hash/0890.Find-and-Replace-Pattern/Readme.md
-::::::::::::::
-### 890.Find-and-Replace-Pattern
-
-我们将每个单词编码为数字串，其中相同的字母对应相同的数字，靠前的字母对应较小的数字。比如acbb就编码为1233，同理bacc也是编码为1233，这样通过编码后的形式判断是否属于同pattern。
-::::::::::::::
-Hash/0930.Binary-Subarrays-With-Sum/930.Binary-Subarrays-With-Sum.cpp
-::::::::::::::
-class Solution {
-public:
-    int numSubarraysWithSum(vector<int>& A, int S) 
-    {
-        unordered_map<int,int>Map;
-        Map[0] = 1;
-        int sum = 0, ret = 0;
-        for (int i=0; i<A.size(); i++)
-        {
-            sum += A[i];
-            if (Map.find(sum-S)!=Map.end())
-                ret+=Map[sum-S];
-            Map[sum]+=1;
-        }
-        return ret;
-
-    }
-};
-::::::::::::::
-Hash/0930.Binary-Subarrays-With-Sum/Readme.md
-::::::::::::::
-### 930.Binary-Subarrays-With-Sum
-
-此题是考察对Hash+prefix的常见组合。
-
-我们遍历每一个元素j，考察以j为结尾、满足条件的subarray，这样的起点i可以在哪里？如果满足条件的起点i有多种可能，那么答案就可以累加上这么多数量．
-
-如何确定i的位置呢？凡是涉及到数组的subarray的和，我们通常会转化为前缀和来处理。即```sum[i:j] = prefix[j]-prefix[i-1]```。其中sum[i:j]即使S，当我们固定j的时候，prefix[j]也是已知的。因此可以知道我们期望的prefix[i-1]是多少，假设为val。所以我们可以用Hash来存储某个所有前缀和val所对应的i的个数。因此我们就有
-```
-ret += Map[prefix[j] - S]
-```
-
-[Leetcode Link](https://leetcode.com/problems/binary-subarrays-with-sum)
-::::::::::::::
-Hash/0939.Minimum-Area-Rectangle/939.Minimum-Area-Rectangle.cpp
-::::::::::::::
-class Solution {
-public:
-    int minAreaRect(vector<vector<int>>& points) 
-    {
-        unordered_map<int, unordered_set<int>>Map;
-        for (auto p: points)
-            Map[p[0]].insert(p[1]);
-        
-        int ret = INT_MAX;
-        for (int i=0; i<points.size(); i++)
-            for (int j=i+1; j<points.size(); j++)
-            {
-                int x1 = points[i][0];
-                int y1 = points[i][1];
-                int x2 = points[j][0];
-                int y2 = points[j][1];
-                
-                if (x1==x2 || y1==y2) continue;
-                
-                int x3 = x2;
-                int y3 = y1;
-                int x4 = x1;
-                int y4 = y2;
-                
-                if (Map[x3].find(y3)==Map[x3].end())
-                    continue;
-                if (Map[x4].find(y4)==Map[x4].end())
-                    continue;
-                
-                ret = min(ret, abs(x2-x1)*abs(y1-y2));
-            }
-        
-        return ret==INT_MAX? 0:ret;
-        
-    }
-};
-::::::::::::::
-Hash/0939.Minimum-Area-Rectangle/Readme.md
-::::::::::::::
-### 939.Minimum-Area-Rectangle
-
-对于“横平竖直”的矩阵而言，只需要给定对角线的两个点，就能完全确定一个矩形。所以最外层的两个大循环来遍历点A和点B，这是显而易见的。固定A和B之后，另外一条对角线的两个点C和D，其坐标也就能确定下来。那么如何在一个集合中快速查找到C和D呢？
-
-因为每个点的坐标包括两个分量，所以你想做查找的话，无非两个思路：1.把所有二维坐标哈希化成字符串，放入一个无序集合中，但额外的哈希化很耗时。2.直接把二维向量放入一个有序集合中，但这涉及红黑树的插入，也是效率很低的。
-
-这里提供一个用空间换时间的方法。那就是设计一个这样的数据结构```unordered_map<int, unordered_set<int>>Map```。其中key是横坐标的值，value是纵坐标的值的集合。初始化时将所有的点按照横坐标的位置来这样归类。这样，后期我们考察(x,y)是否存在的时候，只需要考察Map[x]里面是否存在y就可以了。这样既避免了哈希化，也只用到了无序容器从而省去了排序的时间。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-area-rectangle)::::::::::::::
-Hash/0974.Subarray-Sums-Divisible-by-K/974.Subarray-Sums-Divisible-by-K.cpp
-::::::::::::::
-class Solution {
-public:
-    int subarraysDivByK(vector<int>& A, int K) 
-    {
-        unordered_map<int,int>Map;
-
-        Map[0] = 1;
-        int presum = 0;
-        int ret = 0;
-        for (int i=0; i<A.size(); i++)
-        {
-            presum += A[i];
-            int r = presum > 0 ? presum%K : (presum%K+K)%K;
-            ret += Map[r];
-            Map[r]++;
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Hash/0974.Subarray-Sums-Divisible-by-K/Readme.md
-::::::::::::::
-### 974.Subarray-Sums-Divisible-by-K
-
-我们考虑右端点在i位置的话，符合条件的区间的左端点j在哪里？如果我们将区间和转化为前缀和来看，sum[i:j]能被K整除的充要条件就是：presum[i]和presum[j-1]除以K的余数相同。于是我们用计数器记录i之前presum对K除的余数各自出现了多少次。如果```presum[i]%K=r```，那么count[r]就意味着有多少个位置j能配对成符合条件的区间。
-
-注意前缀和可能是负数，而C++中整除的余数允许是负数。所以我们在计算余数的时候需要转化为 ```(presum % k + k) % k```。
-::::::::::::::
 Hash/1074.Number-of-Submatrices-That-Sum-to-Target/1074.Number-of-Submatrices-That-Sum-to-Target.cpp
 ::::::::::::::
 class Solution {
@@ -1493,6 +167,141 @@ Hash/1487.Making-File-Names-Unique/Readme.md
 
 这种解法虽然依旧把所有的文件名都存入了Map，空间上并没有优势，但是在查找name(i)的时候可以更快速地定位，时间上会有优势。
 ::::::::::::::
+Hash/149.Max-Points-on-a-Line/149.Max-Points-on-a-Line.cpp
+::::::::::::::
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPoints(vector<Point>& points) 
+    {
+        int result=0;
+        
+        for (int i=0; i<points.size(); i++)
+        {
+            unordered_map <int,int> Map;
+            int countSame=0;
+            
+            for (int j=0; j<points.size(); j++)
+            {
+                if (j==i) continue;
+                
+                if (points[i].x==points[j].x && points[i].y==points[j].y )
+                {
+                    countSame++;
+                    continue;
+                }
+                
+                int flag=0;
+                for (auto a:Map)
+                {
+                    Point p=points[a.first];
+                    if ( (long long)(p.y-points[i].y)*(points[j].x-points[i].x) == (long long)(points[j].y-points[i].y)*(p.x-points[i].x) )
+                    {
+                        flag=1;
+                        Map[a.first]++;
+                        break;
+                    }
+                }
+                
+                if (flag==0)                
+                    Map[j]=1;                               
+            }
+            
+            int temp=0;
+            for (auto a:Map)
+                temp = max(temp,a.second);
+            temp+=(countSame+1);
+            result=max(result,temp);
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Hash/149.Max-Points-on-a-Line/149.Max-Points-on-a-Line_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxPoints(vector<vector<int>>& points) 
+    {
+        int ret = 0;
+            
+        for (int i=0; i<points.size(); i++)
+        {
+            map<pair<int,int>, int>count;
+            int verticle = 0;
+            int same = 0;
+            
+            for (int j=0; j<points.size(); j++)
+            {
+                if (i==j)  continue;
+                if (points[i]==points[j])
+                {
+                    same++;
+                    continue;
+                }
+                
+                int dy = points[j][1]-points[i][1];
+                int dx = points[j][0]-points[i][0];
+                
+                if (dx==0)
+                {
+                    verticle ++;
+                    continue;
+                }
+                
+                int a = dy/gcd(dy,dx);
+                int b = dx/gcd(dy,dx);
+                
+                count[make_pair(a,b)] ++;
+            }
+            
+            ret = max(ret, same + 1);
+            ret = max(ret, verticle + same +1 );
+            for (auto x: count)
+                ret = max(ret, x.second + same + 1);
+        }
+        
+        return ret;
+    }
+};
+::::::::::::::
+Hash/149.Max-Points-on-a-Line/Readme.md
+::::::::::::::
+### 149.Max-Points-on-a-Line
+
+#### 解法1
+此题不能试图固定一个点、再构建直线斜率的hash表 map<double,int>Map 来确定直线的种类。因为靠相除得到的斜率会有数值误差，在最新的测试样例中无法通过。  
+对于一个点 (x0,y0),判断是否和另外两点(x1,y1),(x2,y2)构成直线的判据是
+```cpp
+(y1-y0)*(x2-x0)==(y2-y0)*(x1-x0)
+```
+正确的思路：  
+遍历点P[i]. 对于固定的起始点P[i]，考虑会和剩下的点构成多少不同的直线。  
+
+于是遍历剩下的点，比如P[j]，看是否P[j]和P[i]能构成一个新的直线。建立一个Hash Map，如果在这个表中发现已经有一条直线P[k]，使得P[k],P[j],P[i]满足之前的那个关系，说明P[j]已经属于P[k]、P[i]构成的直线上，则Map[k]++. 如果遍历Map之后没有找到任何归属，就将这个点加入hash表作为新的key，即Map[j]=1，表示连接P[i]、P[j]所代表的一条新直线。遍历完所有的j之后，查看此时Map里面最多个数的那项，代表P[i]所能构建的最多点的直线。    
+
+最外边的大循环，遍历完P[i]之后，最大的结果就出来了。
+
+注意点：  
+1. 如果P[j]和P[i]重合，那么这些点可归属任意的直线，需要在Map里特殊处理。  
+2. 如果用C++，则在上述的判断三点共线的数学等式里，必须都转换为long long类型才能得到正确的比较结果。
+
+#### 解法2
+之前提到，如果计算斜率 k = (y1-y0)/(x1-x0)作为key的话，会因为精度不足而产生错误。
+
+一个巧妙的解决方法是，因为x0,y0,x1,y1都是整数，可以令 a=y1-y0, b=x1-x0, 那么一对tuple值 (a/gcd(a,b), b/gcd(a,b))则可以代表一条直线斜率的特征，成为可以信赖的key放入字典内统计该直线上的点的数目.
+
+
+[Leetcode Link](https://leetcode.com/problems/max-points-on-a-line)::::::::::::::
 Hash/1524.Number-of-Sub-arrays-With-Odd-Sum/1524.Number-of-Sub-arrays-With-Odd-Sum.cpp
 ::::::::::::::
 class Solution {
@@ -1743,6 +552,144 @@ Hash/1658.Minimum-Operations-to-Reduce-X-to-Zero/Readme.md
 
 最终答案是遍历所有的b，找到i+(n-b)的最小值。
 ::::::::::::::
+Hash/166.Fraction-to-Recurring-Decimal/166.Fraction-to-Recurring-Decimal.cpp
+::::::::::::::
+class Solution {
+public:
+    string fractionToDecimal(int numerator, int denominator) 
+    {
+        long A = numerator;
+        long B = denominator;
+        
+        if (A==0) return "0";
+        
+        int sign = 1;
+        if (A<0)
+        {
+            sign *= -1;
+            A = abs(A);
+        }
+        if (B<0)
+        {
+            sign *= -1;
+            B = abs(B);
+        }
+        
+        string ret;
+        if (sign==-1) ret = "-";
+        
+        ret += to_string(A/B);
+        
+        if (A%B==0) return ret;
+        else ret+=".";
+        
+        long C = A%B;
+        
+        unordered_map<int,int>Map;
+        
+        while (C!=0 && Map.find(C)==Map.end())
+        {
+            Map[C] = ret.size();
+            ret.push_back('0'+C*10/B);
+            C = C*10%B;
+        }
+        
+        if (C==0) return ret;
+        
+        ret.insert(ret.begin()+Map[C], '(');
+        ret.push_back(')');
+        
+        return ret;
+    }
+};
+::::::::::::::
+Hash/166.Fraction-to-Recurring-Decimal/Readme.md
+::::::::::::::
+### 166.Fraction-to-Recurring-Decimal
+
+注意的几个细节：
+1. 被除数为0；
+2. 被除数或除数为负数；
+3. 遇到INT_MIN时的溢出;
+4. 整除的情况。
+
+
+需要一个set记录每次的余数t。如果某次的余数已经在集合中，则说明有循环。
+
+同时需要一个Map来记录每次的余数与对应的小数位置，当发现循环的起始位置时，便于插入‘(’。
+
+```cpp
+        while (t!=0 && Set.find(t)==Set.end())
+        {
+            Set.insert(t);
+            Map[t]=result.size();            
+            result.push_back((t*10/B)+'0');
+            t=t*10%B;
+        }
+        
+        if (t==0) return result; //整除：就直接输出
+        
+        int pos=Map[t]; // 非整除：找到循环体开始的位置
+        result.insert(result.begin()+pos,'(');
+        result.push_back(')');        
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/fraction-to-recurring-decimal)::::::::::::::
+Hash/170.Two-Sum-III-Data-structure-design/170.Two Sum III - Data structure design.cpp
+::::::::::::::
+class TwoSum {
+    
+private:
+    unordered_map<int,int>Map;
+
+public:
+
+    // Add the number to an internal data structure.
+	void add(int number) 
+	{
+	    Map[number]++;   
+	}
+
+    // Find if there exists any pair of numbers which sum is equal to the value.
+	bool find(int value) 
+	{
+	    for (auto a:Map)
+	    {
+	        if (value-a.first!=a.first)
+	        {
+	           if (Map.find(value-a.first)!=Map.end())
+	                return true;;
+	        }
+	        else if (value-a.first==a.first)
+	        {
+	            if (a.second>1)
+	                return true;
+	        }
+	    }
+	    
+	    return false;
+	}
+};
+
+
+// Your TwoSum object will be instantiated and called as such:
+// TwoSum twoSum;
+// twoSum.add(number);
+// twoSum.find(value);
+::::::::::::::
+Hash/170.Two-Sum-III-Data-structure-design/Readme.md
+::::::::::::::
+### 170.Two-Sum-III-Data-structure-design
+
+不要试图构建一个存放所有两两之和的Set，那样会超时。
+
+正确的思想应该是构建元素及其出现次数的映射 unordered_map<int,vector<int>>Map，因为这样的Map本身兼具Set的元素不相容的功能. 
+
+当find(val)时，遍历所有Map里的元素x，查找val-x是否也在Map里。同时需要考虑x=val-x的情况。
+
+
+[Leetcode Link](https://leetcode.com/problems/two-sum-iii-data-structure-design)::::::::::::::
 Hash/1915.Number-of-Wonderful-Substrings/1915.Number-of-Wonderful-Substrings.cpp
 ::::::::::::::
 typedef long long ll;
@@ -1902,6 +849,54 @@ Hash/2025.Maximum-Number-of-Ways-to-Partition-an-Array/Readme.md
 
 所以本题的算法很简单：预先计算presum和sufsum。遍历改动的位置nums[i]，在i之前查看有多少presum等于new_sum/2，再在i之后查看有多少sufsum等于new_sum/2. 这两部分方案数之和就是这次改动能够成立的partition方法。
 ::::::::::::::
+Hash/204.Count-Primes/204.Count Primes.cpp
+::::::::::::::
+class Solution {
+public:
+    int countPrimes(int n) 
+    {
+        if (n<=2) return 0;
+        
+        vector<bool> num(n - 1, true);
+        
+        for (int x = 2; x <= sqrt(n); x++) 
+        {
+            if (num[x]==false) continue;
+            
+            for (int j=2; x*j < n; j++) 
+                num[x*j] = false;
+        }
+        
+        int count=0;
+        for (int j = 2; j < n; ++j) 
+        {
+            if (num[j]) count++;
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Hash/204.Count-Primes/Readme.md
+::::::::::::::
+### 204.Count-Primes
+
+用倍数筛除法去除所有已知质数的倍数。最高效的容器是bool型的vector
+```cpp
+vector<bool>q(n,true);
+for (x=2; x<=sqrt(n); x++)
+{
+   if (q[x]==false) continue; 
+   for (int i=2; x*i<n; i++)
+     q[x*i]=false;
+}
+```
+然后检查从2到n-1里仍然标记为true的元素数目。    
+
+注意，x的判断范围是从2到sqrt(n)即可，不需要遍历到n。
+
+
+[Leetcode Link](https://leetcode.com/problems/count-primes)::::::::::::::
 Hash/2131.Longest-Palindrome-by-Concatenating-Two-Letter-Words/2131.Longest-Palindrome-by-Concatenating-Two-Letter-Words.cpp
 ::::::::::::::
 class Solution {
@@ -1955,3 +950,1008 @@ Hash/2131.Longest-Palindrome-by-Concatenating-Two-Letter-Words/Readme.md
 假设有字符串ab出现了count1次，字符串ba出现了count2次。那么我们就可以用min(count1,count2)个ab和ba对称放置组成回文串。
 
 假设有字符串cc出现了count3次，那么我们就可以用```count3/2*2```个cc对称放置组成回文串。特别注意，如果有落单的、但是形如xx的字符串，我们可以额外放在正中间增加回文串的长度by 2.
+::::::::::::::
+Hash/274.H-Index/274.H-index_Binary.cpp
+::::::::::::::
+class Solution {
+public:
+    int hIndex(vector<int>& citations) 
+    {
+        int left=0;
+        int N=citations.size();
+        int right=N-1;
+        int mid;
+        
+        if (N==0) return 0;
+        
+        while (left<right)
+        {
+            int mid= left+(right-left)/2;
+            
+            if (N-mid==citations[mid])
+                return citations[mid];
+            else if (N-mid<citations[mid])
+                right = mid;
+            else
+                left= mid+1;
+        }
+        
+        return min(N-left,citations[left]);
+        
+    }
+};
+::::::::::::::
+Hash/274.H-Index/274.H-Index_Hash.cpp
+::::::::::::::
+class Solution {
+public:
+    int hIndex(vector<int>& citations) 
+    {
+        if (citations.size()==0) return 0;
+        
+        map<int,int>Map;
+        for (int i=0; i<citations.size(); i++)
+            Map[citations[i]]++;
+        auto q = vector<pair<int,int>>(Map.begin(),Map.end());
+        
+        int sum=0;
+        
+        for (int i=q.size()-1; i>=0; i--)
+        {
+            if (q[i].first>sum+q[i].second)
+                sum+=q[i].second;
+            else if (q[i].first==sum+q[i].second)
+                return q[i].first;
+            else
+                return max(q[i].first,sum);
+        }
+        
+        return sum;        
+    }
+};
+::::::::::::::
+Hash/274.H-Index/274.H-index_Pointer.cpp
+::::::::::::::
+class Solution {
+public:
+    int hIndex(vector<int>& citations) 
+    {
+        if (citations.size()==0) return 0;
+        
+        sort(citations.begin(),citations.end());
+        
+        int sum=0;
+        int i=citations.size()-1;
+        
+        while (i>=0)
+        {
+            sum++;
+            
+            if (citations[i]==sum)
+                return sum;
+            else if (citations[i]>sum)
+                i--;
+            else
+            {
+                return max(citations[i],sum-1);
+            }
+            
+        }
+        
+        return sum;
+        
+    }
+};
+::::::::::::::
+Hash/274.H-Index/Readme.md
+::::::::::::::
+### 274.H-Index
+
+类似的题目里 275.H-Index II 给出排序后的citations，可以用双指针来做。本题中，考虑如果不先行排序的话，需要用到Hash表。
+
+首先遍历数组，建立映射：引用数 -> 符合该引用数的文章数目。然后把Map放进pair类型的数组中，方便用sort直接排序。
+```cpp
+        for (int i=0; i<citations.size(); i++)
+            Map[citations[i]]++;
+        auto q = vector<pair<int,int>>(Map.begin(),Map.end());
+        sort(q.begin(),q.end());
+```        
+然后对于q数组，从后往前考察：
+```cpp
+        int sum=0;        
+        for (int i=q.size()-1; i>=0; i--)
+        {
+            if (q[i].first>sum+q[i].second) // 文章总数还小于citation量，可以尝试进一步扩大范围（考虑引用量更少的文章）
+                sum+=q[i].second;
+            else if (q[i].first==sum+q[i].second) // 文章总数恰好等于citation量，可以证明这就是最优解
+                return q[i].first;
+            else if (q[i].first<sum+q[i].second)  // 文章总数已经大于citation量，说明q[i]不可完全列入考虑范围。
+                return max(q[i].first,sum);       // 这个操作非常关键！仔细思考。
+        }
+```
+
+
+
+[Leetcode Link](https://leetcode.com/problems/h-index)::::::::::::::
+Hash/325.Maximum-Size-Subarray-Sum-Equals-k/325.Maximum Size Subarray Sum Equals k.cpp
+::::::::::::::
+class Solution {
+public:
+    int maxSubArrayLen(vector<int>& nums, int k) 
+    {
+        unordered_map<int,vector<int>>Map;
+        int sum=0;
+        int result=INT_MIN;
+        
+        nums.insert(nums.begin(),0);
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            sum+=nums[i];
+            Map[sum].push_back(i);
+            
+            int temp = sum-k;
+            if (Map.find(temp)!=Map.end())
+            {
+                result = max(result, i-Map[temp][0]);
+            }
+        }
+        
+        if (result==INT_MIN) result=0;
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Hash/325.Maximum-Size-Subarray-Sum-Equals-k/Readme.md
+::::::::::::::
+### 325.Maximum-Size-Subarray-Sum-Equals-k
+
+在遍历元素的过程中，建立累加和sum，并建立映射Map:sum->i。对于每个元素i，找和为k的子数组，就是寻找之前的累加和序列里是否出现过 sum-k，显然，直接从Map中就可以找到。
+
+```cpp
+        for (int i=0; i<nums.size(); i++)
+        {
+            sum+=nums[i];
+            Map[sum].push_back(i);
+            
+            int temp = sum-k;
+            if (Map.find(temp)!=Map.end())
+            {
+                result = max(result, i-Map[temp][0]);
+            }
+        }
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-size-subarray-sum-equals-k)::::::::::::::
+Hash/356.Line-Reflection/356.Line Reflection.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isReflected(vector<pair<int, int>>& points) 
+    {
+        
+        int N=points.size();
+        if (N==0) return true;
+        
+        unordered_map<int,set<int>>Map;
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            Map[points[i].second].insert(points[i].first);
+            Set.insert(points[i].first);
+        }
+        
+        float x0=0;
+        for (auto a:Set)
+            x0+=a;
+        x0=x0/Set.size();
+        
+        for (auto a:Map)
+        {
+            vector<int>q(a.second.begin(),a.second.end());
+            int i=0;
+            int j=q.size()-1;
+            while (i<=j)
+            {
+                if (q[i]+q[j]!=x0*2)
+                    return false;
+                i++;
+                j--;
+            }
+        }
+        
+        return true;
+    }
+};
+::::::::::::::
+Hash/356.Line-Reflection/Readme.md
+::::::::::::::
+### 356.Line-Reflection
+
+首先，需要确定这些点关于x的对称中心位置，即镜面位置。注意到重复点在本题只算一个点，所以需要借助Set排除重复的干扰。   
+根据数学关系，易知：x1,x2,...,x_n的对称中心，应该等于(x1+x2+...+x_n)/N
+```cpp
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)        
+            Set.insert(points[i].first);               
+        float x0=0;
+        for (auto a:Set)
+            x0+=a;
+        x0=x0/Set.size();
+```
+然后要判断这些点关于x=x0镜面对称，需要先保证对称点都在同一个y坐标上。所以利用Map来对这些点关于y的位置进行分类。
+```cpp
+        unordered_map<int,set<int>>Map;
+        for (int i=0; i<N; i++)
+        {
+            Map[points[i].second].insert(points[i].first);
+        }
+```
+对于每个y位置，都有一个集合包括了若干个不重复的x位置，我们需要保证它们两两关于x0对称。利用了set的自动排序特点，我们可以用双指针从两边往中间夹逼。
+```cpp
+        for (auto a:Map)
+        {
+            vector<int>q(a.second.begin(),a.second.end()); //因为set是有序的，直接导入一个数组中。
+            int i=0;
+            int j=q.size()-1;
+            while (i<=j)
+            {
+                if (q[i]+q[j]!=x0*2)  // 关于x0对称的判据
+                    return false;
+                i++;
+                j--;
+            }
+        }
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/line-reflection)::::::::::::::
+Hash/392.Is-Subsequence/392.Is Subsequence_s1.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isSubsequence(string s, string t) 
+    {
+        int i=0;
+        int j=0;
+        while (i<s.size() && j<t.size())
+        {
+            if (s[i]!=t[j])
+                j++;
+            else
+            {
+                i++;
+                j++;
+            }
+        }
+        if (i<s.size())
+            return false;
+        else
+            return true;
+    }
+};
+::::::::::::::
+Hash/392.Is-Subsequence/392.Is Subsequence_s2.cpp
+::::::::::::::
+class Solution {
+public:
+    bool isSubsequence(string s, string t) 
+    {
+        unordered_map<char,vector<int>>Map;
+        for (int i=0; i<t.size(); i++)
+            Map[t[i]].push_back(i);
+            
+        int NextStart = -1;
+        for (int i=0; i<s.size(); i++)
+        {
+            char ch = s[i];
+            int flag=0;
+            
+            for (int j:Map[ch])
+            {
+                if (j>NextStart)
+                {
+                    flag = 1;
+                    NextStart = j;
+                    break;
+                }
+            }
+            if (flag==0) return false;
+        }
+        
+        return true;
+        
+    }
+};
+::::::::::::::
+Hash/392.Is-Subsequence/Readme.md
+::::::::::::::
+### 392.Is-Subsequence
+
+普通的双指针解法就不再赘述。考虑follow up的问题。显然，需要提前建立关于t的一些信息的存储，方便s来查阅，用空间换时间嘛。
+
+结合双指针解法的思路，如果在t[pos]找到了s[i]，则只需要在pos之后去寻找s[i+1]。所以提前构建映射：t的每个字符和该字符出现位置:
+```cpp
+Map[s[i]].push_back(i);
+```
+建立pos的初始位置-1. 然后遍历s[i]：在Map[s[i]]里找第一个大于pos的位置并更新pos，则之后对于s[i+1]的查找必须从t的新pos位置开始。
+```
+int pos=-1;
+for (int i=0; i<s.size()-1; i++)
+{
+   int flag=0;
+   for (int j: Map[s[i]])
+   {
+      if (j>pos)
+      {
+         pos = j;
+         flag = 1;
+      }
+   }
+   if (flag==0) retrun false; // 对于s[i]，在t中没有找到合适的位置
+}
+return true;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/is-subsequence)::::::::::::::
+Hash/409.Longest-Palindrome/409.Longest Palindrome.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestPalindrome(string s) 
+    {
+        vector<int>Map(256,0);
+        for (int i=0; i<s.size(); i++)
+            Map[s[i]]++;
+        
+        int sum=0;
+        int flag=0;
+        for (auto a:Map)
+        {
+            if ((a % 2) ==1)
+            {
+                sum+=a-1;
+                flag=1;
+            }
+            else
+                sum+=a;
+        }
+        
+        return sum+flag;
+        
+    }
+};
+::::::::::::::
+Hash/409.Longest-Palindrome/Readme.md
+::::::::::::::
+### 409.Longest-Palindrome
+
+注意，出现了奇数次的字符也可以参与构建回文串：其中一个可以全部采用；剩余的只需要取用其偶数次。
+
+所以，判定方法是：
+```cpp
+        int sum=0;
+        int flag=0;
+        for (auto a:Map)
+        {
+            if ((a % 2) ==1)
+            {
+                sum+=a-1;
+                flag=1;
+            }
+            else
+                sum+=a;
+        }        
+        return sum+flag;
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-palindrome)::::::::::::::
+Hash/438.Find-All-Anagrams-in-a-String/438.Find All Anagrams in a String.cpp
+::::::::::::::
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) 
+    {
+        vector<int>P(255,0);
+        vector<int>S(255,0);
+        for (char ch:p) P[ch]++;
+        
+        vector<int>results;
+        for (int i=0; i<s.size(); i++)
+        {
+            S[s[i]]++;
+            if (i>=p.size()) S[s[i-p.size()]]--;            
+            if (S==P) results.push_back(i-p.size()+1);
+        }
+        return results;
+    }
+};
+::::::::::::::
+Hash/438.Find-All-Anagrams-in-a-String/Readme.md
+::::::::::::::
+### 438.Find-All-Anagrams-in-a-String
+
+1. 注意到本题的查验子串的窗口长度是固定的s.size()，所以不需要双指针，单指针即可。
+2. 需要构造字符的哈希表时，用数组而不是map，效率更高。但记得一定要赋初值 vector<int>Map(256,0)
+3. 数组之间判断是否相等的比较，直接用 == 即可。
+4. 仔细考虑循环条件，不要遗漏最后一次比较。
+
+完全相同的问题有 567.Permutation in String
+
+
+[Leetcode Link](https://leetcode.com/problems/find-all-anagrams-in-a-string)::::::::::::::
+Hash/446.Arithmetic-Slices-II-Subsequence/446.Arithmetic-Slices-II-Subsequence.cpp
+::::::::::::::
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) 
+    {
+        int n = A.size();
+        unordered_map<long,int>dp[1000];
+        int count = 0;
+        
+        for (int i=1; i<A.size(); i++)
+        {
+            for (int j=i-1; j>=0; j--)
+            {
+                long diff = (long)A[i]-(long)A[j];
+                count += dp[j][diff];
+                
+                if (dp[j].find(diff)!=dp[j].end())
+                    dp[i][diff] += dp[j][diff]+1;                                    
+                else
+                    dp[i][diff] = 1;
+            }
+        }
+                    
+        return count;
+    }
+};
+::::::::::::::
+Hash/446.Arithmetic-Slices-II-Subsequence/446.Arithmetic-Slices-II-Subsequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) 
+    {
+        unordered_map<int,vector<int>>Map;
+        for (int i=0; i<A.size(); i++)
+            Map[A[i]].push_back(i);
+        
+        int N = A.size();
+        auto dp = vector<vector<int>>(N,vector<int>(N,0));
+        for (int i=0; i<N; i++)
+            for (int j=0; j<i; j++)
+            {
+                long m = A[j]*2L-A[i];
+                if (m>INT_MAX || m<INT_MIN) continue;
+                for (int k:Map[m])
+                {
+                    if (k<j)
+                        dp[j][i] += dp[k][j]+1;
+                }
+            }
+        int count = 0;
+        for (int j=0; j<N; j++)
+            for (int i=j+1; i<N; i++)
+                count+=dp[j][i];
+        return count;
+    }
+};
+::::::::::::::
+Hash/446.Arithmetic-Slices-II-Subsequence/Readme.md
+::::::::::::::
+### 446.Arithmetic-Slices-II-Subsequence
+
+#### 解法1
+
+首先我们会想，如何能够确定一个等差数列．知道了首项，公差，就能往后推序列的其他元素．所以本题容易想到的一个思路就是正向地搜索．这样的话，光遍历首项和公差就是o(N^2)的复杂度，后续的DFS更是计算量巨大．
+
+搜索不成的话，DP是个很常规的替代方案．考虑到本题是求方案的数量，所以DP解法的嫌疑就更大了．最常见的DP套路，就是考察待求的状态量```DP[i]```与之前的状态量```DP[j]```之间的推导关系，这里的```DP[i]```不妨就设计为题意要求的以元素```j```结尾的的等差数列的个数．
+
+如果```i```是等差数列的最后一个，那么它之前的一个元素是什么呢？那么```j=0~i-1```都是有可能的，只要元素```j```是某个相同公差的等差数列的结尾元素．如果是的话，显然```DP[i]+=DP[j]```．由此，我们看到一个重要的因素，那就是公差```diff```．也就是说，判断```j```是否和```i```构成等差数列的条件，就是先计算```diff=A[j]-A[i]```，然后再考察```j```是否为一个公差为```diff```的等差数列的尾项．于是我们还需要在DP数组中给Ａ的每个元素开辟一个Hash，用来存储它所涉及的公差．
+
+我们令dp[i][diff]表示以元素i结尾、公差为diff的等差数列（长度>=2）有多少个。为什么我们会这么定义“长度>=2”？假设我们后面能接上一个元素k并保持这个公差diff的话，对于k而言，以其为结尾的长度>=3的等差数列那就是dp[i][diff]，恰好就是我们想统计的。可见这样定义dp[i][diff]能给我们带来极大的方便。
+
+当然，对于k而言，你也必须正确地更新dp[k][diff]。注意DP变量的定义，以k为结尾的长度>=2的等差数列应该有dp[i][diff]+1个，这“+1”就是代表着仅包含{i,k}两个元素的数列。
+
+核心代码如下：
+```cpp
+unorderd_map<int,int>DP[1000];
+int count = 0;
+for (int i=0; i<N; i++)
+  for (int j=0; j<i; j++)
+  {
+      diff = A[i]-A[j];
+      count += dp[j][diff]; // 构建了以j,i为倒数两位，且公差为diff的新等差数列(保证长度>=3)
+      
+      if (dp[j].find(diff)==dp[j].end())
+        dp[i][diff] = 1;
+      else
+        dp[i][diff] += dp[j][diff]+1;  // 更新以i为结尾，且公差为diff的等差数列(长度>=2)的个数。
+  }
+return count;  
+```
+
+这个思想和```1027.Longest-Arithmetic-Sequence```的解法一致，时间复杂度是o(N^2).
+
+#### 解法2
+
+一个等差数列,可以通过后两位元素就能唯一确定.所以另一个很常见的DP解法,就是定义状态变量DP[i][j]表示为以元素i,j结尾的等差数列的个数.
+
+我们通过i,j,查找之前是否存在一个索引k使得```A[i]*2=A[k]+A[j]```.如果找到的话那就说明```DP[i][j]+=DP[k][i]+1```。其中```DP[k][i]+1```的意思是：以i,j为结尾的等差数列，大部分可以由以k,i为结尾的等差数列延长而来（多加上一个A[i]而已），但还多出来的一个就是仅含有k,i,j三个元素的等差数列。另外，这里为什么是```+=```而不是```=```，那是因为这样的k可能会有好几个(对应相同的A[k]值).
+
+想通过A[k]值找到k,需要提前处理,用到一个一对应多的hash表unordered_map<int,vector<int>>Map. 注意这种解法的时间复杂度是o(N^3).
+
+
+[Leetcode Link](https://leetcode.com/problems/arithmetic-slices-ii-subsequence)
+::::::::::::::
+Hash/447.Number-of-Boomerangs/447.Number of Boomerangs.cpp
+::::::::::::::
+class Solution {
+public:
+    int numberOfBoomerangs(vector<pair<int, int>>& points) 
+    {
+        int result=0;
+        for (int i=0; i<points.size(); i++)
+        {
+            unordered_map<int,int>Map;
+            for (int j=0; j<points.size(); j++)
+            {
+                int dis= (points[i].first-points[j].first)*(points[i].first-points[j].first)+(points[i].second-points[j].second)*(points[i].second-points[j].second);
+                Map[dis]++;
+            }
+            for (auto a:Map)
+            {
+                result+=a.second*(a.second-1);
+            }            
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Hash/447.Number-of-Boomerangs/Readme.md
+::::::::::::::
+### 447.Number-of-Boomerangs
+
+固定一个点i，查找其他所有点到该点的距离，存进一个Map。假设到i距离为d的点的数目有n个，说明有n*(n-1)个(i,j,k)配对。
+
+因为(i,j,k)的次序有关系，遍历其他点的时候，要考察所有点而不是仅仅从i+1开始。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-boomerangs)::::::::::::::
+Hash/525.Contiguous-Array/525.Contiguous Array.cpp
+::::::::::::::
+class Solution {
+public:
+    int findMaxLength(vector<int>& nums) 
+    {
+        int sum=0;
+        unordered_map<int,int>Map;
+        Map[0]=-1;
+        
+        int result=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            sum+=(nums[i]==1?1:-1);
+            if (Map.find(sum)==Map.end())
+                Map[sum]=i;
+            else
+            {
+                result = max(result, i-Map[sum]);
+            }
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Hash/525.Contiguous-Array/Readme.md
+::::::::::::::
+### 525.Contiguous-Array
+
+建立累加和sum，遍历所有元素，遇到1加1，遇到0减1. 如果两个位置的累加和相等，说明中间的元素和是0，即有相同数目的0和1.
+
+构造unordered_map<int,int>Map记录每个累加和sum出现的位置。注意，因为求的是最大长度，只需要存储第一次出现sum数值的位置即可。另外，需要考虑子串的首位置可以是0，故设置Map[0]=-1.
+
+```cpp
+        int result=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            sum+=(nums[i]==1?1:-1);
+            if (Map.find(sum)==Map.end())
+                Map[sum]=i;
+            else
+                result = max(result, i-Map[sum]);
+        }
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/contiguous-array)::::::::::::::
+Hash/532.K-diff-Pairs-in-an-Array/532.K-diff Pairs in an Array_Hash.cpp
+::::::::::::::
+class Solution {
+public:
+    int findPairs(vector<int>& nums, int k) 
+    {
+        if (k<0) return 0;
+        unordered_set<int>Set;
+        unordered_set<int>minSet;
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (Set.find(nums[i]-k)!=Set.end())
+                minSet.insert(nums[i]-k);
+            if (Set.find(nums[i]+k)!=Set.end())
+                minSet.insert(nums[i]);
+            Set.insert(nums[i]);
+        }
+        
+        return minSet.size();        
+    }
+};
+::::::::::::::
+Hash/532.K-diff-Pairs-in-an-Array/532.K-diff Pairs in an Array_TwoPointer.cpp
+::::::::::::::
+class Solution {
+public:
+    int findPairs(vector<int>& nums, int k) 
+    {
+        sort(nums.begin(),nums.end());
+        
+        int i=0;
+        int j=1;
+        int result=0;
+        
+        while (j<nums.size())
+        {
+            while (nums[j]<nums[i]+k) j++;
+            if (nums[j]==nums[i]+k)
+                result++;
+            i++;
+            while (i<nums.size() && nums[i]==nums[i-1]) i++;
+            j=max(j,i+1);
+        }
+        
+        return result;
+    }
+};
+::::::::::::::
+Hash/532.K-diff-Pairs-in-an-Array/Readme.md
+::::::::::::::
+### 532.K-diff-Pairs-in-an-Array
+
+#### 解法1：
+双指针，滑动窗口，时间复杂度o(nlogn)。需要注意的是，每移动一次左指针后，右指针的初始位置必须保证在左指针的右边。
+
+#### 解法2：
+Hash表。设置两个集合，遍历nums，用集合A装每次访问的元素nums[i]，用集合B装用nums[i]构成pair的较小的那个元素。最后数一下集合B中的元素个数就是答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/k-diff-pairs-in-an-array)::::::::::::::
+Hash/535.Encode-and-Decode-TinyURL/535.Encode and Decode TinyURL.cpp
+::::::::::::::
+class Solution {
+private:
+    unordered_map<string, string> short2long, long2short;
+    string dict;
+    
+public:
+    Solution()
+    {
+        dict = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        short2long.clear();
+        long2short.clear();
+        srand(time(NULL));
+    }
+    
+    // Encodes a URL to a shortened URL.
+    string encode(string longUrl) 
+    {
+        if (long2short.find(longUrl)!=long2short.end())
+            return "http://tinyurl.com/"+long2short[longUrl];
+        
+        string s;
+        for (int i=0; i<6; i++)
+            s+= dict[rand()%62];
+        
+        long2short[longUrl]=s;
+        short2long[s]=longUrl;
+        
+        return "http://tinyurl.com/"+s;
+    }
+
+    // Decodes a shortened URL to its original URL.
+    string decode(string shortUrl) 
+    {
+        string randStr = shortUrl.substr(shortUrl.find_last_of("/") + 1);
+        string longUrl;
+        
+        if (short2long.find(randStr)!=short2long.end())
+            longUrl = short2long[randStr];
+        else
+            longUrl = shortUrl;
+        
+        return longUrl;
+    }
+};
+
+// Your Solution object will be instantiated and called as such:
+// Solution solution;
+// solution.decode(solution.encode(url));
+::::::::::::::
+Hash/535.Encode-and-Decode-TinyURL/Readme.md
+::::::::::::::
+### 535.Encode-and-Decode-TinyURL
+
+利用62位的dict随机生成一个6位的字符串来作为短链接
+```cpp
+dict=""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"";
+for (int i=0; i<6; i++) 
+   shortUrl+=dict[rand()%62];"
+```
+构建short2long和long2short两个Map来存储长短链接之间的互换.   
+
+编码：
+```cpp
+        if (long2short.find(longUrl)!=long2short.end())
+            return "http://tinyurl.com/"+long2short[longUrl];
+        else
+            return "http://tinyurl.com/"+shortUrl;
+```
+解码
+```cpp
+        string randStr = shortUrl.substr(shortUrl.find_last_of("/") + 1);        
+        if (short2long.find(randStr)!=short2long.end())
+            longUrl = short2long[randStr];
+        else
+            longUrl = shortUrl;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/encode-and-decode-tinyurl)::::::::::::::
+Hash/594.Longest-Harmonious-Subsequence/594.Longest Harmonious Subsequence.cpp
+::::::::::::::
+class Solution {
+public:
+    int findLHS(vector<int>& nums) 
+    {
+        map<int,int>Map;
+        for (int i=0; i<nums.size(); i++)
+            Map[nums[i]]++;
+        
+        int lastFreq=0;
+        int lastNum;
+        int result=0;
+        for (auto a:Map)
+        {
+            if (lastFreq==0)
+            {
+                lastNum=a.first;
+                lastFreq=a.second;
+            }
+            else
+            {
+                if (lastNum+1==a.first)
+                    result = max(result,lastFreq+a.second);
+                lastNum = a.first;
+                lastFreq = a.second;
+            }
+        }
+        
+        return result;
+        
+    }
+};
+::::::::::::::
+Hash/594.Longest-Harmonious-Subsequence/Readme.md
+::::::::::::::
+### 594.Longest-Harmonious-Subsequence
+
+首先要正确理解题意。subsequence不一定要求连续，只要是原数列的任意部分都符合要求。
+
+这样的话，我们可以遍历一遍整个数列，构造频次的Hash表，而且这个表是根据key有序排列的。那么我们可以依次考察任意相邻的两个频次，如果key值只相差1的话，那么这两个key对应的频次之和就是符合题意的一个方案。不断遍历这个Hash表、更新直到得到最大值。
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-harmonious-subsequence)::::::::::::::
+Hash/753.Cracking-the-Safe/753.Cracking-the-Safe.cpp
+::::::::::::::
+class Solution {
+public:
+    string crackSafe(int n, int k) 
+    {
+        string ans;
+        ans.assign(n-1,'0');
+        unordered_map<string,int>record;
+        
+        int total = pow(k,n);
+        
+        for (int i=0; i<total; i++)
+        {
+            string temp = ans.substr(ans.size()-(n-1),(n-1));
+            record[temp] = (record[temp]+1)%k;;
+            ans+= '0'+record[temp];
+        }
+        return ans;        
+    }
+};
+::::::::::::::
+Hash/753.Cracking-the-Safe/Readme.md
+::::::::::::::
+### 753.Cracking-the-Safe
+
+这道题是一个被研究过的经典问题，称为De Bruijin序列。Wikipedia有专门介绍的页面。这个问题可以转化为一个特定的有向图，求问是否有一条最短的路径使得能遍历所有的节点。答案是可以的，而且这个路径非常优秀，每个节点可以只需要访问一次，我们称这样的有向图是存在哈密尔顿路径的。
+
+注意，De Buijing序列并不是唯一的，有很多种生成方式。这里介绍一个比较简单的算法。就是将已经经历过的密码组合，取前n-1位作为key，最后一位作为val，放入哈希表中。当我们想在序列里添加一个新字符的时候，取当前序列的末尾n-1位作为哈希表的key，看看它对应的val是多少（注意val是之前已经尝试过的），那么这次我就在序列后添加val+1，这样就能生成一个新的n位的密码组合（记得同时更新哈希表的key-val）。依次重复下去，直到生成所有的k^n种密码组合为止。
+
+上面算法其实有个assumption，那就是任意的n-1位组成的key，恰好会在这个过程中出现k次，不会更多也不会更少。事实上这个assumption是满足的，但证明过程就不深究了。
+
+
+[Leetcode Link](https://leetcode.com/problems/cracking-the-safe)::::::::::::::
+Hash/890.Find-and-Replace-Pattern/890.Find-and-Replace-Pattern.cpp
+::::::::::::::
+class Solution {
+public:
+    string encode(string s)
+    {
+        int num = 0;
+        unordered_map<char, int>Map;
+        string ret;
+        for (auto ch: s)
+        {
+            if (Map.find(ch)!=Map.end())
+                ret+=to_string(Map[ch]);
+            else
+            {
+                Map[ch] = num;
+                ret+=to_string(num);
+                num++;
+            }            
+        }
+        return ret;
+    }    
+    
+    vector<string> findAndReplacePattern(vector<string>& words, string pattern) 
+    {
+        string p = encode(pattern);
+        vector<string>rets;
+        
+        for (auto word: words)
+        {
+            string t = encode(word);
+            if(t==p)
+                rets.push_back(word);                
+        }
+        return rets;
+    }
+};
+::::::::::::::
+Hash/890.Find-and-Replace-Pattern/Readme.md
+::::::::::::::
+### 890.Find-and-Replace-Pattern
+
+我们将每个单词编码为数字串，其中相同的字母对应相同的数字，靠前的字母对应较小的数字。比如acbb就编码为1233，同理bacc也是编码为1233，这样通过编码后的形式判断是否属于同pattern。
+::::::::::::::
+Hash/930.Binary-Subarrays-With-Sum/930.Binary-Subarrays-With-Sum.cpp
+::::::::::::::
+class Solution {
+public:
+    int numSubarraysWithSum(vector<int>& A, int S) 
+    {
+        unordered_map<int,int>Map;
+        Map[0] = 1;
+        int sum = 0, ret = 0;
+        for (int i=0; i<A.size(); i++)
+        {
+            sum += A[i];
+            if (Map.find(sum-S)!=Map.end())
+                ret+=Map[sum-S];
+            Map[sum]+=1;
+        }
+        return ret;
+
+    }
+};
+::::::::::::::
+Hash/930.Binary-Subarrays-With-Sum/Readme.md
+::::::::::::::
+### 930.Binary-Subarrays-With-Sum
+
+此题是考察对Hash+prefix的常见组合。
+
+我们遍历每一个元素j，考察以j为结尾、满足条件的subarray，这样的起点i可以在哪里？如果满足条件的起点i有多种可能，那么答案就可以累加上这么多数量．
+
+如何确定i的位置呢？凡是涉及到数组的subarray的和，我们通常会转化为前缀和来处理。即```sum[i:j] = prefix[j]-prefix[i-1]```。其中sum[i:j]即使S，当我们固定j的时候，prefix[j]也是已知的。因此可以知道我们期望的prefix[i-1]是多少，假设为val。所以我们可以用Hash来存储某个所有前缀和val所对应的i的个数。因此我们就有
+```
+ret += Map[prefix[j] - S]
+```
+
+[Leetcode Link](https://leetcode.com/problems/binary-subarrays-with-sum)
+::::::::::::::
+Hash/939.Minimum-Area-Rectangle/939.Minimum-Area-Rectangle.cpp
+::::::::::::::
+class Solution {
+public:
+    int minAreaRect(vector<vector<int>>& points) 
+    {
+        unordered_map<int, unordered_set<int>>Map;
+        for (auto p: points)
+            Map[p[0]].insert(p[1]);
+        
+        int ret = INT_MAX;
+        for (int i=0; i<points.size(); i++)
+            for (int j=i+1; j<points.size(); j++)
+            {
+                int x1 = points[i][0];
+                int y1 = points[i][1];
+                int x2 = points[j][0];
+                int y2 = points[j][1];
+                
+                if (x1==x2 || y1==y2) continue;
+                
+                int x3 = x2;
+                int y3 = y1;
+                int x4 = x1;
+                int y4 = y2;
+                
+                if (Map[x3].find(y3)==Map[x3].end())
+                    continue;
+                if (Map[x4].find(y4)==Map[x4].end())
+                    continue;
+                
+                ret = min(ret, abs(x2-x1)*abs(y1-y2));
+            }
+        
+        return ret==INT_MAX? 0:ret;
+        
+    }
+};
+::::::::::::::
+Hash/939.Minimum-Area-Rectangle/Readme.md
+::::::::::::::
+### 939.Minimum-Area-Rectangle
+
+对于“横平竖直”的矩阵而言，只需要给定对角线的两个点，就能完全确定一个矩形。所以最外层的两个大循环来遍历点A和点B，这是显而易见的。固定A和B之后，另外一条对角线的两个点C和D，其坐标也就能确定下来。那么如何在一个集合中快速查找到C和D呢？
+
+因为每个点的坐标包括两个分量，所以你想做查找的话，无非两个思路：1.把所有二维坐标哈希化成字符串，放入一个无序集合中，但额外的哈希化很耗时。2.直接把二维向量放入一个有序集合中，但这涉及红黑树的插入，也是效率很低的。
+
+这里提供一个用空间换时间的方法。那就是设计一个这样的数据结构```unordered_map<int, unordered_set<int>>Map```。其中key是横坐标的值，value是纵坐标的值的集合。初始化时将所有的点按照横坐标的位置来这样归类。这样，后期我们考察(x,y)是否存在的时候，只需要考察Map[x]里面是否存在y就可以了。这样既避免了哈希化，也只用到了无序容器从而省去了排序的时间。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-area-rectangle)::::::::::::::
+Hash/974.Subarray-Sums-Divisible-by-K/974.Subarray-Sums-Divisible-by-K.cpp
+::::::::::::::
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& A, int K) 
+    {
+        unordered_map<int,int>Map;
+
+        Map[0] = 1;
+        int presum = 0;
+        int ret = 0;
+        for (int i=0; i<A.size(); i++)
+        {
+            presum += A[i];
+            int r = presum > 0 ? presum%K : (presum%K+K)%K;
+            ret += Map[r];
+            Map[r]++;
+        }
+        return ret;
+    }
+};
+::::::::::::::
+Hash/974.Subarray-Sums-Divisible-by-K/Readme.md
+::::::::::::::
+### 974.Subarray-Sums-Divisible-by-K
+
+我们考虑右端点在i位置的话，符合条件的区间的左端点j在哪里？如果我们将区间和转化为前缀和来看，sum[i:j]能被K整除的充要条件就是：presum[i]和presum[j-1]除以K的余数相同。于是我们用计数器记录i之前presum对K除的余数各自出现了多少次。如果```presum[i]%K=r```，那么count[r]就意味着有多少个位置j能配对成符合条件的区间。
+
+注意前缀和可能是负数，而C++中整除的余数允许是负数。所以我们在计算余数的时候需要转化为 ```(presum % k + k) % k```。

@@ -1,1106 +1,4 @@
 ::::::::::::::
-Union_Find/0128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence.cpp
-::::::::::::::
-class Solution {
-	unordered_map<int,int>Father;
-public:
-    int longestConsecutive(vector<int>& nums) 
-	{
-        if (nums.size()==0) return 0;
-
-		for (int i=0; i<nums.size(); i++)
-		{
-			Father[nums[i]]=nums[i];
-			if (Father.find(nums[i]-1)!=Father.end() && FindSet(nums[i]-1)!=FindSet(nums[i]))			
-				Union(nums[i]-1,nums[i]);						
-			if (Father.find(nums[i]+1)!=Father.end() && FindSet(nums[i]+1)!=FindSet(nums[i]))
-				Union(nums[i]+1,nums[i]);			
-		}
-        
-   		for (int i=0; i<nums.size(); i++)
-        {
-            Father[nums[i]]=FindSet(nums[i]);
-        }
-        
-		unordered_map<int,unordered_set<int>>Map;
-		for (auto a:Father)
-			Map[a.second].insert(a.first);
-		
-		int result=0;
-		for (auto a:Map)
-		{
-			int n=a.second.size();
-            result=max(result,n);
-		}
-		return result;
-    }
-
-	int FindSet(int x)
-	{
-		if (Father[x]!=x)
-			Father[x]=FindSet(Father[x]);
-		return Father[x];
-	}
-
-	void Union(int x, int y)
-	{
-		x=Father[x];
-		y=Father[y];
-		if (x<=y)
-			Father[y]=x;
-		else
-			Father[x]=y;
-	}
-
-};
-::::::::::::::
-Union_Find/0128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestConsecutive(vector<int>& nums) 
-    {
-        unordered_set<int>Set;
-        for (auto a:nums)
-            Set.insert(a);
-        
-        int result = 0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (Set.find(nums[i]-1)!=Set.end())
-                continue;
-            int j = nums[i]+1;
-            while (Set.find(j)!=Set.end())
-                j++;
-            
-            result = max(result, j-nums[i]);
-        }
-        return result;
-    }
-};
-::::::::::::::
-Union_Find/0128.Longest-Consecutive-Sequence/Readme.md
-::::::::::::::
-### 128.Longest-Consecutive-Sequence
-
-#### 解法１：　Union Find
-遍历nums，每读入一个数a，分别查看a+1和a-1是否已经收录。是的话就对这两个数尝试进行Union。
-
-最后用一个哈希表unordered_map<int,unordered_set<int>>Map，把所有具有相同Father的数都收集在一个集合里。查看每个集合，找出元素最多的那个。
-  
-#### 解法2：　Set
-此题更加简洁，巧妙和高效的算法是如下．
-
-将所有的元素放入一个集合中．然后我们再遍历一下这个数组nums[i]，如果nums[i]-1不在这个集合中，说明nums[i]可能是一个连续序列的下限，那么我们就从这个下限顺着递增去查验，找到一个完整的递增序列．如果nums[i]-1在这个集合中，说明它有更小的下限，那么我们就不去查验这个递增序列，因为我们规定，只有遇到了下限才会去查验整个序列．于是遍历完整个数组后，对于集合的查验也就仅仅是o(n)次．
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-consecutive-sequence)::::::::::::::
-Union_Find/0130.Surrounded-Regions/130.Surrounded-Regions_BFS.cpp
-::::::::::::::
-class Solution {
-public:
-    void solve(vector<vector<char>>& board) 
-    {
-        int M=board.size();
-        if (M==0) return;
-        int N=board[0].size();
-        
-        for (int i=0; i<M; i++)
-        {
-            if (board[i][0]=='O') BFS(i,0,board);
-            if (board[i][N-1]=='O') BFS(i,N-1,board);
-        }
-        
-        for (int j=0; j<N; j++)
-        {
-            if (board[0][j]=='O') BFS(0,j,board);
-            if (board[M-1][j]=='O') BFS(M-1,j,board);
-        }
-        
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (board[i][j]=='#') 
-                 board[i][j]='O';
-             else if (board[i][j]=='O') 
-                 board[i][j]='X';
-         }        
-            
-    }
-    
-    void BFS(int i, int j, vector<vector<char>>& board)
-    {
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
-        queue<pair<int,int>>q;
-        q.push({i,j});
-        board[i][j]='#';
-        int M=board.size();
-        int N=board[0].size();
-        
-        while (!q.empty())
-        {
-            int x=q.front().first;
-            int y=q.front().second;            
-            q.pop();
-            
-            for (int k=0; k<4; k++)
-            {
-                int m=x+dir[k].first;
-                int n=y+dir[k].second;
-                if (m<0||m>=M||n<0||n>=N)
-                    continue;
-                if (board[m][n]!='O')
-                    continue;
-                board[m][n]='#';
-                q.push({m,n});
-            }
-        }
-    }    
-    
-};
-::::::::::::::
-Union_Find/0130.Surrounded-Regions/130.Surrounded-Regions.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>Father;
-    int M;
-    int N;
-    public:
-    void solve(vector<vector<char>>& board)
-    {
-        M=board.size();
-        if (M==0) return;
-        N=board[0].size();
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (board[i][j]=='X') continue;
-             if (i==0 || i==M-1 || j==0 || j==N-1)
-                 Father[i*N+j]=-1;
-             else
-                 Father[i*N+j]=i*N+j;
-         }
-
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (board[i][j]=='X') continue;
-             for (int k=0; k<4; k++)
-             {
-                 int x=i+dir[k].first;
-                 int y=j+dir[k].second;
-                 if (x<0||x>=M||y<0||y>=N) continue;
-                 if (board[x][y]=='X') continue;
-                 if (FindSet(x*N+y)!=FindSet(i*N+j))
-                     Union(x*N+y,i*N+j);
-             }
-         }
-
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (board[i][j]=='X') continue;
-             if (FindSet(i*N+j)!=-1)
-                 board[i][j]='X';
-         }
-    }
-
-    int FindSet(int x)
-    {
-        if (Father[x]==-1)
-            return -1;
-        if (Father[x]!=x)
-        {
-            Father[x]=FindSet(Father[x]);
-        }
-        return Father[x];
-    }
-
-    void Union(int x,int y)
-    {
-        x=Father[x];
-        y=Father[y];
-        
-        bool flag;
-        if (x/N<y/N)
-            flag=1;
-        else if (x%N==y%N)
-            flag=1;
-        else
-            flag=0;
-        
-        if (flag)        
-            Father[y]=x;        
-        else    
-            Father[x]=y;        
-    }
-};
-::::::::::::::
-Union_Find/0130.Surrounded-Regions/Readme.md
-::::::::::::::
-### 130.Surrounded-Regions
-
-#### BFS
-此题用BFS的想法会更直接。找到所有在边界上的O点，以其为基础做BFS的扩散，标记为#。最后，所有剩余的O都转化为X。
-
-注意，在BFS队列的处理中，进队列的时候就标记#，而不是在出队列的时候。这样能够避免很多各自的重复入列。
-
-#### Union Find
-遍历时忽略所有的X，仅对所有的O进行集合编组。注意，在初始编组中，我们对所有在边界上的O点统一编组为-1，非边界上的O点编组序号为其本身的index。
-
-在第二遍遍历的过程中，我们对所有想邻接的O点进行Union。Union的规则其实不需要改动，因为-1永远比任何index而言都是最小的，按照最小编号进行Union的法则，所有与边界相通的O点都可以最终归为-1. 但要注意的是，在FindSet的操作中需要特殊的操作，需要判断```if (Father[x]==-1) return -1;```因为对于与边界相邻的O点，其递归的终点不是```x==Father[x]```而是-1.
-
-
-[Leetcode Link](https://leetcode.com/problems/surrounded-regions)::::::::::::::
-Union_Find/0305.Number-of-Islands-II/305.Number-of-Islands-II.cpp
-::::::::::::::
-class Solution {
-    vector<int>Father;
-public:
-    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) 
-    {
-        Father.resize(m*n);
-        for (int i=0; i<m*n; i++)         
-             Father[i]=-1;
-        
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
-        int count=0;
-        vector<int>result;
-        
-        for (int i=0; i<positions.size(); i++)
-        {
-            int x=positions[i][0];
-            int y=positions[i][1];
-            if (Father[x*n+y]!=-1)
-            {
-                result.push_back(result.back());
-                continue;
-            }
-            
-            Father[x*n+y]=x*n+y;
-            count+=1;
-            
-            for (int k=0; k<4; k++)
-            {
-                int a=x+dir[k].first;
-                int b=y+dir[k].second;
-                if (a<0||a>=m||b<0||b>=n)
-                    continue;
-                if (Father[a*n+b]==-1)
-                    continue;
-                if (FindSet(a*n+b)!=FindSet(x*n+y))
-                {
-                    count--;
-                    Union(a*n+b,x*n+y);                    
-                }                    
-            }
-            result.push_back(count);
-        }
-        
-        return result;
-    }
-    
-    int FindSet(int x)
-    {
-        if (x!=Father[x])
-            Father[x]=FindSet(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x=Father[x];
-        y=Father[y];
-        
-        if (x<y)
-            Father[y]=x;
-        else
-            Father[x]=y;        
-    }
-};
-::::::::::::::
-Union_Find/0305.Number-of-Islands-II/Readme.md
-::::::::::::::
-### 305.Number-of-Islands-II
-
-设置所有点的初始Father为-1，表示海洋。
-
-然后依次遍历每一块新陆地，最开始标记它的Root为自身，然后count++。依次考察这个新陆地相邻的四块：如果相邻的是陆地，并且新陆地和老陆地的Root不同，那么说明这是需要合并的两个集合，于是count--，并且将新陆地与旧陆地进行Union。最终实时输出count。
-
-有一个corner case是，positions里面可能会包含重复的同一块陆地。所以每遍历一块新陆地的时候，得先看看是否已经访问过了，已经访问过了就不要再重新标记Root，否则会出错。
-
-
-[Leetcode Link](https://leetcode.com/problems/number-of-islands-ii)::::::::::::::
-Union_Find/0547.Friend-Circles/547.Friend-Circles.cpp
-::::::::::::::
-
-class Solution {
-    vector<int>Father;
-public:
-    int findCircleNum(vector<vector<int>>& M) 
-    {
-        int N=M.size();
-        
-        for (int i=0; i<N; i++)
-            Father.push_back(i);
-        
-        for (int i=0; i<N; i++)
-         for (int j=0; j<N; j++)
-         {
-             if (M[i][j]==0) continue;
-             
-             if (FindSet(i)!=FindSet(j))
-                 Union(i,j);             
-         }
-        
-        unordered_set<int>Set;
-        for (int i=0; i<N; i++)
-        {
-            Father[i] = FindSet(i);
-            Set.insert(Father[i]);
-        }
-            
-        return Set.size();
-    }
-    
-    int FindSet(int x)
-    {
-        if (x!=Father[x])
-        {
-            Father[x]=FindSet(Father[x]);
-        }
-        return Father[x];
-    }
-    
-    void Union (int x, int y)
-    {
-        x=Father[x];
-        y=Father[y];
-        if (x<=y)
-            Father[y]=x;
-        else
-            Father[x]=y;
-    }
-};
-::::::::::::::
-Union_Find/0547.Friend-Circles/Readme.md
-::::::::::::::
-### 547.Friend-Circles
-
-注意，最后需要重新遍历一遍所有节点，通过FindSet来更新所有的父节点。
-```cpp
-        unordered_set<int>Set;
-        for (int i=0; i<N; i++)
-        {
-            Father[i] = FindSet(i);
-            Set.insert(Father[i]);
-        }
-        return Set.size();
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/friend-circles)::::::::::::::
-Union_Find/0684.Redundant-Connection/684.Redundant-Connection.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>Father;
-public:
-    vector<int> findRedundantConnection(vector<vector<int>>& edges) 
-    {        
-        for (int i=0; i<edges.size(); i++)
-        {
-            Father[edges[i][0]]=edges[i][0];
-            Father[edges[i][1]]=edges[i][1];
-        }
-        
-        for (int i=0; i<edges.size(); i++)
-        {
-            if (FindSet(edges[i][0])==FindSet(edges[i][1]))
-                return edges[i];
-            else
-                Union(edges[i][0],edges[i][1]);
-        }
-        return edges[0];
-    }
-    
-    int FindSet(int x)
-    {
-        if (x!=Father[x])
-        {
-            Father[x]=FindSet(Father[x]);
-        }
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x=FindSet(x);
-        y=FindSet(y);
-        if (x<=y)
-            Father[y]=x;
-        else
-            Father[x]=y;
-    }
-};
-::::::::::::::
-Union_Find/0684.Redundant-Connection/Readme.md
-::::::::::::::
-### 684.Redundant-Connection
-
-考虑这些edges所组成的网络是个无向图。那么这个图是tree的充要条件是：所有节点到另外一个节点的通路有且仅有一条。
-
-所以从前往后遍历edges，一旦发现某个edge的两个点，已经在之前的遍历中是联通的了，那么这个edge的加入就会导致“树”定义的不成立，故必须除去。根据题意，保证了只有唯一的答案，故就不用继续往后查下去了。
-
-于是本题就是一个考察union find的基本题。两个基本操作要熟练：
-```cpp
-int FindSet(int x)
-{
-   if (x!=Father[x])
-   {
-      Father[x]=FindSet(Father[x]);
-   }
-   return Father[x];
-}
-```
-```cpp
-void Union (int x, int y)
-{
-   x=Father[x];
-   y=Father[y];
-   if (x<y)
-      Father[y]=x;
-   else
-      Father[x]=y;
-}
-```
-在遍历edges的过程中
-```cpp
-   int x=edges[i][0];
-   int y=edges[i][1];
-   if (FindSet[x]==FindSet[y])  //注意，不是 if (Father[x]==Father[y])，因为Father[x]可能还没更新到这个集合的根。
-      return edges[i];
-   else 
-      Union(x,y);
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/redundant-connection)::::::::::::::
-Union_Find/0685.Redundant-Connection-II/685.Redundant-Connection-II.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>Father;
-public:
-    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) 
-    {
-        vector<int>candA,candB;
-        
-        for (int i=0; i<edges.size(); i++)
-        {
-            int u=edges[i][0];
-            int v=edges[i][1];
-            if (Father.find(v)==Father.end())
-                Father[v]=u;
-            else
-            {
-                candA={Father[v],v};
-                candB=edges[i];
-                break;
-            }
-        }
-        
-        for (int i=1; i<=edges.size(); i++)        
-            Father[i]=i;    
-        
-        for (int i=0; i<edges.size(); i++)
-        {
-            if (edges[i]==candB) continue;
-            
-            int u=edges[i][0];
-            int v=edges[i][1];
-            
-            if (findSet(v)==findSet(u))
-            {
-                if (candA.size()==0)
-                    return edges[i];
-                else
-                    return candA;
-            }
-            else
-                Father[v]=u;                
-        }
-        
-        return candB;        
-    }
-    
-	int	findSet(int x)
-	{
-		if (x!=Father[x])
-			Father[x]=findSet(Father[x]);
-		return Father[x];
-	}    
-};
-::::::::::::::
-Union_Find/0685.Redundant-Connection-II/Readme.md
-::::::::::::::
-### 685.Redundant-Connection-II
-
-题意说了，只有一个edge有问题，要把它找出来。这多余的一个edge究竟会如何影响一个valid的tree呢？
-
-首先，它可能造成某个节点会有两个parent。如果我们发现一个节点A（并且只可能有一个）的parent有两个，那么我们就可以把目标迅速缩小到A和它的这两个“父节点”之间的edges，称之为candA和candB。最终的答案必然是二选一。我们的策略是断开candB，根据剩馀的edges来尝试构造这棵树。
-
-如果在重构的过程中（即遍历edges的过程），我们没有遇到“成环”的情况，说明什么？说明我们断开candB的决策是对的，答案就是candB。如果遇到成环的情况，那么说明决策错误，答案应该是candA。重构的过程仍然可以用union find，这和68４.Redundant-Connection-I没有太大区别，只不过union两个节点的时候已经知道明确的指向关系了．
-
-当然，以上前提是candA和candB非空。如果candA和candB是空的，即这些节点中并没有dual parent的情况，那么本题其实就退化成了684.Redundant-Connection-I，只需要检验这些edges是否成环就行了，也就是说，答案只要输出当前使成环的那个edge就行。
-
-补充：
-
-1.为什么不能任意断开一条边就行？考察这个例子：　0->1, 1->2, 2->1. 对于1而言有两个parent,但是如果断开0->1的话，0就成了孤悬的节点．事实上，0应该是根节点．分析可知，如果一个节点有两个parent，这两个入度线路可能有一个不是从根节点方向过来的，必须断开这个；如果两个入度线路都是从根方向来的，那么任意断开一个都是可以的．
-
-２．有一道类似的题，给出一个二叉树的root，并且告诉你这个树里面从某个节点多飞出了一条edge连接到了其他节点上，求修复这棵树．对于这道题，因为已经告知了root，所以当你发现有两个parent的时候，删掉任意一个edge都是可以的．
-
-但是有一个corner case，那就是如果这个多余的edge指向了root，那么整棵树里不会有任何节点拥有两个parent，这需要额外处理．
-
-
-[Leetcode Link](https://leetcode.com/problems/redundant-connection-ii)::::::::::::::
-Union_Find/0721.Accounts-Merge/721.Accounts-Merge.cpp
-::::::::::::::
-class Solution {
-    unordered_map<string,string>Father;
-    unordered_map<string,string>Owner;
-    unordered_map<string,set<string>>Group;
-public:
-    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) 
-    {
-        for (int i=0; i<accounts.size(); i++)
-         for (int j=1; j<accounts[i].size(); j++)
-         {
-             Father[accounts[i][j]]=accounts[i][j];
-             Owner[accounts[i][j]]=accounts[i][0];
-         }
-             
-        
-        for (int i=0; i<accounts.size(); i++)
-        {
-            for (int j=2; j<accounts[i].size(); j++)
-            {
-                if (FindSet(accounts[i][j])!=FindSet(accounts[i][j-1]))
-                    Union(accounts[i][j],accounts[i][j-1]);
-            }
-        }
-        
-        for (int i=0; i<accounts.size(); i++)
-         for (int j=1; j<accounts[i].size(); j++)
-         {
-             string parent = FindSet(accounts[i][j]);
-             Group[parent].insert(accounts[i][j]);
-         }
-        
-        vector<vector<string>>result;
-        for (auto a:Group)
-        {
-            vector<string> temp;
-            temp.push_back(Owner[a.first]);
-            for (auto b:a.second)
-                temp.push_back(b);
-            result.push_back(temp);
-        }
-        return result;
-    }
-    
-    string FindSet(string x)
-    {
-        if (x!=Father[x])
-            Father[x]=FindSet(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(string x, string y)
-    {
-        x=Father[x];
-        y=Father[y];
-        if (x<y)
-            Father[y]=x;
-        else
-            Father[x]=y;
-    }
-};
-::::::::::::::
-Union_Find/0721.Accounts-Merge/Readme.md
-::::::::::::::
-### 721.Accounts-Merge
-
-此题是accounts的聚类，本质就是Union Find，不要被owner的名字所干扰。
-
-初始化时，每个account的Father都是本身。对于一组account里的所有邮箱怎么做归并：完全等价于线性地处理每两个相邻邮箱的归并。每个group的Father可以定义为字典序最小的那个。
-
-归并完之后，再遍历一次所有的邮箱，按照其Father分类就是答案所要求的分类。每个分类对应的人名，就是Father account对应的人名。
-
-
-[Leetcode Link](https://leetcode.com/problems/accounts-merge)::::::::::::::
-Union_Find/0765.Couples-Holding-Hands/765.Couples-Holding-Hands.cpp
-::::::::::::::
-class Solution {
-public:
-    int minSwapsCouples(vector<int>& row) 
-    {        
-        if (row.size()==0) return 0;
-        
-        int N = row.size();
-        unordered_map<int,int>Pos;
-        unordered_map<int,int>coupleID;
-        
-        for (int i=0; i<N; i++)
-        {
-            Pos[row[i]] = i;
-            coupleID[i] = i/2;
-        }
-            
-        int count = 0;
-        
-        for (int k=0; k<N; k+=2)
-        {           
-            if (coupleID[row[k]]==coupleID[row[k+1]])
-                continue;
-
-            int flag=0;       
-            
-            int holder = row[k];
-            int partner = coupleID[holder]*2==holder? holder+1:holder-1;
-            int curPos = k+1;
-            
-            while (flag==0)
-            {                
-                swap(row[Pos[partner]],row[curPos]);                
-                count++;
-                
-                holder = row[Pos[partner]];
-                int holder_pos = Pos[partner];
-                
-                curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;
-                partner = coupleID[holder]*2==holder? holder+1:holder-1;
-                                
-                flag = row[curPos]==partner;
-            }
-            
-        }
-        
-        return count;
-    }
-};
-::::::::::::::
-Union_Find/0765.Couples-Holding-Hands/765.Couples-Holding-Hands_v2.cpp
-::::::::::::::
-class Solution {
-    vector<int>Father;
-public:
-    int minSwapsCouples(vector<int>& row) 
-    {
-        int N = row.size();
-        Father.resize(N);
-        
-        for (int i=0; i<N; i+=2)
-        {
-            Father[i] = i;
-            Father[i+1] = i;
-        }
-        
-        for (int i=0; i<N; i+=2)
-        {
-            int a = row[i];
-            int b = row[i+1];
-            if (FindFather(a)!=FindFather(b))
-                Union(a,b);
-        }
-        
-        unordered_map<int,int>count;
-        for (int i=0; i<N; i++)
-            count[FindFather(i)] += 1;
-        
-        int ret = 0;
-        for (auto x: count)
-           ret += x.second/2-1;
-        
-        return ret;
-    }
-    
-    int FindFather(int x)
-    {
-        if (Father[x]!=x)
-            Father[x] = FindFather(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x = Father[x];
-        y = Father[y];
-        if (x<y)
-            Father[y] = x;
-        else
-            Father[x] = y;
-    }
-};
-
-::::::::::::::
-Union_Find/0765.Couples-Holding-Hands/Readme.md
-::::::::::::::
-### 765.Couples-Holding-Hands
-
-#### 解法1：此题可以人工找到最优的策略,所以属于贪心法.
-
-考虑这么一个字串```03....61....42....```.我们试图想把前两个数字变为```01```使得配成一对,那么最高效的方法就只有把3和1进行交换.于是得到```01....63....42....```接下来,为了充分利用刚才的这次交换,我们可以假定3已经处于了最终位置,那么我们需要把6换掉变成2,使得```23```配成一对.于是得到```01....23....46....```接下来,同理,为了充分利用刚才的这次交换,我们固定4的位置,需要把6换走,换来5,...以此类推,直到某次交换结束后恰好配成了一对不需要再做这样的换走/换来的swap.这其实说明这M次swap形成了一个闭环,共配成了M+1对,是最高效的方法.
-
-接下来,我们可以继续在这个数列里寻找下一个没配对的位置,重复上述的过程,在一个闭环中完成若干次匹配.这种算法可以成为```cyclic swapping```
-
-以上述例子的第二次swap为例,核心的代码如下:
-```cpp
-while (flag==0)
-{
-  // 此时序列是```03....61....42....```,partner是1,curPos是1
-  
-  swap(row[curPos],row[Pos[partner]]);  // 交换3和1,得到```01....63....42....```
-  
-  holder = row[Pos[partner]]; // holder是在当前配对中已经固定好的那个数,即3
-  int holder_pos = Pos[partner];  // holder所在的idx,即此时3的那个位置
-  
-  partner = coupleID[holder]*2==holder? holder+1:holder-1;  //根据holder,确定它的partner,即2
-  curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;   //根据holder_pos,确定下次需要交换的两个数的其中一个位置,即此时3前面的那个位置
-  
-  flag = row[curPos]==partner; //判断此时holder和partner是否已经配对,否则需要继续循环
-}
-```
-
-#### 解法2：Union Find
-
-我们根据如下的规则将所有的人分组：1.同属于一对couple的聚为一组；2.被安排在相邻位置的聚为一组（指的是01，23，45这样的位置）。
-
-这样我们就得到了若干个union。这些union有如下性质：1.每个union之间是没有关系的，即没有任何couple被拆在不同的union里。2.在每个union内部，都可以通过若干次的swap使得内部的couple得到配对。3.每个union不可能再拆分为若干个更小的union。
-
-因为每个union是这样一个“最小”的社区单位，所以他们其实形成了一个闭环。如果一个union内部有k对couple，则最多只需要k-1次swap就可以让所有couple配对。（这是因为每次swap至少能保证一对couple配对，而使得k-1对couple配对后，最后一对couple自然也就配对了。）那么有没有可能用更少次数的swap使其配对呢？其实不可能。
-
-给一个比较粗糙的类比。Union A有k个couple，Union B有m个couple，Union C有n个couple，且k=m+n。要是的B和C理顺关系，只需要m-1+n-1=m+n-2=k-2次swap。如果理顺A也只需要k-2此的话，其意味着A可能分为B+C？但事实上A不可再分，其拓扑结构必然复杂于B+C，所以不可能也用k-2次swap就实现目标，只能用k-1次。
-
-
-[Leetcode Link](https://leetcode.com/problems/couples-holding-hands)::::::::::::::
-Union_Find/0924.Minimize-Malware-Spread/924.Minimize-Malware-Spread.cpp
-::::::::::::::
-
-::::::::::::::
-Union_Find/0924.Minimize-Malware-Spread/Readme.md
-::::::::::::::
-### 924.Minimize-Malware-Spread
-
-本题依然是根据提供的edg的关系，构建图中的若干连通分量。
-
-如果一个连通分量里面有两或两个以上的点是初始感染点，那么无论我们隔离哪一个，最终整个连通图还是会全部感染。这种连通图是我们不想要的。
-
-如果一个连通分量里面只有一个点是初始感染点，那么只要我们隔离了这个点，就能最终拯救整个连通图。显然，我们希望找到最大的这样的连通图，意味着我们可以拯救更多的点，也就是题意里面的minimize M(initial)。
-
-特别注意，如果所有的连通分量都包含>=2个初始感染点，根据要求我们仍要返回一个点作为最终结果（显然应该是initial里面的最小值）。这意味着尽管我们隔离了这样一个点，但也仅能拯救这一个点而已。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimize-malware-spread)::::::::::::::
-Union_Find/0947.Most-Stones-Removed-with-Same-Row-or-Column/947.Most-Stones-Removed-with-Same-Row-or-Column.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>Father;
-    unordered_map<int,vector<int>>MapX;
-    unordered_map<int,vector<int>>MapY;
-    int N = 10000;
-public:
-    int removeStones(vector<vector<int>>& stones) 
-    {
-        for (auto x:stones)
-        {
-            int i = x[0];
-            int j = x[1];
-            int id = i*N+j;
-            Father[id] = id;
-            MapX[i].push_back(id);
-            MapY[j].push_back(id);
-        }
-        
-        for (auto a: MapX)
-        {
-            int id0 = a.second[0];
-            for (int i=1; i<a.second.size(); i++)
-            {
-                int id = a.second[i];
-                if (FindFather(id0)!=FindFather(id))
-                    Union(id0, id);                
-            }
-        }
-        
-        for (auto a: MapY)
-        {
-            int id0 = a.second[0];
-            for (int i=1; i<a.second.size(); i++)
-            {
-                int id = a.second[i];
-                if (FindFather(id0)!=FindFather(id))
-                    Union(id0, id);                
-            }
-        }
-        
-        unordered_set<int>Set;
-        for (auto x: stones)
-        {
-            int id = x[0]*N+x[1];
-            int id0 = FindFather(id);
-            Set.insert(id0);
-        }
-        
-        return stones.size() - Set.size();
-    }
-    
-    int FindFather(int x)
-    {
-        if (Father[x]!=x)
-            Father[x] = FindFather(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x = Father[x];
-        y = Father[y];
-        if (x<=y)
-            Father[y] = x;
-        else
-            Father[x] = y;
-     }
-};
-::::::::::::::
-Union_Find/0947.Most-Stones-Removed-with-Same-Row-or-Column/Readme.md
-::::::::::::::
-### 947.Most-Stones-Removed-with-Same-Row-or-Column
-
-本题的核心就是找出这样的规律：将所有同行或者同列关系的石头两两归并，最终都融为一个group。在这一个group里面，依次取度为1的石头（即同行或同列还有剩余的石头），按照规则可以一直取到整个组只剩下一个为止。
-
-因为每个group都只剩一个石头，所以可以移走的石头数目，就等于总共的石头数目减去group的数目。
-
-
-[Leetcode Link](https://leetcode.com/problems/most-stones-removed-with-same-row-or-column)::::::::::::::
-Union_Find/0952.Largest-Component-Size-by-Common-Factor/952.Largest-Component-Size-by-Common-Factor.cpp
-::::::::::::::
-class Solution {
-    int L = 1e5;
-    int Father[100005];
-    int FindFather(int x)
-    {
-        if (Father[x]!=x)
-            Father[x] = FindFather(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x = Father[x];
-        y = Father[y];
-        if (x<y) Father[y] = x;
-        else Father[x] = y;
-    }         
-public:
-    vector<int>Eratosthenes(int n)
-    {
-        auto q=vector<int>(n+1,0);
-        for (int i=2; i<=sqrt(n); i++)
-        {
-            if (q[i]==0)
-            {
-                int j=i*2;
-                while (j<n)
-                {
-                    q[j]=1;
-                    j+=i;
-                }
-            }
-        }
-        vector<int>primes;
-        for (int i=2; i<=n; i++)
-        {
-            if (q[i]==0)
-                primes.push_back(i);                
-        }
-        return primes;
-    }
-
-    int largestComponentSize(vector<int>& nums) 
-    {        
-        for (int i=0; i<=L; i++)
-            Father[i] = i;
-
-        vector<int>primes = Eratosthenes(sqrt(L));
-
-        for (int i=0; i<nums.size(); i++)
-        {
-            int x = nums[i];
-            for (int p: primes)
-            {
-                if (x % p == 0)
-                {
-                    if (FindFather(nums[i])!=FindFather(p))
-                        Union(nums[i], p);
-                    while (x%p==0) x/=p;
-                }
-            }
-            if (x > 1)
-            {
-                if (FindFather(nums[i])!=FindFather(x))
-                    Union(nums[i], x);                
-            }
-        }
-
-        unordered_map<int,int>count;
-        for (int i=0; i<nums.size(); i++)
-        {
-            count[FindFather(nums[i])] += 1;
-        }
-        int ret = 0;
-        for (auto x: count)
-            ret = max(ret, x.second);
-        return ret;
-    }
-};
-::::::::::::::
-Union_Find/0952.Largest-Component-Size-by-Common-Factor/Readme.md
-::::::::::::::
-### 952.Largest-Component-Size-by-Common-Factor
-
-此题一眼就能看出是Union Find的解法．任意两个数，只要有质因数相同，就能建立起联系．所以我们将所有的数a,都分解成一系列质因数Pi，将a和Pi都Union起来．最后看所有的数字经过聚类之后，最大的群的数量．
-
-第一个版本，我们可以将100000以内的所有的质数Pi都找出来，挨个查看是否是a的因数．这比直接求a的所有质因数要快．
-```cpp
-        vector<int>primes = makePrimes(100000);
-        for (auto p:primes) Root[p] = p;
-        for (auto a:A) Root[a] = a;
-        
-        for (auto a:A)
-        {
-            for (int p:primes)
-            {
-                if (a%p==0 && findRoot(a)!=findRoot(p))
-                    Union(a,p);                            
-                if (p>a/2) break;
-            }
-        }
-        
-        unordered_map<int,int>Groups;
-        for (auto a:A)              
-            Groups[findRoot(a)]+=1;
-            
-        int result = 0;
-        for (auto x:Groups)
-            result = max(result,x.second);
-        return result;
-```
-这个解法能够AC，但是比其他答案要慢得多．原因是100000以内的质数筛检非常费事．怎么改进呢？
-
-第二个版本，我们只需要求出sqrt(100000)以内的所有质数Pi，这样预处理的规模就小了很多．但是如果继续按照上面的算法，如何保证得到a的所有质因数Pi并建立联系呢？其实我们只要将a不断除以它在sqrt(100000)以内的所有质因数，如果仍然大于1，那么剩下的必然是它唯一的一个大于sqrt(100000)的质因数．因为任何数不可能含有两个大于sqrt(100000)的质因数的．
-```cpp
-        vector<int>primes = makePrimes(sqrt(100000));        
-        for (auto p:primes) Root[p] = p;
-        for (auto a:A) Root[a] = a;
-        
-        for (auto a:A)
-        {
-            int x = a;
-            for (int p:primes)
-            {
-                if (x%p==0)
-                {
-                    if (findRoot(p)!=findRoot(a))
-                        Union(p,a);
-                    while (x%p==0) x = x/p;                    
-                }                
-                if (p>x) break;
-            }
-            
-            if (x>1)
-            {
-                if (Root.find(x)==Root.end()) Root[x] = x;
-                Union(x,a);
-            }
-        }
-        
-        unordered_map<int,int>Groups;
-        for (auto a:A)      
-            Groups[findRoot(a)]+=1;
-            
-        int result = 0;
-        for (auto x:Groups)
-            result = max(result,x.second);
-        return result;
-```        
-
-
-[Leetcode Link](https://leetcode.com/problems/largest-component-size-by-common-factor)::::::::::::::
-Union_Find/0990.Satisfiability-of-Equality-Equations/990.Satisfiability-of-Equality-Equations.cpp
-::::::::::::::
-class Solution {
-    vector<int>Father;
-public:
-    bool equationsPossible(vector<string>& equations) 
-    {
-        Father.resize(26);
-        for (int i=0; i<26; i++)
-            Father[i] = i;
-
-        for (auto & eq: equations)
-        {            
-            if (eq[1]=='=')
-            {
-                int a = eq[0]-'a';
-                int b = eq[3]-'a';
-                if (FindFather(a)!=FindFather(b))
-                    Union(a,b);
-            }
-        }
-
-        for (auto & eq: equations)
-        {            
-            if (eq[1]=='!')
-            {
-                int a = eq[0]-'a';
-                int b = eq[3]-'a';
-                if (FindFather(a)==FindFather(b))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-    int FindFather(int x)
-    {
-        if (Father[x]!=x)
-            Father[x] = FindFather(Father[x]);
-        return Father[x];
-    }
-    
-    void Union(int x, int y)
-    {
-        x = Father[x];
-        y = Father[y];
-        if (x<y)
-            Father[y] = x;
-        else
-            Father[x] = y;
-    }    
-};
-::::::::::::::
-Union_Find/0990.Satisfiability-of-Equality-Equations/Readme.md
-::::::::::::::
-### 990.Satisfiability-of-Equality-Equations
-
-容易想到如果遇到```a==b```，那么a和b可以通过Union Find聚为一类。
-
-如果遇到```a!=b```，那么我们会检查a和b是否已经聚成了一类，是的话就说明引入了矛盾，返回false；如果不是的话，目前但前暂时没有导出矛盾。但问题是，我们如何保证之后再遇到```a==b```时能记住之前的```a!=b```呢？
-
-解决方法很简单，就是先考察所有的等式，将所有的能聚类的元素都聚起来。然后再考察所有的不等式，考察是否有与之前那些等式相矛盾的地方。没有任何矛盾的话就返回true。
-
-
-[Leetcode Link](https://leetcode.com/problems/satisfiability-of-equality-equations)::::::::::::::
 Union_Find/1061.Lexicographically-Smallest-Equivalent-String/1061.Lexicographically-Smallest-Equivalent-String.cpp
 ::::::::::::::
 class Solution {
@@ -1403,6 +301,260 @@ Union_Find/1202.Smallest-String-With-Swaps/Readme.md
 
 
 [Leetcode Link](https://leetcode.com/problems/smallest-string-with-swaps)::::::::::::::
+Union_Find/128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence.cpp
+::::::::::::::
+class Solution {
+	unordered_map<int,int>Father;
+public:
+    int longestConsecutive(vector<int>& nums) 
+	{
+        if (nums.size()==0) return 0;
+
+		for (int i=0; i<nums.size(); i++)
+		{
+			Father[nums[i]]=nums[i];
+			if (Father.find(nums[i]-1)!=Father.end() && FindSet(nums[i]-1)!=FindSet(nums[i]))			
+				Union(nums[i]-1,nums[i]);						
+			if (Father.find(nums[i]+1)!=Father.end() && FindSet(nums[i]+1)!=FindSet(nums[i]))
+				Union(nums[i]+1,nums[i]);			
+		}
+        
+   		for (int i=0; i<nums.size(); i++)
+        {
+            Father[nums[i]]=FindSet(nums[i]);
+        }
+        
+		unordered_map<int,unordered_set<int>>Map;
+		for (auto a:Father)
+			Map[a.second].insert(a.first);
+		
+		int result=0;
+		for (auto a:Map)
+		{
+			int n=a.second.size();
+            result=max(result,n);
+		}
+		return result;
+    }
+
+	int FindSet(int x)
+	{
+		if (Father[x]!=x)
+			Father[x]=FindSet(Father[x]);
+		return Father[x];
+	}
+
+	void Union(int x, int y)
+	{
+		x=Father[x];
+		y=Father[y];
+		if (x<=y)
+			Father[y]=x;
+		else
+			Father[x]=y;
+	}
+
+};
+::::::::::::::
+Union_Find/128.Longest-Consecutive-Sequence/128.Longest-Consecutive-Sequence_v2.cpp
+::::::::::::::
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) 
+    {
+        unordered_set<int>Set;
+        for (auto a:nums)
+            Set.insert(a);
+        
+        int result = 0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (Set.find(nums[i]-1)!=Set.end())
+                continue;
+            int j = nums[i]+1;
+            while (Set.find(j)!=Set.end())
+                j++;
+            
+            result = max(result, j-nums[i]);
+        }
+        return result;
+    }
+};
+::::::::::::::
+Union_Find/128.Longest-Consecutive-Sequence/Readme.md
+::::::::::::::
+### 128.Longest-Consecutive-Sequence
+
+#### 解法１：　Union Find
+遍历nums，每读入一个数a，分别查看a+1和a-1是否已经收录。是的话就对这两个数尝试进行Union。
+
+最后用一个哈希表unordered_map<int,unordered_set<int>>Map，把所有具有相同Father的数都收集在一个集合里。查看每个集合，找出元素最多的那个。
+  
+#### 解法2：　Set
+此题更加简洁，巧妙和高效的算法是如下．
+
+将所有的元素放入一个集合中．然后我们再遍历一下这个数组nums[i]，如果nums[i]-1不在这个集合中，说明nums[i]可能是一个连续序列的下限，那么我们就从这个下限顺着递增去查验，找到一个完整的递增序列．如果nums[i]-1在这个集合中，说明它有更小的下限，那么我们就不去查验这个递增序列，因为我们规定，只有遇到了下限才会去查验整个序列．于是遍历完整个数组后，对于集合的查验也就仅仅是o(n)次．
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-consecutive-sequence)::::::::::::::
+Union_Find/130.Surrounded-Regions/130.Surrounded-Regions_BFS.cpp
+::::::::::::::
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) 
+    {
+        int M=board.size();
+        if (M==0) return;
+        int N=board[0].size();
+        
+        for (int i=0; i<M; i++)
+        {
+            if (board[i][0]=='O') BFS(i,0,board);
+            if (board[i][N-1]=='O') BFS(i,N-1,board);
+        }
+        
+        for (int j=0; j<N; j++)
+        {
+            if (board[0][j]=='O') BFS(0,j,board);
+            if (board[M-1][j]=='O') BFS(M-1,j,board);
+        }
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='#') 
+                 board[i][j]='O';
+             else if (board[i][j]=='O') 
+                 board[i][j]='X';
+         }        
+            
+    }
+    
+    void BFS(int i, int j, vector<vector<char>>& board)
+    {
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        queue<pair<int,int>>q;
+        q.push({i,j});
+        board[i][j]='#';
+        int M=board.size();
+        int N=board[0].size();
+        
+        while (!q.empty())
+        {
+            int x=q.front().first;
+            int y=q.front().second;            
+            q.pop();
+            
+            for (int k=0; k<4; k++)
+            {
+                int m=x+dir[k].first;
+                int n=y+dir[k].second;
+                if (m<0||m>=M||n<0||n>=N)
+                    continue;
+                if (board[m][n]!='O')
+                    continue;
+                board[m][n]='#';
+                q.push({m,n});
+            }
+        }
+    }    
+    
+};
+::::::::::::::
+Union_Find/130.Surrounded-Regions/130.Surrounded-Regions.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+    int M;
+    int N;
+    public:
+    void solve(vector<vector<char>>& board)
+    {
+        M=board.size();
+        if (M==0) return;
+        N=board[0].size();
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             if (i==0 || i==M-1 || j==0 || j==N-1)
+                 Father[i*N+j]=-1;
+             else
+                 Father[i*N+j]=i*N+j;
+         }
+
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             for (int k=0; k<4; k++)
+             {
+                 int x=i+dir[k].first;
+                 int y=j+dir[k].second;
+                 if (x<0||x>=M||y<0||y>=N) continue;
+                 if (board[x][y]=='X') continue;
+                 if (FindSet(x*N+y)!=FindSet(i*N+j))
+                     Union(x*N+y,i*N+j);
+             }
+         }
+
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (board[i][j]=='X') continue;
+             if (FindSet(i*N+j)!=-1)
+                 board[i][j]='X';
+         }
+    }
+
+    int FindSet(int x)
+    {
+        if (Father[x]==-1)
+            return -1;
+        if (Father[x]!=x)
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+
+    void Union(int x,int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        
+        bool flag;
+        if (x/N<y/N)
+            flag=1;
+        else if (x%N==y%N)
+            flag=1;
+        else
+            flag=0;
+        
+        if (flag)        
+            Father[y]=x;        
+        else    
+            Father[x]=y;        
+    }
+};
+::::::::::::::
+Union_Find/130.Surrounded-Regions/Readme.md
+::::::::::::::
+### 130.Surrounded-Regions
+
+#### BFS
+此题用BFS的想法会更直接。找到所有在边界上的O点，以其为基础做BFS的扩散，标记为#。最后，所有剩余的O都转化为X。
+
+注意，在BFS队列的处理中，进队列的时候就标记#，而不是在出队列的时候。这样能够避免很多各自的重复入列。
+
+#### Union Find
+遍历时忽略所有的X，仅对所有的O进行集合编组。注意，在初始编组中，我们对所有在边界上的O点统一编组为-1，非边界上的O点编组序号为其本身的index。
+
+在第二遍遍历的过程中，我们对所有想邻接的O点进行Union。Union的规则其实不需要改动，因为-1永远比任何index而言都是最小的，按照最小编号进行Union的法则，所有与边界相通的O点都可以最终归为-1. 但要注意的是，在FindSet的操作中需要特殊的操作，需要判断```if (Father[x]==-1) return -1;```因为对于与边界相邻的O点，其递归的终点不是```x==Father[x]```而是-1.
+
+
+[Leetcode Link](https://leetcode.com/problems/surrounded-regions)::::::::::::::
 Union_Find/1319.Number-of-Operations-to-Make-Network-Connected/1319.Number-of-Operations-to-Make-Network-Connected.cpp
 ::::::::::::::
 class Solution {
@@ -3063,3 +2215,852 @@ Union_Find/2157.Groups-of-Strings/Readme.md
 2. 将每个单词i的编码A，任意去掉一个字母变成编码B，将编码A的家族与B家族进行Union
 
 满足以上操作之后，所有需要Union的单词一定已经做了归并。我们根据每个家族的族长进行分组统计，得到家族的数量和最大的家族。
+::::::::::::::
+Union_Find/305.Number-of-Islands-II/305.Number-of-Islands-II.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) 
+    {
+        Father.resize(m*n);
+        for (int i=0; i<m*n; i++)         
+             Father[i]=-1;
+        
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};
+        int count=0;
+        vector<int>result;
+        
+        for (int i=0; i<positions.size(); i++)
+        {
+            int x=positions[i][0];
+            int y=positions[i][1];
+            if (Father[x*n+y]!=-1)
+            {
+                result.push_back(result.back());
+                continue;
+            }
+            
+            Father[x*n+y]=x*n+y;
+            count+=1;
+            
+            for (int k=0; k<4; k++)
+            {
+                int a=x+dir[k].first;
+                int b=y+dir[k].second;
+                if (a<0||a>=m||b<0||b>=n)
+                    continue;
+                if (Father[a*n+b]==-1)
+                    continue;
+                if (FindSet(a*n+b)!=FindSet(x*n+y))
+                {
+                    count--;
+                    Union(a*n+b,x*n+y);                    
+                }                    
+            }
+            result.push_back(count);
+        }
+        
+        return result;
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        
+        if (x<y)
+            Father[y]=x;
+        else
+            Father[x]=y;        
+    }
+};
+::::::::::::::
+Union_Find/305.Number-of-Islands-II/Readme.md
+::::::::::::::
+### 305.Number-of-Islands-II
+
+设置所有点的初始Father为-1，表示海洋。
+
+然后依次遍历每一块新陆地，最开始标记它的Root为自身，然后count++。依次考察这个新陆地相邻的四块：如果相邻的是陆地，并且新陆地和老陆地的Root不同，那么说明这是需要合并的两个集合，于是count--，并且将新陆地与旧陆地进行Union。最终实时输出count。
+
+有一个corner case是，positions里面可能会包含重复的同一块陆地。所以每遍历一块新陆地的时候，得先看看是否已经访问过了，已经访问过了就不要再重新标记Root，否则会出错。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-islands-ii)::::::::::::::
+Union_Find/547.Friend-Circles/547.Friend-Circles.cpp
+::::::::::::::
+
+class Solution {
+    vector<int>Father;
+public:
+    int findCircleNum(vector<vector<int>>& M) 
+    {
+        int N=M.size();
+        
+        for (int i=0; i<N; i++)
+            Father.push_back(i);
+        
+        for (int i=0; i<N; i++)
+         for (int j=0; j<N; j++)
+         {
+             if (M[i][j]==0) continue;
+             
+             if (FindSet(i)!=FindSet(j))
+                 Union(i,j);             
+         }
+        
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            Father[i] = FindSet(i);
+            Set.insert(Father[i]);
+        }
+            
+        return Set.size();
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+    
+    void Union (int x, int y)
+    {
+        x=Father[x];
+        y=Father[y];
+        if (x<=y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/547.Friend-Circles/Readme.md
+::::::::::::::
+### 547.Friend-Circles
+
+注意，最后需要重新遍历一遍所有节点，通过FindSet来更新所有的父节点。
+```cpp
+        unordered_set<int>Set;
+        for (int i=0; i<N; i++)
+        {
+            Father[i] = FindSet(i);
+            Set.insert(Father[i]);
+        }
+        return Set.size();
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/friend-circles)::::::::::::::
+Union_Find/684.Redundant-Connection/684.Redundant-Connection.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) 
+    {        
+        for (int i=0; i<edges.size(); i++)
+        {
+            Father[edges[i][0]]=edges[i][0];
+            Father[edges[i][1]]=edges[i][1];
+        }
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (FindSet(edges[i][0])==FindSet(edges[i][1]))
+                return edges[i];
+            else
+                Union(edges[i][0],edges[i][1]);
+        }
+        return edges[0];
+    }
+    
+    int FindSet(int x)
+    {
+        if (x!=Father[x])
+        {
+            Father[x]=FindSet(Father[x]);
+        }
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x=FindSet(x);
+        y=FindSet(y);
+        if (x<=y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/684.Redundant-Connection/Readme.md
+::::::::::::::
+### 684.Redundant-Connection
+
+考虑这些edges所组成的网络是个无向图。那么这个图是tree的充要条件是：所有节点到另外一个节点的通路有且仅有一条。
+
+所以从前往后遍历edges，一旦发现某个edge的两个点，已经在之前的遍历中是联通的了，那么这个edge的加入就会导致“树”定义的不成立，故必须除去。根据题意，保证了只有唯一的答案，故就不用继续往后查下去了。
+
+于是本题就是一个考察union find的基本题。两个基本操作要熟练：
+```cpp
+int FindSet(int x)
+{
+   if (x!=Father[x])
+   {
+      Father[x]=FindSet(Father[x]);
+   }
+   return Father[x];
+}
+```
+```cpp
+void Union (int x, int y)
+{
+   x=Father[x];
+   y=Father[y];
+   if (x<y)
+      Father[y]=x;
+   else
+      Father[x]=y;
+}
+```
+在遍历edges的过程中
+```cpp
+   int x=edges[i][0];
+   int y=edges[i][1];
+   if (FindSet[x]==FindSet[y])  //注意，不是 if (Father[x]==Father[y])，因为Father[x]可能还没更新到这个集合的根。
+      return edges[i];
+   else 
+      Union(x,y);
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/redundant-connection)::::::::::::::
+Union_Find/685.Redundant-Connection-II/685.Redundant-Connection-II.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) 
+    {
+        vector<int>candA,candB;
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            int u=edges[i][0];
+            int v=edges[i][1];
+            if (Father.find(v)==Father.end())
+                Father[v]=u;
+            else
+            {
+                candA={Father[v],v};
+                candB=edges[i];
+                break;
+            }
+        }
+        
+        for (int i=1; i<=edges.size(); i++)        
+            Father[i]=i;    
+        
+        for (int i=0; i<edges.size(); i++)
+        {
+            if (edges[i]==candB) continue;
+            
+            int u=edges[i][0];
+            int v=edges[i][1];
+            
+            if (findSet(v)==findSet(u))
+            {
+                if (candA.size()==0)
+                    return edges[i];
+                else
+                    return candA;
+            }
+            else
+                Father[v]=u;                
+        }
+        
+        return candB;        
+    }
+    
+	int	findSet(int x)
+	{
+		if (x!=Father[x])
+			Father[x]=findSet(Father[x]);
+		return Father[x];
+	}    
+};
+::::::::::::::
+Union_Find/685.Redundant-Connection-II/Readme.md
+::::::::::::::
+### 685.Redundant-Connection-II
+
+题意说了，只有一个edge有问题，要把它找出来。这多余的一个edge究竟会如何影响一个valid的tree呢？
+
+首先，它可能造成某个节点会有两个parent。如果我们发现一个节点A（并且只可能有一个）的parent有两个，那么我们就可以把目标迅速缩小到A和它的这两个“父节点”之间的edges，称之为candA和candB。最终的答案必然是二选一。我们的策略是断开candB，根据剩馀的edges来尝试构造这棵树。
+
+如果在重构的过程中（即遍历edges的过程），我们没有遇到“成环”的情况，说明什么？说明我们断开candB的决策是对的，答案就是candB。如果遇到成环的情况，那么说明决策错误，答案应该是candA。重构的过程仍然可以用union find，这和68４.Redundant-Connection-I没有太大区别，只不过union两个节点的时候已经知道明确的指向关系了．
+
+当然，以上前提是candA和candB非空。如果candA和candB是空的，即这些节点中并没有dual parent的情况，那么本题其实就退化成了684.Redundant-Connection-I，只需要检验这些edges是否成环就行了，也就是说，答案只要输出当前使成环的那个edge就行。
+
+补充：
+
+1.为什么不能任意断开一条边就行？考察这个例子：　0->1, 1->2, 2->1. 对于1而言有两个parent,但是如果断开0->1的话，0就成了孤悬的节点．事实上，0应该是根节点．分析可知，如果一个节点有两个parent，这两个入度线路可能有一个不是从根节点方向过来的，必须断开这个；如果两个入度线路都是从根方向来的，那么任意断开一个都是可以的．
+
+２．有一道类似的题，给出一个二叉树的root，并且告诉你这个树里面从某个节点多飞出了一条edge连接到了其他节点上，求修复这棵树．对于这道题，因为已经告知了root，所以当你发现有两个parent的时候，删掉任意一个edge都是可以的．
+
+但是有一个corner case，那就是如果这个多余的edge指向了root，那么整棵树里不会有任何节点拥有两个parent，这需要额外处理．
+
+
+[Leetcode Link](https://leetcode.com/problems/redundant-connection-ii)::::::::::::::
+Union_Find/721.Accounts-Merge/721.Accounts-Merge.cpp
+::::::::::::::
+class Solution {
+    unordered_map<string,string>Father;
+    unordered_map<string,string>Owner;
+    unordered_map<string,set<string>>Group;
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) 
+    {
+        for (int i=0; i<accounts.size(); i++)
+         for (int j=1; j<accounts[i].size(); j++)
+         {
+             Father[accounts[i][j]]=accounts[i][j];
+             Owner[accounts[i][j]]=accounts[i][0];
+         }
+             
+        
+        for (int i=0; i<accounts.size(); i++)
+        {
+            for (int j=2; j<accounts[i].size(); j++)
+            {
+                if (FindSet(accounts[i][j])!=FindSet(accounts[i][j-1]))
+                    Union(accounts[i][j],accounts[i][j-1]);
+            }
+        }
+        
+        for (int i=0; i<accounts.size(); i++)
+         for (int j=1; j<accounts[i].size(); j++)
+         {
+             string parent = FindSet(accounts[i][j]);
+             Group[parent].insert(accounts[i][j]);
+         }
+        
+        vector<vector<string>>result;
+        for (auto a:Group)
+        {
+            vector<string> temp;
+            temp.push_back(Owner[a.first]);
+            for (auto b:a.second)
+                temp.push_back(b);
+            result.push_back(temp);
+        }
+        return result;
+    }
+    
+    string FindSet(string x)
+    {
+        if (x!=Father[x])
+            Father[x]=FindSet(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(string x, string y)
+    {
+        x=Father[x];
+        y=Father[y];
+        if (x<y)
+            Father[y]=x;
+        else
+            Father[x]=y;
+    }
+};
+::::::::::::::
+Union_Find/721.Accounts-Merge/Readme.md
+::::::::::::::
+### 721.Accounts-Merge
+
+此题是accounts的聚类，本质就是Union Find，不要被owner的名字所干扰。
+
+初始化时，每个account的Father都是本身。对于一组account里的所有邮箱怎么做归并：完全等价于线性地处理每两个相邻邮箱的归并。每个group的Father可以定义为字典序最小的那个。
+
+归并完之后，再遍历一次所有的邮箱，按照其Father分类就是答案所要求的分类。每个分类对应的人名，就是Father account对应的人名。
+
+
+[Leetcode Link](https://leetcode.com/problems/accounts-merge)::::::::::::::
+Union_Find/765.Couples-Holding-Hands/765.Couples-Holding-Hands.cpp
+::::::::::::::
+class Solution {
+public:
+    int minSwapsCouples(vector<int>& row) 
+    {        
+        if (row.size()==0) return 0;
+        
+        int N = row.size();
+        unordered_map<int,int>Pos;
+        unordered_map<int,int>coupleID;
+        
+        for (int i=0; i<N; i++)
+        {
+            Pos[row[i]] = i;
+            coupleID[i] = i/2;
+        }
+            
+        int count = 0;
+        
+        for (int k=0; k<N; k+=2)
+        {           
+            if (coupleID[row[k]]==coupleID[row[k+1]])
+                continue;
+
+            int flag=0;       
+            
+            int holder = row[k];
+            int partner = coupleID[holder]*2==holder? holder+1:holder-1;
+            int curPos = k+1;
+            
+            while (flag==0)
+            {                
+                swap(row[Pos[partner]],row[curPos]);                
+                count++;
+                
+                holder = row[Pos[partner]];
+                int holder_pos = Pos[partner];
+                
+                curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;
+                partner = coupleID[holder]*2==holder? holder+1:holder-1;
+                                
+                flag = row[curPos]==partner;
+            }
+            
+        }
+        
+        return count;
+    }
+};
+::::::::::::::
+Union_Find/765.Couples-Holding-Hands/765.Couples-Holding-Hands_v2.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    int minSwapsCouples(vector<int>& row) 
+    {
+        int N = row.size();
+        Father.resize(N);
+        
+        for (int i=0; i<N; i+=2)
+        {
+            Father[i] = i;
+            Father[i+1] = i;
+        }
+        
+        for (int i=0; i<N; i+=2)
+        {
+            int a = row[i];
+            int b = row[i+1];
+            if (FindFather(a)!=FindFather(b))
+                Union(a,b);
+        }
+        
+        unordered_map<int,int>count;
+        for (int i=0; i<N; i++)
+            count[FindFather(i)] += 1;
+        
+        int ret = 0;
+        for (auto x: count)
+           ret += x.second/2-1;
+        
+        return ret;
+    }
+    
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }
+};
+
+::::::::::::::
+Union_Find/765.Couples-Holding-Hands/Readme.md
+::::::::::::::
+### 765.Couples-Holding-Hands
+
+#### 解法1：此题可以人工找到最优的策略,所以属于贪心法.
+
+考虑这么一个字串```03....61....42....```.我们试图想把前两个数字变为```01```使得配成一对,那么最高效的方法就只有把3和1进行交换.于是得到```01....63....42....```接下来,为了充分利用刚才的这次交换,我们可以假定3已经处于了最终位置,那么我们需要把6换掉变成2,使得```23```配成一对.于是得到```01....23....46....```接下来,同理,为了充分利用刚才的这次交换,我们固定4的位置,需要把6换走,换来5,...以此类推,直到某次交换结束后恰好配成了一对不需要再做这样的换走/换来的swap.这其实说明这M次swap形成了一个闭环,共配成了M+1对,是最高效的方法.
+
+接下来,我们可以继续在这个数列里寻找下一个没配对的位置,重复上述的过程,在一个闭环中完成若干次匹配.这种算法可以成为```cyclic swapping```
+
+以上述例子的第二次swap为例,核心的代码如下:
+```cpp
+while (flag==0)
+{
+  // 此时序列是```03....61....42....```,partner是1,curPos是1
+  
+  swap(row[curPos],row[Pos[partner]]);  // 交换3和1,得到```01....63....42....```
+  
+  holder = row[Pos[partner]]; // holder是在当前配对中已经固定好的那个数,即3
+  int holder_pos = Pos[partner];  // holder所在的idx,即此时3的那个位置
+  
+  partner = coupleID[holder]*2==holder? holder+1:holder-1;  //根据holder,确定它的partner,即2
+  curPos = (holder_pos%2==0) ? holder_pos+1:holder_pos-1;   //根据holder_pos,确定下次需要交换的两个数的其中一个位置,即此时3前面的那个位置
+  
+  flag = row[curPos]==partner; //判断此时holder和partner是否已经配对,否则需要继续循环
+}
+```
+
+#### 解法2：Union Find
+
+我们根据如下的规则将所有的人分组：1.同属于一对couple的聚为一组；2.被安排在相邻位置的聚为一组（指的是01，23，45这样的位置）。
+
+这样我们就得到了若干个union。这些union有如下性质：1.每个union之间是没有关系的，即没有任何couple被拆在不同的union里。2.在每个union内部，都可以通过若干次的swap使得内部的couple得到配对。3.每个union不可能再拆分为若干个更小的union。
+
+因为每个union是这样一个“最小”的社区单位，所以他们其实形成了一个闭环。如果一个union内部有k对couple，则最多只需要k-1次swap就可以让所有couple配对。（这是因为每次swap至少能保证一对couple配对，而使得k-1对couple配对后，最后一对couple自然也就配对了。）那么有没有可能用更少次数的swap使其配对呢？其实不可能。
+
+给一个比较粗糙的类比。Union A有k个couple，Union B有m个couple，Union C有n个couple，且k=m+n。要是的B和C理顺关系，只需要m-1+n-1=m+n-2=k-2次swap。如果理顺A也只需要k-2此的话，其意味着A可能分为B+C？但事实上A不可再分，其拓扑结构必然复杂于B+C，所以不可能也用k-2次swap就实现目标，只能用k-1次。
+
+
+[Leetcode Link](https://leetcode.com/problems/couples-holding-hands)::::::::::::::
+Union_Find/924.Minimize-Malware-Spread/924.Minimize-Malware-Spread.cpp
+::::::::::::::
+
+::::::::::::::
+Union_Find/924.Minimize-Malware-Spread/Readme.md
+::::::::::::::
+### 924.Minimize-Malware-Spread
+
+本题依然是根据提供的edg的关系，构建图中的若干连通分量。
+
+如果一个连通分量里面有两或两个以上的点是初始感染点，那么无论我们隔离哪一个，最终整个连通图还是会全部感染。这种连通图是我们不想要的。
+
+如果一个连通分量里面只有一个点是初始感染点，那么只要我们隔离了这个点，就能最终拯救整个连通图。显然，我们希望找到最大的这样的连通图，意味着我们可以拯救更多的点，也就是题意里面的minimize M(initial)。
+
+特别注意，如果所有的连通分量都包含>=2个初始感染点，根据要求我们仍要返回一个点作为最终结果（显然应该是initial里面的最小值）。这意味着尽管我们隔离了这样一个点，但也仅能拯救这一个点而已。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimize-malware-spread)::::::::::::::
+Union_Find/947.Most-Stones-Removed-with-Same-Row-or-Column/947.Most-Stones-Removed-with-Same-Row-or-Column.cpp
+::::::::::::::
+class Solution {
+    unordered_map<int,int>Father;
+    unordered_map<int,vector<int>>MapX;
+    unordered_map<int,vector<int>>MapY;
+    int N = 10000;
+public:
+    int removeStones(vector<vector<int>>& stones) 
+    {
+        for (auto x:stones)
+        {
+            int i = x[0];
+            int j = x[1];
+            int id = i*N+j;
+            Father[id] = id;
+            MapX[i].push_back(id);
+            MapY[j].push_back(id);
+        }
+        
+        for (auto a: MapX)
+        {
+            int id0 = a.second[0];
+            for (int i=1; i<a.second.size(); i++)
+            {
+                int id = a.second[i];
+                if (FindFather(id0)!=FindFather(id))
+                    Union(id0, id);                
+            }
+        }
+        
+        for (auto a: MapY)
+        {
+            int id0 = a.second[0];
+            for (int i=1; i<a.second.size(); i++)
+            {
+                int id = a.second[i];
+                if (FindFather(id0)!=FindFather(id))
+                    Union(id0, id);                
+            }
+        }
+        
+        unordered_set<int>Set;
+        for (auto x: stones)
+        {
+            int id = x[0]*N+x[1];
+            int id0 = FindFather(id);
+            Set.insert(id0);
+        }
+        
+        return stones.size() - Set.size();
+    }
+    
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<=y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+     }
+};
+::::::::::::::
+Union_Find/947.Most-Stones-Removed-with-Same-Row-or-Column/Readme.md
+::::::::::::::
+### 947.Most-Stones-Removed-with-Same-Row-or-Column
+
+本题的核心就是找出这样的规律：将所有同行或者同列关系的石头两两归并，最终都融为一个group。在这一个group里面，依次取度为1的石头（即同行或同列还有剩余的石头），按照规则可以一直取到整个组只剩下一个为止。
+
+因为每个group都只剩一个石头，所以可以移走的石头数目，就等于总共的石头数目减去group的数目。
+
+
+[Leetcode Link](https://leetcode.com/problems/most-stones-removed-with-same-row-or-column)::::::::::::::
+Union_Find/952.Largest-Component-Size-by-Common-Factor/952.Largest-Component-Size-by-Common-Factor.cpp
+::::::::::::::
+class Solution {
+    int L = 1e5;
+    int Father[100005];
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y) Father[y] = x;
+        else Father[x] = y;
+    }         
+public:
+    vector<int>Eratosthenes(int n)
+    {
+        auto q=vector<int>(n+1,0);
+        for (int i=2; i<=sqrt(n); i++)
+        {
+            if (q[i]==0)
+            {
+                int j=i*2;
+                while (j<n)
+                {
+                    q[j]=1;
+                    j+=i;
+                }
+            }
+        }
+        vector<int>primes;
+        for (int i=2; i<=n; i++)
+        {
+            if (q[i]==0)
+                primes.push_back(i);                
+        }
+        return primes;
+    }
+
+    int largestComponentSize(vector<int>& nums) 
+    {        
+        for (int i=0; i<=L; i++)
+            Father[i] = i;
+
+        vector<int>primes = Eratosthenes(sqrt(L));
+
+        for (int i=0; i<nums.size(); i++)
+        {
+            int x = nums[i];
+            for (int p: primes)
+            {
+                if (x % p == 0)
+                {
+                    if (FindFather(nums[i])!=FindFather(p))
+                        Union(nums[i], p);
+                    while (x%p==0) x/=p;
+                }
+            }
+            if (x > 1)
+            {
+                if (FindFather(nums[i])!=FindFather(x))
+                    Union(nums[i], x);                
+            }
+        }
+
+        unordered_map<int,int>count;
+        for (int i=0; i<nums.size(); i++)
+        {
+            count[FindFather(nums[i])] += 1;
+        }
+        int ret = 0;
+        for (auto x: count)
+            ret = max(ret, x.second);
+        return ret;
+    }
+};
+::::::::::::::
+Union_Find/952.Largest-Component-Size-by-Common-Factor/Readme.md
+::::::::::::::
+### 952.Largest-Component-Size-by-Common-Factor
+
+此题一眼就能看出是Union Find的解法．任意两个数，只要有质因数相同，就能建立起联系．所以我们将所有的数a,都分解成一系列质因数Pi，将a和Pi都Union起来．最后看所有的数字经过聚类之后，最大的群的数量．
+
+第一个版本，我们可以将100000以内的所有的质数Pi都找出来，挨个查看是否是a的因数．这比直接求a的所有质因数要快．
+```cpp
+        vector<int>primes = makePrimes(100000);
+        for (auto p:primes) Root[p] = p;
+        for (auto a:A) Root[a] = a;
+        
+        for (auto a:A)
+        {
+            for (int p:primes)
+            {
+                if (a%p==0 && findRoot(a)!=findRoot(p))
+                    Union(a,p);                            
+                if (p>a/2) break;
+            }
+        }
+        
+        unordered_map<int,int>Groups;
+        for (auto a:A)              
+            Groups[findRoot(a)]+=1;
+            
+        int result = 0;
+        for (auto x:Groups)
+            result = max(result,x.second);
+        return result;
+```
+这个解法能够AC，但是比其他答案要慢得多．原因是100000以内的质数筛检非常费事．怎么改进呢？
+
+第二个版本，我们只需要求出sqrt(100000)以内的所有质数Pi，这样预处理的规模就小了很多．但是如果继续按照上面的算法，如何保证得到a的所有质因数Pi并建立联系呢？其实我们只要将a不断除以它在sqrt(100000)以内的所有质因数，如果仍然大于1，那么剩下的必然是它唯一的一个大于sqrt(100000)的质因数．因为任何数不可能含有两个大于sqrt(100000)的质因数的．
+```cpp
+        vector<int>primes = makePrimes(sqrt(100000));        
+        for (auto p:primes) Root[p] = p;
+        for (auto a:A) Root[a] = a;
+        
+        for (auto a:A)
+        {
+            int x = a;
+            for (int p:primes)
+            {
+                if (x%p==0)
+                {
+                    if (findRoot(p)!=findRoot(a))
+                        Union(p,a);
+                    while (x%p==0) x = x/p;                    
+                }                
+                if (p>x) break;
+            }
+            
+            if (x>1)
+            {
+                if (Root.find(x)==Root.end()) Root[x] = x;
+                Union(x,a);
+            }
+        }
+        
+        unordered_map<int,int>Groups;
+        for (auto a:A)      
+            Groups[findRoot(a)]+=1;
+            
+        int result = 0;
+        for (auto x:Groups)
+            result = max(result,x.second);
+        return result;
+```        
+
+
+[Leetcode Link](https://leetcode.com/problems/largest-component-size-by-common-factor)::::::::::::::
+Union_Find/990.Satisfiability-of-Equality-Equations/990.Satisfiability-of-Equality-Equations.cpp
+::::::::::::::
+class Solution {
+    vector<int>Father;
+public:
+    bool equationsPossible(vector<string>& equations) 
+    {
+        Father.resize(26);
+        for (int i=0; i<26; i++)
+            Father[i] = i;
+
+        for (auto & eq: equations)
+        {            
+            if (eq[1]=='=')
+            {
+                int a = eq[0]-'a';
+                int b = eq[3]-'a';
+                if (FindFather(a)!=FindFather(b))
+                    Union(a,b);
+            }
+        }
+
+        for (auto & eq: equations)
+        {            
+            if (eq[1]=='!')
+            {
+                int a = eq[0]-'a';
+                int b = eq[3]-'a';
+                if (FindFather(a)==FindFather(b))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+    int FindFather(int x)
+    {
+        if (Father[x]!=x)
+            Father[x] = FindFather(Father[x]);
+        return Father[x];
+    }
+    
+    void Union(int x, int y)
+    {
+        x = Father[x];
+        y = Father[y];
+        if (x<y)
+            Father[y] = x;
+        else
+            Father[x] = y;
+    }    
+};
+::::::::::::::
+Union_Find/990.Satisfiability-of-Equality-Equations/Readme.md
+::::::::::::::
+### 990.Satisfiability-of-Equality-Equations
+
+容易想到如果遇到```a==b```，那么a和b可以通过Union Find聚为一类。
+
+如果遇到```a!=b```，那么我们会检查a和b是否已经聚成了一类，是的话就说明引入了矛盾，返回false；如果不是的话，目前但前暂时没有导出矛盾。但问题是，我们如何保证之后再遇到```a==b```时能记住之前的```a!=b```呢？
+
+解决方法很简单，就是先考察所有的等式，将所有的能聚类的元素都聚起来。然后再考察所有的不等式，考察是否有与之前那些等式相矛盾的地方。没有任何矛盾的话就返回true。
+
+
+[Leetcode Link](https://leetcode.com/problems/satisfiability-of-equality-equations)
