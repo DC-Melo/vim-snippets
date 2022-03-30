@@ -1587,7 +1587,7 @@ endsnippet
 # 014
 snippet commonPrefix "(string)prefix=find common prefix(vector<string> &strs)" b
 /* code by 王江 DC-Melo */
-string ${1:function}(vector<string> &strs) {
+string commonPrefix(vector<string> &strs) {
     if( strs.size() == 0) return "";
     string prefix = strs[0];
     for(int i = 0;i<strs.size();i++) {
@@ -3544,15 +3544,15 @@ endsnippet
 # 056
 snippet mergeAreaIntervals "(vector<Interval>)merge=all overlapping intervals(vector<Interval> &intervals)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+
+// Definition for an interval.
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+};
+
 bool cmp(struct Interval in1,struct Interval in2) { return in1.start < in2.start; }
 vector<Interval> merge(vector<Interval> &intervals) {
 	sort(intervals.begin(),intervals.end(),cmp);
@@ -3580,15 +3580,15 @@ endsnippet
 # 057
 snippet insertAreaInterval "(vector<Interval>)area=insert merge interval into the intervals(vector<Interval> &intervals, Interval newInterval)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+
+// Definition for an interval.
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+};
+
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	int i = 0;
 	int len = intervals.size();
@@ -3709,14 +3709,14 @@ endsnippet
 # 061
 snippet reverseNodeBykthrotateList "(ListNode *)rotate=the list to the right by k places(ListNode *head, int k)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 ListNode *rotateRight(ListNode *head, int k) {
 	if(k == 0 || head == NULL) return head;
 	int length = 0;
@@ -4255,13 +4255,12 @@ endsnippet
 # 082
 snippet removeDuplicatesAllFromSortedListII "(ListNode *)Given a sorted linked list, delete all nodes that have duplicate numbers(ListNode *head)" b
 /* code by 王江 DC-Melo */
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 ListNode *deleteDuplicates(ListNode *head) {
 	ListNode** curNext = &head;
 	ListNode* cur = head;
@@ -4283,14 +4282,14 @@ endsnippet
 # 083
 snippet removeDuplicatesFromSortedList "(ListNode *)Given a sorted linked list, delete all duplicates such that each element appear only once(ListNode *head)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 ListNode *deleteDuplicates(ListNode *head) {
 	if(head == NULL) return head;
 	ListNode *last = head;
@@ -4389,14 +4388,14 @@ endsnippet
 # 086
 snippet partitionList "(ListNode *)Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.(ListNode *head, int x)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+//Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 ListNode *partition(ListNode *head, int x) {
 	ListNode *list1 = new ListNode(0);
 	ListNode *first = list1;
@@ -4518,14 +4517,14 @@ endsnippet
 # 092
 snippet reverseLinkedListWindowMN "Reverse a linked list from position m to n. Do it in-place and in one-pass." b
 /* code by 王江 DC-Melo */
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 ListNode *reverseBetween(ListNode *head, int m, int n) {
 	if (head == NULL) return NULL;
 	ListNode *q = NULL;
@@ -4596,15 +4595,15 @@ endsnippet
 # 094
 snippet binaryTreeInorderTraversal "Given a binary tree, return the inorder traversal of its nodes’ values." b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
     vector<int> result;
     void dfs(TreeNode *root) {
         if(root == NULL) return;
@@ -4624,15 +4623,15 @@ endsnippet
 # 095
 snippet uniqueBinarySearchTreesII "Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1 ... n." b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 vector<TreeNode *> generateTrees(int n) { return createTree(1,n); }
 vector<TreeNode *> createTree(int start, int end) {
 	vector<TreeNode *> results;
@@ -4709,15 +4708,15 @@ endsnippet
 # 098
 snippet isValidateBinarySearchTree "Given the root of a binary tree, determine if it is a valid binary search tree (BST)." b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 int tmp;
 bool tag;
 bool key;
@@ -4746,15 +4745,15 @@ endsnippet
 # 099
 snippet recoverBinarySearchTree "Two elements of a binary search tree (BST) are swapped by mistake" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 TreeNode *node1;
 TreeNode *node2;
 TreeNode *pre;
@@ -4781,15 +4780,15 @@ endsnippet
 # 100
 snippet isSameTree "Given two binary trees, write a function to check if they are the same or not" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 bool dfs(TreeNode *p, TreeNode *q) {
 	if( p == NULL && q == NULL) return true;
 	else if( p == NULL || q == NULL) return false;
@@ -4807,15 +4806,15 @@ endsnippet
 # 101
 snippet isSymmetricTree "Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center)." b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 bool dfs(TreeNode *left,TreeNode *right) {
 	if(!left && !right) return true;
 	if((left && !right) || (!left && right) || (left->val!=right->val)) return false;
@@ -4832,15 +4831,15 @@ endsnippet
 snippet binaryTreeLevelOrderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 
 class Solution 
 {
@@ -4891,15 +4890,15 @@ endsnippet
 # 103
 snippet zTraversalBinaryTree "(vector<vector<int> >)Binary Tree Zigzag Level Order Traversal(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
 vector<vector<int> >result;
 if (!root) return result;
@@ -4937,15 +4936,15 @@ endsnippet
 # 104
 snippet maximumDepthOfBinaryTree "(int)Given a binary tree, find its maximum depth.(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -4960,15 +4959,15 @@ endsnippet
 snippet constructBinaryTreefromPreorderAndInorderTraversal "(TreeNode *)Given preorder and inorder traversal of a tree, construct the binary tree.(vector<int> &preorder, vector<int> &inorder)" b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -5007,15 +5006,15 @@ endsnippet
 snippet constructBinaryTreeFromInorderAndPostorderTraversal "Given inorder and postorder traversal of a tree, construct the binary tree." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -5054,15 +5053,15 @@ endsnippet
 snippet binaryTreeLevelOrderTraversalII "eturn the bottom-up level order traversal of its nodes values" b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -5104,15 +5103,15 @@ endsnippet
 snippet convertSortedArrayToBinarySearchTree "convert it to a height balanced BST." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
     TreeNode* createTree(vector<int> &num,int left, int right) {
         if(left > right) return NULL;
         int mid = (left+right)/2;
@@ -5131,23 +5130,23 @@ endsnippet
 snippet convertSortedListToBinarySearchTree "convert linked list to a height balanced BST." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 
     TreeNode* createTree(vector<int> &num,int left, int right) {
         if(left > right) return NULL;
@@ -5174,15 +5173,15 @@ endsnippet
 # 110
 snippet isBalancedBinaryTree "(bool)Given a binary tree, determine if it is height-balanced.(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 int isBalancedUtil(TreeNode* root, bool& isValid) {
 	if(root == NULL) return 0;
 	if(!isValid) return -1;
@@ -5203,15 +5202,15 @@ endsnippet
 snippet minimumDepthOfBinaryTree "Given a binary tree, find its minimum depth" b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 int minDepth(TreeNode *root) {
 	if(root == NULL) return 0;
   
@@ -5226,15 +5225,15 @@ endsnippet
 snippet findPathSumOfTree "he tree has a root-to-leaf path such that adding up all the values" b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 bool dfs(TreeNode *node, int sum, int curSum) {
 	if (node == NULL) return false;
 	if (node->left == NULL && node->right == NULL) return curSum + node->val == sum;
@@ -5248,15 +5247,15 @@ endsnippet
 snippet findAllPathSumII "where each path's sum equals the given sum." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 vector<vector<int> > result;
 void dfs(TreeNode *node, int sum, vector<int> curPath, int curSum) {
 	if (node == NULL) return;
@@ -5280,15 +5279,15 @@ endsnippet
 snippet convertBinaryTreeToLinkedList "Given a binary tree, flatten it to a linked list in-place." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 TreeNode *pre;
 Solution() {
 	pre = NULL;
@@ -5338,14 +5337,14 @@ endsnippet
 snippet populatingNextRightPointersInEachNode "Populate each next pointer to point to its next right node " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree with next pointer.
- * struct TreeLinkNode {
- *  int val;
- *  TreeLinkNode *left, *right, *next;
- *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
- * };
- */
+
+// Definition for binary tree with next pointer.
+struct TreeLinkNode {
+ int val;
+ TreeLinkNode *left, *right, *next;
+ TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+};
+
 void connect(TreeLinkNode *root) {
 	if(root == NULL || root->left == NULL) return;
 	TreeLinkNode *p = root;
@@ -5363,14 +5362,14 @@ endsnippet
 snippet populatingNextRightPointersInEachNodeII "Follow up for problem Populating Next Right Pointers in Each Node." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree with next pointer.
- * struct TreeLinkNode {
- *  int val;
- *  TreeLinkNode *left, *right, *next;
- *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
- * };
- */
+
+// Definition for binary tree with next pointer.
+struct TreeLinkNode {
+ int val;
+ TreeLinkNode *left, *right, *next;
+ TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+};
+
 void broadSearch(TreeLinkNode* queueS) {
 	if(queueS == NULL) return;
 	TreeLinkNode* newQueueH = NULL;
@@ -5553,15 +5552,15 @@ endsnippet
 snippet maximumSumbinaryTreeMaximumPathSum "Given a non-empty binary tree, find the maximum path sum." b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 
 #define INT_MAX ((int)(~0U>>1))
 #define INT_MIN (-INT_MAX - 1)
@@ -5872,7 +5871,7 @@ $0
 endsnippet
 
 # 132
-snippet minimumCutsPalindromePartitioningII "Return the minimum cuts needed for a palindrome partitioning of s." b
+snippet minCutsPalindromePartitioningII "Return the minimum cuts needed for a palindrome partitioning of s." b
 /* code by 王江 DC-Melo */
 int minCut(string s) {
 	int n = s.size();
@@ -5897,14 +5896,14 @@ endsnippet
 # 133
 snippet copyCloneGraph "a deep copy (clone) of the graph" b
 /* code by 王江 DC-Melo */
-/**
- * Definition for undirected graph.
- * struct UndirectedGraphNode {
- *     int label;
- *     vector<UndirectedGraphNode *> neighbors;
- *     UndirectedGraphNode(int x) : label(x) {};
- * };
- */
+
+// Definition for undirected graph.
+struct UndirectedGraphNode {
+    int label;
+    vector<UndirectedGraphNode *> neighbors;
+    UndirectedGraphNode(int x) : label(x) {};
+};
+
 UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
 	if( node == NULL ) return NULL;
 	unordered_map<UndirectedGraphNode * , UndirectedGraphNode *> otn;
@@ -5966,17 +5965,17 @@ $0
 endsnippet
 
 # 135
-snippet minimumCandiesMustGiveCandy "minimum candies you must give" b
+snippet minCandiesMustGiveCandy "minimum candies you must give" b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 ListNode *sortList(ListNode *head) {
 	if(!head||!head->next) return head;
 	return mergeSort(head);
@@ -6019,7 +6018,7 @@ $0
 endsnippet
 
 # 136
-snippet findSingleNumberInArray "every element appears twice except for one. Find that single one" b
+snippet singleNumberInArray "every element appears twice except for one. Find that single one" b
 /* code by 王江 DC-Melo */
 int singleNumber(vector<int>& nums) {
 	set<int> S;
@@ -6050,14 +6049,14 @@ endsnippet
 snippet copyListWithRandomPointer "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list with a random pointer.
- * struct RandomListNode {
- *     int label;
- *     RandomListNode *next, *random;
- *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
- * };
- */
+
+// Definition for singly-linked list with a random pointer.
+struct RandomListNode {
+    int label;
+    RandomListNode *next, *random;
+    RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6193,14 +6192,14 @@ endsnippet
 snippet linkedListCycle "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {   
 public:
@@ -6227,14 +6226,14 @@ endsnippet
 snippet linkedListCycleII "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6270,14 +6269,14 @@ endsnippet
 snippet reorderList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6337,15 +6336,15 @@ endsnippet
 snippet binaryTreePreorderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6375,15 +6374,15 @@ endsnippet
 snippet binaryTreePostorderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
+// Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6474,14 +6473,14 @@ endsnippet
 snippet insertionSortList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6534,14 +6533,14 @@ endsnippet
 snippet sortList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -6605,15 +6604,15 @@ endsnippet
 snippet maxPointsOnALine "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a point.
- * struct Point {
- *     int x;
- *     int y;
- *     Point() : x(0), y(0) {}
- *     Point(int a, int b) : x(a), y(b) {}
- * };
- */
+
+// Definition for a point.
+struct Point {
+    int x;
+    int y;
+    Point() : x(0), y(0) {}
+    Point(int a, int b) : x(a), y(b) {}
+};
+
 class Solution 
 {
 public:
@@ -6865,14 +6864,14 @@ endsnippet
 snippet intersectionOfTwoLinkedLists "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution 
 {
 public:
@@ -7233,15 +7232,13 @@ endsnippet
 snippet binarySearchTreeIterator "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class BSTIterator 
 {
 private:
@@ -7279,10 +7276,9 @@ public:
     }
 };
 
-/**
- * Your BSTIterator will be called like this:
- * BSTIterator i = BSTIterator(root);
- * while (i.hasNext()) cout << i.next();
+Your BSTIterator will be called like this:
+BSTIterator i = BSTIterator(root);
+while (i.hasNext()) cout << i.next();
 $0
 endsnippet
  # */::::::::::::::
@@ -7554,15 +7550,13 @@ endsnippet
 snippet binaryTreeRightSideView "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -7693,14 +7687,12 @@ endsnippet
 snippet removeLinkedListElements "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution 
 {
 public:
@@ -7810,14 +7802,12 @@ endsnippet
 snippet reverseLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution 
 {
 public:
@@ -8668,15 +8658,13 @@ endsnippet
 snippet invertBinaryTree "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -8700,15 +8688,13 @@ endsnippet
 snippet kthSmallestElementInABST "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -8801,14 +8787,12 @@ endsnippet
 snippet palindromeLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution 
 {
 public:
@@ -8857,15 +8841,13 @@ endsnippet
 snippet lowestCommonAncestorOfABinarySearchTree "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -8890,14 +8872,12 @@ endsnippet
 snippet deleteNodeInALinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution 
 {
 public:
@@ -9063,15 +9043,13 @@ endsnippet
 snippet binaryTreePaths "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -9563,10 +9541,9 @@ public:
     }
 };
 
-/**
- * Your NumMatrix object will be instantiated and called as such:
- * NumMatrix obj = new NumMatrix(matrix);
- * int param_1 = obj.sumRegion(row1,col1,row2,col2);
+Your NumMatrix object will be instantiated and called as such:
+NumMatrix obj = new NumMatrix(matrix);
+int param_1 = obj.sumRegion(row1,col1,row2,col2);
 $0
 endsnippet
  # */::::::::::::::
@@ -9694,14 +9671,12 @@ endsnippet
 snippet oddEvenLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution {
 public:
     ListNode* oddEvenList(ListNode* head) 
@@ -10055,14 +10030,12 @@ endsnippet
 snippet linkedListRandomNode "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+// definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
 class Solution 
 {
 public:
@@ -10093,10 +10066,9 @@ public:
     ListNode* head;
 };
 
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(head);
- * int param_1 = obj.getRandom();
+Your Solution object will be instantiated and called as such:
+Solution obj = new Solution(head);
+int param_1 = obj.getRandom();
 $0
 endsnippet
  # */::::::::::::::
@@ -10156,11 +10128,10 @@ public:
     }
 };
 
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(nums);
- * vector<int> param_1 = obj.reset();
- * vector<int> param_2 = obj.shuffle();
+Your Solution object will be instantiated and called as such:
+Solution obj = new Solution(nums);
+vector<int> param_1 = obj.reset();
+vector<int> param_2 = obj.shuffle();
 $0
 endsnippet
  # */::::::::::::::
@@ -10512,15 +10483,13 @@ endsnippet
 snippet sumOfLeftLeaves "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -10895,15 +10864,13 @@ endsnippet
 snippet nonOverlappingIntervals "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+// definition for an interval.
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+};
 class Solution {
 public:
     int eraseOverlapIntervals(vector<Interval>& intervals) {
@@ -10916,15 +10883,13 @@ endsnippet
 snippet findRightInterval "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+// definition for an interval.
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+};
 
 bool cmp(pair<Interval,int> a,pair<Interval,int> b)
 {
@@ -10963,15 +10928,13 @@ endsnippet
 snippet pathSumIII "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution 
 {
 public:
@@ -11854,15 +11817,13 @@ endsnippet
 snippet increasingOrderSearchTree "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution {
 public:
     TreeNode *nt;
@@ -12101,15 +12062,13 @@ endsnippet
 snippet completeBinaryTreeInserter "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class CBTInserter {
 public:
     TreeNode* r;
@@ -12149,12 +12108,10 @@ public:
     }
 };
 
-/**
- * Your CBTInserter object will be instantiated and called as such:
- * CBTInserter obj = new CBTInserter(root);
- * int param_1 = obj.insert(v);
- * TreeNode* param_2 = obj.get_root();
- */
+Your CBTInserter object will be instantiated and called as such:
+CBTInserter obj = new CBTInserter(root);
+int param_1 = obj.insert(v);
+TreeNode* param_2 = obj.get_root();
 $0
 endsnippet
 
@@ -12335,11 +12292,9 @@ public:
     }
 };
 
-/**
- * Your RecentCounter object will be instantiated and called as such:
- * RecentCounter* obj = new RecentCounter();
- * int param_1 = obj->ping(t);
- */
+Your RecentCounter object will be instantiated and called as such:
+RecentCounter* obj = new RecentCounter();
+int param_1 = obj->ping(t);
 $0
 endsnippet
 
@@ -12487,15 +12442,13 @@ endsnippet
 snippet rangeSumOfBST "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution {
 public:
     int preOrder(TreeNode* root, int L, int R){
@@ -12999,15 +12952,13 @@ endsnippet
 snippet flipEquivalentBinaryTrees "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution {
 public:
     bool eq(TreeNode* n1, TreeNode* n2){
@@ -13265,15 +13216,13 @@ endsnippet
 snippet checkCompletenessOfABinaryTree "comment " b
 /* code by 王江 DC-Melo */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
 class Solution {
 public:
     bool isCompleteTree(TreeNode* root) {
