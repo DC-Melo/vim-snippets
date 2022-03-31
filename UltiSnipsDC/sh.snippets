@@ -501,7 +501,7 @@ im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infi
 # 对称水动
 im_image_effects_shimmer.sh -r 3 outfile1.png outfile.gif
 # 正弦波动文字
-im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f STXingkai -b white -a 0.5 -r 0.5 -m constant outfile.gif
+im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f "${font}" -b white -a 0.5 -r 0.5 -m constant outfile.gif
 # 两幅画渐变
 im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
 # 打字机
