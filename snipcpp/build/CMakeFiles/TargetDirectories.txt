@@ -1,3 +1,0 @@
-/home/dc/.vim/plugged/vim-snippets/snipcpp/build/CMakeFiles/rebuild_cache.dir
-/home/dc/.vim/plugged/vim-snippets/snipcpp/build/CMakeFiles/ProjectName.dir
-/home/dc/.vim/plugged/vim-snippets/snipcpp/build/CMakeFiles/edit_cache.dir
