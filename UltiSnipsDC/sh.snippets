@@ -298,11 +298,12 @@ text3="工作了工作作了，"
 text4="测试本文文文文。"
 text5="--作者"
 if [  -n "$(uname -a | grep -i darwin)" ]; then
-	font=~/Library/Fonts/印品抹茶体.ttf
+    font=~/Library/Fonts/印品抹茶体.ttf
+    rm outfile*.png
 else
-	font=~/.local/share/fonts/印品抹茶体.ttf
+    font=~/.local/share/fonts/印品抹茶体.ttf
+    trash outfile*.png
 fi
-trash outfile*.png
 convert \
     -font "${font}" \
     -fill white -stroke white -strokewidth 1 -gravity center -pointsize 20 label:"${text1}" \
@@ -359,6 +360,18 @@ convert \
     outfile5.png
 convert -delay 200 outfile*.png -loop 0  outfile.gif
 
+strSize="`file outfile.gif`"
+echo $strSize
+pat='([0-9]+) x ([0-9]+)'
+[[ $strSize =~ $pat ]] # $pat must be unquoted
+echo "${BASH_REMATCH[0]}"
+echo "${BASH_REMATCH[1]}"
+echo "${BASH_REMATCH[2]}"
+if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
+    convert  outfile.gif -resize x1000  outfile.gif
+else
+    convert  outfile.gif -resize 1000x  outfile.gif
+fi
 $0
 endsnippet
 snippet imGif4TextDelete "Generates gif from " b
@@ -366,153 +379,212 @@ text1="佳哥"
 text2="成了我的培训专场了"
 text3="大家集思广益"
 text4="共同提高"
+text5="共同提高"
 size1=120
 size2=100
 size3=120
 size4=200
+size5=200
 if [  -n "$(uname -a | grep -i darwin)" ]; then
-	font=~/Library/Fonts/印品抹茶体.ttf
-	rm outfile*.png
+    font=~/Library/Fonts/印品抹茶体.ttf
+    rm outfile*.png
 else
-	font=~/.local/share/fonts/印品抹茶体.ttf
-	trash outfile*.png
+    font=~/.local/share/fonts/印品抹茶体.ttf
+    trash outfile*.png
 fi
-convert \
-    -font "${font}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile00.png
-convert \
-    -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile10.png
-convert \
-    -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile20.png
-convert \
-    -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    \(  \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile21.png
-convert \
-    -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    \(  \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile30.png
-convert \
-    -font "${font}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    \(  \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    -append \
-    outfile40.png
-# convert outfile0.png -fuzz 20% -transparent white outfile0.png
-# convert outfile1.png -fuzz 20% -transparent white outfile1.png
-# convert outfile2.png -fuzz 20% -transparent white outfile2.png
-# convert outfile3.png -fuzz 20% -transparent white outfile3.png
-# convert outfile4.png -fuzz 20% -transparent white outfile4.png
-# convert outfile5.png -fuzz 20% -transparent white outfile5.png
-convert outfile00.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile00.png
-convert outfile10.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile10.png
-convert outfile20.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile20.png
-convert outfile21.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile21.png
-convert outfile30.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile30.png
-convert outfile40.png -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white outfile40.png
+#0 convert \
+    #0 -font "${font}" \
+    #1 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #2 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #3 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #4 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #5 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #0 -append \
+    #0 outfile05.png
+#1 convert \
+    #1 -font "${font}" \
+    #1#a#A \(  \
+    #1 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #1#a#A -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #2#b#B \(  \
+    #2 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #2#b#B -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #3#c#C \(  \
+    #3 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #3#c#C -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#d#D \(  \
+    #4 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #4#d#D -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#e#E \(  \
+    #5 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#e#E -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #1 -append \
+    #1 outfile15.png
+#2 convert \
+    #2 -font "${font}" \
+    #2#a#A \(  \
+    #2 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #2#a#A -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #2#b#B \(  \
+    #2 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #2#b#B -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #3#c#C \(  \
+    #3 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #3#c#C -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#d#D \(  \
+    #4 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #4#d#D -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#e#E \(  \
+    #5 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#e#E -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #2 -append \
+    #2 outfile25.png
+#3 convert \
+    #3 -font "${font}" \
+    #3#a#A \(  \
+    #3 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #3#a#A -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #3#b#B \(  \
+    #3 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #3#b#B -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #3#c#C \(  \
+    #3 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #3#c#C -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#d#D \(  \
+    #4 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #4#d#D -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#e#E \(  \
+    #5 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#e#E -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #3 -append \
+    #3 outfile35.png
+#4 convert \
+    #4 -font "${font}" \
+    #4#a#A \(  \
+    #4 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #4#a#A -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#b#B \(  \
+    #4 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #4#b#B -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#c#C \(  \
+    #4 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #4#c#C -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4#d#D \(  \
+    #4 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #4#d#D -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#e#E \(  \
+    #5 -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#e#E -fill white   -stroke white   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #4 -append \
+    #4 outfile45.png
+#5 convert \
+    #5 -font "${font}" \
+    #5#a#A \(  \
+    #5 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #5#a#A -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#b#B \(  \
+    #5 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #5#b#B -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#c#C \(  \
+    #5 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #5#c#C -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#d#D \(  \
+    #5 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #5#d#D -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5#e#E \(  \
+    #5 -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#e#E -fill red   -stroke red   -strokewidth 10 -draw "line 20,100 1000,20" \)                 \
+    #5 -append \
+    #5 outfile55.png
+#!@ convert \
+    #!@ -font "${font}" \
+    #!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #!@#a -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #!@#b -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #!@#B -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #!@#c -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #!@#C -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #!@#d -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #!@#D -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #!@#e -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #!@ -append \
+    #a#A outfile11.png
+    #b#B outfile21.png
+    #c#C outfile31.png
+    #d#D outfile41.png
+    #e#E outfile51.png
+# mogrify -fuzz 20% -transparent white outfile5.png
+mogrify -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white *.png
 convert -delay 200 outfile*.png -loop 0 outfile.gif
 
-strSize="\`file outfile.gif\`"
+strSize="`file outfile.gif`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
 echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
-if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
+if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
     convert  outfile.gif -resize x1000  outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
     convert  outfile.gif -resize 1000x  outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
 fi
-
-
 
 $0
 endsnippet
 
+snippet imGif4Image2 "Generates gif from " b
+# 两幅画渐变
+im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
+# 两副画旋转转换
+im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png outfile.gif
+$0
+endsnippet
+
 snippet imGif4Image "Generates gif from " b
+text1="佳哥"
+text2="成了我的培训专场了"
+size1=120
+size2=100
 if [  -n "$(uname -a | grep -i darwin)" ]; then
-	font=~/Library/Fonts/印品抹茶体.ttf
+    font=~/Library/Fonts/印品抹茶体.ttf
+    rm outfile*.png
 else
-	font=~/.local/share/fonts/印品抹茶体.ttf
+    font=~/.local/share/fonts/印品抹茶体.ttf
+    trash outfile*.png
 fi
 convert \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200 label:"This is 200 point text." \
-    -fill black -stroke red   -strokewidth 4 -draw "line 10,125 500,80" \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 200  label:"This is 100 point text." \
-    -fill black -stroke black -strokewidth 2 -gravity center -pointsize 400 label:"This is 100 point text." \
-    -append \
-    -resize 830x \
-    outfile1.png
-
-convert \
-	-flip \
-	-background  transparent \
-	-bordercolor white \
+	# -flip \
+	# -background  transparent \
+	# -bordercolor white \
 	-fill black \
 	-gravity center \
 	-font "${font}" \
-	-pointsize 200 label:"This is 200 point text." \
-	-pointsize 100 label:"This is 100 point text." \
+	-pointsize 200 label:"${text1}" \
+	-pointsize 100 label:"${text2}" \
 	-append \
-	-border 10x10 \
-	-resize 830x \
+	# -border 10x10 \
+	# -resize 830x \
 		outfile1.png
 
-# 滚动文字
-im_image_effects_scalescroll.sh -D left outfile1.png outfile.gif
-# 两副画旋转转换
-im_image_effects_fxtransitions.sh -e swirl -f 18 -d 20 -p 50 -r infile1.png infile2.png outfile.gif
-# 对称水动
-im_image_effects_shimmer.sh -r 3 outfile1.png outfile.gif
 # 正弦波动文字
-im_image_effects_sinescrolltext.sh -t "THIS IS A TEST OF SINESCROLL" -w 400 -f "${font}" -b white -a 0.5 -r 0.5 -m constant outfile.gif
-# 两幅画渐变
-im_image_effects_transitions.sh -m dissolve -f 21 -d 10 -p 10 -e infile1.png infile2.png outfile.gif
+#a#A im_image_effects_sinescrolltext.sh -t "${text1}" -w 800 -f "${font}" -b white -a 0.5 -r 0.5 -m constant outfile.gif
+# 滚动文字
+#b#B im_image_effects_scalescroll.sh -D left outfile1.png outfile.gif
+# 对称水动
+#c#C im_image_effects_shimmer.sh -r 3 outfile1.png outfile.gif
 # 打字机
+#d#D im_image_effects_typewriter.sh -f "${font}" -p 24 -t black -b white textfile outfile.gif
 # USAGE: typewriter [-f font] [-p pointsize] [-t txtcolor] [-b bgcolor] textfile outfile USAGE: typewriter [-h or -help]
-im_image_effects_typewriter.sh -f CourierNewB -p 24 -t black -b white textfile outfile.gif
 # 水波纹
-im_image_effects_wiggle.sh -w 0.5 outfile1.png outfile.gif
+#e#E im_image_effects_wiggle.sh -w 0.5 outfile1.png outfile.gif
 # 旋转文字
-im_image_effects_zoomrotatetext.sh -t "THIS IS A TEST OF ZOOMROTATE TEXT" -w 400 -f "${font}" -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
+#f#F im_image_effects_zoomrotatetext.sh -t "${text1}" -w 800 -f "${font}" -b pink -D cw -m 3 -F 30 -d 10 -p 10 outfile.gif
 # 通道选择
-im_miscellaneous_utilities_flickerchannel.sh -f -i infile
+#g#G im_miscellaneous_utilities_flickerchannel.sh -f -i infile
 
 strSize="\`file outfile.gif\`"
 echo $strSize
@@ -521,12 +593,10 @@ pat='([0-9]+) x ([0-9]+)'
 echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
-if  [[ ${BASH_REMATCH[2]} -gt 1000 ]];then
+if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
     convert  outfile.gif -resize x1000  outfile.gif
-    # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
     convert  outfile.gif -resize 1000x  outfile.gif
-    # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
 fi
 
 $0
