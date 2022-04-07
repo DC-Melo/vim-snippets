@@ -1,6 +1,349 @@
-::::::::::::::
-Bit_Manipulation/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters.cpp
-::::::::::::::
+
+# ==> ./Bit_Manipulation/0136.Single-Number/Readme.md <==
+snippet 0136.Single-Number "0136.Single-Number" b
+### 136.Single-Number
+
+巧妙应用“亦或”操作。
+
+a^a=0   
+
+a^b=1  
+
+A^B^B=A  (该操作具有交换律commutative.)
+
+0^A=A (所以初值设为0)
+
+
+[Leetcode Link](https://leetcode.com/problems/single-number)
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0136.Single-Number/136.Single Number.cpp <==
+snippet 0136.Single-Number "0136.Single-Number" b
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) 
+    {
+        int result=0;
+        for (int i=0; i<nums.size(); i++)
+            result^=nums[i];
+        
+        return result;
+        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0137.Single-Number-II/Readme.md <==
+snippet 0137.Single-Number-II "0137.Single-Number-II" b
+### 137.Single-Number-II
+
+此题容易受到```136.Single-Number```的影响，总觉得应该用到“亦或”操作的性质。但事实上，此题的解法和^操作的关系并不大。
+
+此题的突破点在于，细分到所有N个数的每个二进制位，都会有N-1个bit重复出现了3次，而有另一个bit出现了1次（这个bit就对应着那个single number）。如果把该二进制位上所有数的bit都相加起来，那么对3除的余数一定就是那个与众不同的bit。就这样，我们可以确定这个single number的每一位的bit，然后重构出对应的二进制数来。
+
+实现上可以设计一个```vector<int>bits(32)```来累加每个二进制位的bit的总和。当然还有更省空间的方法。因为我们实际上只需要计算各个二进制位上bit之和除以3的余数，总共只有三种可能0,1,2.于是可以设计两个int32的计数器count1,count2. 其中count1[i]和count2[i]用来记录第i个二进制位上的bit之和，即00,01,11这三种情况。single number的每一个二进制位可以通过最终的count1[i]和count2[i]重构出来。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0137.Single-Number-II/137.Single-Number-II_v1.cpp <==
+snippet 0137.Single-Number-II "0137.Single-Number-II" b
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) 
+    {
+        vector<int>bits(32,0);
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            int k=nums[i];
+            for (int j=0; j<32; j++)
+            {
+                bits[j]+=((k>>j)&1);
+            }            
+        }
+        
+        int result=0;
+        for (int j=0; j<32; j++)
+        {
+            if (bits[j]%3!=0)
+                result+= 1<<j;
+        }
+        
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0137.Single-Number-II/137.Single-Number-II_v2.cpp <==
+snippet 0137.Single-Number-II "0137.Single-Number-II" b
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) 
+    {
+        int count1 = 0, count2 = 0;
+        for (auto x: nums)
+        {
+            int count1_new = 0, count2_new = 0;
+            for (int i=0; i<32; i++)
+            {
+                int hi = (count1>>i)&1;
+                int low = (count2>>i)&1;
+                int sum = (hi*2+low+((x>>i)&1))%3;
+                count1_new |= ((sum/2)<<i);
+                count2_new |= ((sum%2)<<i);
+            }       
+            count1 = count1_new, count2 = count2_new;     
+        }
+
+        int ret = 0;
+        for (int i=0; i<32; i++)
+        {
+            ret += ((count2>>i)&1)<<i;
+        }
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0260.Single-Number-III/Readme.md <==
+snippet 0260.Single-Number-III "0260.Single-Number-III" b
+### 260.Single-Number-III
+
+这是一道经典题．首先，我们容易想到把所有数字亦或起来，看看得到什么．假设最后的结果是x和y，那么我们最后得到的是x和y．这有什么用呢？
+
+显然x,y不相等的话，那么x^y不可能为零．所有必然有一个bit位置上，x和y是不同的．那么我们就可以把所有的数字按照这个位置的bit值分为两类，其中一类和x相同（偶数个），另一类和y相同（也是偶数个）．这两类各自做亦或和的操作，相同的数都会cancel掉，剩下来的就是x和y本身了．
+
+此题需要用到的一些bit操作技巧是：
+
+```x&(x-1)```：　表示unset the rightmost set bit
+
+```x^(x&(x-1))```：　表示只保留 the rightmost set bit
+
+```log2(x^(x&(x-1)))```：　表示the rightmost set bit的位置
+
+
+[Leetcode Link](https://leetcode.com/problems/single-number-iii)
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0260.Single-Number-III/260.Single-Number-III.cpp <==
+snippet 0260.Single-Number-III "0260.Single-Number-III" b
+class Solution {
+public:
+    vector<int> singleNumber(vector<int>& nums) 
+    {
+        int s = 0;
+        for (auto n:nums) s = s^n;  // i.e. a^b
+        int t = s^(s&(s-1)); // only keep the rightmost set bit
+        int a = 0, b = 0;
+        for (auto n:nums)
+        {
+            if (n&t) a = a^n;
+            else b = b^n;
+        }
+        return {a,b};        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0318.Maximum-Product-of-Word-Lengths/Readme.md <==
+snippet 0318.Maximum-Product-of-Word-Lengths "0318.Maximum-Product-of-Word-Lengths" b
+### 318.Maximum-Product-of-Word-Lengths
+
+最直观的想法，从字符串数组中穷举两两的组合，找出最大的乘积，这样o(n^2)的复杂度其实可以接受。主要的问题就是对于每一对组合，要判断这两个字符串是否有相同的字母，这样的操作需要不少的语句，乘以n^2之后耗时就非常可观。
+
+我们的想法是预处理一遍words，利用o(n)的时间将其字母信息存储下来，当穷举两两组合时所需要的判定时间减少。
+
+一个比较简单的想法是，因为小写字母只有26个，可以用一个32位的int每一个bit来代表一个字母出现与否。这样只用一个int就能编码一个word所包含的字母信息了。两个word是否含有有相同的字母，则让两个对应code进行与操作，如果结果不是0，说明有一个bit不是零，代表了这个字母在两个word里都出现过。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-product-of-word-lengths)
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0318.Maximum-Product-of-Word-Lengths/318.Maximum-Product-of-Word-Lengths.cpp <==
+snippet 0318.Maximum-Product-of-Word-Lengths "0318.Maximum-Product-of-Word-Lengths" b
+class Solution {
+public:
+    int maxProduct(vector<string>& words) 
+    {
+        vector<int>codes(words.size(),0);
+        
+        for (int i=0; i<words.size(); i++)
+        {
+            string s=words[i];
+            int code=0;
+            for (int j=0; j<s.size(); j++)
+            {
+                int x=s[j]-'a';
+                code = (code|(1<<x));
+            }
+            codes[i]=code;
+        }        
+        
+        
+        int result=0;
+        for (int i=0; i<words.size(); i++)
+         for (int j=0; j<words.size(); j++)
+         {
+             if ((codes[i]&codes[j])!=0) continue;
+             result=max(result,(int)words[i].size()*(int)words[j].size());
+         }
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0342.Power-of-Four/Readme.md <==
+snippet 0342.Power-of-Four "0342.Power-of-Four" b
+### 342.Power-of-Four
+
+满足power of 4的条件是：1.大于零；2.是power of 2；3.num-1之后是3的倍数。
+
+其中满足power of 2的条件是：除了最高bit位是1，其余位都是0，所以 num & (num-1) ==0
+
+为什么num-1一定会是3的倍数呢？(4^k-1)=(2^k+1)(2^k-1)，其中2^k一定不能被3整除，余数可能是1，也可能是2，无论哪一种，(2^k+1)和(2^k-1)里必然有一个能被3整除。
+
+
+[Leetcode Link](https://leetcode.com/problems/power-of-four)
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0342.Power-of-Four/342.Power-of-Four.cpp <==
+snippet 0342.Power-of-Four "0342.Power-of-Four" b
+class Solution {
+public:
+    bool isPowerOfFour(int num) 
+    {
+        if (num==1)
+            return true;
+        else if (num>0 && (num&(num-1))==0 && (num-1)%3==0)
+            return true;
+        else
+            return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0371.Sum-of-Two-Integers/Readme.md <==
+snippet 0371.Sum-of-Two-Integers "0371.Sum-of-Two-Integers" b
+### 371.Sum-of-Two-Integers
+
+将a+b改造为m+n，其中m=a^b不进位的加法，n=(a&b)<<1将有进位的bit置为1。反复这样的操作直至所有的进位为零，得到的m即为结果。
+
+
+[Leetcode Link](https://leetcode.com/problems/sum-of-two-integers)
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0371.Sum-of-Two-Integers/371.Sum-of-Two-Integers.cpp <==
+snippet 0371.Sum-of-Two-Integers "0371.Sum-of-Two-Integers" b
+class Solution {
+public:
+    int getSum(int a, int b) {
+        while (b != 0) {
+            unsigned int carry = (unsigned int)(a & b) << 1;
+            a = a ^ b;
+            b = carry;
+        }
+        return a;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0957.Prison-Cells-After-N-Days/Readme.md <==
+snippet 0957.Prison-Cells-After-N-Days "0957.Prison-Cells-After-N-Days" b
+### 957.Prison-Cells-After-N-Days
+
+我们首先解决这个问题：从一个状态到下一个状态，如何高效地进行转换。用8个bit位来代表0/1是比较自然的想法。假设当前的状态用整形k来表示，下一个状态用k'来表示。我们发现，k'除去首尾，其余所有位置上，第i位的bit取决于上一个状态时第i-1位的bit是否和第i+1位的bit相等，即```bit(i)=~(bit(i-1)^bit(i+1))```。
+
+我们将k右移一位记作k1，同时将k左移一位记作k2，我们将k1和k2对齐。我们发现，上述的操作就等价于```bit(k_i)=~(bit(k1_i)^bit(k2_i))```，也就是```k'=~(k1^k2)```。
+```
+k =   abcdefgh
+k1 =  xabcdefg
+k2 =  bcdefghx
+```
+另外注意，k'的首尾bit注定是0，所以我们额外加上需要加上一个```mask=01111110```来将首尾强制置为0.因此最终一次变换的表达式就是```k=~((k>>1)^(k<<1))&126```
+
+接下来考虑，我们是否要真的做N次变换来得到最终结果呢？考虑到N的数量级很大，肯定是不合适的。我们发现，k总共8个bit位，除去首尾必须是0，那么总共只有2^6=64种可能。所以一定存在一个有限长度的循环节。我们最多模拟64个回合，就一定能找到循环节的起始点S和长度L。也就是说，从K0开始变换S次进入循环节，再变换L次就又重复这个循环节。
+
+所以我们对于非常大的N，预处理为```N = (N-S)%L+S```。然后从K0开始，变换N次即可。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/0957.Prison-Cells-After-N-Days/957.Prison-Cells-After-N-Days.cpp <==
+snippet 0957.Prison-Cells-After-N-Days "0957.Prison-Cells-After-N-Days" b
+class Solution {
+public:
+    vector<int> prisonAfterNDays(vector<int>& cells, int N) 
+    {
+        int K = 0;
+        for (int i=0; i<8; i++)
+            K += (cells[i]<<i);
+        int K0 = K;
+
+        unordered_map<int,int>Map;
+        int t = 0;
+        while (Map.find(K)==Map.end())
+        {
+            Map[K] = t;
+            K = (~((K>>1)^(K<<1)))&126;
+            t++;
+        }
+        int S = Map[K];
+        int L = t - S;
+
+        int M = K0;
+        if (N >= S)
+            N = (N-S) % L + S;
+
+        for (int i=0; i<N; i++)
+        {
+            M = (~((M>>1)^(M<<1)))&126;
+        }
+        
+        vector<int>results(8,0);
+        for (int i=0; i<8; i++)
+            results[i] = ((M>>i)&1);
+        return results;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters/Readme.md <==
+snippet 1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters "1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters" b
+### 1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters
+
+本题就是一个基本的DFS爆搜。注意不要误认为是LIS。
+
+一个long long变量有32个bit，我们可以用来记录dfs的过程中已经收集了哪些字符，记做变量bits。当前DFS过程中的bits与某个新字符串对应的bits做“AND”之后，如果不为零时，说明二者有重复的字符，搜索可以终止。
+
+最终的答案就是搜索过程中bits出现的最多的1的各种，即```__builtin_popcount(bits)```
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters.cpp <==
+snippet 1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters "1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters" b
 typedef long long ll;
 class Solution {
     int ret = 0;
@@ -43,19 +386,23 @@ public:
         }
     }
 };
-::::::::::::::
-Bit_Manipulation/1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters/Readme.md
-::::::::::::::
-### 1239.Maximum-Length-of-a-Concatenated-String-with-Unique-Characters
 
-本题就是一个基本的DFS爆搜。注意不要误认为是LIS。
+$0
+endsnippet
 
-一个long long变量有32个bit，我们可以用来记录dfs的过程中已经收集了哪些字符，记做变量bits。当前DFS过程中的bits与某个新字符串对应的bits做“AND”之后，如果不为零时，说明二者有重复的字符，搜索可以终止。
+# ==> ./Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/Readme.md <==
+snippet 1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix "1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix" b
+### 1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix
 
-最终的答案就是搜索过程中bits出现的最多的1的各种，即```__builtin_popcount(bits)```
-::::::::::::::
-Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix_v1.cpp
-::::::::::::::
+首先我们应该有这样一个认识，每个元素最多只需要flip一次，flip两次及以上都是没有意义的操作。再考虑到矩阵的维度非常小（不超过3x3），因此即使穷举每个元素是否flip，最多只有2^9种不同的可能性。对于每种可能性，我们最多再花o(4mn)的时间来验证是否能实现矩阵全部翻零。因此这种暴力的方法的时间复杂度是可以接受的。
+
+如果还想优化一点的话，可以用Gosper's hack，按照“1-bit的个数”从小到大地枚举状态。一旦发现可以实现矩阵翻零，即可输出答案。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix_v1.cpp <==
+snippet 1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix "1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix" b
 class Solution {
     int m,n;
 public:
@@ -105,9 +452,12 @@ public:
         return true;
     }
 };
-::::::::::::::
-Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix_v2.cpp <==
+snippet 1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix "1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix" b
 class Solution {
     int m,n;
 public:
@@ -162,122 +512,36 @@ public:
         return true;
     }
 };
-::::::::::::::
-Bit_Manipulation/1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix/Readme.md
-::::::::::::::
-### 1284.Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix
 
-首先我们应该有这样一个认识，每个元素最多只需要flip一次，flip两次及以上都是没有意义的操作。再考虑到矩阵的维度非常小（不超过3x3），因此即使穷举每个元素是否flip，最多只有2^9种不同的可能性。对于每种可能性，我们最多再花o(4mn)的时间来验证是否能实现矩阵全部翻零。因此这种暴力的方法的时间复杂度是可以接受的。
+$0
+endsnippet
 
-如果还想优化一点的话，可以用Gosper's hack，按照“1-bit的个数”从小到大地枚举状态。一旦发现可以实现矩阵翻零，即可输出答案。
-::::::::::::::
-Bit_Manipulation/1310.XOR-Queries-of-a-Subarray/Readme.md
-::::::::::::::
+# ==> ./Bit_Manipulation/1310.XOR-Queries-of-a-Subarray/Readme.md <==
+snippet 1310.XOR-Queries-of-a-Subarray "1310.XOR-Queries-of-a-Subarray" b
 ### 1310.XOR-Queries-of-a-Subarray
 
 求区间的异或和，可以转化为前缀异或和的异或。即```xor[i:j] = pre_xor[j] ^ pre_xor[i-1]```.
-::::::::::::::
-Bit_Manipulation/136.Single-Number/136.Single Number.cpp
-::::::::::::::
-class Solution {
-public:
-    int singleNumber(vector<int>& nums) 
-    {
-        int result=0;
-        for (int i=0; i<nums.size(); i++)
-            result^=nums[i];
-        
-        return result;
-        
-    }
-};
-::::::::::::::
-Bit_Manipulation/136.Single-Number/Readme.md
-::::::::::::::
-### 136.Single-Number
 
-巧妙应用“亦或”操作。
+$0
+endsnippet
 
-a^a=0   
+# ==> ./Bit_Manipulation/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR/Readme.md <==
+snippet 1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR "1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR" b
+### 1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR
 
-a^b=1  
+本题是说，问有多少个相邻的子区间对[i:j]和[j+1:k]，使得这两个子区间的亦或和相等。
 
-A^B^B=A  (该操作具有交换律commutative.)
+这个问法其实非常巧妙。如果[i:j]和[j+1:k]的亦或和相等，那么这个大区间[i:k]的亦或和就一定等于零。而这个亦或和等于零的区间[i:k]，你从任意位置去分成两部分，这两个子区间的亦或和又肯定是相等的。
 
-0^A=A (所以初值设为0)
+于是这道题等价于，问有多少个区间的亦或和等于0. 对于每一个符合的区间[i:k]，只要令j为i+1到k任意一个位置，都可以满足xor[i:j]==xor[j+1:k]。也就是说，对于符合条件的(i,k)，存在k-i个拆分方法，得到符合条件的(i,j,k)。
 
+对于求亦或和为0的子区间，就是常见的Hash+Prefix的套路。
 
-[Leetcode Link](https://leetcode.com/problems/single-number)::::::::::::::
-Bit_Manipulation/137.Single-Number-II/137.Single-Number-II_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int singleNumber(vector<int>& nums) 
-    {
-        vector<int>bits(32,0);
-        
-        for (int i=0; i<nums.size(); i++)
-        {
-            int k=nums[i];
-            for (int j=0; j<32; j++)
-            {
-                bits[j]+=((k>>j)&1);
-            }            
-        }
-        
-        int result=0;
-        for (int j=0; j<32; j++)
-        {
-            if (bits[j]%3!=0)
-                result+= 1<<j;
-        }
-        
-        return result;
-    }
-};
-::::::::::::::
-Bit_Manipulation/137.Single-Number-II/137.Single-Number-II_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int singleNumber(vector<int>& nums) 
-    {
-        int count1 = 0, count2 = 0;
-        for (auto x: nums)
-        {
-            int count1_new = 0, count2_new = 0;
-            for (int i=0; i<32; i++)
-            {
-                int hi = (count1>>i)&1;
-                int low = (count2>>i)&1;
-                int sum = (hi*2+low+((x>>i)&1))%3;
-                count1_new |= ((sum/2)<<i);
-                count2_new |= ((sum%2)<<i);
-            }       
-            count1 = count1_new, count2 = count2_new;     
-        }
+$0
+endsnippet
 
-        int ret = 0;
-        for (int i=0; i<32; i++)
-        {
-            ret += ((count2>>i)&1)<<i;
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Bit_Manipulation/137.Single-Number-II/Readme.md
-::::::::::::::
-### 137.Single-Number-II
-
-此题容易受到```136.Single-Number```的影响，总觉得应该用到“亦或”操作的性质。但事实上，此题的解法和^操作的关系并不大。
-
-此题的突破点在于，细分到所有N个数的每个二进制位，都会有N-1个bit重复出现了3次，而有另一个bit出现了1次（这个bit就对应着那个single number）。如果把该二进制位上所有数的bit都相加起来，那么对3除的余数一定就是那个与众不同的bit。就这样，我们可以确定这个single number的每一位的bit，然后重构出对应的二进制数来。
-
-实现上可以设计一个```vector<int>bits(32)```来累加每个二进制位的bit的总和。当然还有更省空间的方法。因为我们实际上只需要计算各个二进制位上bit之和除以3的余数，总共只有三种可能0,1,2.于是可以设计两个int32的计数器count1,count2. 其中count1[i]和count2[i]用来记录第i个二进制位上的bit之和，即00,01,11这三种情况。single number的每一个二进制位可以通过最终的count1[i]和count2[i]重构出来。
-::::::::::::::
-Bit_Manipulation/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR.cpp <==
+snippet 1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR "1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR" b
 class Solution {
 public:
     int countTriplets(vector<int>& arr) 
@@ -296,21 +560,27 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR/Readme.md
-::::::::::::::
-### 1442.Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR
 
-本题是说，问有多少个相邻的子区间对[i:j]和[j+1:k]，使得这两个子区间的亦或和相等。
+$0
+endsnippet
 
-这个问法其实非常巧妙。如果[i:j]和[j+1:k]的亦或和相等，那么这个大区间[i:k]的亦或和就一定等于零。而这个亦或和等于零的区间[i:k]，你从任意位置去分成两部分，这两个子区间的亦或和又肯定是相等的。
+# ==> ./Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/Readme.md <==
+snippet 1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List "1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List" b
+### 1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List
 
-于是这道题等价于，问有多少个区间的亦或和等于0. 对于每一个符合的区间[i:k]，只要令j为i+1到k任意一个位置，都可以满足xor[i:j]==xor[j+1:k]。也就是说，对于符合条件的(i,k)，存在k-i个拆分方法，得到符合条件的(i,j,k)。
+#### 解法1：暴力验证
+我们建立每个人的公司列表转化为集合。对于每个人i，我们查看那些公司列表比i更长的那些人j，看i的公司列表是不是j的公司列表的子集。如果i是j的子集的话，那么i就不是答案，终止对i的考察。如果i不是任何j的子集，那么就把i放入答案。
 
-对于求亦或和为0的子区间，就是常见的Hash+Prefix的套路。
-::::::::::::::
-Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List_v1.cpp
-::::::::::::::
+#### 解法2：bitmask
+以上解法有一个可以显著优化的地方。对于第i个人而言，不需要考察所有其他人j。我们令c2p[c]表示喜欢公司c的人的集合。我们只要考察i喜欢的所有公司的c2p集合的交集。最终留在交集里的人，就是和i一样喜欢相同公司的人。显然如果这个交集除了i之外还有其他人的话，就说明i的公司列表就是这些人的公司列表的子集。
+
+数据结构上如何来存储c2p[c]呢？当然可以用一个set。只不过set之间做交集的运算写起来有点麻烦。更方便的数据结构是bitset<100>，用每个bit表示这个人是否喜欢这家公司。这样c2p[x]&c2p[y]就能表达哪些人同时喜欢x和y两家公司，交集的操作非常方便。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List_v1.cpp <==
+snippet 1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List "1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List" b
 class Solution {
     
 public:
@@ -351,9 +621,12 @@ public:
     }  
 
 };
-::::::::::::::
-Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List_v2.cpp <==
+snippet 1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List "1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List" b
 class Solution {
 public:
     vector<int> peopleIndexes(vector<vector<string>>& favoriteCompanies) 
@@ -380,21 +653,29 @@ public:
         return ret;        
     }
 };
-::::::::::::::
-Bit_Manipulation/1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List/Readme.md
-::::::::::::::
-### 1452.People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List
 
-#### 解法1：暴力验证
-我们建立每个人的公司列表转化为集合。对于每个人i，我们查看那些公司列表比i更长的那些人j，看i的公司列表是不是j的公司列表的子集。如果i是j的子集的话，那么i就不是答案，终止对i的考察。如果i不是任何j的子集，那么就把i放入答案。
+$0
+endsnippet
 
-#### 解法2：bitmask
-以上解法有一个可以显著优化的地方。对于第i个人而言，不需要考察所有其他人j。我们令c2p[c]表示喜欢公司c的人的集合。我们只要考察i喜欢的所有公司的c2p集合的交集。最终留在交集里的人，就是和i一样喜欢相同公司的人。显然如果这个交集除了i之外还有其他人的话，就说明i的公司列表就是这些人的公司列表的子集。
+# ==> ./Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/Readme.md <==
+snippet 1506.Find-Root-of-N-Ary-Tree "1506.Find-Root-of-N-Ary-Tree" b
+### 1506.Find-Root-of-N-Ary-Tree
 
-数据结构上如何来存储c2p[c]呢？当然可以用一个set。只不过set之间做交集的运算写起来有点麻烦。更方便的数据结构是bitset<100>，用每个bit表示这个人是否喜欢这家公司。这样c2p[x]&c2p[y]就能表达哪些人同时喜欢x和y两家公司，交集的操作非常方便。
-::::::::::::::
-Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/1506.Find-Root-of-N-Ary-Tree_v1.cpp
-::::::::::::::
+#### 解法1：
+我们从每个节点的子节点开始递归访问所有后续节点并做标记。最终唯一没有被标记访问过的，就是根节点。
+
+
+#### 解法2
+
+我们把数组里的每个节点和每个节点的所有子节点都访问一次，我们会发现只有根节点被访问了一次，其余的节点都访问了两次（作为数组的节点元素访问一次，作为子节点访问一次）。
+
+显然，我们只要在上述的遍历过程中，把所有的val都亦或起来，得到的就是根节点的val值。再扫一遍就可以根据val把根节点挑出来。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/1506.Find-Root-of-N-Ary-Tree_v1.cpp <==
+snippet 1506.Find-Root-of-N-Ary-Tree "1506.Find-Root-of-N-Ary-Tree" b
 /*
 // Definition for a Node.
 class Node {
@@ -445,9 +726,12 @@ public:
             dfs(child);
     }
 };
-::::::::::::::
-Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/1506.Find-Root-of-N-Ary-Tree_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/1506.Find-Root-of-N-Ary-Tree_v2.cpp <==
+snippet 1506.Find-Root-of-N-Ary-Tree "1506.Find-Root-of-N-Ary-Tree" b
 /*
 // Definition for a Node.
 class Node {
@@ -490,23 +774,23 @@ public:
         
     }
 };
-::::::::::::::
-Bit_Manipulation/1506.Find-Root-of-N-Ary-Tree/Readme.md
-::::::::::::::
-### 1506.Find-Root-of-N-Ary-Tree
 
-#### 解法1：
-我们从每个节点的子节点开始递归访问所有后续节点并做标记。最终唯一没有被标记访问过的，就是根节点。
+$0
+endsnippet
 
+# ==> ./Bit_Manipulation/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target/Readme.md <==
+snippet 1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target "1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target" b
+### 1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target
 
-#### 解法2
+考虑s集合包含了所有以元素i结尾的subarray的bitwise AND的结果。那么这个集合有多大呢？其实并没有i个，而是最多只有32个。因为这些subarray的bitwise AND的本质，都是针对A[i]的某些bit进行从1到0的翻转。并且这些subarray bitwise AND从后往前来看都是不可逆的。具体地说，A[i], A[i]&A[i-1], A[i]&A[i-1]&A[i-2], ... 它们的bit 1的个数只会越来越少。因为A[i]最多只有32个1，所以所有这些subarray最多只会有32个不同的bitwise AND的结果。
 
-我们把数组里的每个节点和每个节点的所有子节点都访问一次，我们会发现只有根节点被访问了一次，其余的节点都访问了两次（作为数组的节点元素访问一次，作为子节点访问一次）。
+既然s只有32个元素，那么只需要遍历一遍就可以找到最接近target的值。然后在考虑A[i+1]，并更新s集合：只需要将每个s的元素与A[i+1]进行AND，再添加A[i+1]即可。同理可知，此时的集合s依然最多只有32个元素。
 
-显然，我们只要在上述的遍历过程中，把所有的val都亦或起来，得到的就是根节点的val值。再扫一遍就可以根据val把根节点挑出来。
-::::::::::::::
-Bit_Manipulation/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target.cpp <==
+snippet 1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target "1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target" b
 class Solution {
 public:
     int closestToTarget(vector<int>& arr, int target) {
@@ -525,17 +809,40 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target/Readme.md
-::::::::::::::
-### 1521.Find-a-Value-of-a-Mysterious-Function-Closest-to-Target
 
-考虑s集合包含了所有以元素i结尾的subarray的bitwise AND的结果。那么这个集合有多大呢？其实并没有i个，而是最多只有32个。因为这些subarray的bitwise AND的本质，都是针对A[i]的某些bit进行从1到0的翻转。并且这些subarray bitwise AND从后往前来看都是不可逆的。具体地说，A[i], A[i]&A[i-1], A[i]&A[i-1]&A[i-2], ... 它们的bit 1的个数只会越来越少。因为A[i]最多只有32个1，所以所有这些subarray最多只会有32个不同的bitwise AND的结果。
+$0
+endsnippet
 
-既然s只有32个元素，那么只需要遍历一遍就可以找到最接近target的值。然后在考虑A[i+1]，并更新s集合：只需要将每个s的元素与A[i+1]进行AND，再添加A[i+1]即可。同理可知，此时的集合s依然最多只有32个元素。
-::::::::::::::
-Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v1.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/Readme.md <==
+snippet 1601.Maximum-Number-of-Achievable-Transfer-Requests "1601.Maximum-Number-of-Achievable-Transfer-Requests" b
+### 1601.Maximum-Number-of-Achievable-Transfer-Requests
+
+考虑到requests的总数只有16个，那么任意所有得到满足的请求的组合总数最多也就是2^16种，利用Bit Mask暴力枚举查验都是可行的。查验的方法就是，所有的requests综合效果，是否对于每幢楼而言的净输出和净输入都相等。
+
+本题可以优化的地方就是，我们优先考察含有1-bit多的那些bit mask（令m=requests.size()，则最多m个，其次是m-1，然后递减），如果我们按照这个顺序遇到了第一个查验通过的bit mask，那么对应的1-bit的数目就是答案。
+
+那么如何高效遍历所有含1-bit数目为k的m-bit的bit mask呢？
+
+第一种方法是用C++的next permutation. 比如，我们初始令arr = {0,0,1,1,1}，即将数组的末尾k个元素都设为1. 那么每次运行```next_permuation(arr.begin(), arr.end())```之后就可以得到下一个不同的permutation（即01011, 01101, 01110, 10011, 10101, 10110...），显然所有的permutation包含的1的个数都是相同的。注意，这个函数会自动过滤掉duplicated的排列。
+
+第二种方法是Gosper's Hack。模板如下：
+```
+int state = (1 << k) - 1;            
+while (state < (1 << m))
+{
+    doSomething(state);
+
+    int c = state & - state;
+    int r = state + c;
+    state = (((r ^ state) >> 2) / c) | r;
+}
+```
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v1.cpp <==
+snippet 1601.Maximum-Number-of-Achievable-Transfer-Requests "1601.Maximum-Number-of-Achievable-Transfer-Requests" b
 class Solution {
     vector<int>net;
 public:
@@ -582,9 +889,12 @@ public:
         return ret;        
     }
 };
-::::::::::::::
-Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v2.cpp <==
+snippet 1601.Maximum-Number-of-Achievable-Transfer-Requests "1601.Maximum-Number-of-Achievable-Transfer-Requests" b
 class Solution {
     vector<int>net;
 public:
@@ -644,9 +954,12 @@ public:
         return 0;
     }
 };
-::::::::::::::
-Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v3.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/1601.Maximum-Number-of-Achievable-Transfer-Requests_v3.cpp <==
+snippet 1601.Maximum-Number-of-Achievable-Transfer-Requests "1601.Maximum-Number-of-Achievable-Transfer-Requests" b
 class Solution {
     vector<int>net;
 public:
@@ -699,34 +1012,23 @@ public:
         return 0;
     }
 };
-::::::::::::::
-Bit_Manipulation/1601.Maximum-Number-of-Achievable-Transfer-Requests/Readme.md
-::::::::::::::
-### 1601.Maximum-Number-of-Achievable-Transfer-Requests
 
-考虑到requests的总数只有16个，那么任意所有得到满足的请求的组合总数最多也就是2^16种，利用Bit Mask暴力枚举查验都是可行的。查验的方法就是，所有的requests综合效果，是否对于每幢楼而言的净输出和净输入都相等。
+$0
+endsnippet
 
-本题可以优化的地方就是，我们优先考察含有1-bit多的那些bit mask（令m=requests.size()，则最多m个，其次是m-1，然后递减），如果我们按照这个顺序遇到了第一个查验通过的bit mask，那么对应的1-bit的数目就是答案。
+# ==> ./Bit_Manipulation/1734.Decode-XORed-Permutation/Readme.md <==
+snippet 1734.Decode-XORed-Permutation "1734.Decode-XORed-Permutation" b
+### 1734.Decode-XORed-Permutation
 
-那么如何高效遍历所有含1-bit数目为k的m-bit的bit mask呢？
+我们知道，XOR的最常用的一个性质就是x^x=0，我们需要尽量使用这个性质。但是我们发现如果把encode里面的元素全部XOR起来，大多数元素都会被消除，得到的只是头尾值```nums[0]^nums[n-1]```.
 
-第一种方法是用C++的next permutation. 比如，我们初始令arr = {0,0,1,1,1}，即将数组的末尾k个元素都设为1. 那么每次运行```next_permuation(arr.begin(), arr.end())```之后就可以得到下一个不同的permutation（即01011, 01101, 01110, 10011, 10101, 10110...），显然所有的permutation包含的1的个数都是相同的。注意，这个函数会自动过滤掉duplicated的排列。
+这时候我们注意到题目中说n是个奇数，这个条件很奇怪。仔细分析了一下，发现我们如果间隔着取encode里面的元素再XOR起来，就得到```nohead = nums[1]^numx[2]^...^nums[n-1]```，只缺少了nums[0]而已.这时候我们果断想到全局的XOR Sum其实是已知的（因为题目说的是1到n的permutation）。将nohead与XORSum再亦或一下，就得到了nums[0]。于是nums[1]就可以从encode[0]^nums[0]得到，其余的nums[i]也就迎刃而解。
 
-第二种方法是Gosper's Hack。模板如下：
-```
-int state = (1 << k) - 1;            
-while (state < (1 << m))
-{
-    doSomething(state);
+$0
+endsnippet
 
-    int c = state & - state;
-    int r = state + c;
-    state = (((r ^ state) >> 2) / c) | r;
-}
-```
-::::::::::::::
-Bit_Manipulation/1734.Decode-XORed-Permutation/1734.Decode-XORed-Permutation.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/1734.Decode-XORed-Permutation/1734.Decode-XORed-Permutation.cpp <==
+snippet 1734.Decode-XORed-Permutation "1734.Decode-XORed-Permutation" b
 class Solution {
 public:
     vector<int> decode(vector<int>& encoded) 
@@ -750,17 +1052,25 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/1734.Decode-XORed-Permutation/Readme.md
-::::::::::::::
-### 1734.Decode-XORed-Permutation
 
-我们知道，XOR的最常用的一个性质就是x^x=0，我们需要尽量使用这个性质。但是我们发现如果把encode里面的元素全部XOR起来，大多数元素都会被消除，得到的只是头尾值```nums[0]^nums[n-1]```.
+$0
+endsnippet
 
-这时候我们注意到题目中说n是个奇数，这个条件很奇怪。仔细分析了一下，发现我们如果间隔着取encode里面的元素再XOR起来，就得到```nohead = nums[1]^numx[2]^...^nums[n-1]```，只缺少了nums[0]而已.这时候我们果断想到全局的XOR Sum其实是已知的（因为题目说的是1到n的permutation）。将nohead与XORSum再亦或一下，就得到了nums[0]。于是nums[1]就可以从encode[0]^nums[0]得到，其余的nums[i]也就迎刃而解。
-::::::::::::::
-Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/1738.Find-Kth-Largest-XOR-Coordinate-Value_v1.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/Readme.md <==
+snippet 1738.Find-Kth-Largest-XOR-Coordinate-Value "1738.Find-Kth-Largest-XOR-Coordinate-Value" b
+### 1738.Find-Kth-Largest-XOR-Coordinate-Value
+
+和二维矩阵前缀和的思路类似，我们可以用o(1)的时间求出每个网格位置的值：```a[i][j] = a[i-1][j]^a[i][j-1]^a[i-1][j-1]^matrix[i][j]```.
+
+求一个数组中的第k大value，两种做法。第一种用优先队列，按照从小到大排序，当队列里面超过k个元素时，那么队首元素就可以舍弃，因为它至少是第k+1大的元素。
+
+第二种方法类似于```215.Kth-Largest-Element-in-an-Array```。每次猜测一个值x，然后遍历全局矩阵，统计有多少个元素大于等于x，如果count小于k，那么x肯定不可能是答案，我们将猜测的上界下调至x-1；否则，我们就将猜测的下界调整至x。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/1738.Find-Kth-Largest-XOR-Coordinate-Value_v1.cpp <==
+snippet 1738.Find-Kth-Largest-XOR-Coordinate-Value "1738.Find-Kth-Largest-XOR-Coordinate-Value" b
 class Solution {
     int a[1000][1000];
     int m,n;
@@ -803,9 +1113,12 @@ public:
         return count;
     }
 };
-::::::::::::::
-Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/1738.Find-Kth-Largest-XOR-Coordinate-Value_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/1738.Find-Kth-Largest-XOR-Coordinate-Value_v2.cpp <==
+snippet 1738.Find-Kth-Largest-XOR-Coordinate-Value "1738.Find-Kth-Largest-XOR-Coordinate-Value" b
 class Solution {
     int a[1000][1000];
     int m,n;
@@ -836,19 +1149,29 @@ public:
         return pq.top();
     }    
 };
-::::::::::::::
-Bit_Manipulation/1738.Find-Kth-Largest-XOR-Coordinate-Value/Readme.md
-::::::::::::::
-### 1738.Find-Kth-Largest-XOR-Coordinate-Value
 
-和二维矩阵前缀和的思路类似，我们可以用o(1)的时间求出每个网格位置的值：```a[i][j] = a[i-1][j]^a[i][j-1]^a[i-1][j-1]^matrix[i][j]```.
+$0
+endsnippet
 
-求一个数组中的第k大value，两种做法。第一种用优先队列，按照从小到大排序，当队列里面超过k个元素时，那么队首元素就可以舍弃，因为它至少是第k+1大的元素。
+# ==> ./Bit_Manipulation/1755.Closest-Subsequence-Sum/Readme.md <==
+snippet 1755.Closest-Subsequence-Sum "1755.Closest-Subsequence-Sum" b
+### 1755.Closest-Subsequence-Sum
 
-第二种方法类似于```215.Kth-Largest-Element-in-an-Array```。每次猜测一个值x，然后遍历全局矩阵，统计有多少个元素大于等于x，如果count小于k，那么x肯定不可能是答案，我们将猜测的上界下调至x-1；否则，我们就将猜测的下界调整至x。
-::::::::::::::
-Bit_Manipulation/1755.Closest-Subsequence-Sum/1755.Closest-Subsequence-Sum.cpp
-::::::::::::::
+这道题的数据范围限定了解题方法。
+
+如果nums的元素不超过20个，那么我们可以穷举所有的subset sum，最多有2^20 = 1e6，时间复杂度是可以接受的。我们遍历一下这些subset，找到最接近goal的那个即可。
+
+如果nums的元素很多，但是值的范围很小，比如说限定了都是正数、所有的和不超过1000之类的，那么就可以当做动态规划来解。每处理一个新元素x，我们遍历所有subset sum的可能，更新dp[sum] = dp[sum-x]. 
+
+对于本题而言，以上两种方法都不适用。对于有经验的同学而言，nums的元素个数是40，提示了一种非常巧妙的解法：就是将nums平均拆成两个数组nums1和nums2来处理。对于每个数组，我们分别可以穷举所有的subset sum，时间复杂度是o(2^N/2)，然后各自排序得到sum1和sum2。然后对于sum1的每个元素x而言，我们要在sum2里面找到最接近goal-x的那个。反之对于sum2的每个元素x而言，我们要在sum1里面找到最接近goal-x的那个。最后找到全局最接近的abs diff即可。
+
+在上面的解法中，如果先求得所有的subset sum，然后排序，将会使得时间复杂度达到o(MlogM)，其中M=2^N/2. 有一种方法可以直接用o(2^N/2)得到有序的subset sum。假设nums的前i-1个元素已经得到了有序的subset sum的集合{a_k},那么加上第i个元素之后的subset sum的集合就是{a_k}和{a_k+nums[i]}的并集。我们发现这两个集合是各自有序的，这样我们可以用归并排序的方法将两者合并成一个更大的有序集合。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1755.Closest-Subsequence-Sum/1755.Closest-Subsequence-Sum.cpp <==
+snippet 1755.Closest-Subsequence-Sum "1755.Closest-Subsequence-Sum" b
 class Solution {
     int ret = INT_MAX;
 public:
@@ -932,23 +1255,23 @@ public:
         }
     }
 };
-::::::::::::::
-Bit_Manipulation/1755.Closest-Subsequence-Sum/Readme.md
-::::::::::::::
-### 1755.Closest-Subsequence-Sum
 
-这道题的数据范围限定了解题方法。
+$0
+endsnippet
 
-如果nums的元素不超过20个，那么我们可以穷举所有的subset sum，最多有2^20 = 1e6，时间复杂度是可以接受的。我们遍历一下这些subset，找到最接近goal的那个即可。
+# ==> ./Bit_Manipulation/1774.Closest-Dessert-Cost/Readme.md <==
+snippet 1774.Closest-Dessert-Cost "1774.Closest-Dessert-Cost" b
+### 1774.Closest-Dessert-Cost
 
-如果nums的元素很多，但是值的范围很小，比如说限定了都是正数、所有的和不超过1000之类的，那么就可以当做动态规划来解。每处理一个新元素x，我们遍历所有subset sum的可能，更新dp[sum] = dp[sum-x]. 
+本题需要暴力枚举所有toppings的选配方案。枚举时对每种topping的数量都在0，1，2中选择，所以可以将topping的组合用一个含有m个bit的三进制数表示。我们对0到3^m进行循环，查看每个三进制数所对应的topping组合方案需要的cost，记录在toppingsSet里去重，并对按照从小到大排序。
 
-对于本题而言，以上两种方法都不适用。对于有经验的同学而言，nums的元素个数是40，提示了一种非常巧妙的解法：就是将nums平均拆成两个数组nums1和nums2来处理。对于每个数组，我们分别可以穷举所有的subset sum，时间复杂度是o(2^N/2)，然后各自排序得到sum1和sum2。然后对于sum1的每个元素x而言，我们要在sum2里面找到最接近goal-x的那个。反之对于sum2的每个元素x而言，我们要在sum1里面找到最接近goal-x的那个。最后找到全局最接近的abs diff即可。
+记得我们仍然需要遍历base. 总的时间复杂度是```o(m*3^n)```，大概是6e5，是可以接受的。
 
-在上面的解法中，如果先求得所有的subset sum，然后排序，将会使得时间复杂度达到o(MlogM)，其中M=2^N/2. 有一种方法可以直接用o(2^N/2)得到有序的subset sum。假设nums的前i-1个元素已经得到了有序的subset sum的集合{a_k},那么加上第i个元素之后的subset sum的集合就是{a_k}和{a_k+nums[i]}的并集。我们发现这两个集合是各自有序的，这样我们可以用归并排序的方法将两者合并成一个更大的有序集合。
-::::::::::::::
-Bit_Manipulation/1774.Closest-Dessert-Cost/1774.Closest-Dessert-Cost.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1774.Closest-Dessert-Cost/1774.Closest-Dessert-Cost.cpp <==
+snippet 1774.Closest-Dessert-Cost "1774.Closest-Dessert-Cost" b
 class Solution {
 public:
     int closestCost(vector<int>& baseCosts, vector<int>& toppingCosts, int target) {
@@ -981,17 +1304,23 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/1774.Closest-Dessert-Cost/Readme.md
-::::::::::::::
-### 1774.Closest-Dessert-Cost
 
-本题需要暴力枚举所有toppings的选配方案。枚举时对每种topping的数量都在0，1，2中选择，所以可以将topping的组合用一个含有m个bit的三进制数表示。我们对0到3^m进行循环，查看每个三进制数所对应的topping组合方案需要的cost，记录在toppingsSet里去重，并对按照从小到大排序。
+$0
+endsnippet
 
-记得我们仍然需要遍历base. 总的时间复杂度是```o(m*3^n)```，大概是6e5，是可以接受的。
-::::::::::::::
-Bit_Manipulation/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND/Readme.md <==
+snippet 1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND "1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND" b
+### 1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND
+
+因为XOR和AND都是位操作，我们其实可以只关注每个bit的变化。假设第i个bit位上，我们求某个a与所有b1,b2,...bn的配对，即```a&b1 ^ a&b2 ^ a&b3 ^ ... a&bn```。如果a为0，那么答案就是0；如果a为1，那么答案就是```b1 ^ b2 ^ b3 ^ ... bn```，结果就是数这些bi里面有几个1. 如果有奇数个1，那么答案就是1；如果是偶数个，那么答案就是0.
+
+对于所有的a，{b1,b2,...,bn}都是共享的，所以将上述的过程重复n遍即可。总的时间复杂度就是o(N)。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND.cpp <==
+snippet 1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND "1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND" b
 class Solution {
 public:
     int getXORSum(vector<int>& arr1, vector<int>& arr2) 
@@ -1021,17 +1350,23 @@ public:
         return ret;        
     }
 };
-::::::::::::::
-Bit_Manipulation/1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND/Readme.md
-::::::::::::::
-### 1835.Find-XOR-Sum-of-All-Pairs-Bitwise-AND
 
-因为XOR和AND都是位操作，我们其实可以只关注每个bit的变化。假设第i个bit位上，我们求某个a与所有b1,b2,...bn的配对，即```a&b1 ^ a&b2 ^ a&b3 ^ ... a&bn```。如果a为0，那么答案就是0；如果a为1，那么答案就是```b1 ^ b2 ^ b3 ^ ... bn```，结果就是数这些bi里面有几个1. 如果有奇数个1，那么答案就是1；如果是偶数个，那么答案就是0.
+$0
+endsnippet
 
-对于所有的a，{b1,b2,...,bn}都是共享的，所以将上述的过程重复n遍即可。总的时间复杂度就是o(N)。
-::::::::::::::
-Bit_Manipulation/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences/Readme.md <==
+snippet 2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences "2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences" b
+### 2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences
+
+因为只有12个字符，我们可以暴力枚举拆解的方案，也就是2^12=4096种方法，将原字符串拆为两个subsequence。然后查看每个subsequence里面最长的回文子序列。
+
+对于一个subsequence里面的最长回文子序列问题，我们可以将这个子序列收拢转化为一个常规的字符串。求字符串里的最长回文子序列，这是一个经典问题。可以用o(N^2)的DP。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences.cpp <==
+snippet 2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences "2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences" b
 class Solution {    
 public:
     int lp(string&s, int state)
@@ -1071,17 +1406,29 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences/Readme.md
-::::::::::::::
-### 2002.Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences
 
-因为只有12个字符，我们可以暴力枚举拆解的方案，也就是2^12=4096种方法，将原字符串拆为两个subsequence。然后查看每个subsequence里面最长的回文子序列。
+$0
+endsnippet
 
-对于一个subsequence里面的最长回文子序列问题，我们可以将这个子序列收拢转化为一个常规的字符串。求字符串里的最长回文子序列，这是一个经典问题。可以用o(N^2)的DP。
-::::::::::::::
-Bit_Manipulation/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference.cpp
-::::::::::::::
+# ==> ./Bit_Manipulation/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference/Readme.md <==
+snippet 2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference "2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference" b
+### 2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference
+
+本题的思路来自于```1755.Closest-Subsequence-Sum```
+
+本题要将最多30个数平均分成两组。这个规模暗示我们其实并没有贪心或者高效的算法，本题是指数级别的暴力搜索NPC问题。但是从30个里面遍历15个数的组合，是一个非常大的数字，这是无法暴力完成。怎么办呢？
+
+我们发现如果只考虑一半的规模即n=15时，2^15=32768是一个可以接受的规模。这就提醒我们类似的1755，将数组分成两部分来处理。对于前半部分数组，我们可以遍历所有的组合（每个组合代表选取哪些元素），将每个组合的sum记录下来。假设前半部分的某个组合有i个元素，该组合的元素之和是x，那么我们自然希望在后半部分数组里挑选n-j个元素（记该组合的元素之和是y）使得x+y尽量接近sum-(x+y)。稍微变化一下，就知道我们需要找这样一个y，使得y尽量接近```sum/2-x```. 
+
+所以看出来，我们需要对后半部分数组进行预处理，构造一个Hash表，令Map[j]表示在后半部分数组里取j个元素的组合时，元素之和可能是哪些。对于前述的任何一个i和x，我们对应直接在Map[j]里面找最接近```sum/2-x```的数值（记做y）。那么```|x+y-(sum-x-y)|```就是一个可能的最优解。
+
+所以总的时间复杂度是：1. 预处理部分，需要```O(2^n*n)```，其中乘以n表示遍历该state的每一个bit来计算sum。2. 遍历左边部分的所有组合（对应的i和x），然后在右边的Map[n-j]里面用二分来挑选最接近的数值，故是```o(2^n*log(2^n)) = o(2^n*n)```
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference.cpp <==
+snippet 2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference "2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference" b
 using LL = long long;
 class Solution {
 public:
@@ -1144,23 +1491,25 @@ public:
       return ret;
     }
 };
-::::::::::::::
-Bit_Manipulation/2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference/Readme.md
-::::::::::::::
-### 2035.Partition-Array-Into-Two-Arrays-to-Minimize-Sum-Difference
 
-本题的思路来自于```1755.Closest-Subsequence-Sum```
+$0
+endsnippet
 
-本题要将最多30个数平均分成两组。这个规模暗示我们其实并没有贪心或者高效的算法，本题是指数级别的暴力搜索NPC问题。但是从30个里面遍历15个数的组合，是一个非常大的数字，这是无法暴力完成。怎么办呢？
+# ==> ./Bit_Manipulation/2151.Maximum-Good-People-Based-on-Statements/Readme.md <==
+snippet 2151.Maximum-Good-People-Based-on-Statements "2151.Maximum-Good-People-Based-on-Statements" b
+### 2151.Maximum-Good-People-Based-on-Statements
 
-我们发现如果只考虑一半的规模即n=15时，2^15=32768是一个可以接受的规模。这就提醒我们类似的1755，将数组分成两部分来处理。对于前半部分数组，我们可以遍历所有的组合（每个组合代表选取哪些元素），将每个组合的sum记录下来。假设前半部分的某个组合有i个元素，该组合的元素之和是x，那么我们自然希望在后半部分数组里挑选n-j个元素（记该组合的元素之和是y）使得x+y尽量接近sum-(x+y)。稍微变化一下，就知道我们需要找这样一个y，使得y尽量接近```sum/2-x```. 
+本题的人数只有n<=15，这就非常强烈地暗示了我们用二进制的bit mask来暴力枚举所有“好人”的可能组合。对于任意一种组合，我们只需要用o(n^2)的时间检查一遍。所以总的时间复杂度是```2^15*15^2=7e6```是可以接受的。
 
-所以看出来，我们需要对后半部分数组进行预处理，构造一个Hash表，令Map[j]表示在后半部分数组里取j个元素的组合时，元素之和可能是哪些。对于前述的任何一个i和x，我们对应直接在Map[j]里面找最接近```sum/2-x```的数值（记做y）。那么```|x+y-(sum-x-y)|```就是一个可能的最优解。
+当我们考虑一种好人组合，如何判定它是否可行呢？我们需要注意三点：就是这些好人做出的判断不能彼此矛盾；好人认定的“好人”一定要出现在组合中；好人认定的“坏人”一定不能出现在组合中。满足这三点，那么这种好人组合就没有问题。
 
-所以总的时间复杂度是：1. 预处理部分，需要```O(2^n*n)```，其中乘以n表示遍历该state的每一个bit来计算sum。2. 遍历左边部分的所有组合（对应的i和x），然后在右边的Map[n-j]里面用二分来挑选最接近的数值，故是```o(2^n*log(2^n)) = o(2^n*n)```
-::::::::::::::
-Bit_Manipulation/2151.Maximum-Good-People-Based-on-Statements/2151.Maximum-Good-People-Based-on-Statements.cpp
-::::::::::::::
+此外，本题可以用Gosper's hack，从好人多到好人少的组合依次遍历，找到合适的组合后即可提前终止。
+
+$0
+endsnippet
+
+# ==> ./Bit_Manipulation/2151.Maximum-Good-People-Based-on-Statements/2151.Maximum-Good-People-Based-on-Statements.cpp <==
+snippet 2151.Maximum-Good-People-Based-on-Statements "2151.Maximum-Good-People-Based-on-Statements" b
 class Solution {
 public:
     bool checkOK(int state, vector<vector<int>>& statements)
@@ -1226,199 +1575,6 @@ public:
         return 0;
     }
 };
-::::::::::::::
-Bit_Manipulation/2151.Maximum-Good-People-Based-on-Statements/Readme.md
-::::::::::::::
-### 2151.Maximum-Good-People-Based-on-Statements
 
-本题的人数只有n<=15，这就非常强烈地暗示了我们用二进制的bit mask来暴力枚举所有“好人”的可能组合。对于任意一种组合，我们只需要用o(n^2)的时间检查一遍。所以总的时间复杂度是```2^15*15^2=7e6```是可以接受的。
-
-当我们考虑一种好人组合，如何判定它是否可行呢？我们需要注意三点：就是这些好人做出的判断不能彼此矛盾；好人认定的“好人”一定要出现在组合中；好人认定的“坏人”一定不能出现在组合中。满足这三点，那么这种好人组合就没有问题。
-
-此外，本题可以用Gosper's hack，从好人多到好人少的组合依次遍历，找到合适的组合后即可提前终止。
-::::::::::::::
-Bit_Manipulation/260.Single-Number-III/260.Single-Number-III.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> singleNumber(vector<int>& nums) 
-    {
-        int s = 0;
-        for (auto n:nums) s = s^n;  // i.e. a^b
-        int t = s^(s&(s-1)); // only keep the rightmost set bit
-        int a = 0, b = 0;
-        for (auto n:nums)
-        {
-            if (n&t) a = a^n;
-            else b = b^n;
-        }
-        return {a,b};        
-    }
-};
-::::::::::::::
-Bit_Manipulation/260.Single-Number-III/Readme.md
-::::::::::::::
-### 260.Single-Number-III
-
-这是一道经典题．首先，我们容易想到把所有数字亦或起来，看看得到什么．假设最后的结果是x和y，那么我们最后得到的是x和y．这有什么用呢？
-
-显然x,y不相等的话，那么x^y不可能为零．所有必然有一个bit位置上，x和y是不同的．那么我们就可以把所有的数字按照这个位置的bit值分为两类，其中一类和x相同（偶数个），另一类和y相同（也是偶数个）．这两类各自做亦或和的操作，相同的数都会cancel掉，剩下来的就是x和y本身了．
-
-此题需要用到的一些bit操作技巧是：
-
-```x&(x-1)```：　表示unset the rightmost set bit
-
-```x^(x&(x-1))```：　表示只保留 the rightmost set bit
-
-```log2(x^(x&(x-1)))```：　表示the rightmost set bit的位置
-
-
-[Leetcode Link](https://leetcode.com/problems/single-number-iii)::::::::::::::
-Bit_Manipulation/318.Maximum-Product-of-Word-Lengths/318.Maximum-Product-of-Word-Lengths.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxProduct(vector<string>& words) 
-    {
-        vector<int>codes(words.size(),0);
-        
-        for (int i=0; i<words.size(); i++)
-        {
-            string s=words[i];
-            int code=0;
-            for (int j=0; j<s.size(); j++)
-            {
-                int x=s[j]-'a';
-                code = (code|(1<<x));
-            }
-            codes[i]=code;
-        }        
-        
-        
-        int result=0;
-        for (int i=0; i<words.size(); i++)
-         for (int j=0; j<words.size(); j++)
-         {
-             if ((codes[i]&codes[j])!=0) continue;
-             result=max(result,(int)words[i].size()*(int)words[j].size());
-         }
-        return result;
-    }
-};
-::::::::::::::
-Bit_Manipulation/318.Maximum-Product-of-Word-Lengths/Readme.md
-::::::::::::::
-### 318.Maximum-Product-of-Word-Lengths
-
-最直观的想法，从字符串数组中穷举两两的组合，找出最大的乘积，这样o(n^2)的复杂度其实可以接受。主要的问题就是对于每一对组合，要判断这两个字符串是否有相同的字母，这样的操作需要不少的语句，乘以n^2之后耗时就非常可观。
-
-我们的想法是预处理一遍words，利用o(n)的时间将其字母信息存储下来，当穷举两两组合时所需要的判定时间减少。
-
-一个比较简单的想法是，因为小写字母只有26个，可以用一个32位的int每一个bit来代表一个字母出现与否。这样只用一个int就能编码一个word所包含的字母信息了。两个word是否含有有相同的字母，则让两个对应code进行与操作，如果结果不是0，说明有一个bit不是零，代表了这个字母在两个word里都出现过。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-product-of-word-lengths)::::::::::::::
-Bit_Manipulation/342.Power-of-Four/342.Power-of-Four.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isPowerOfFour(int num) 
-    {
-        if (num==1)
-            return true;
-        else if (num>0 && (num&(num-1))==0 && (num-1)%3==0)
-            return true;
-        else
-            return false;
-    }
-};
-::::::::::::::
-Bit_Manipulation/342.Power-of-Four/Readme.md
-::::::::::::::
-### 342.Power-of-Four
-
-满足power of 4的条件是：1.大于零；2.是power of 2；3.num-1之后是3的倍数。
-
-其中满足power of 2的条件是：除了最高bit位是1，其余位都是0，所以 num & (num-1) ==0
-
-为什么num-1一定会是3的倍数呢？(4^k-1)=(2^k+1)(2^k-1)，其中2^k一定不能被3整除，余数可能是1，也可能是2，无论哪一种，(2^k+1)和(2^k-1)里必然有一个能被3整除。
-
-
-[Leetcode Link](https://leetcode.com/problems/power-of-four)::::::::::::::
-Bit_Manipulation/371.Sum-of-Two-Integers/371.Sum-of-Two-Integers.cpp
-::::::::::::::
-class Solution {
-public:
-    int getSum(int a, int b) {
-        while (b != 0) {
-            unsigned int carry = (unsigned int)(a & b) << 1;
-            a = a ^ b;
-            b = carry;
-        }
-        return a;
-    }
-};
-::::::::::::::
-Bit_Manipulation/371.Sum-of-Two-Integers/Readme.md
-::::::::::::::
-### 371.Sum-of-Two-Integers
-
-将a+b改造为m+n，其中m=a^b不进位的加法，n=(a&b)<<1将有进位的bit置为1。反复这样的操作直至所有的进位为零，得到的m即为结果。
-
-
-[Leetcode Link](https://leetcode.com/problems/sum-of-two-integers)::::::::::::::
-Bit_Manipulation/957.Prison-Cells-After-N-Days/957.Prison-Cells-After-N-Days.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> prisonAfterNDays(vector<int>& cells, int N) 
-    {
-        int K = 0;
-        for (int i=0; i<8; i++)
-            K += (cells[i]<<i);
-        int K0 = K;
-
-        unordered_map<int,int>Map;
-        int t = 0;
-        while (Map.find(K)==Map.end())
-        {
-            Map[K] = t;
-            K = (~((K>>1)^(K<<1)))&126;
-            t++;
-        }
-        int S = Map[K];
-        int L = t - S;
-
-        int M = K0;
-        if (N >= S)
-            N = (N-S) % L + S;
-
-        for (int i=0; i<N; i++)
-        {
-            M = (~((M>>1)^(M<<1)))&126;
-        }
-        
-        vector<int>results(8,0);
-        for (int i=0; i<8; i++)
-            results[i] = ((M>>i)&1);
-        return results;
-    }
-};
-::::::::::::::
-Bit_Manipulation/957.Prison-Cells-After-N-Days/Readme.md
-::::::::::::::
-### 957.Prison-Cells-After-N-Days
-
-我们首先解决这个问题：从一个状态到下一个状态，如何高效地进行转换。用8个bit位来代表0/1是比较自然的想法。假设当前的状态用整形k来表示，下一个状态用k'来表示。我们发现，k'除去首尾，其余所有位置上，第i位的bit取决于上一个状态时第i-1位的bit是否和第i+1位的bit相等，即```bit(i)=~(bit(i-1)^bit(i+1))```。
-
-我们将k右移一位记作k1，同时将k左移一位记作k2，我们将k1和k2对齐。我们发现，上述的操作就等价于```bit(k_i)=~(bit(k1_i)^bit(k2_i))```，也就是```k'=~(k1^k2)```。
-```
-k =   abcdefgh
-k1 =  xabcdefg
-k2 =  bcdefghx
-```
-另外注意，k'的首尾bit注定是0，所以我们额外加上需要加上一个```mask=01111110```来将首尾强制置为0.因此最终一次变换的表达式就是```k=~((k>>1)^(k<<1))&126```
-
-接下来考虑，我们是否要真的做N次变换来得到最终结果呢？考虑到N的数量级很大，肯定是不合适的。我们发现，k总共8个bit位，除去首尾必须是0，那么总共只有2^6=64种可能。所以一定存在一个有限长度的循环节。我们最多模拟64个回合，就一定能找到循环节的起始点S和长度L。也就是说，从K0开始变换S次进入循环节，再变换L次就又重复这个循环节。
-
-所以我们对于非常大的N，预处理为```N = (N-S)%L+S```。然后从K0开始，变换N次即可。
+$0
+endsnippet

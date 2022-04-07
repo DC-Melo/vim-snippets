@@ -1,6 +1,6 @@
-::::::::::::::
-Template/Binary_Index_Tree/BIT.cpp
-::::::::::::::
+
+# ==> ./Template/Binary_Index_Tree/BIT.cpp <==
+snippet Binary_Index_Tree "Binary_Index_Tree" b
 class BIT{
     public:
     int N;    
@@ -55,23 +55,19 @@ int main()
         cout << bit.sumRange(1,i);
     }
 }
-::::::::::::::
-Template/Bit_manipulation/bitset.cpp
-::::::::::::::
-bitset<100>bs; // define a bitset type variable
 
-std::string str = std::bitset<32>(n).to_string(); // convert an integer n to bitset type, and then to string type
+$0
+endsnippet
 
-bs.set(); // make every bit as 1
-
-bs.count(); // count the number of 1-bits in bs
-::::::::::::::
-Template/Bit_manipulation/Count_bit_1_numbers.cpp
-::::::::::::::
+# ==> ./Template/Bit_manipulation/Count_bit_1_numbers.cpp <==
+snippet Bit_manipulation "Bit_manipulation" b
 __builtin_popcount(state)
-::::::::::::::
-Template/Bit_manipulation/Gospers-Hack.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Bit_manipulation/Gospers-Hack.cpp <==
+snippet Bit_manipulation "Bit_manipulation" b
 // Iterate all the m-bit state where there are k 1-bits.
 
 int state = (1 << k) - 1;            
@@ -83,47 +79,35 @@ while (state < (1 << m))
     int r = state + c;
     state = (((r ^ state) >> 2) / c) | r;
 }
-::::::::::::::
-Template/Bit_manipulation/Iterate_Subsets.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Bit_manipulation/Iterate_Subsets.cpp <==
+snippet Bit_manipulation "Bit_manipulation" b
 for (int subset=state; subset>0; subset=(subset-1)&state)
 {
    DoSomething(subset);
 }
-::::::::::::::
-Template/Combination-Number/comb.cpp
-::::::::::::::
-typedef long long ll;
 
-main()
-{
-  // compute all C(n,m) saved in comb
-  ll comb[1000][1000];  
-  for (int i = 0; i <= n; ++i) 
-  {
-      comb[i][i] = comb[i][0] = 1;            
-      if (i==0) continue;
-      for (int j = 1; j < i; ++j) 
-      {
-          comb[i][j] = comb[i - 1][j - 1] + comb[i - 1][j];
-      }
-  }  
-}
+$0
+endsnippet
 
-// Compute C(n,m) on demand
-ll help(int n, int m)
-{
-    long long cnt = 1;
-    for(int i = 0; i < m; i++)
-    {
-        cnt *= n - i;
-        cnt /= i + 1;
-    }
-    return cnt;
-}
-::::::::::::::
-Template/CPP_LANG/Hash.cpp
-::::::::::::::
+# ==> ./Template/Bit_manipulation/bitset.cpp <==
+snippet Bit_manipulation "Bit_manipulation" b
+bitset<100>bs; // define a bitset type variable
+
+std::string str = std::bitset<32>(n).to_string(); // convert an integer n to bitset type, and then to string type
+
+bs.set(); // make every bit as 1
+
+bs.count(); // count the number of 1-bits in bs
+
+$0
+endsnippet
+
+# ==> ./Template/CPP_LANG/Hash.cpp <==
+snippet CPP_LANG "CPP_LANG" b
 #include <functional>
 // from boost (functional/hash):
 // see http://www.boost.org/doc/libs/1_35_0/doc/html/hash/combine.html template
@@ -165,9 +149,12 @@ int main() {
     return 0;
 }
 // Reference: [C++ Standard Library: A tutorial and reference, Second version](https://www.mica.edu.vn/perso/Vu-Hai/EE3490/Ref/The%20C++Standard%20Library%20-%202nd%20Edition.pdf) Chapter 7.9.2: Creating and Controlling unordered Container
-::::::::::::::
-Template/CPP_LANG/istringstream.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/CPP_LANG/istringstream.cpp <==
+snippet CPP_LANG "CPP_LANG" b
 // read a series of words in str seperated by blanks
 vector<string> ReadWordsFromString(string str)
 {
@@ -179,9 +166,76 @@ vector<string> ReadWordsFromString(string str)
   return str_arr;
 }
 
-::::::::::::::
-Template/Diff_Array_2D/code.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Combination-Number/comb.cpp <==
+snippet Combination-Number "Combination-Number" b
+typedef long long ll;
+
+main()
+{
+  // compute all C(n,m) saved in comb
+  ll comb[1000][1000];  
+  for (int i = 0; i <= n; ++i) 
+  {
+      comb[i][i] = comb[i][0] = 1;            
+      if (i==0) continue;
+      for (int j = 1; j < i; ++j) 
+      {
+          comb[i][j] = comb[i - 1][j - 1] + comb[i - 1][j];
+      }
+  }  
+}
+
+// Compute C(n,m) on demand
+ll help(int n, int m)
+{
+    long long cnt = 1;
+    for(int i = 0; i < m; i++)
+    {
+        cnt *= n - i;
+        cnt /= i + 1;
+    }
+    return cnt;
+}
+
+$0
+endsnippet
+
+# ==> ./Template/Diff_Array_2D/Readme.md <==
+snippet Diff_Array_2D "Diff_Array_2D" b
+我们来复习一下二维差分的模板。假设二维矩阵为f[i][j]。我们构造与之对应的差分数组diff[i][j]. 如果我们想将以(x0,y0)为左上角、(x1,y1)为右下角的矩形区域统一加上val，那么我们只需要在diff数组上做标记：
+```
+diff[x0][y0]+=1;
+diff[x0][y1+1]-=1;
+diff[x1+1][y0]-=1;
+diff[x1+1][y1+1]+=1;
+```
+其中diff[i][j]的物理意义是，以(i,j)为左上角、延伸至大矩阵（即整个空间）的右下角，这样的区域我们整体赋值. 
+
+这样的操作可以进行多次。如果我们想重构更新后的f的值，需要做如下操作：
+```
+for (int i=0; i<m; i++)
+    for (int j=0; j<n; j++)
+    {               
+        f[i][j] = f[i-1][j] + f[i][j-1] - f[i-1][j-1] + diff[i][j];
+    }
+```
+此时可以输出任意f里的任意数值。注意，由上面的公式可以看出，diff数组的维度要比f大一点。计算f时，如果遇到越界的格子，默认为0.
+
+模板代码的三个方法：
+1. Diff2d(vector<vector<int>>& A) 根据所给的矩阵维度初始化（A本身的值没有用处）
+2. void set(int x0, int y0, int x1, int y1, int val) 将以(x0,y0)为左上角、(x1,y1)为右下角的矩形区域统一加上val
+3. void compute() 输出重构的二维数组前必须做这步操作
+4. f[i][j] 直接输出重构的二维数组的任意值
+
+$0
+endsnippet
+
+# ==> ./Template/Diff_Array_2D/code.cpp <==
+snippet Diff_Array_2D "Diff_Array_2D" b
 class Diff2d {    
 public:
     vector<vector<int>>f;
@@ -219,40 +273,38 @@ public:
             }
     }    
 };
-::::::::::::::
-Template/Diff_Array_2D/Readme.md
-::::::::::::::
-我们来复习一下二维差分的模板。假设二维矩阵为f[i][j]。我们构造与之对应的差分数组diff[i][j]. 如果我们想将以(x0,y0)为左上角、(x1,y1)为右下角的矩形区域统一加上val，那么我们只需要在diff数组上做标记：
-```
-diff[x0][y0]+=1;
-diff[x0][y1+1]-=1;
-diff[x1+1][y0]-=1;
-diff[x1+1][y1+1]+=1;
-```
-其中diff[i][j]的物理意义是，以(i,j)为左上角、延伸至大矩阵（即整个空间）的右下角，这样的区域我们整体赋值. 
 
-这样的操作可以进行多次。如果我们想重构更新后的f的值，需要做如下操作：
-```
-for (int i=0; i<m; i++)
-    for (int j=0; j<n; j++)
-    {               
-        f[i][j] = f[i-1][j] + f[i][j-1] - f[i-1][j-1] + diff[i][j];
-    }
-```
-此时可以输出任意f里的任意数值。注意，由上面的公式可以看出，diff数组的维度要比f大一点。计算f时，如果遇到越界的格子，默认为0.
+$0
+endsnippet
 
-模板代码的三个方法：
-1. Diff2d(vector<vector<int>>& A) 根据所给的矩阵维度初始化（A本身的值没有用处）
-2. void set(int x0, int y0, int x1, int y1, int val) 将以(x0,y0)为左上角、(x1,y1)为右下角的矩形区域统一加上val
-3. void compute() 输出重构的二维数组前必须做这步操作
-4. f[i][j] 直接输出重构的二维数组的任意值
-::::::::::::::
-Template/Fast_IO/Fast_IO.cpp
-::::::::::::::
+# ==> ./Template/Fast_IO/Fast_IO.cpp <==
+snippet Fast_IO "Fast_IO" b
 #define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-::::::::::::::
-Template/Graph/Hungarian.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Graph/Readme.md <==
+snippet Graph "Graph" b
+
+### 二分图
+#### 匈牙利算法
+“匈牙利算法”指出：通过一条增广路径，通过取反操作，我们就能匹配更多的点。
+增广路径是指，由一个未匹配的顶点开始，经过若干个匹配顶点，最后到达对面集合的一个未匹配顶点的路径，即这条路径将两个不同集合的两个未匹配顶点通过一系列匹配顶点相连。
+
+https://www.renfei.org/blog/bipartite-matching.html
+
+#### KM算法
+带权二分图的最优匹配问题，可由KM算法解决。 有权重 weight
+
+https://www.cnblogs.com/logosG/p/logos.html   
+https://blog.csdn.net/chenshibo17/article/details/79933191
+
+$0
+endsnippet
+
+# ==> ./Template/Graph/Hungarian.cpp <==
+snippet Graph "Graph" b
 int num_nodes = 100000;
 class Solution {
     vector<int> next[num_nodes];
@@ -295,9 +347,12 @@ public:
         return false;
     }                                        
 };
-::::::::::::::
-Template/Graph/Judge_Circle.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Graph/Judge_Circle.cpp <==
+snippet Graph "Graph" b
 
 int numNodes;
 int visited[numNodes];
@@ -371,25 +426,50 @@ bool bfs()
     
     return count==numNodes;        
 }
-::::::::::::::
-Template/Graph/Readme.md
-::::::::::::::
 
-### 二分图
-#### 匈牙利算法
-“匈牙利算法”指出：通过一条增广路径，通过取反操作，我们就能匹配更多的点。
-增广路径是指，由一个未匹配的顶点开始，经过若干个匹配顶点，最后到达对面集合的一个未匹配顶点的路径，即这条路径将两个不同集合的两个未匹配顶点通过一系列匹配顶点相连。
+$0
+endsnippet
 
-https://www.renfei.org/blog/bipartite-matching.html
+# ==> ./Template/Inverse_Element/Readme.md <==
+snippet Inverse_Element "Inverse_Element" b
+一般地，我们说如果a和b满足这样的性质：
+```
+x / a ≡ x * b (mod M)
+```
+从形式上来看，b好像就与1/a（在同余的意义上）等价，所以我们称b就是a的逆元，记做 b = inv(a)（反之也成立）。     
+对于a而言，存在逆元的充要条件是a与M互质。当然，我们做题时M一般都已经是质数。
 
-#### KM算法
-带权二分图的最优匹配问题，可由KM算法解决。 有权重 weight
+#### 逆元的计算方法
 
-https://www.cnblogs.com/logosG/p/logos.html   
-https://blog.csdn.net/chenshibo17/article/details/79933191
-::::::::::::::
-Template/Inverse_Element/Inverse_Element.cpp
-::::::::::::::
+##### 方法1：快速幂法
+根据费马小定理，我们有
+```
+inv(a) ≡ a ^ (M-2)  (mod M)
+```
+显然，我们需要利用快速幂来计算这个数。
+
+##### 方法2：线性求逆元
+如果我们想求1,2,3...N 每个数的逆元：
+```cpp
+const ll N = 1e6+7, M = 998244353;
+ll inv[N];
+int i;
+for(inv[1]=1, i=2; i<N; ++i)
+    inv[i] = (M - M/i) * inv[M % i] % M
+```
+
+#### 逆元的一些性质
+逆元的计算有如下的性质：
+```
+x1/y1 + x2/y2 ≡ x1 * y1^-1 + x2 * y2^-1 (mod M)
+x1/y1/y2 ≡ x1 * y1^-1 * y2^-1 (mod M)
+```
+
+$0
+endsnippet
+
+# ==> ./Template/Inverse_Element/Inverse_Element.cpp <==
+snippet Inverse_Element "Inverse_Element" b
 #include<bits/stdc++.h>
 #define LL long long
 using namespace std;
@@ -440,44 +520,12 @@ LL inv(int x)
       s = s*(mod-mod/x)%mod;
     return s;
 }
-::::::::::::::
-Template/Inverse_Element/Readme.md
-::::::::::::::
-一般地，我们说如果a和b满足这样的性质：
-```
-x / a ≡ x * b (mod M)
-```
-从形式上来看，b好像就与1/a（在同余的意义上）等价，所以我们称b就是a的逆元，记做 b = inv(a)（反之也成立）。     
-对于a而言，存在逆元的充要条件是a与M互质。当然，我们做题时M一般都已经是质数。
 
-#### 逆元的计算方法
+$0
+endsnippet
 
-##### 方法1：快速幂法
-根据费马小定理，我们有
-```
-inv(a) ≡ a ^ (M-2)  (mod M)
-```
-显然，我们需要利用快速幂来计算这个数。
-
-##### 方法2：线性求逆元
-如果我们想求1,2,3...N 每个数的逆元：
-```cpp
-const ll N = 1e6+7, M = 998244353;
-ll inv[N];
-int i;
-for(inv[1]=1, i=2; i<N; ++i)
-    inv[i] = (M - M/i) * inv[M % i] % M
-```
-
-#### 逆元的一些性质
-逆元的计算有如下的性质：
-```
-x1/y1 + x2/y2 ≡ x1 * y1^-1 + x2 * y2^-1 (mod M)
-x1/y1/y2 ≡ x1 * y1^-1 * y2^-1 (mod M)
-```
-::::::::::::::
-Template/Math/Primes.cpp
-::::::::::::::
+# ==> ./Template/Math/Primes.cpp <==
+snippet Math "Math" b
 // Find all primes <= n.
 vector<int>Eratosthenes(int n)
 {
@@ -502,9 +550,12 @@ vector<int>Eratosthenes(int n)
     }
     return primes;
 }
-::::::::::::::
-Template/Math/QuickPow.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Math/QuickPow.cpp <==
+snippet Math "Math" b
 class Solution {
 public:
     double quickMul(double x, long long N) {
@@ -520,15 +571,12 @@ public:
         return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
     }
 };
-::::::::::::::
-Template/Random/random.cpp
-::::::::::::::
-mt19937 gen{random_device{}()};
-int left = 1, right = 100;
-int r = uniform_int_distribution<int>{left, right}(gen);
-::::::::::::::
-Template/RB_Tree/ordered_set.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/RB_Tree/ordered_set.cpp <==
+snippet RB_Tree "RB_Tree" b
 #include <ext/pb_ds/assoc_container.hpp> // Common file
 #include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
 using namespace __gnu_pbds;
@@ -555,9 +603,21 @@ int main() {
     }    
 }
 // If you want to make it like a multiset, you may design the base type of the ordered_set as pair<int,int>
-::::::::::::::
-Template/SegmentTree/SegmentTree_Basic.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Random/random.cpp <==
+snippet Random "Random" b
+mt19937 gen{random_device{}()};
+int left = 1, right = 100;
+int r = uniform_int_distribution<int>{left, right}(gen);
+
+$0
+endsnippet
+
+# ==> ./Template/SegmentTree/SegmentTree_Basic.cpp <==
+snippet SegmentTree "SegmentTree" b
 // LeetCode 307. Range Sum Query - Mutable
 
 class NumArray {
@@ -638,9 +698,12 @@ public:
     }
 };
 
-::::::::::::::
-Template/SegmentTree/SegmentTree_LazyTag.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/SegmentTree/SegmentTree_LazyTag.cpp <==
+snippet SegmentTree "SegmentTree" b
 // LeetCode 370. Range Addition
 
 class Solution {
@@ -742,9 +805,12 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Template/SegmentTree/SegmentTree_LazyTag_Discretization.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/SegmentTree/SegmentTree_LazyTag_Discretization.cpp <==
+snippet SegmentTree "SegmentTree" b
 // LeetCode 699. Falling Squares
 
 class Solution {
@@ -858,9 +924,12 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Template/Sub_Rect_Sum_2D/code.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Template/Sub_Rect_Sum_2D/code.cpp <==
+snippet Sub_Rect_Sum_2D "Sub_Rect_Sum_2D" b
 class RegionSum {
     vector<vector<int>>presum;
 public:
@@ -889,3 +958,6 @@ public:
         return area;
     }
 };
+
+$0
+endsnippet

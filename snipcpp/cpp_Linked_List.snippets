@@ -1,6 +1,63 @@
-::::::::::::::
-Linked_List/025.Reverse-Nodes-in-k-Group/025.Reverse-Nodes-in-k-Group.cpp
-::::::::::::::
+
+# ==> ./Linked_List/0025.Reverse-Nodes-in-k-Group/Readme.md <==
+snippet 0025.Reverse-Nodes-in-k-Group "0025.Reverse-Nodes-in-k-Group" b
+### 025.Reverse-Nodes-in-k-Group
+
+我们首先建立一个dummy放置在head之前。
+
+举个例子，假设我们从p开始，对于未来的连续k个节点（不包括p）需要做方向的反转。
+```
+p -> x0 -> x1 -> x2 -> x3 -> x4 -> y
+```
+第一步就是要确定存在后续的k个节点。我们用一个指针q尝试走k步，走不完的话（提前遇到了空指针）说明这个链表已经不需要再做任何处理了，就返回dummy->next；否则的话我们就要做这个group的反转。
+```cpp    
+    ListNode* q = p;
+    int count = 0;
+    while (q->next && count < k)
+    {
+        q = q->next;
+        count++;
+    }
+    if (count < k)
+        return dummy->next;
+```
+做反转的时候，我们记得时刻维护cur, nxt, future这三个连续的指针。反转操作很简单，就是将nxt指向cur；但是更重要的是，之后需要更新这三个指针，使之整体后移一位。注意对于一个group，我们只需要做k-1次的反转。
+```cpp
+for (int i=0; i<k-1; i++) 
+{
+  nxt->next = cur;
+  
+  future = future->next;
+  next = future;
+  cur = next;
+}
+```
+当这个group内部全部反转之后，别忘了要将原先的p指向当前该group的首指针（即x4，此时是cur），另外将x0指向y（此时是nxt）。
+```
+p --------------------------> 
+    x0 <- x1 <- x2 <- x3 <- x4   y
+     ---------------------------->
+```
+但此时x0已经没有被指向。所以，记得在最初的时候需要保留x0节点，即令```start = p->next```，
+```cpp
+start = p->next;
+
+cur = p->next;
+nxt = cur->next;
+future = nxt->next;
+
+for (int i=0; i<k-1; i++)
+{ ... }
+
+p->next = cur;
+start->next = nxt;
+```
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0025.Reverse-Nodes-in-k-Group/025.Reverse-Nodes-in-k-Group.cpp <==
+snippet 0025.Reverse-Nodes-in-k-Group "0025.Reverse-Nodes-in-k-Group" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -54,9 +111,12 @@ public:
         return dummy->next;        
     }
 };
-::::::::::::::
-Linked_List/025.Reverse-Nodes-in-k-Group/025.Reverse-Nodes-in-k-Group_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0025.Reverse-Nodes-in-k-Group/025.Reverse-Nodes-in-k-Group_v2.cpp <==
+snippet 0025.Reverse-Nodes-in-k-Group "0025.Reverse-Nodes-in-k-Group" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -119,63 +179,27 @@ public:
         return last;
     }    
 };
-::::::::::::::
-Linked_List/025.Reverse-Nodes-in-k-Group/Readme.md
-::::::::::::::
-### 025.Reverse-Nodes-in-k-Group
 
-我们首先建立一个dummy放置在head之前。
+$0
+endsnippet
 
-举个例子，假设我们从p开始，对于未来的连续k个节点（不包括p）需要做方向的反转。
-```
-p -> x0 -> x1 -> x2 -> x3 -> x4 -> y
-```
-第一步就是要确定存在后续的k个节点。我们用一个指针q尝试走k步，走不完的话（提前遇到了空指针）说明这个链表已经不需要再做任何处理了，就返回dummy->next；否则的话我们就要做这个group的反转。
-```cpp    
-    ListNode* q = p;
-    int count = 0;
-    while (q->next && count < k)
-    {
-        q = q->next;
-        count++;
-    }
-    if (count < k)
-        return dummy->next;
-```
-做反转的时候，我们记得时刻维护cur, nxt, future这三个连续的指针。反转操作很简单，就是将nxt指向cur；但是更重要的是，之后需要更新这三个指针，使之整体后移一位。注意对于一个group，我们只需要做k-1次的反转。
-```cpp
-for (int i=0; i<k-1; i++) 
-{
-  nxt->next = cur;
-  
-  future = future->next;
-  next = future;
-  cur = next;
-}
-```
-当这个group内部全部反转之后，别忘了要将原先的p指向当前该group的首指针（即x4，此时是cur），另外将x0指向y（此时是nxt）。
-```
-p --------------------------> 
-    x0 <- x1 <- x2 <- x3 <- x4   y
-     ---------------------------->
-```
-但此时x0已经没有被指向。所以，记得在最初的时候需要保留x0节点，即令```start = p->next```，
-```cpp
-start = p->next;
+# ==> ./Linked_List/0061.Rotate-List/Readme.md <==
+snippet 0061.Rotate-List "0061.Rotate-List" b
+### 061.Rotate-List
+此题对于链表的操作包括：
 
-cur = p->next;
-nxt = cur->next;
-future = nxt->next;
+1. 确定链表的总长度Len，注意如果Len==0时的处理（此时可以顺便记录末尾节点end）
+2. 确定实际需要旋转的次数 k=k%Len  
+3. 令p从头指针前进 Len-k+1 步，就到了断开链表的位置。
+4. 将p->next作为新的head，原本的end之后指向原本的head，再把p的next指向NULL，
 
-for (int i=0; i<k-1; i++)
-{ ... }
+[Leetcode Link](https://leetcode.com/problems/rotate-list)
 
-p->next = cur;
-start->next = nxt;
-```
-::::::::::::::
-Linked_List/061.Rotate-List/061.Rotate-List.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Linked_List/0061.Rotate-List/061.Rotate-List.cpp <==
+snippet 0061.Rotate-List "0061.Rotate-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -207,21 +231,22 @@ public:
         return ret;        
     }
 };
-::::::::::::::
-Linked_List/061.Rotate-List/Readme.md
-::::::::::::::
-### 061.Rotate-List
-此题对于链表的操作包括：
 
-1. 确定链表的总长度Len，注意如果Len==0时的处理（此时可以顺便记录末尾节点end）
-2. 确定实际需要旋转的次数 k=k%Len  
-3. 令p从头指针前进 Len-k+1 步，就到了断开链表的位置。
-4. 将p->next作为新的head，原本的end之后指向原本的head，再把p的next指向NULL，
+$0
+endsnippet
 
-[Leetcode Link](https://leetcode.com/problems/rotate-list)
-::::::::::::::
-Linked_List/082.Remove-Duplicates-from-Sorted-List-II/082.Remove-Duplicates-from-Sorted-List-II.cpp
-::::::::::::::
+# ==> ./Linked_List/0082.Remove-Duplicates-from-Sorted-List-II/Readme.md <==
+snippet 0082.Remove-Duplicates-from-Sorted-List-II "0082.Remove-Duplicates-from-Sorted-List-II" b
+### 082.Remove-Duplicates-from-Sorted-List-II
+
+注意实现上的小技巧。对于```... dummy->B1->B2->C1->C2-> D....```，我们做法是立足dummy，看到有若干个相同数值的B1、B2，就跳过他们，令```dummy->next = C1```。同样地，继续立足dummy，看到有若干个相同数值的C1、C2，就跳过他们，令```dummy->next = D```。
+
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0082.Remove-Duplicates-from-Sorted-List-II/082.Remove-Duplicates-from-Sorted-List-II.cpp <==
+snippet 0082.Remove-Duplicates-from-Sorted-List-II "0082.Remove-Duplicates-from-Sorted-List-II" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -256,16 +281,46 @@ public:
         return dummy->next;
     }
 };
-::::::::::::::
-Linked_List/082.Remove-Duplicates-from-Sorted-List-II/Readme.md
-::::::::::::::
-### 082.Remove-Duplicates-from-Sorted-List-II
 
-注意实现上的小技巧。对于```... dummy->B1->B2->C1->C2-> D....```，我们做法是立足dummy，看到有若干个相同数值的B1、B2，就跳过他们，令```dummy->next = C1```。同样地，继续立足dummy，看到有若干个相同数值的C1、C2，就跳过他们，令```dummy->next = D```。
+$0
+endsnippet
 
-::::::::::::::
-Linked_List/086.Partition-List/086.Partition-List_v1.cpp
-::::::::::::::
+# ==> ./Linked_List/0086.Partition-List/Readme.md <==
+snippet 0086.Partition-List "0086.Partition-List" b
+### 86. Partition-List
+
+solution 1: 不在内存中开辟新的节点
+
+1. 创建两个新的指针头p,q： LinkNode\* p=new LinkNode(0)；
+2. 在遍历原链表的过程中，将节点根据val分别归到p或q的链表中。
+```cpp
+  if (h->val<x)
+  {
+     p->next=h;
+     p=p->next;
+     h=h->next;
+  }
+```
+3. 特别注意，原链表遍历结束后，q链表的结尾要赋值NULL，否则q的结尾仍然是原链表中的某个节点，其next仍然有指向（p链表中的某一个元素）。
+
+solution 2: 在内存开辟新的节点
+```cpp
+  if (h->val<x)
+  {
+     p->next=new ListNode(h->val);
+     p=p->next;
+     h=h->next;
+  }
+```
+这样就不需要手工在q结尾赋值NULL，因为新开辟的节点已经自动给next赋值NULL。
+
+
+[Leetcode Link](https://leetcode.com/problems/partition-list)
+$0
+endsnippet
+
+# ==> ./Linked_List/0086.Partition-List/086.Partition-List_v1.cpp <==
+snippet 0086.Partition-List "0086.Partition-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -302,9 +357,12 @@ public:
         return h1->next;        
     }
 };
-::::::::::::::
-Linked_List/086.Partition-List/086.Partition-List_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0086.Partition-List/086.Partition-List_v2.cpp <==
+snippet 0086.Partition-List "0086.Partition-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -343,40 +401,27 @@ public:
         
     }
 };
-::::::::::::::
-Linked_List/086.Partition-List/Readme.md
-::::::::::::::
-### 86. Partition-List
 
-solution 1: 不在内存中开辟新的节点
+$0
+endsnippet
 
-1. 创建两个新的指针头p,q： LinkNode\* p=new LinkNode(0)；
-2. 在遍历原链表的过程中，将节点根据val分别归到p或q的链表中。
-```cpp
-  if (h->val<x)
-  {
-     p->next=h;
-     p=p->next;
-     h=h->next;
-  }
-```
-3. 特别注意，原链表遍历结束后，q链表的结尾要赋值NULL，否则q的结尾仍然是原链表中的某个节点，其next仍然有指向（p链表中的某一个元素）。
+# ==> ./Linked_List/0092.Reverse-Linked-List-II/Readme.md <==
+snippet 0092.Reverse-Linked-List-II "0092.Reverse-Linked-List-II" b
+### 092.Reverse-Linked-List-II
 
-solution 2: 在内存开辟新的节点
-```cpp
-  if (h->val<x)
-  {
-     p->next=new ListNode(h->val);
-     p=p->next;
-     h=h->next;
-  }
-```
-这样就不需要手工在q结尾赋值NULL，因为新开辟的节点已经自动给next赋值NULL。
+本题的基本思路很明显，我们需要将原列表拆分为三部分。然后对中间一部分进行链表反转操作（参考 206.Reverse-Linked-List），最后将三部分拼接起来。
 
+需要注意的是left和right可能很极限，也就是说原题可能本质上是反转整个链表。所以方便的处理方法是前面添加一个dummy节点，末尾也虚拟地认为有一个NULL节点。这样我们就一定能够把整个链表分为实实在在的三部分。然后应用上述的算法。
 
-[Leetcode Link](https://leetcode.com/problems/partition-list)::::::::::::::
-Linked_List/092.Reverse-Linked-List-II/092.Reverse-Linked-List-II.cpp
-::::::::::::::
+另外注意，所谓的将链表拆违三部分，并不是找到每一部分的首尾就完了，还要把尾节点的next置为NULL，这样才能形成一个单独的链表。否则可能会有各种意想不到的bug。
+
+[Leetcode Link](https://leetcode.com/problems/reverse-linked-list-ii)
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0092.Reverse-Linked-List-II/092.Reverse-Linked-List-II.cpp <==
+snippet 0092.Reverse-Linked-List-II "0092.Reverse-Linked-List-II" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -416,9 +461,12 @@ public:
     }
 
 };
-::::::::::::::
-Linked_List/092.Reverse-Linked-List-II/092.Reverse-Linked-List-II_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0092.Reverse-Linked-List-II/092.Reverse-Linked-List-II_v2.cpp <==
+snippet 0092.Reverse-Linked-List-II "0092.Reverse-Linked-List-II" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -474,21 +522,27 @@ public:
         return last;
     }
 };
-::::::::::::::
-Linked_List/092.Reverse-Linked-List-II/Readme.md
-::::::::::::::
-### 092.Reverse-Linked-List-II
 
-本题的基本思路很明显，我们需要将原列表拆分为三部分。然后对中间一部分进行链表反转操作（参考 206.Reverse-Linked-List），最后将三部分拼接起来。
+$0
+endsnippet
 
-需要注意的是left和right可能很极限，也就是说原题可能本质上是反转整个链表。所以方便的处理方法是前面添加一个dummy节点，末尾也虚拟地认为有一个NULL节点。这样我们就一定能够把整个链表分为实实在在的三部分。然后应用上述的算法。
+# ==> ./Linked_List/0109.Convert-Sorted-List-to-Binary-Search-Tree/Readme.md <==
+snippet 0109.Convert-Sorted-List-to-Binary-Search-Tree "0109.Convert-Sorted-List-to-Binary-Search-Tree" b
+### 109.Convert-Sorted-List-to-Binary-Search-Tree
 
-另外注意，所谓的将链表拆违三部分，并不是找到每一部分的首尾就完了，还要把尾节点的next置为NULL，这样才能形成一个单独的链表。否则可能会有各种意想不到的bug。
+用快慢指针fast/slow的方法定位到链表的中点，即为根结点，然后把中点前的ListNode切断。这样根结点的左子树即可递归调用 sortedListToBST(head)，右子树即可递归调用 sortedListToBST(slow-next). 
 
-[Leetcode Link](https://leetcode.com/problems/reverse-linked-list-ii)
-::::::::::::::
-Linked_List/109.Convert-Sorted-List-to-Binary-Search-Tree/109.Convert Sorted List to Binary Search Tree.cpp
-::::::::::::::
+细节：
+1. 为了能把中点前的ListNode切断，需要设置一个temp来保存慢指针的旧值。
+2. 注意递归的边界条件。首先 (head==NULL) 必然需要单独处理；其次 (head->next==NULL)也需要单独处理；最后 (head->next->next==NULL) 也需要单独处理，因为在这种情况下，快指针是无法前进的，无法定位链表的中点。
+
+
+[Leetcode Link](https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree)
+$0
+endsnippet
+
+# ==> ./Linked_List/0109.Convert-Sorted-List-to-Binary-Search-Tree/109.Convert Sorted List to Binary Search Tree.cpp <==
+snippet 0109.Convert-Sorted-List-to-Binary-Search-Tree "0109.Convert-Sorted-List-to-Binary-Search-Tree" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -544,21 +598,33 @@ public:
         
     }
 };
-::::::::::::::
-Linked_List/109.Convert-Sorted-List-to-Binary-Search-Tree/Readme.md
-::::::::::::::
-### 109.Convert-Sorted-List-to-Binary-Search-Tree
 
-用快慢指针fast/slow的方法定位到链表的中点，即为根结点，然后把中点前的ListNode切断。这样根结点的左子树即可递归调用 sortedListToBST(head)，右子树即可递归调用 sortedListToBST(slow-next). 
+$0
+endsnippet
 
-细节：
-1. 为了能把中点前的ListNode切断，需要设置一个temp来保存慢指针的旧值。
-2. 注意递归的边界条件。首先 (head==NULL) 必然需要单独处理；其次 (head->next==NULL)也需要单独处理；最后 (head->next->next==NULL) 也需要单独处理，因为在这种情况下，快指针是无法前进的，无法定位链表的中点。
+# ==> ./Linked_List/0142.Linked-List-Cycle-II/Readme.md <==
+snippet 0142.Linked-List-Cycle-II "0142.Linked-List-Cycle-II" b
+### 142. Linked List Cycle II  
+
+#### 算法思想：快慢指针、链表
+
+从第141题已知，用快慢指针的方法可以判断是否链表存在环。
+
+假设两个指针相遇时，快指针走过了m步进入环的入口然后转了k1圈（每圈n步）又多p步；同理，慢指针走过了m步进入环的入口然后转了k2圈又多p步。由于两者是两倍关系，所以 m+k1\*n+p = 2\*(m+k2*n+p)。
+
+化简之后得到 m = (k1-2k2)\*n-p，变换一下  p+m = (k1-2k2)\*n
+
+因为慢指针目前已经比整数圈多走了p步，结合这个数学式子，这说明如果慢指针再走m步的话，又会凑成整数圈，即到了环的入口。怎么确定m呢？只要另开一个指针从head开始与慢指针一齐走，它们相遇的地方就是环的入口。
+
+本题的算法还有一个非常巧妙的应用：287. Find the Duplicate Number
 
 
-[Leetcode Link](https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree)::::::::::::::
-Linked_List/142.Linked-List-Cycle-II/142.Linked-List-Cycle-II.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/linked-list-cycle-ii)
+$0
+endsnippet
+
+# ==> ./Linked_List/0142.Linked-List-Cycle-II/142.Linked-List-Cycle-II.cpp <==
+snippet 0142.Linked-List-Cycle-II "0142.Linked-List-Cycle-II" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -602,27 +668,28 @@ public:
         
     }
 };
-::::::::::::::
-Linked_List/142.Linked-List-Cycle-II/Readme.md
-::::::::::::::
-### 142. Linked List Cycle II  
 
-#### 算法思想：快慢指针、链表
+$0
+endsnippet
 
-从第141题已知，用快慢指针的方法可以判断是否链表存在环。
+# ==> ./Linked_List/0143.Reorder-List/Readme.md <==
+snippet 0143.Reorder-List "0143.Reorder-List" b
+### 143.Reorder-List.cpp
 
-假设两个指针相遇时，快指针走过了m步进入环的入口然后转了k1圈（每圈n步）又多p步；同理，慢指针走过了m步进入环的入口然后转了k2圈又多p步。由于两者是两倍关系，所以 m+k1\*n+p = 2\*(m+k2*n+p)。
+此题不难，但是比较繁琐，需要耐心理清思路，细致地操作指针。
 
-化简之后得到 m = (k1-2k2)\*n-p，变换一下  p+m = (k1-2k2)\*n
+本题的算法是，先求得整体的长度count。于是我们将整个链表分割为两部分：前者有(count+1)/2个节点；后者再进行反转链表的操作。
 
-因为慢指针目前已经比整数圈多走了p步，结合这个数学式子，这说明如果慢指针再走m步的话，又会凑成整数圈，即到了环的入口。怎么确定m呢？只要另开一个指针从head开始与慢指针一齐走，它们相遇的地方就是环的入口。
-
-本题的算法还有一个非常巧妙的应用：287. Find the Duplicate Number
+得到这两段链表之后，交替摘取节点拼接到新链表上。
 
 
-[Leetcode Link](https://leetcode.com/problems/linked-list-cycle-ii)::::::::::::::
-Linked_List/143.Reorder-List/143.Reorder-List.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/reorder-list)
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0143.Reorder-List/143.Reorder-List.cpp <==
+snippet 0143.Reorder-List "0143.Reorder-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -690,9 +757,12 @@ public:
         return last;
     }
 };
-::::::::::::::
-Linked_List/143.Reorder-List/143.Reorder-List_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0143.Reorder-List/143.Reorder-List_v2.cpp <==
+snippet 0143.Reorder-List "0143.Reorder-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -732,22 +802,390 @@ public:
         }
     }
 };
-::::::::::::::
-Linked_List/143.Reorder-List/Readme.md
-::::::::::::::
-### 143.Reorder-List.cpp
 
-此题不难，但是比较繁琐，需要耐心理清思路，细致地操作指针。
+$0
+endsnippet
 
-本题的算法是，先求得整体的长度count。于是我们将整个链表分割为两部分：前者有(count+1)/2个节点；后者再进行反转链表的操作。
+# ==> ./Linked_List/0206.Reverse-Linked-List/Readme.md <==
+snippet 0206.Reverse-Linked-List "0206.Reverse-Linked-List" b
+### 206.Reverse-Linked-List
 
-得到这两段链表之后，交替摘取节点拼接到新链表上。
+此题是链表操作的常规考题。我们维护一个滑窗，last,cur,nxt表示三个连续的node。初始的时候，last=NULL, cur=head, nxt=cur->next. 对于每一个滑窗，我们要做的仅仅就是把cur从指向nxt改为指向last。然后移动滑窗，更新last,cur,nxt所对应的节点.
+
+最终当cur==NULL是结束循环，此时反转链表之后的头指针就是last。
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0206.Reverse-Linked-List/206.Reverse-Linked-List.cpp <==
+snippet 0206.Reverse-Linked-List "0206.Reverse-Linked-List" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) 
+    {
+        ListNode* last = NULL;
+        ListNode* cur = head;
+        ListNode* nxt;
+
+        while (cur)
+        {
+            nxt = cur->next;
+            cur->next = last;
+            last = cur;
+            cur = nxt;
+        }
+        return last;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0206.Reverse-Linked-List/206.Reverse-Linked-List_Recursion.cpp <==
+snippet 0206.Reverse-Linked-List "0206.Reverse-Linked-List" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) 
+    {
+        return helper(NULL, head);
+    }
+    
+    ListNode* helper(ListNode*last, ListNode* head)
+    {
+        if (head==NULL) return last;
+        ListNode* nxt = head->next;
+        head->next = last;
+        return helper(head, nxt);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0369.Plus-One-Linked-List/Readme.md <==
+snippet 0369.Plus-One-Linked-List "0369.Plus-One-Linked-List" b
+### 369.Plus-One-Linked-List
+
+链表题比较适合用递归来做，利用递归返回值来处理当前的节点，很方便。
+
+本题的一个技巧就是当递归到节点为NULL时，令carry=1。其余的节点就是更新```node->val = node->val+carry```的处理。
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0369.Plus-One-Linked-List/369.Plus-One-Linked-List.cpp <==
+snippet 0369.Plus-One-Linked-List "0369.Plus-One-Linked-List" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* plusOne(ListNode* head) 
+    {
+        int carry = 0;
+        dfs(head, carry);
+        if (carry == 0)
+            return head;
+        else
+        {
+            ListNode* node = new ListNode(1);
+            node->next = head;
+            return node;
+        }
+    }
+    
+    void dfs(ListNode* head, int& carry) 
+    {       
+        if (head==NULL)
+        {
+            carry = 1;
+            return;
+        }
+        
+        dfs(head->next, carry);
+        
+        int val = head->val + carry;
+        carry = val / 10;
+        head->val = val % 10;        
+        
+        // if (head->val==3) cout<<val<<endl;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0430.Flatten-a-Multilevel-Doubly-Linked-List/Readme.md <==
+snippet 0430.Flatten-a-Multilevel-Doubly-Linked-List "0430.Flatten-a-Multilevel-Doubly-Linked-List" b
+### 430.Flatten-a-Multilevel-Doubly-Linked-List
+
+本题的基本思想是，对于一个节点h，我们需要依次拼接h本身、遍历h->child得到的链表，遍历h->next得到的链表。考虑到第三部分要接在第二部分的末尾，所以这个“遍历”的递归函数的返回值应该是整个链表的最后一个节点。
+
+所以，当h的next和child都存在的时候，大致的思路应该是这样的：
+```cpp
+Node* dfs(Node* h)
+{
+  child = h->child;
+  next = h->next;
+  Node* childEnd = dfs(child);
+  Node* nextEnd = dfs(next);
+
+  h->next = child;   // h和child拼接
+  child->prev = h;
+  childEnd->next = next;  //childEnd与next拼接
+  next->prev = childEnd;
+
+  return nextEnd;
+}  
+```
+但是在实际处理的时候，考虑当child和next各自是否为NULL时，具体的代码写法会不一样。
+1. child和next都为空：直接返回h
+2. child不为空，next为空：将h与child拼接后，返回的是childEnd
+3. child为空，next不为空：返回的是nextEnd.
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0430.Flatten-a-Multilevel-Doubly-Linked-List/430.Flatten-a-Multilevel-Doubly-Linked-List.cpp <==
+snippet 0430.Flatten-a-Multilevel-Doubly-Linked-List "0430.Flatten-a-Multilevel-Doubly-Linked-List" b
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
+};
+*/
+
+class Solution {
+public:
+    Node* flatten(Node* head) 
+    {
+        findEnd(head);
+        return head;
+    }
+
+    Node* findEnd(Node* h)
+    {   
+        if (h==NULL) return NULL;
+
+        Node* next = h->next;
+        Node* child = h->child;
+        h->child = NULL;
+
+        if (child==NULL && next==NULL)
+            return h;
+        else if (child!=NULL && next==NULL)
+        {
+            h->next = child;
+            child->prev = h;
+            Node* childEnd = findEnd(child);
+            return childEnd;
+        }
+        else if (child==NULL && next!=NULL)
+        {
+            Node* nextEnd = findEnd(next);
+            return nextEnd;
+        }
+        else
+        {
+            h->next = child;
+            child->prev = h;
+            Node* childEnd = findEnd(child);            
+            childEnd->next = next;
+            next->prev = childEnd;
+            return findEnd(next);
+        }
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0457.Circular-Array-Loop/Readme.md <==
+snippet 0457.Circular-Array-Loop "0457.Circular-Array-Loop" b
+### 457.Circular-Array-Loop
+
+看到题目要求用o(1)的空间判断一个array里是否存在loop，就应该条件反射地想到用快慢指针的方法。这个方法在linked list的数据结构里经常用到，因为链表无法反向遍历或这按index遍历。此题虽然是数组，但由于空间要求的限制，不得不利用链表里的这个技巧。
+
+此题要注意的细节是，getNext(pos,nums,dir)函数应该在两种情况下返回”错误“的提示。一种情况是该点nums[pos]和设定的遍历方向dir不同，违反题意，那么就直接返回”错误“。另一种情况是，getNext得到的是本身节点（仅对于慢指针）的话，说明这个方向的搜寻陷入了dead end，不能构成一个环。
+
+有了以上两个报错预判作为while循环的条件，就可以放心地让快慢指针各自前进，直至两者相遇。
+```py
+        while (getNextTwo(fast,nums,dir)!=-1 and getNext(slow,nums,dir)!=-1):
+                fast,slow = getNextTwo(fast,nums,dir),getNext(slow,nums,dir)
+                if (fast==slow): break
+```
+跳出之后根据```(getNextTwo(fast,nums,dir)!=-1 and getNext(slow,nums,dir)!=-1)```判断是否真的loop达成。
+
+如果loop没达成，则让慢指针再跑一遍，从起点到它的dead end一路都标记为0，以后这些元素就不用访问。这额外的一遍访问会增加一倍o(n)的时间，不会改变整体时间的数量级。
 
 
-[Leetcode Link](https://leetcode.com/problems/reorder-list)
-::::::::::::::
-Linked_List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/circular-array-loop)
+$0
+endsnippet
+
+# ==> ./Linked_List/0457.Circular-Array-Loop/457.Circular-Array-Loop.cpp <==
+snippet 0457.Circular-Array-Loop "0457.Circular-Array-Loop" b
+class Solution {
+public:
+    bool circularArrayLoop(vector<int>& nums) 
+    {
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] == 0) continue; 
+            
+            int slow = i, fast = i, dir = nums[i];
+            do {
+                slow = advanceBy(1, slow, nums, dir);
+                fast = advanceBy(2, fast, nums, dir);
+            } while (slow >= 0 && fast >= 0 && slow != fast);
+                
+            if (slow >= 0 && fast >= 0 && slow != advanceBy(1, slow, nums, dir)) 
+                return true;
+            
+            slow = i;
+            while (advanceBy(1, slow, nums, dir)>=0)
+            {
+                int tmp = advanceBy(1, slow, nums, dir);
+                nums[slow] = 0;
+                slow = tmp;
+            }
+        }
+        return false;
+    }
+    
+    int advanceBy(int step, int j, vector<int>& nums, int dir) 
+    {
+        int n = nums.size();
+        for (int k=0; k<step; k++) 
+        {
+            j = (j + nums[j] + n) % n;
+            j = (j + n) % n;
+            if (nums[j] * dir <= 0)
+                return -1;
+        }
+        return j;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/0708.Insert-into-a-Cyclic-Sorted-List/Readme.md <==
+snippet 0708.Insert-into-a-Cyclic-Sorted-List "0708.Insert-into-a-Cyclic-Sorted-List" b
+### 708.Insert-into-a-Cyclic-Sorted-List
+
+本题的一个能简化思维的方法就是，提前找到这个链表中的最小值的节点．这样的话，后续的插入就会很方便．
+```cpp
+Node* h = head->next;
+Node* pre = head;
+while (h!=head && pre->val<=h->val)
+{
+   h = h->next;
+   pre = pre->next;
+}
+```
+这样，得到的h就是整个链表中最小的节点了．于是，容易找到一个合适的插入位置：
+```cpp
+Node* NewHead = h;        
+while (h->next!=NewHead && !(h->val<=insertVal && h->next->val>=insertVal))
+    h = h->next;
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/insert-into-a-cyclic-sorted-list)
+$0
+endsnippet
+
+# ==> ./Linked_List/0708.Insert-into-a-Cyclic-Sorted-List/708.Insert-into-a-Cyclic-Sorted-List.cpp <==
+snippet 0708.Insert-into-a-Cyclic-Sorted-List "0708.Insert-into-a-Cyclic-Sorted-List" b
+class Solution {
+public:
+    Node* insert(Node* head, int insertVal) 
+    {
+        if (head==NULL)
+        {
+            Node* h = new Node(insertVal);
+            h->next = h;
+            return h;
+        }
+        
+        Node* h = head->next;
+        Node* pre = head;
+
+        while (h!=head)
+        {
+            if (h->val >= pre->val )
+            {
+                h = h->next;
+                pre = pre->next;
+            }
+            else                
+                break;
+        }
+        
+        Node* NewHead = h;        
+        while (h->next!=NewHead && !(h->val<=insertVal && h->next->val>=insertVal))
+            h = h->next;
+        
+        Node* temp = h->next;
+        h->next = new Node(insertVal);
+        h = h->next;
+        h->next = temp;
+        
+        return head;
+        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Linked_List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List/Readme.md <==
+snippet 1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List "1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List" b
+### 1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List
+
+这道题对于链表的操作考察得比较细致。大致的思路是：
+1. 设置p指针为head
+2. p指针尝试走m-1格，到达保留区的最后一个位置。如果走不到那里，就终止整个程序。
+3. 设置q指针为p，然后尝试走n格，到达删除区的最后一个位置。如果走到了，```p->next = q->next```；否则 ```p->next = NULL```，终止整个程序。
+4. 设置```p = p->next```，重复2的循环。
+
+$0
+endsnippet
+
+# ==> ./Linked_List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List.cpp <==
+snippet 1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List "1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -795,19 +1233,97 @@ public:
         
     }
 };
-::::::::::::::
-Linked_List/1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List/Readme.md
-::::::::::::::
-### 1474.Delete-N-Nodes-After-M-Nodes-of-a-Linked-List
 
-这道题对于链表的操作考察得比较细致。大致的思路是：
-1. 设置p指针为head
-2. p指针尝试走m-1格，到达保留区的最后一个位置。如果走不到那里，就终止整个程序。
-3. 设置q指针为p，然后尝试走n格，到达删除区的最后一个位置。如果走到了，```p->next = q->next```；否则 ```p->next = NULL```，终止整个程序。
-4. 设置```p = p->next```，重复2的循环。
-::::::::::::::
-Linked_List/1670.Design-Front-Middle-Back-Queue/1670.Design-Front-Middle-Back-Queue_v1.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Linked_List/1670.Design-Front-Middle-Back-Queue/Readme.md <==
+snippet 1670.Design-Front-Middle-Back-Queue "1670.Design-Front-Middle-Back-Queue" b
+### 1670.Design-Front-Middle-Back-Queue
+
+#### 解法1
+考虑到如果使用最粗暴的数组来实现这个数据结构的话，数组里最多有1000个元素，每次增删一个元素最多调整1000个元素的位置。10^6的复杂度是足够解这道题了。
+
+#### 解法2
+更高级的数据结构是用双端链表，这样所有的增删操作都是o(1)。C++里面的list<int>就可以实现这样的功能。我们另外还需要维护一个迭代器list<int>::iterator mid用来存放middle元素所在的位置。
+
+1. push_front:    
+```
+当n为偶数时，mid不用变化。
+ OXOO
+YOXOO 
+```    
+```
+当n为奇数时，mid需要前移一位。 
+ OOXOO
+YOOXOO
+```
+
+2. push_back:        
+```
+当n为偶数时，mid需要后移一位。
+OXOO
+OXOOY
+``` 
+```
+当n为奇数时，mid不用变化。
+OOXOO
+OOXOOY
+```
+
+3. push_middle:        
+```
+当n为偶数时，新mid会插在mid后面。
+ OXOO
+ OXYOO
+``` 
+```
+当n为奇数时，新mid会插在mid前面。
+OOXOO
+OOYXOO
+```
+
+4. pop_front:        
+```
+当n为偶数时，mid需要后移一位。
+OXOO
+ XOO
+``` 
+```
+当n为奇数时，mid不需要变化
+OOXOO
+ OXOO
+```
+
+5. pop_back:        
+```
+当n为偶数时，mid不需要变化
+OXOO
+OXO
+``` 
+```
+当n为奇数时，mid需要前移一位
+OOXOO
+OOXO
+```
+
+6. pop_middle:        
+```
+当n为偶数时，mid需要后移一位。
+OXOO
+O OO
+``` 
+```
+当n为奇数时，mid需要前移一位。
+OOXOO
+OO OO
+```
+
+$0
+endsnippet
+
+# ==> ./Linked_List/1670.Design-Front-Middle-Back-Queue/1670.Design-Front-Middle-Back-Queue_v1.cpp <==
+snippet 1670.Design-Front-Middle-Back-Queue "1670.Design-Front-Middle-Back-Queue" b
 class FrontMiddleBackQueue {
     vector<int>q;
 public:
@@ -864,9 +1380,12 @@ public:
  * int param_5 = obj->popMiddle();
  * int param_6 = obj->popBack();
  */
-::::::::::::::
-Linked_List/1670.Design-Front-Middle-Back-Queue/1670.Design-Front-Middle-Back-Queue_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/1670.Design-Front-Middle-Back-Queue/1670.Design-Front-Middle-Back-Queue_v2.cpp <==
+snippet 1670.Design-Front-Middle-Back-Queue "1670.Design-Front-Middle-Back-Queue" b
 class FrontMiddleBackQueue {
     list<int> List;
     list<int>::iterator mid;
@@ -963,91 +1482,12 @@ public:
  * int param_5 = obj->popMiddle();
  * int param_6 = obj->popBack();
  */
-::::::::::::::
-Linked_List/1670.Design-Front-Middle-Back-Queue/Readme.md
-::::::::::::::
-### 1670.Design-Front-Middle-Back-Queue
 
-#### 解法1
-考虑到如果使用最粗暴的数组来实现这个数据结构的话，数组里最多有1000个元素，每次增删一个元素最多调整1000个元素的位置。10^6的复杂度是足够解这道题了。
+$0
+endsnippet
 
-#### 解法2
-更高级的数据结构是用双端链表，这样所有的增删操作都是o(1)。C++里面的list<int>就可以实现这样的功能。我们另外还需要维护一个迭代器list<int>::iterator mid用来存放middle元素所在的位置。
-
-1. push_front:    
-```
-当n为偶数时，mid不用变化。
- OXOO
-YOXOO 
-```    
-```
-当n为奇数时，mid需要前移一位。 
- OOXOO
-YOOXOO
-```
-
-2. push_back:        
-```
-当n为偶数时，mid需要后移一位。
-OXOO
-OXOOY
-``` 
-```
-当n为奇数时，mid不用变化。
-OOXOO
-OOXOOY
-```
-
-3. push_middle:        
-```
-当n为偶数时，新mid会插在mid后面。
- OXOO
- OXYOO
-``` 
-```
-当n为奇数时，新mid会插在mid前面。
-OOXOO
-OOYXOO
-```
-
-4. pop_front:        
-```
-当n为偶数时，mid需要后移一位。
-OXOO
- XOO
-``` 
-```
-当n为奇数时，mid不需要变化
-OOXOO
- OXOO
-```
-
-5. pop_back:        
-```
-当n为偶数时，mid不需要变化
-OXOO
-OXO
-``` 
-```
-当n为奇数时，mid需要前移一位
-OOXOO
-OOXO
-```
-
-6. pop_middle:        
-```
-当n为偶数时，mid需要后移一位。
-OXOO
-O OO
-``` 
-```
-当n为奇数时，mid需要前移一位。
-OOXOO
-OO OO
-```
-::::::::::::::
-Linked_List/1756.Design-Most-Recently-Used-Queue/Readme.md
-::::::::::::::
+# ==> ./Linked_List/1756.Design-Most-Recently-Used-Queue/Readme.md <==
+snippet 1756.Design-Most-Recently-Used-Queue "1756.Design-Most-Recently-Used-Queue" b
 ### 1756.Design-Most-Recently-Used-Queue
 
 本题的算法是一种将o(N)复杂度降至o(sqrt(N))的经典方法。
@@ -1065,9 +1505,23 @@ for (int i=j; i<skip.size(); i++)
 
 特别注意的是我们的操作顺序：我们需要先把第k个元素添加在list的末尾，再做skip的位移，再做第链表中原k个元素的删除。
 
-::::::::::::::
-Linked_List/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Linked_List/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values/Readme.md <==
+snippet 2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values "2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values" b
+### 2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values
+
+本题的突破点在于，我们可以发现所有的正数都是从小到大排列的，所有的负数也是从大到小排列的。我们把所有的正数、负数节点分别拿出来组成两个链表，显然只需要把负数链表反转再接上正数链表就是答案了。
+
+这种“按照绝对值升序排列”的序列有很多有意思的题目。比如说，在这样的一个数组里，能否用o(N)的时间判断是否存在two sum等于target。
+
+$0
+endsnippet
+
+# ==> ./Linked_List/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values.cpp <==
+snippet 2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values "2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -1139,84 +1593,29 @@ public:
         return last;
     }
 };
-::::::::::::::
-Linked_List/2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values/Readme.md
-::::::::::::::
-### 2046.Sort-Linked-List-Already-Sorted-Using-Absolute-Values
 
-本题的突破点在于，我们可以发现所有的正数都是从小到大排列的，所有的负数也是从大到小排列的。我们把所有的正数、负数节点分别拿出来组成两个链表，显然只需要把负数链表反转再接上正数链表就是答案了。
+$0
+endsnippet
 
-这种“按照绝对值升序排列”的序列有很多有意思的题目。比如说，在这样的一个数组里，能否用o(N)的时间判断是否存在two sum等于target。
-::::::::::::::
-Linked_List/206.Reverse-Linked-List/206.Reverse-Linked-List.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* reverseList(ListNode* head) 
-    {
-        ListNode* last = NULL;
-        ListNode* cur = head;
-        ListNode* nxt;
+# ==> ./Linked_List/2074.Reverse-Nodes-in-Even-Length-Groups/Readme.md <==
+snippet 2074.Reverse-Nodes-in-Even-Length-Groups "2074.Reverse-Nodes-in-Even-Length-Groups" b
+### 2074.Reverse-Nodes-in-Even-Length-Groups
 
-        while (cur)
-        {
-            nxt = cur->next;
-            cur->next = last;
-            last = cur;
-            cur = nxt;
-        }
-        return last;
-    }
-};
-::::::::::::::
-Linked_List/206.Reverse-Linked-List/206.Reverse-Linked-List_Recursion.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* reverseList(ListNode* head) 
-    {
-        return helper(NULL, head);
-    }
-    
-    ListNode* helper(ListNode*last, ListNode* head)
-    {
-        if (head==NULL) return last;
-        ListNode* nxt = head->next;
-        head->next = last;
-        return helper(head, nxt);
-    }
-};
-::::::::::::::
-Linked_List/206.Reverse-Linked-List/Readme.md
-::::::::::::::
-### 206.Reverse-Linked-List
+本题可以用取巧的方法，将所有的节点数值都复制到一个数组之中，然后根据题意重新创建一个链表。
 
-此题是链表操作的常规考题。我们维护一个滑窗，last,cur,nxt表示三个连续的node。初始的时候，last=NULL, cur=head, nxt=cur->next. 对于每一个滑窗，我们要做的仅仅就是把cur从指向nxt改为指向last。然后移动滑窗，更新last,cur,nxt所对应的节点.
+在这里我们写一下严格的in-place的解法。
 
-最终当cur==NULL是结束循环，此时反转链表之后的头指针就是last。
-::::::::::::::
-Linked_List/2074.Reverse-Nodes-in-Even-Length-Groups/2074.Reverse-Nodes-in-Even-Length-Groups.cpp
-::::::::::::::
+我们第一步是需要将原链表拆解成若干个独立的子链表，各个子链表的长度分别是1,2,3,... 注意到最后一个链表的长度不定。我们将所有子链表的头指针放入数组heads，并且将所有子链表的长度放入数组lens
+
+第二步就是对长度为偶数的子链表做反转操作。这是一个经典考点。
+
+最后就是把所有的子链表串联起来。具体的就是将前一个子链表的尾节点，与下一个子链表的头节点相连。
+
+$0
+endsnippet
+
+# ==> ./Linked_List/2074.Reverse-Nodes-in-Even-Length-Groups/2074.Reverse-Nodes-in-Even-Length-Groups.cpp <==
+snippet 2074.Reverse-Nodes-in-Even-Length-Groups "2074.Reverse-Nodes-in-Even-Length-Groups" b
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -1289,283 +1688,6 @@ public:
         return last;
     }
 };
-::::::::::::::
-Linked_List/2074.Reverse-Nodes-in-Even-Length-Groups/Readme.md
-::::::::::::::
-### 2074.Reverse-Nodes-in-Even-Length-Groups
 
-本题可以用取巧的方法，将所有的节点数值都复制到一个数组之中，然后根据题意重新创建一个链表。
-
-在这里我们写一下严格的in-place的解法。
-
-我们第一步是需要将原链表拆解成若干个独立的子链表，各个子链表的长度分别是1,2,3,... 注意到最后一个链表的长度不定。我们将所有子链表的头指针放入数组heads，并且将所有子链表的长度放入数组lens
-
-第二步就是对长度为偶数的子链表做反转操作。这是一个经典考点。
-
-最后就是把所有的子链表串联起来。具体的就是将前一个子链表的尾节点，与下一个子链表的头节点相连。
-::::::::::::::
-Linked_List/369.Plus-One-Linked-List/369.Plus-One-Linked-List.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* plusOne(ListNode* head) 
-    {
-        int carry = 0;
-        dfs(head, carry);
-        if (carry == 0)
-            return head;
-        else
-        {
-            ListNode* node = new ListNode(1);
-            node->next = head;
-            return node;
-        }
-    }
-    
-    void dfs(ListNode* head, int& carry) 
-    {       
-        if (head==NULL)
-        {
-            carry = 1;
-            return;
-        }
-        
-        dfs(head->next, carry);
-        
-        int val = head->val + carry;
-        carry = val / 10;
-        head->val = val % 10;        
-        
-        // if (head->val==3) cout<<val<<endl;
-    }
-};
-::::::::::::::
-Linked_List/369.Plus-One-Linked-List/Readme.md
-::::::::::::::
-### 369.Plus-One-Linked-List
-
-链表题比较适合用递归来做，利用递归返回值来处理当前的节点，很方便。
-
-本题的一个技巧就是当递归到节点为NULL时，令carry=1。其余的节点就是更新```node->val = node->val+carry```的处理。
-::::::::::::::
-Linked_List/430.Flatten-a-Multilevel-Doubly-Linked-List/430.Flatten-a-Multilevel-Doubly-Linked-List.cpp
-::::::::::::::
-/*
-// Definition for a Node.
-class Node {
-public:
-    int val;
-    Node* prev;
-    Node* next;
-    Node* child;
-};
-*/
-
-class Solution {
-public:
-    Node* flatten(Node* head) 
-    {
-        findEnd(head);
-        return head;
-    }
-
-    Node* findEnd(Node* h)
-    {   
-        if (h==NULL) return NULL;
-
-        Node* next = h->next;
-        Node* child = h->child;
-        h->child = NULL;
-
-        if (child==NULL && next==NULL)
-            return h;
-        else if (child!=NULL && next==NULL)
-        {
-            h->next = child;
-            child->prev = h;
-            Node* childEnd = findEnd(child);
-            return childEnd;
-        }
-        else if (child==NULL && next!=NULL)
-        {
-            Node* nextEnd = findEnd(next);
-            return nextEnd;
-        }
-        else
-        {
-            h->next = child;
-            child->prev = h;
-            Node* childEnd = findEnd(child);            
-            childEnd->next = next;
-            next->prev = childEnd;
-            return findEnd(next);
-        }
-    }
-};
-::::::::::::::
-Linked_List/430.Flatten-a-Multilevel-Doubly-Linked-List/Readme.md
-::::::::::::::
-### 430.Flatten-a-Multilevel-Doubly-Linked-List
-
-本题的基本思想是，对于一个节点h，我们需要依次拼接h本身、遍历h->child得到的链表，遍历h->next得到的链表。考虑到第三部分要接在第二部分的末尾，所以这个“遍历”的递归函数的返回值应该是整个链表的最后一个节点。
-
-所以，当h的next和child都存在的时候，大致的思路应该是这样的：
-```cpp
-Node* dfs(Node* h)
-{
-  child = h->child;
-  next = h->next;
-  Node* childEnd = dfs(child);
-  Node* nextEnd = dfs(next);
-
-  h->next = child;   // h和child拼接
-  child->prev = h;
-  childEnd->next = next;  //childEnd与next拼接
-  next->prev = childEnd;
-
-  return nextEnd;
-}  
-```
-但是在实际处理的时候，考虑当child和next各自是否为NULL时，具体的代码写法会不一样。
-1. child和next都为空：直接返回h
-2. child不为空，next为空：将h与child拼接后，返回的是childEnd
-3. child为空，next不为空：返回的是nextEnd.
-::::::::::::::
-Linked_List/457.Circular-Array-Loop/457.Circular-Array-Loop.cpp
-::::::::::::::
-class Solution {
-public:
-    bool circularArrayLoop(vector<int>& nums) 
-    {
-        for (int i = 0; i < nums.size(); i++)
-        {
-            if (nums[i] == 0) continue; 
-            
-            int slow = i, fast = i, dir = nums[i];
-            do {
-                slow = advanceBy(1, slow, nums, dir);
-                fast = advanceBy(2, fast, nums, dir);
-            } while (slow >= 0 && fast >= 0 && slow != fast);
-                
-            if (slow >= 0 && fast >= 0 && slow != advanceBy(1, slow, nums, dir)) 
-                return true;
-            
-            slow = i;
-            while (advanceBy(1, slow, nums, dir)>=0)
-            {
-                int tmp = advanceBy(1, slow, nums, dir);
-                nums[slow] = 0;
-                slow = tmp;
-            }
-        }
-        return false;
-    }
-    
-    int advanceBy(int step, int j, vector<int>& nums, int dir) 
-    {
-        int n = nums.size();
-        for (int k=0; k<step; k++) 
-        {
-            j = (j + nums[j] + n) % n;
-            j = (j + n) % n;
-            if (nums[j] * dir <= 0)
-                return -1;
-        }
-        return j;
-    }
-};
-::::::::::::::
-Linked_List/457.Circular-Array-Loop/Readme.md
-::::::::::::::
-### 457.Circular-Array-Loop
-
-看到题目要求用o(1)的空间判断一个array里是否存在loop，就应该条件反射地想到用快慢指针的方法。这个方法在linked list的数据结构里经常用到，因为链表无法反向遍历或这按index遍历。此题虽然是数组，但由于空间要求的限制，不得不利用链表里的这个技巧。
-
-此题要注意的细节是，getNext(pos,nums,dir)函数应该在两种情况下返回”错误“的提示。一种情况是该点nums[pos]和设定的遍历方向dir不同，违反题意，那么就直接返回”错误“。另一种情况是，getNext得到的是本身节点（仅对于慢指针）的话，说明这个方向的搜寻陷入了dead end，不能构成一个环。
-
-有了以上两个报错预判作为while循环的条件，就可以放心地让快慢指针各自前进，直至两者相遇。
-```py
-        while (getNextTwo(fast,nums,dir)!=-1 and getNext(slow,nums,dir)!=-1):
-                fast,slow = getNextTwo(fast,nums,dir),getNext(slow,nums,dir)
-                if (fast==slow): break
-```
-跳出之后根据```(getNextTwo(fast,nums,dir)!=-1 and getNext(slow,nums,dir)!=-1)```判断是否真的loop达成。
-
-如果loop没达成，则让慢指针再跑一遍，从起点到它的dead end一路都标记为0，以后这些元素就不用访问。这额外的一遍访问会增加一倍o(n)的时间，不会改变整体时间的数量级。
-
-
-[Leetcode Link](https://leetcode.com/problems/circular-array-loop)::::::::::::::
-Linked_List/708.Insert-into-a-Cyclic-Sorted-List/708.Insert-into-a-Cyclic-Sorted-List.cpp
-::::::::::::::
-class Solution {
-public:
-    Node* insert(Node* head, int insertVal) 
-    {
-        if (head==NULL)
-        {
-            Node* h = new Node(insertVal);
-            h->next = h;
-            return h;
-        }
-        
-        Node* h = head->next;
-        Node* pre = head;
-
-        while (h!=head)
-        {
-            if (h->val >= pre->val )
-            {
-                h = h->next;
-                pre = pre->next;
-            }
-            else                
-                break;
-        }
-        
-        Node* NewHead = h;        
-        while (h->next!=NewHead && !(h->val<=insertVal && h->next->val>=insertVal))
-            h = h->next;
-        
-        Node* temp = h->next;
-        h->next = new Node(insertVal);
-        h = h->next;
-        h->next = temp;
-        
-        return head;
-        
-    }
-};
-::::::::::::::
-Linked_List/708.Insert-into-a-Cyclic-Sorted-List/Readme.md
-::::::::::::::
-### 708.Insert-into-a-Cyclic-Sorted-List
-
-本题的一个能简化思维的方法就是，提前找到这个链表中的最小值的节点．这样的话，后续的插入就会很方便．
-```cpp
-Node* h = head->next;
-Node* pre = head;
-while (h!=head && pre->val<=h->val)
-{
-   h = h->next;
-   pre = pre->next;
-}
-```
-这样，得到的h就是整个链表中最小的节点了．于是，容易找到一个合适的插入位置：
-```cpp
-Node* NewHead = h;        
-while (h->next!=NewHead && !(h->val<=insertVal && h->next->val>=insertVal))
-    h = h->next;
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/insert-into-a-cyclic-sorted-list)
+$0
+endsnippet

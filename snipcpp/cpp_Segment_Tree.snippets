@@ -1,178 +1,60 @@
-::::::::::::::
-Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/2031.Count-Subarrays-With-More-Ones-Than-Zeros.cpp
-::::::::::::::
-const int MAX_N = 200003;
-using LL = long long;
 
-class Solution {        
-    int OFFSET = 100001;
-    long long bitArr[MAX_N];
-    long long nums[MAX_N];  // Note: nums is 1-index
-    long long M = 1e9+7;
+# ==> ./Segment_Tree/0218.The-Skyline-Problem/Readme.md <==
+snippet 0218.The-Skyline-Problem "0218.The-Skyline-Problem" b
+### 218.The-Skyline-Problem
 
-    // increase nums[i] by delta  (1-index)
-    void updateDelta(int i, long long delta) {
-        int idx = i;
-        while (idx <= MAX_N)
+#### 解法1:有序容器
+
+此题需要设置一个multiSet记录所有的当前下降沿的高度，则*prev(Set.end(),1)就是这个Set里的最大值。
+
+首先，将所有的edges放入一个数组，按时间顺序排序，然后顺次遍历考虑：如果是上升沿，则在Set里加入对应高度（即添加一个上升沿）；如果是下降沿，则需要在Set里删除对应的高度（即退出当前的下降沿）。
+
+那何时对results进行更新呢？我们在每次处理edge时，不管是加入上升边沿还是退出下降沿之后，都意味着天际线有可能变动。天际线会变成什么呢？答案是此时Set里的最大值！回想一下，Set里装的是所有当前仍未退出的下降沿，说明他们都在当前可以撑起对应的高度。那么Set里的最大值就是当前天际线的最高值。
+
+所以每次查看一个edges，我们都要比较当前的高度（用cur记录）和Set里的最大值进行比较：一旦不同，就用Set里的最大值去加入results，同时也要更新cur。
+
+有一个细节需要注意，在生成edges数组时，如果某一个位置同时有上升沿也有下降沿，注意要先考察上升沿，再考察下降沿。也就是要先加入一个上升沿，再退出可能的下降沿。否则类似[[0,2,3],[2,5,3]]的测试例子就会有问题。
+
+#### 解法2:线段树
+
+此题的线段树解法，是以```370.Range-Addition```的懒标记版本为基础，稍加改动。
+
+首先，不同于307或者370中已经给出了nums数组。此题中给出的是建筑物高度拐点的pos。这些pos的绝对值对我们而言其实是没有意义的，我们只关心这些pos的相对顺序，也就是idx。所以我们其实需要构造两个映射，pos2idx和idx2pos，方便我们做转换。转换之后，每个builiding相当于一个区间更新。特别注意，如果一个building对应的索引区间是```[i:j]```，那么我们只更新区间```[i:j-1]```。也就是说，线段树中的每个叶子节点的单点info，代表的其实是```[i:i+1)```这段左闭右开的小区间。
+
+然后我们设计一下SegTreeNode的数据结构。除了常规的left,right,start,end之外，此时节点的info表示的是该区间内出现的高度最大值。注意，不一定整个区间都是该恒定的高度。此外，该节点的tag是一个bool量，表示该区间的高度是否都是相同的（也就是等于info）。tag为true时说明我们能断言整个区间的信息是一致的，我们不需要下沉去更新每一块更细的区间。下文会详细说明。
+
+初始化函数```init(root, 0, n-1)```不需要特别的改动。其中n就是离散化之后有多少个数据点。初始化时，每个节点的info设置为0，tag设置为false。
+
+区间更新函数```updateRange(node, a, b, val)```是本题的重点，意思是将区间[a,b]里的所有数据点的最大值更新为val（如果原最大值小于val的话）。我们分几种情况讨论：
+1. 边界条件：[a,b]与该节点区间互斥，直接return。
+2. 边界条件：该节点的区间是单点，那么```node->info = max(node->info, val)```然后return
+3. 边界条件：如果该节点的区间包含在[a,b]内，并且```node->info <= val```，说明该节点区间的数据点可以统一更新为val。并且我们就设置tag标记true，根据之前的分析，我们可以直接返回而不用下沉去更新更细节的区间。
+4. 其他情况下，我们就递归处理```updateRange(node->left, a, b, val) && updateRange(node->right, a, b, val)```。但是递归之前，我们别忘了查看当前的tag是否为true。如果是的话，说明当前节点的区间不再有统一的高度，我们需要去掉tag的标记，并且将其影响传递给两个子区间，即
+```cpp
+        if (node->tag == 1) // if current node tagged lazy, push information down
         {
-            bitArr[idx]+=delta;
-            bitArr[idx] %= M;
-            idx+=idx&(-idx);
-        }
-    }
-
-    // sum of a range nums[1:j] inclusively, 1-index
-    long long queryPreSum(int idx){
-        long long result = 0;
-        while (idx){
-            result += bitArr[idx];
-            result %= M;
-            idx-=idx&(-idx);
-        }
-        return result;
-    }
-
-    // sum of a range nums[i:j] inclusively
-    long long sumRange(int i, int j) {    
-        return queryPreSum(j)-queryPreSum(i-1);
-    }
-    
-public:
-    int subarraysWithMoreZerosThanOnes(vector<int>& nums) 
-    {
-        cout<<nums.size()<<endl;
-        int diff = 0;
-        LL ret = 0;
-        updateDelta(0+OFFSET, 1);
-        
-        for (int i=0; i<nums.size(); i++)
-        {
-            if (nums[i]==1) diff++;
-            else diff--;
-            
-            ret = (ret + queryPreSum(diff-1+OFFSET)) % M;                    
-            updateDelta(diff+OFFSET, 1);
-        }        
-        return ret;        
-    }
-};
-::::::::::::::
-Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/Readme.md
-::::::::::::::
-### 2031.Count-Subarrays-With-More-Ones-Than-Zeros
-
-对于区间的问题，我们很容想到尝试前缀和。我们令diff[i]表示前i个数字里元素1与元素0个数之差。那么对于以i为右边界的合法区间，我们希望它对应的左边界位置j有什么性质呢？显然，我们希望```diff[j] < diff[i]```即可。这样从[j+1:i]这个区间里的元素1一定比0多。有多少个这样的j，就有多少个以i为右边界的合法区间。
-
-那么有多少个j满足这个条件呢？我们显然需要在i之前，记录下所有diff[j]的值并且统计频次，并且累加那些差值小于diff[i]的频次。
-
-比如，我们令nums[k]表示diff为k出现的频次，即有多少个j，满足长度为j的前缀区间里元素1与元素0个数之差为k。对于每一个右边界为i的合法区间，我们需要累加```nums[0]+nums[1]+..+nums[diff[i]-1]```，这个数目就是左边界的数目。计算出这个答案之后，我们还需要更新```nums[diff[i]]+=1```，因为下一个回合的diff[i+1]会再次用到更新后的nums数组。
-
-由此可见，我们需要一个数据结构，能够快速求出nums数组里的指定区间和（更确切地说是前缀和），同时也要支持对nums任意单点的高效修改。显然这样的数据结果，binary index tree是再合适不过了。
-
-此题需要额外处理的一个问题的是：diff的数值范围可以是-10000到+10000，即我们需要记录从nums[-100000]到nums[+100000]。但是树状数组的index必须都是正数。所以我们需要一个```offset=1e5+1```，将差值[-1e5,1e5]映射到正数[1, 2e5+2]上。注意在这里的模板中，树状数组里有意义的元素下标从1开始。
-::::::::::::::
-Segment_Tree/2179.Count-Good-Triplets-in-an-Array/2179.Count-Good-Triplets-in-an-Array.cpp
-::::::::::::::
-class BIT{
-    public:
-    int N;    
-    vector<long long>bitArr; // Note: all arrays are 1-index
-    vector<long long>nums;
-    long long M = 1e9+7;
-    
-    BIT(int N)
-    {
-        this->N = N;
-        bitArr.resize(N+1);
-        nums.resize(N+1);        
-    }
-
-    // increase nums[i] by delta
-    void updateDelta(int i, long long delta) {
-        int idx = i;
-        while (idx <= N)
-        {
-            bitArr[idx]+=delta;
-            bitArr[idx] %= M;
-            idx+=idx&(-idx);
-        }
-    }
-
-    // sum of a range nums[1:j] inclusively
-    long long queryPreSum(int idx){
-        long long result = 0;
-        while (idx){
-            result += bitArr[idx];
-            result %= M;
-            idx-=idx&(-idx);
-        }
-        return result;
-    }
-
-    // sum of a range nums[i:j] inclusively
-    long long sumRange(int i, int j) {    
-        return queryPreSum(j)-queryPreSum(i-1);
-    } 
-};
-
-class Solution {
-public:    
-    long long goodTriplets(vector<int>& nums1, vector<int>& nums2) 
-    {
-        int n = nums1.size();
-        unordered_map<int,int>Map;
-        for (int i=0; i<n; i++)
-            Map[nums1[i]] = i;
-        
-        for (int i=0; i<n; i++)
-            nums2[i] = Map[nums2[i]]+1;
-        
-        vector<int>smallerBefore(n,0);
-        BIT bit1(100005);
-        for (int i=0; i<n; i++)
-        {
-            smallerBefore[i] = bit1.sumRange(1,nums2[i]);
-            bit1.updateDelta(nums2[i], 1);
-        }
-        
-        vector<int>largerAfter(n,0);
-        BIT bit2(100005);
-        for (int i=n-1; i>=0; i--)
-        {
-            largerAfter[i] = bit2.sumRange(nums2[i], 100000);
-            bit2.updateDelta(nums2[i], 1);
-        }
-        
-        long long ret = 0;
-        for (int i=0; i<n; i++)
-            ret += (long long)smallerBefore[i] * (long long)largerAfter[i];
-        return ret;
-    }    
-};
-::::::::::::::
-Segment_Tree/2179.Count-Good-Triplets-in-an-Array/Readme.md
-::::::::::::::
-### 2179.Count-Good-Triplets-in-an-Array
-
-本题的入手思路如下。我们容易确定相同数字在两个数组中的位置，类似nums1[i]==nums2[j]
+            node->tag = 0;            
+            node->left->info = node->info;
+            node->right->info = node->info;
+            node->left->tag = 1;
+            node->right->tag = 1;            
+        }   
 ```
-X X X i X X X X X X X 
-X X X X X X j X X X X
+对于此题，我们其实不需要写区间查询的函数。因为我们最终输出的结果，会要求遍历线段树的每一个节点，写个DFS即可。当然，如果遍历到某个区间的tag依然为true时，其实可以不用继续深入下去，直接输出该区间的信息。最终输出的结果需要整理一下，如果相邻的叶子节点的高度相同，我们再做一下归并。
+
+另外补充一点，我们将所有的building按照高度从小到大排序一遍，会使带有懒标签的线段树代码跑得更快。这是因为在updateRange时有更大的概率触发下面这个条件，使得我们只需要标记lazy tag并立即返回：
+```cpp
+if (a <= node->start && node->end <=b && val >= node->info) 
+{... return; }
 ```
-自然地，我们希望知道有多少```x>i```和```y>j```，使得nums1[x]==nums2[y]. 比较暴力的方法是遍历大于i的所有位置x，查看nums[j+1:n-1]区间内是否有与nums1[x]相同的数。但从这个算法来看并没有优化的空间，因为能有多少配对完全是随机事件。如何更高效地去做呢？
 
-考虑到所有的元素都互不相同，这里有一个技巧：因为我们对nums1里面的元素大小并不关心，我们其实可以只看编号不看数值，这样nums1在我们眼里可以就只是```0,1,2,3...,```，这样就构建了一个映射。将nums1所做的映射也应用在nums2里面，则nums2重新变换成了一个新的乱序排列。这里就发现了规律，变换后nums1里面在i后面的元素，意味着在nums2里面必然都比nums[j]的数值大。反过来说，nums2里那些比nums2[j]大的数，意味着在nums1里时一定排在i后面。所以我们需要根据nums2[j]计算一个新数组largerAfterSelf[j]，表示nums2[j]后面有多少元素比自己大，那么这些元素必然也存在于nums1[i]的后面。
+[Leetcode Link](https://leetcode.com/problems/the-skyline-problem)
 
-同理，我们可以构造smallerBeforeSelf[j]，表示nums2[j]前面有多少元素比自己小，那么这些元素必然也存在于nums1[i]的后面。
+$0
+endsnippet
 
-最终的答案就是```sum{smallerBeforeSelf[j] * largerAfterSelf[j]}, for i=0,1,2,..,n-1```. 这个思路在```1713.Minimum-Operations-to-Make-a-Subsequence```里也有应用。
-
-计算largerAfterSelf的方法同```315.Count-of-Smaller-Numbers-After-Self```，可以用分治+归并排序，也可以套用树状数组。
-
-对于BIT的解法，我们注意到所有数值的大小不超过1e5，所以开辟长度为1e5的树状数组作为篮子，每考察nums[i]，就需要在树状数组的[nums[i]+1: INT_MAX]区间内累加所有的数据之和，这个就是largerAfterSelf[i]. 之后记得在idex = nums[i]的位置自增1. 
-::::::::::::::
-Segment_Tree/218.The-Skyline-Problem/218.The-Skyline-Problem.cpp
-::::::::::::::
+# ==> ./Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem.cpp <==
+snippet 0218.The-Skyline-Problem "0218.The-Skyline-Problem" b
 class Solution {
 public:
     vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) 
@@ -206,9 +88,12 @@ public:
         return results;
     }
 };
-::::::::::::::
-Segment_Tree/218.The-Skyline-Problem/218.The-Skyline-Problem_SegmentTree_lazyTag.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem_SegmentTree_lazyTag.cpp <==
+snippet 0218.The-Skyline-Problem "0218.The-Skyline-Problem" b
 class Solution {
     class SegTreeNode
     {
@@ -333,9 +218,12 @@ public:
     }
     
 };
-::::::::::::::
-Segment_Tree/218.The-Skyline-Problem/218.The-Skyline-Problem_segTree.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0218.The-Skyline-Problem/218.The-Skyline-Problem_segTree.cpp <==
+snippet 0218.The-Skyline-Problem "0218.The-Skyline-Problem" b
 class Solution {
     class SegTree
     {
@@ -414,60 +302,90 @@ public:
         }
     }
 };
-::::::::::::::
-Segment_Tree/218.The-Skyline-Problem/Readme.md
-::::::::::::::
-### 218.The-Skyline-Problem
 
-#### 解法1:有序容器
+$0
+endsnippet
 
-此题需要设置一个multiSet记录所有的当前下降沿的高度，则*prev(Set.end(),1)就是这个Set里的最大值。
+# ==> ./Segment_Tree/0307.Range-Sum-Query-Mutable/Readme.md <==
+snippet 0307.Range-Sum-Query-Mutable "0307.Range-Sum-Query-Mutable" b
+### 307.Range-Sum-Query-Mutable
 
-首先，将所有的edges放入一个数组，按时间顺序排序，然后顺次遍历考虑：如果是上升沿，则在Set里加入对应高度（即添加一个上升沿）；如果是下降沿，则需要在Set里删除对应的高度（即退出当前的下降沿）。
+#### Binary Indexed Tree
+此题用到了一种比较不常见的数据结构 Binary Indexed Tree. 参考(http://www.cnblogs.com/grandyang/p/4985506.html). 总的来说，这种数据结构累加一部分元素，又留着一部分元素，是一种兼顾“查找元素本身”和“查找元素和”的中庸方法。
 
-那何时对results进行更新呢？我们在每次处理edge时，不管是加入上升边沿还是退出下降沿之后，都意味着天际线有可能变动。天际线会变成什么呢？答案是此时Set里的最大值！回想一下，Set里装的是所有当前仍未退出的下降沿，说明他们都在当前可以撑起对应的高度。那么Set里的最大值就是当前天际线的最高值。
+这种数据结构的特征是：元素的标号（index）从1开始。第i个元素的变化，之后影响到的依次以此是 i+= (i&-i)。举个列子：     
+第1个元素影响到：1,2,4,8,16，...      
+第2个元素影响到：2,4,8,16，...   
+第3个元素影响到：3,4,8,16，...   
+第4个元素影响到：4,8,16，...   
+总的来说，一个元素的变化，影响到整个Binary Indexed Tree的节点变化数目是 log(n)，比传统“累加和数组”牵一发动全身的数据结构而言，会优越很多。
 
-所以每次查看一个edges，我们都要比较当前的高度（用cur记录）和Set里的最大值进行比较：一旦不同，就用Set里的最大值去加入results，同时也要更新cur。
-
-有一个细节需要注意，在生成edges数组时，如果某一个位置同时有上升沿也有下降沿，注意要先考察上升沿，再考察下降沿。也就是要先加入一个上升沿，再退出可能的下降沿。否则类似[[0,2,3],[2,5,3]]的测试例子就会有问题。
-
-#### 解法2:线段树
-
-此题的线段树解法，是以```370.Range-Addition```的懒标记版本为基础，稍加改动。
-
-首先，不同于307或者370中已经给出了nums数组。此题中给出的是建筑物高度拐点的pos。这些pos的绝对值对我们而言其实是没有意义的，我们只关心这些pos的相对顺序，也就是idx。所以我们其实需要构造两个映射，pos2idx和idx2pos，方便我们做转换。转换之后，每个builiding相当于一个区间更新。特别注意，如果一个building对应的索引区间是```[i:j]```，那么我们只更新区间```[i:j-1]```。也就是说，线段树中的每个叶子节点的单点info，代表的其实是```[i:i+1)```这段左闭右开的小区间。
-
-然后我们设计一下SegTreeNode的数据结构。除了常规的left,right,start,end之外，此时节点的info表示的是该区间内出现的高度最大值。注意，不一定整个区间都是该恒定的高度。此外，该节点的tag是一个bool量，表示该区间的高度是否都是相同的（也就是等于info）。tag为true时说明我们能断言整个区间的信息是一致的，我们不需要下沉去更新每一块更细的区间。下文会详细说明。
-
-初始化函数```init(root, 0, n-1)```不需要特别的改动。其中n就是离散化之后有多少个数据点。初始化时，每个节点的info设置为0，tag设置为false。
-
-区间更新函数```updateRange(node, a, b, val)```是本题的重点，意思是将区间[a,b]里的所有数据点的最大值更新为val（如果原最大值小于val的话）。我们分几种情况讨论：
-1. 边界条件：[a,b]与该节点区间互斥，直接return。
-2. 边界条件：该节点的区间是单点，那么```node->info = max(node->info, val)```然后return
-3. 边界条件：如果该节点的区间包含在[a,b]内，并且```node->info <= val```，说明该节点区间的数据点可以统一更新为val。并且我们就设置tag标记true，根据之前的分析，我们可以直接返回而不用下沉去更新更细节的区间。
-4. 其他情况下，我们就递归处理```updateRange(node->left, a, b, val) && updateRange(node->right, a, b, val)```。但是递归之前，我们别忘了查看当前的tag是否为true。如果是的话，说明当前节点的区间不再有统一的高度，我们需要去掉tag的标记，并且将其影响传递给两个子区间，即
+总结一下这种数据结构的初始化方法。nums是原始的数据（数组），tree是Binary Indexed Tree，本质也是一个数组。注意，两者的元素标号都是从1开始，标号为0的元素没有意义。
 ```cpp
-        if (node->tag == 1) // if current node tagged lazy, push information down
+for (int i=1; i<nums.size(); i++)
+{
+    for (int j=i; j<nums.size(); j+=(j&-j))
+      tree[i]+=nums[i];
+}
+```
+相应地，如果想更新nums[i]，则对应的tree的变化
+```cpp
+  int update(i,new_val)
+  {
+    int diff = new_val - nums[i];
+    for (int j=i; j<nums.size(); j+=(j&-j))
+      tree[j]+=diff;  
+    nums[i] = new_val;  
+  }
+```
+对于nums前k个元素之和，需要在tree中累加的元素标号依次是 k-=(k&-k)，举个例子：    
+nums的前8个元素之和，需要累加的的tree元素：8   
+nums的前7个元素之和，需要累加的的tree元素：7,6,4   
+nums的前6个元素之和，需要累加的的tree元素：6,4   
+nums的前5个元素之和，需要累加的的tree元素：5,4   
+由此看来，平均需要在tree里累加的元素和的数目也是log(n)，虽然比不上纯的累加数组，但也算很高效。
+```cpp
+    int getSum(int i)
+    {
+        int res = 0;
+        for (int j = i; j > 0; j -= (j&-j)) 
         {
-            node->tag = 0;            
-            node->left->info = node->info;
-            node->right->info = node->info;
-            node->left->tag = 1;
-            node->right->tag = 1;            
-        }   
+            res += tree[j];
+        }
+        return res;        
+    }
 ```
-对于此题，我们其实不需要写区间查询的函数。因为我们最终输出的结果，会要求遍历线段树的每一个节点，写个DFS即可。当然，如果遍历到某个区间的tag依然为true时，其实可以不用继续深入下去，直接输出该区间的信息。最终输出的结果需要整理一下，如果相邻的叶子节点的高度相同，我们再做一下归并。
 
-另外补充一点，我们将所有的building按照高度从小到大排序一遍，会使带有懒标签的线段树代码跑得更快。这是因为在updateRange时有更大的概率触发下面这个条件，使得我们只需要标记lazy tag并立即返回：
+#### Segment Tree
+此题是应用线段树的典型例子。线段树的模板有很多种写法，这里来讲一下最基础的版本。
+
+首先定义线段树节点
 ```cpp
-if (a <= node->start && node->end <=b && val >= node->info) 
-{... return; }
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
+    };
 ```
+其中的info是存储我们想在线段树加载的信息，在这里，存储的是下面所有叶子节点的数值的和。
 
-[Leetcode Link](https://leetcode.com/problems/the-skyline-problem)
-::::::::::::::
-Segment_Tree/307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_BIT.cpp
-::::::::::::::
+第一个常用的API就是初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：```init(root, 0, n-1)```.
+
+第二个API就是单点修改：```void updateSingle(SegTreeNode* node, int id, int val)```，其意义是对以node为根节点的线段树时，修改nums[id]所对应的叶子节点的info为val。
+
+第三个API就是区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树时，查询nums[a:b]区间所对应的所有叶子节点的info的和。
+
+[Leetcode Link](https://leetcode.com/problems/range-sum-query-mutable)
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_BIT.cpp <==
+snippet 0307.Range-Sum-Query-Mutable "0307.Range-Sum-Query-Mutable" b
 class NumArray {
 public:
     vector<int>bitArr;
@@ -509,9 +427,95 @@ public:
         return my_query(j)-my_query(i-1);
     }
 };
-::::::::::::::
-Segment_Tree/307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v1.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_SegTree_v3.cpp <==
+snippet 0307.Range-Sum-Query-Mutable "0307.Range-Sum-Query-Mutable" b
+class NumArray {
+    class SegTreeNode
+    {
+        public:
+        SegTreeNode* left;
+        SegTreeNode* right;
+        int start, end;
+        int info;        
+        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
+    };
+    
+    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
+    {                        
+        if (a==b)
+        {
+            node->info = nums[a];
+            return;
+        }
+        int mid = (a+b)/2;
+        if (node->left==NULL)
+        {
+            node->left = new SegTreeNode(a, mid);
+            node->right = new SegTreeNode(mid+1, b);
+        }
+        init(node->left, a, mid);
+        init(node->right, mid+1, b);
+                
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    void updateSingle(SegTreeNode* node, int id, int val)
+    {        
+        if (id < node->start || id > node->end ) return;
+        if (node->start == node->end)
+        {
+            node->info = val;
+            return;
+        }
+        updateSingle(node->left, id, val);
+        updateSingle(node->right, id, val);
+        node->info = node->left->info + node->right->info;  // write your own logic
+    }
+    
+    int queryRange(SegTreeNode* node, int a, int b)
+    {
+        if (b < node->start || a > node->end )
+        {
+            return 0;  // write your own logic
+        }
+        if (a <= node->start && b>=node->end)
+        {
+            return node->info;  // write your own logic
+        }        
+        return queryRange(node->left, a, b) + queryRange(node->right, a, b);  // write your own logic
+    }    
+    
+    vector<int> nums;
+    SegTreeNode* root;
+    
+public:
+    NumArray(vector<int> nums) 
+    {
+        this->nums = nums;
+        root = new SegTreeNode(0, nums.size()-1);
+        init(root, 0, nums.size()-1);
+    }
+    
+    void update(int i, int val) 
+    {
+        updateSingle(root, i, val);        
+    }
+    
+    int sumRange(int i, int j) 
+    {
+        return queryRange(root, i, j);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v1.cpp <==
+snippet 0307.Range-Sum-Query-Mutable "0307.Range-Sum-Query-Mutable" b
 class NumArray {
     class SegmentTreeNode
     {
@@ -589,9 +593,12 @@ public:
  * obj.update(i,val);
  * int param_2 = obj.sumRange(i,j);
  */
-::::::::::::::
-Segment_Tree/307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_segTree_v2.cpp <==
+snippet 0307.Range-Sum-Query-Mutable "0307.Range-Sum-Query-Mutable" b
 class NumArray {
     
     class SegTree
@@ -684,164 +691,38 @@ public:
  * obj.update(i,val);
  * int param_2 = obj.sumRange(i,j);
  */
-::::::::::::::
-Segment_Tree/307.Range-Sum-Query-Mutable/307.Range-Sum-Query-Mutable_SegTree_v3.cpp
-::::::::::::::
-class NumArray {
-    class SegTreeNode
-    {
-        public:
-        SegTreeNode* left;
-        SegTreeNode* right;
-        int start, end;
-        int info;        
-        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
-    };
-    
-    void init(SegTreeNode* node, int a, int b)  // init for range [a,b]
-    {                        
-        if (a==b)
-        {
-            node->info = nums[a];
-            return;
-        }
-        int mid = (a+b)/2;
-        if (node->left==NULL)
-        {
-            node->left = new SegTreeNode(a, mid);
-            node->right = new SegTreeNode(mid+1, b);
-        }
-        init(node->left, a, mid);
-        init(node->right, mid+1, b);
-                
-        node->info = node->left->info + node->right->info;  // write your own logic
-    }
-    
-    void updateSingle(SegTreeNode* node, int id, int val)
-    {        
-        if (id < node->start || id > node->end ) return;
-        if (node->start == node->end)
-        {
-            node->info = val;
-            return;
-        }
-        updateSingle(node->left, id, val);
-        updateSingle(node->right, id, val);
-        node->info = node->left->info + node->right->info;  // write your own logic
-    }
-    
-    int queryRange(SegTreeNode* node, int a, int b)
-    {
-        if (b < node->start || a > node->end )
-        {
-            return 0;  // write your own logic
-        }
-        if (a <= node->start && b>=node->end)
-        {
-            return node->info;  // write your own logic
-        }        
-        return queryRange(node->left, a, b) + queryRange(node->right, a, b);  // write your own logic
-    }    
-    
-    vector<int> nums;
-    SegTreeNode* root;
-    
-public:
-    NumArray(vector<int> nums) 
-    {
-        this->nums = nums;
-        root = new SegTreeNode(0, nums.size()-1);
-        init(root, 0, nums.size()-1);
-    }
-    
-    void update(int i, int val) 
-    {
-        updateSingle(root, i, val);        
-    }
-    
-    int sumRange(int i, int j) 
-    {
-        return queryRange(root, i, j);
-    }
-};
-::::::::::::::
-Segment_Tree/307.Range-Sum-Query-Mutable/Readme.md
-::::::::::::::
-### 307.Range-Sum-Query-Mutable
 
-#### Binary Indexed Tree
-此题用到了一种比较不常见的数据结构 Binary Indexed Tree. 参考(http://www.cnblogs.com/grandyang/p/4985506.html). 总的来说，这种数据结构累加一部分元素，又留着一部分元素，是一种兼顾“查找元素本身”和“查找元素和”的中庸方法。
+$0
+endsnippet
 
-这种数据结构的特征是：元素的标号（index）从1开始。第i个元素的变化，之后影响到的依次以此是 i+= (i&-i)。举个列子：     
-第1个元素影响到：1,2,4,8,16，...      
-第2个元素影响到：2,4,8,16，...   
-第3个元素影响到：3,4,8,16，...   
-第4个元素影响到：4,8,16，...   
-总的来说，一个元素的变化，影响到整个Binary Indexed Tree的节点变化数目是 log(n)，比传统“累加和数组”牵一发动全身的数据结构而言，会优越很多。
+# ==> ./Segment_Tree/0370.Range-Addition/Readme.md <==
+snippet 0370.Range-Addition "0370.Range-Addition" b
+### 370.Range-Addition
 
-总结一下这种数据结构的初始化方法。nums是原始的数据（数组），tree是Binary Indexed Tree，本质也是一个数组。注意，两者的元素标号都是从1开始，标号为0的元素没有意义。
-```cpp
-for (int i=1; i<nums.size(); i++)
-{
-    for (int j=i; j<nums.size(); j+=(j&-j))
-      tree[i]+=nums[i];
-}
-```
-相应地，如果想更新nums[i]，则对应的tree的变化
-```cpp
-  int update(i,new_val)
-  {
-    int diff = new_val - nums[i];
-    for (int j=i; j<nums.size(); j+=(j&-j))
-      tree[j]+=diff;  
-    nums[i] = new_val;  
-  }
-```
-对于nums前k个元素之和，需要在tree中累加的元素标号依次是 k-=(k&-k)，举个例子：    
-nums的前8个元素之和，需要累加的的tree元素：8   
-nums的前7个元素之和，需要累加的的tree元素：7,6,4   
-nums的前6个元素之和，需要累加的的tree元素：6,4   
-nums的前5个元素之和，需要累加的的tree元素：5,4   
-由此看来，平均需要在tree里累加的元素和的数目也是log(n)，虽然比不上纯的累加数组，但也算很高效。
-```cpp
-    int getSum(int i)
-    {
-        int res = 0;
-        for (int j = i; j > 0; j -= (j&-j)) 
-        {
-            res += tree[j];
-        }
-        return res;        
-    }
-```
+#### 解法1：
+此题比较简单的解法是用差分数组```diff```。```diff[i]```表示```nums[i]```比```nums[i-1]```大多少。这样如果已知```nums[i-1]```，那么就有```diff[i]=nums[i-1]+diff[i]```。本题中的三元参数```update(i,j,k)```恰好就是给出了这样的差分数组的信息：```diff[i]+=k, diff[j+1]-=k```.
 
-#### Segment Tree
-此题是应用线段树的典型例子。线段树的模板有很多种写法，这里来讲一下最基础的版本。
+#### 解法2：
+本题和307很相似，也可以用线段树来实现。最大的区别就是本题中需要实现的是区间更新。在线段树的basic版本中（LC307），我们实现的都是单点更新，用单点更新来实现区间更细，效率肯定很低。
 
-首先定义线段树节点
-```cpp
-    class SegTreeNode
-    {
-        public:
-        SegTreeNode* left;
-        SegTreeNode* right;
-        int start, end;
-        int info;        
-        SegTreeNode(int a, int b):start(a),end(b),info(0),left(NULL),right(NULL){}
-    };
-```
-其中的info是存储我们想在线段树加载的信息，在这里，存储的是下面所有叶子节点的数值的和。
+本题实现的是线段树的进阶版本，使用lazy tag来实现区间更新的延迟推广。具体的说，我们想要将区间[a:b]增加1时，不一定需要立即下沉到每个叶子节点将其info增1。如果我们没有对[a:b]中的任何一个叶子节点做查询的话，意味着不需要任何下沉操作。我们只增加[a:b]对应的节点的info，但同时标记该节点的tag为1。如果以后某个时刻，我们需要下沉访问某个下层区间或者叶子节点，那么在下沉的过程中必然会重新经过[a:b]对应的node，此时我们顺便将tag信息读入并在访问下层区间或叶子节点时，将它们的info加上这个“延迟加载”的1就行。
 
-第一个常用的API就是初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：```init(root, 0, n-1)```.
+这个版本的线段树有如下API：
 
-第二个API就是单点修改：```void updateSingle(SegTreeNode* node, int id, int val)```，其意义是对以node为根节点的线段树时，修改nums[id]所对应的叶子节点的info为val。
+初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：init(root, 0, n-1).
 
-第三个API就是区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树时，查询nums[a:b]区间所对应的所有叶子节点的info的和。
+区间更新：```void updateRangeBy(SegTreeNode* node, int a, int b, int val)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点，使其info都increase by val.注意，这和LC307基础版本的区别，val是增量。
 
-[Leetcode Link](https://leetcode.com/problems/range-sum-query-mutable)
-::::::::::::::
-Segment_Tree/370.Range-Addition/370.Range-Addition.cpp
-::::::::::::::
+区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点的info之和。
+
+
+[Leetcode Link](https://leetcode.com/problems/range-addition)
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0370.Range-Addition/370.Range-Addition.cpp <==
+snippet 0370.Range-Addition "0370.Range-Addition" b
 class Solution {
 public:
     vector<int> getModifiedArray(int length, vector<vector<int>>& updates) 
@@ -862,9 +743,12 @@ public:
         return results;
     }
 };
-::::::::::::::
-Segment_Tree/370.Range-Addition/370.Range-Addition_SegmentTree_lazyTag.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0370.Range-Addition/370.Range-Addition_SegmentTree_lazyTag.cpp <==
+snippet 0370.Range-Addition "0370.Range-Addition" b
 class Solution {
     class SegTreeNode
     {
@@ -966,9 +850,12 @@ public:
     }
 };
 
-::::::::::::::
-Segment_Tree/370.Range-Addition/370.Range-Addition_segTree.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0370.Range-Addition/370.Range-Addition_segTree.cpp <==
+snippet 0370.Range-Addition "0370.Range-Addition" b
 class Solution {
     class SegTree
     {
@@ -1019,32 +906,129 @@ public:
             results[i] = node->status;
     }
 };
-::::::::::::::
-Segment_Tree/370.Range-Addition/Readme.md
-::::::::::::::
-### 370.Range-Addition
 
-#### 解法1：
-此题比较简单的解法是用差分数组```diff```。```diff[i]```表示```nums[i]```比```nums[i-1]```大多少。这样如果已知```nums[i-1]```，那么就有```diff[i]=nums[i-1]+diff[i]```。本题中的三元参数```update(i,j,k)```恰好就是给出了这样的差分数组的信息：```diff[i]+=k, diff[j+1]-=k```.
+$0
+endsnippet
 
-#### 解法2：
-本题和307很相似，也可以用线段树来实现。最大的区别就是本题中需要实现的是区间更新。在线段树的basic版本中（LC307），我们实现的都是单点更新，用单点更新来实现区间更细，效率肯定很低。
+# ==> ./Segment_Tree/0699.Falling-Squares/Readme.md <==
+snippet 0699.Falling-Squares "0699.Falling-Squares" b
+### 699.Falling-Squares
 
-本题实现的是线段树的进阶版本，使用lazy tag来实现区间更新的延迟推广。具体的说，我们想要将区间[a:b]增加1时，不一定需要立即下沉到每个叶子节点将其info增1。如果我们没有对[a:b]中的任何一个叶子节点做查询的话，意味着不需要任何下沉操作。我们只增加[a:b]对应的节点的info，但同时标记该节点的tag为1。如果以后某个时刻，我们需要下沉访问某个下层区间或者叶子节点，那么在下沉的过程中必然会重新经过[a:b]对应的node，此时我们顺便将tag信息读入并在访问下层区间或叶子节点时，将它们的info加上这个“延迟加载”的1就行。
+#### 解法1：使用Hash容器
 
-这个版本的线段树有如下API：
+此题考查了对Hash结构（比如说Map和Set）的迭代器的操作。
 
-初始化：```void init(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树进行节点的赋值，在其下面构造b-a+1个叶子节点，每个节点（id）对应的元素值从全局变量nums[id]里面读取和写入。显然，这种写法下，初始化只要一步：init(root, 0, n-1).
+设置一个有序hash表，map<int,int>Map，其中的key表示在横轴上某个x的位置，value表示从这个x开始往右直至遇到下一个邻接x位置之间的高度（这个高度在这两个位置之间必须是平整的）。在不断读入positions的过程中，来更新这个Map。
 
-区间更新：```void updateRangeBy(SegTreeNode* node, int a, int b, int val)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点，使其info都increase by val.注意，这和LC307基础版本的区别，val是增量。
+对于一个新引入的square，我们考察它的左右边界left,right在这个hash表中的位置（找最近邻元素的迭代器）
+```cpp
+auto ptri = Map.lower_bound(left);
+auto ptrj = Map.upper_bound(right);
+```
+注意得到的两个边界迭代器的意义。ptri表示处于left或其靠右的第一个迭代器。ptrj表示在right靠右的第一个迭代器。
 
-区间查询：```int queryRange(SegTreeNode* node, int a, int b)```，其意义是对以node为根节点的线段树，在下面更新所有nums[a:b]所对应的节点的info之和。
+根据题意，处于[ptri,ptrj)的那些hash元素都将被取代（抹平），换成这个新square的信息。这个新square叠加上去后的高度等于这些hash元素的最大值加上新square自身的高度。但是注意，以上对于 ```ptri->first == left```时成立；但是对```ptri->first > left```时，我们必须把ptri之前的那个元素也考虑上，即 prev(ptri,1)。
+```cpp
+auto ptr= ptri->left==left? ptri:prev(ptri,1);
+int maxH=0;
+while (ptr!=ptrj)
+{
+    maxH=max(maxH,ptr->second);
+    ptr=next(ptr,1);
+}
+```
+以上得到了新高度。但是如何抹平之前的呢？erase命令可以删除一个前闭后开的迭代器区间。特别强调，不能用for等循环名一边通过迭代器遍历hash、一边删改迭代器。这是会出错的。
+```cpp
+Map.erase(ptri,ptrj)
+```
+接下来要跟新，即在Map里新加入一个区间。显然对于新sqaure的左边界，会引入：
+```cpp
+Map[left]= maxH+h;
+```
+特别注意：对于新sqaure的右边界，同样也可能会引入新生成的边界。比如，当新square比较小，那么Map[right+1]应该是之前 prev(ptrj,1)对应的数值。这个数值必须在对Map做迭代器删改之前保留下来。
 
+#### 解法2：使用线段树
 
-[Leetcode Link](https://leetcode.com/problems/range-addition)
-::::::::::::::
-Segment_Tree/699.Falling-Squares/699.Falling-Squares.cpp
-::::::::::::::
+本题的线段树解法和```218.The Skyline Problem```类似，都要用到离散化+懒标记。
+
+数据结构：和218类似，我们定义SegTreeNode.info表示该节点所对应的区间的最大高度。tag表示该区间的高度是否都是一致的。如果是的话，tag标记为true，我们就可以省去对下层更细区间的查询。
+
+离散化：和218类似。同样，对于底边范围是[i:j]的正方形，我们实际查询和更新的区间是[i:j-1]。也就是说，对于线段树中的每个子节点，info代表的是```[i:i+1)```这段左闭右开的区间的高度。
+
+区间查询：我们需要在某个线段树子树内查询指定区间[a,b]的最大高度。同样分为几种情况讨论：
+1. 如果节点区间与[a,b]互斥，那么返回0（无限小）
+2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，不论是否有懒标记，都无需再查询更下层的区间，直接返回node->info。（这是因为从上往下走的过程中，无论query还是update，我们都不会越过懒标记的节点。如果越过懒标记的节点，必然伴随着pushdown将懒标记下移，并把下层的节点准确地更新了。）
+3. 其他情况下，需要递归处理两个区间，返回```max(queryRange(node->left, a,b), queryRange(node->right, a,b))```.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
+
+区间更新：我们需要在某个线段树子树内将指定区间[a,b]的高度统一设置val。同样分为几种情况讨论：
+1. 如果节点区间与[a,b]互斥，那么直接返回。
+2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，说明整个区间的info一定都是要更新的。那么无需再更新下层的区间，直接更新node->info后返回。注意保持懒标记。
+3. 其他情况下，需要递归处理两个区间，```queryRange(node->left, a,b) && queryRange(node->right, a,b)```，然后更新node->info.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
+
+主程序：
+```cpp
+        for (auto& rect: positions)
+        {
+            int a = pos2idx[rect[0]], b = pos2idx[rect[0]+rect[1]];
+            int h = queryRange(root, a, b-1);
+            updateRange(root, a, b-1, h+rect[1]);
+            cur = max(cur, h+rect[1]);
+            rets.push_back(cur);
+        }
+```        
+
+[Leetcode Link](https://leetcode.com/problems/falling-squares)
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0699.Falling-Squares/699.Falling-Squares-v2.cpp <==
+snippet 0699.Falling-Squares "0699.Falling-Squares" b
+class Solution {
+public:
+    vector<int> fallingSquares(vector<pair<int, int>>& positions) 
+    {
+        map<int,int>Map;
+        Map[0]=0;
+        Map[INT_MAX]=0;
+        int cur=0;
+        vector<int>results;
+        
+        for (int i=0; i<positions.size(); i++)
+        {
+            int left=positions[i].first;            
+            int len=positions[i].second;
+            int right=left+len-1;
+            
+            auto pos1 = Map.lower_bound(left);
+            
+            int Hmax=0;
+            auto pos=pos1;
+            if (pos->first!=left) pos=prev(pos,1);
+            while (pos->first <= right)            
+            {
+                Hmax = max(Hmax, pos->second);
+                pos = next(pos,1);
+            }
+            int rightHeight = prev(pos,1)->second;
+            
+            Map.erase(pos1,pos);
+            Map[left]=Hmax+len;
+            Map[right+1]=rightHeight;                
+            
+            cur = max(cur, Hmax+len);
+            results.push_back(cur);
+        }
+        
+        return results;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0699.Falling-Squares/699.Falling-Squares.cpp <==
+snippet 0699.Falling-Squares "0699.Falling-Squares" b
 class Solution {
 public:
     vector<int> fallingSquares(vector<pair<int, int>>& positions) 
@@ -1089,9 +1073,12 @@ public:
         
     }
 };
-::::::::::::::
-Segment_Tree/699.Falling-Squares/699.Falling-Squares_SegmentTree_LazyTag.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0699.Falling-Squares/699.Falling-Squares_SegmentTree_LazyTag.cpp <==
+snippet 0699.Falling-Squares "0699.Falling-Squares" b
 class Solution {
     class SegTreeNode
     {
@@ -1204,9 +1191,12 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Segment_Tree/699.Falling-Squares/699.Falling-Squares_segTree.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0699.Falling-Squares/699.Falling-Squares_segTree.cpp <==
+snippet 0699.Falling-Squares "0699.Falling-Squares" b
 class Solution {
     class SegTree
     {
@@ -1278,188 +1268,189 @@ public:
         return result;
     }
 };
-::::::::::::::
-Segment_Tree/699.Falling-Squares/699.Falling-Squares-v2.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> fallingSquares(vector<pair<int, int>>& positions) 
-    {
-        map<int,int>Map;
-        Map[0]=0;
-        Map[INT_MAX]=0;
-        int cur=0;
-        vector<int>results;
-        
-        for (int i=0; i<positions.size(); i++)
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0715.Range-Module/Readme.md <==
+snippet 0715.Range-Module "0715.Range-Module" b
+### 715.Range-Module
+
+#### 解法1：使用有序map
+
+我们需要在数轴上维护一个“干净的”区间序列，即每个区间从小到大排列，但彼此互不重合。每次addRange或removeRange时，都要依然维护区间的“干净”，这样queryRange时就方便很多。
+
+类似2213，我们会选择C++的有序map，将左边界作为key，右边界作为val，则所有的区间都按key（即左边界）从小到大排序。
+
+##### AddRange
+加入一个新区间[left,right]时，我们考虑它与数轴上已有区间的关系。
+```
+      A            B         C         D
+L____________   ______  __________R  _____
+   left_____________________right
+```
+如上图所示，我们的目标是：删除已有的区间A、B、C，同时加入一个新的区间[L,R].
+
+如何定位区间A？A是左边界最后一个小于left的区间。所以我们用```iter1=prev(Map.lower_bound(left))```来定位这个区间，同时它可以拓展左边界，即```L = iter1->first```. 注意如果prev操作会越界的话，那么iter1就定位在Map.lower_bound(left)，这是我们想要删除的最左边的区间。
+
+如果定位区间C？其实更容易定位的是区间D，那么就是第一个左边界大于right的区间。所以我们用```iter2=Map.upper_bound(right)```来定位这个区间。于是从iter1到iter2（不包括iter2本身）这些区间都可以删除，于是直接用```Map.erase(iter1, iter2)```. 注意到prev(iter2)就是区间C，区间C的右边界可能帮助我们拓展右边界，即```R = max(right, prev(iter2)->second)```.
+
+最终我们添加新的区间[L,R].
+
+##### RemoveRange
+删除一个新区间[left,right]时，我们类似地考虑它与数轴上已有区间的关系。
+```
+      A            B         C         D
+L____________   ______  __________R  _____
+   left_____________________right
+```
+如上图所示，我们的目标是：删除已有的区间A、B、C，同时加入两个新区间[L,left], [right,R].
+
+如何定位区间A？同上，A是左边界最后一个小于left的区间。所以我们用```iter1=prev(Map.lower_bound(left))```来定位这个区间。如果这个区间存在并且左边界比left更早，那么我们就要添加[L,left].
+
+如何定位C？同理，先定位区间D，即```iter2=Map.upper_bound(right)```，然后我们考察D的前一个区间C的右边界是否比right更晚，那么我们就要添加[right,R].
+
+注意，我们必须显操作```Map.erase(iter1, iter2)```，再添加这两个新区间。
+
+##### QueryRange
+
+只要用prev(Map.upper_bound(left))定位到左边界小于等于left的区间，再看区间右边界是否大于等于right即可。
+
+#### 解法2：使用线段树 （不推荐）
+
+此题适合标准的线段树模型和数据结构。从难度上将，本题是基于307和370基础上的更进一步，因为我们需要再设计一个remove的操作。
+
+在segTree类中，按照常规的操作，需要有如下成员变量
+```
+int begin, end;
+bool status;
+segTree* left;
+setTree* right;
+```
+这个类需要定义三个方法，除了之前我们已经学习实践过的setStatus和getStatus之外，需要一个remove.这个是用来保证线段树在空间上高效的重要操作。
+```
+1. void remove(setTree* & node)
+2. bool setStatus(int a, int b, bool tracking)
+3. bool getStatus(int a, int b)
+```
+首先我们特别关注一下remove。它是用来干什么的呢？我们设想，当我们在一个很大的范围内```[a,b)```做setStatus操作（比如设置为true)的时候，如果这个这个区间内已经有很多的子树（即说明其中有些区域是true，有些区域是false，这些子区间们可能犬牙交错），那么这些分支其实在这个操作之后都是完全可以“抹平”的。所以我们试图把这些子节点都删除，并把当前节点范围```[start,end)```内的status整体比标记为true。
+```cpp
+        void remove(SegTree* &node)
         {
-            int left=positions[i].first;            
-            int len=positions[i].second;
-            int right=left+len-1;
-            
-            auto pos1 = Map.lower_bound(left);
-            
-            int Hmax=0;
-            auto pos=pos1;
-            if (pos->first!=left) pos=prev(pos,1);
-            while (pos->first <= right)            
-            {
-                Hmax = max(Hmax, pos->second);
-                pos = next(pos,1);
-            }
-            int rightHeight = prev(pos,1)->second;
-            
-            Map.erase(pos1,pos);
-            Map[left]=Hmax+len;
-            Map[right+1]=rightHeight;                
-            
-            cur = max(cur, Hmax+len);
-            results.push_back(cur);
+            if (!node) return;
+            remove(node->left);
+            remove(node->right);
+            delete node;
+            node = NULL;
         }
-        
-        return results;
-    }
-};
-::::::::::::::
-Segment_Tree/699.Falling-Squares/Readme.md
-::::::::::::::
-### 699.Falling-Squares
+```   
+接下来再看setStatus。线段树模板写熟了之后，就能知道我们总是根据三种情况讨论：1.[a,b]与这个区间完全不相交（一般就是返回） 2.[a,b]包括了整个区间（一般就是整体赋值），3. [a,b]与该区间相交，这种情况下基本都是要再递归处理。
 
-#### 解法1：使用Hash容器
-
-此题考查了对Hash结构（比如说Map和Set）的迭代器的操作。
-
-设置一个有序hash表，map<int,int>Map，其中的key表示在横轴上某个x的位置，value表示从这个x开始往右直至遇到下一个邻接x位置之间的高度（这个高度在这两个位置之间必须是平整的）。在不断读入positions的过程中，来更新这个Map。
-
-对于一个新引入的square，我们考察它的左右边界left,right在这个hash表中的位置（找最近邻元素的迭代器）
-```cpp
-auto ptri = Map.lower_bound(left);
-auto ptrj = Map.upper_bound(right);
-```
-注意得到的两个边界迭代器的意义。ptri表示处于left或其靠右的第一个迭代器。ptrj表示在right靠右的第一个迭代器。
-
-根据题意，处于[ptri,ptrj)的那些hash元素都将被取代（抹平），换成这个新square的信息。这个新square叠加上去后的高度等于这些hash元素的最大值加上新square自身的高度。但是注意，以上对于 ```ptri->first == left```时成立；但是对```ptri->first > left```时，我们必须把ptri之前的那个元素也考虑上，即 prev(ptri,1)。
-```cpp
-auto ptr= ptri->left==left? ptri:prev(ptri,1);
-int maxH=0;
-while (ptr!=ptrj)
-{
-    maxH=max(maxH,ptr->second);
-    ptr=next(ptr,1);
-}
-```
-以上得到了新高度。但是如何抹平之前的呢？erase命令可以删除一个前闭后开的迭代器区间。特别强调，不能用for等循环名一边通过迭代器遍历hash、一边删改迭代器。这是会出错的。
-```cpp
-Map.erase(ptri,ptrj)
-```
-接下来要跟新，即在Map里新加入一个区间。显然对于新sqaure的左边界，会引入：
-```cpp
-Map[left]= maxH+h;
-```
-特别注意：对于新sqaure的右边界，同样也可能会引入新生成的边界。比如，当新square比较小，那么Map[right+1]应该是之前 prev(ptrj,1)对应的数值。这个数值必须在对Map做迭代器删改之前保留下来。
-
-#### 解法2：使用线段树
-
-本题的线段树解法和```218.The Skyline Problem```类似，都要用到离散化+懒标记。
-
-数据结构：和218类似，我们定义SegTreeNode.info表示该节点所对应的区间的最大高度。tag表示该区间的高度是否都是一致的。如果是的话，tag标记为true，我们就可以省去对下层更细区间的查询。
-
-离散化：和218类似。同样，对于底边范围是[i:j]的正方形，我们实际查询和更新的区间是[i:j-1]。也就是说，对于线段树中的每个子节点，info代表的是```[i:i+1)```这段左闭右开的区间的高度。
-
-区间查询：我们需要在某个线段树子树内查询指定区间[a,b]的最大高度。同样分为几种情况讨论：
-1. 如果节点区间与[a,b]互斥，那么返回0（无限小）
-2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，不论是否有懒标记，都无需再查询更下层的区间，直接返回node->info。（这是因为从上往下走的过程中，无论query还是update，我们都不会越过懒标记的节点。如果越过懒标记的节点，必然伴随着pushdown将懒标记下移，并把下层的节点准确地更新了。）
-3. 其他情况下，需要递归处理两个区间，返回```max(queryRange(node->left, a,b), queryRange(node->right, a,b))```.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
-
-区间更新：我们需要在某个线段树子树内将指定区间[a,b]的高度统一设置val。同样分为几种情况讨论：
-1. 如果节点区间与[a,b]互斥，那么直接返回。
-2. 如果节点区间被包含于[a,b]之中，那么在本题题境里面，说明整个区间的info一定都是要更新的。那么无需再更新下层的区间，直接更新node->info后返回。注意保持懒标记。
-3. 其他情况下，需要递归处理两个区间，```queryRange(node->left, a,b) && queryRange(node->right, a,b)```，然后更新node->info.特别注意，在进行递归之前，需要pushdown（即如果tag已经标记，需要取消该节点的标记，并且将影响传播到它的两个子节点）。
-
-主程序：
-```cpp
-        for (auto& rect: positions)
+在这里，第二种情况下，我们需要添加一个remove操作，以保证线段树的空间高效。因为整体抹平的区间后，我们是不需要再有任何子区间的。另外，需要提醒的是，递归操作后，我们还需要及时更新当前区间的status。和之前的线段树的题目不同，我们这里，即使是非底层节点的status也是有意义的，true表示该区间都是tracked，反之就说明没有全部被tracked。这个对于getStatus函数是很有用的信息，这样我们就不用总是递归到最低层节点即可返回结果。
+```cpp        
+        void setStatus(int a, int b, int s)
         {
-            int a = pos2idx[rect[0]], b = pos2idx[rect[0]+rect[1]];
-            int h = queryRange(root, a, b-1);
-            updateRange(root, a, b-1, h+rect[1]);
-            cur = max(cur, h+rect[1]);
-            rets.push_back(cur);
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回原先的状态
+                return;                        
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，将该区间抹平
+            {
+                remove(left);
+                remove(right);
+                status = s;
+                return;
+            }         
+                                                // 3. 其他情况，[a,b]与该区间相交，需考虑其子树。
+            if (!left)                          // 没有子树？那就自己建立子树，子树的status从当前节点继承。
+            {
+                int mid = (end-begin)/2+begin;
+                left = new SegTree(begin,mid,status);
+                right = new SegTree(mid,end,status);
+            }            
+            leftStatus = left->setStatus(a,b,s);
+            rightStatus = right->setStatus(a,b,s);
+            status = left->status && right->status;     //记得更新当前节点的status
+            return;
+        }
+```
+第三个方法就是getStatus。依然是套路，分三类讨论：1.完全不相交（这里就返回一个无关紧要的true），2.完全包含（这里就返回该节点区间的status），3.部分相交，基本上需要用到递归。当然，这里有个额外的小trick，也就是，如果当前节点已经没有子树了，也可以直接返回它的status。
+```cpp
+        int getStatus(int a, int b)
+        {
+            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回一个不影响结果的状态
+                return true;            
+            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，返回该区间的状态
+                return status;                        
+            if (!left)                         // 3. [a,b]与该区间相交，但又没有子树，返回整个区间状态
+                return status;
+            int mid = (end-begin)/2+begin;      // 4. [a,b]与该区间相交，需要考虑其子树
+            int leftStatus = left->getStatus(a,b);
+            int rightStatus = right->getStatus(a,b);
+            return leftStatus && rightStatus;            
         }
 ```        
 
-[Leetcode Link](https://leetcode.com/problems/falling-squares)
-::::::::::::::
-Segment_Tree/715.Range-Module/715.Range-Module.cpp
-::::::::::::::
+
+[Leetcode Link](https://leetcode.com/problems/range-module)
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0715.Range-Module/715.Range-Module.cpp <==
+snippet 0715.Range-Module "0715.Range-Module" b
 class RangeModule {
     map<int,int>Map;
 public:
-    RangeModule() 
-    {
-        Map.clear();
+    RangeModule() {
     }
     
     void addRange(int left, int right) 
     {       
-        auto pos1 = Map.lower_bound(left);
         int leftboundary=left;
-        if (pos1!=Map.begin() && prev(pos1,1)->second>=left)
-            leftboundary = prev(pos1,1)->first;
-                            
-        auto pos2 = Map.upper_bound(right);
         int rightboundary = right;
-        if (pos2!=Map.begin())
-            rightboundary = max(right, prev(pos2,1)->second);
+
+        auto iter1 = Map.lower_bound(left);
+        if (iter1!=Map.begin() && prev(iter1)->second>=left)
+        {
+            iter1 = prev(iter1);
+            leftboundary = iter1->first;
+        }            
+                            
+        auto iter2 = Map.upper_bound(right);        
+        if (iter2!=Map.begin() && prev(iter2)->second >= rightboundary)
+            rightboundary = prev(iter2)->second;
         
-        Map.erase(pos1,pos2);
+        Map.erase(iter1,iter2);
         Map[leftboundary]=rightboundary;        
-        
-        /*
-        for (auto a:Map)
-            cout<<a.first<<":"<<a.second<<endl;
-        cout<<"added"<<endl;
-        */
     }
     
     bool queryRange(int left, int right) 
     {
-        auto pos = Map.upper_bound(left);
-        if (pos==Map.begin())
-            return false;
-        pos = prev(pos,1);
-        return (pos->second>=right);
+        auto iter = Map.upper_bound(left);
+        return (iter!=Map.begin() && prev(iter)->second>=right);
     }
     
     void removeRange(int left, int right) 
     {
-        auto pos1 = Map.lower_bound(left);
-        bool flag1=0;
-        int temp1;
-        if (pos1!=Map.begin() && prev(pos1,1)->second > left)
+        auto iter1 = Map.lower_bound(left);
+        int start1 = 0, end1 = 0;
+        if (iter1!=Map.begin() && prev(iter1)->second > left)
         {
-            temp1 = prev(pos1,1)->first;
-            flag1=1;
+            iter1 = prev(iter1);
+            start1 = iter1->first;
+            end1 = left;
         }
-        
-        auto pos2 = Map.lower_bound(right);
-        int temp2;
-        bool flag2=0;        
-        if (pos2!=Map.begin() && prev(pos2,1)->second > right)
+
+        auto iter2 = Map.upper_bound(right);
+        int start2 = 0, end2 = 0;
+        if (iter2!=Map.begin() && prev(iter2)->second > right)
         {
-            temp2 = prev(pos2,1)->second;
-            flag2=1;
+            start2 = right;
+            end2 = prev(iter2)->second;
         }
-        
-        Map.erase(pos1,pos2);
-        if (flag1) Map[temp1]=left;
-        if (flag2) Map[right]=temp2;
-        
-        /*
-        for (auto a:Map)
-            cout<<a.first<<":"<<a.second<<endl;
-        cout<<"removed"<<endl;    
-        */
+
+        Map.erase(iter1, iter2);
+        if (start1 < end1) Map[start1] = end1;
+        if (start2 < end2) Map[start2] = end2;
     }
 };
 
@@ -1470,9 +1461,12 @@ public:
  * bool param_2 = obj.queryRange(left,right);
  * obj.removeRange(left,right);
  */
-::::::::::::::
-Segment_Tree/715.Range-Module/715.Range-Module_segTree.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/0715.Range-Module/715.Range-Module_segTree.cpp <==
+snippet 0715.Range-Module "0715.Range-Module" b
 class RangeModule {
     class SegTree
     {
@@ -1561,142 +1555,190 @@ public:
  * bool param_2 = obj.queryRange(left,right);
  * obj.removeRange(left,right);
  */
-::::::::::::::
-Segment_Tree/715.Range-Module/Readme.md
-::::::::::::::
-### 715.Range-Module
 
-#### 解法1：使用有序map
+$0
+endsnippet
 
-对于这种interval类型的题目，我们选用ordered_map，将左边界作为key，右边界作为val，则所有的interval都按左边界从小到大排序。
+# ==> ./Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/Readme.md <==
+snippet 2031.Count-Subarrays-With-More-Ones-Than-Zeros "2031.Count-Subarrays-With-More-Ones-Than-Zeros" b
+### 2031.Count-Subarrays-With-More-Ones-Than-Zeros
 
-加入一个interval时，要考虑这么几点：
+对于区间的问题，我们很容想到尝试前缀和。我们令diff[i]表示前i个数字里元素1与元素0个数之差。那么对于以i为右边界的合法区间，我们希望它对应的左边界位置j有什么性质呢？显然，我们希望```diff[j] < diff[i]```即可。这样从[j+1:i]这个区间里的元素1一定比0多。有多少个这样的j，就有多少个以i为右边界的合法区间。
 
-1. 新加入的区间是否和左边的某个区间部分重合？是的话，那么左边的那个区间就要拉长、重新赋值其右边界；如果不是，那么left就是一个新的左边界。
-2. 新加入的区间是否和右边的某个区间部分重合？是的话，那么右边的那个区间就要删除它的key，其右边界将作为一个新区间的右边界。
-3. 新加入的区间范围内的任何key都是需要抹去的。
-4. 新建立一个区间。
+那么有多少个j满足这个条件呢？我们显然需要在i之前，记录下所有diff[j]的值并且统计频次，并且累加那些差值小于diff[i]的频次。
 
-代码如下：
-```cpp
-int leftBound = left;
-auto pos1=Map.lower_bound(left);
-if (pos1!=Map.begin() && prev(pos1,1)->second >= left)  //左边界部分重合
-    leftBound = prev(pos1,1)->first;
+比如，我们令nums[k]表示diff为k出现的频次，即有多少个j，满足长度为j的前缀区间里元素1与元素0个数之差为k。对于每一个右边界为i的合法区间，我们需要累加```nums[0]+nums[1]+..+nums[diff[i]-1]```，这个数目就是左边界的数目。计算出这个答案之后，我们还需要更新```nums[diff[i]]+=1```，因为下一个回合的diff[i+1]会再次用到更新后的nums数组。
+
+由此可见，我们需要一个数据结构，能够快速求出nums数组里的指定区间和（更确切地说是前缀和），同时也要支持对nums任意单点的高效修改。显然这样的数据结果，binary index tree是再合适不过了。
+
+此题需要额外处理的一个问题的是：diff的数值范围可以是-10000到+10000，即我们需要记录从nums[-100000]到nums[+100000]。但是树状数组的index必须都是正数。所以我们需要一个```offset=1e5+1```，将差值[-1e5,1e5]映射到正数[1, 2e5+2]上。注意在这里的模板中，树状数组里有意义的元素下标从1开始。
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/2031.Count-Subarrays-With-More-Ones-Than-Zeros/2031.Count-Subarrays-With-More-Ones-Than-Zeros.cpp <==
+snippet 2031.Count-Subarrays-With-More-Ones-Than-Zeros "2031.Count-Subarrays-With-More-Ones-Than-Zeros" b
+const int MAX_N = 200003;
+using LL = long long;
+
+class Solution {        
+    int OFFSET = 100001;
+    long long bitArr[MAX_N];
+    long long nums[MAX_N];  // Note: nums is 1-index
+    long long M = 1e9+7;
+
+    // increase nums[i] by delta  (1-index)
+    void updateDelta(int i, long long delta) {
+        int idx = i;
+        while (idx <= MAX_N)
+        {
+            bitArr[idx]+=delta;
+            bitArr[idx] %= M;
+            idx+=idx&(-idx);
+        }
+    }
+
+    // sum of a range nums[1:j] inclusively, 1-index
+    long long queryPreSum(int idx){
+        long long result = 0;
+        while (idx){
+            result += bitArr[idx];
+            result %= M;
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    // sum of a range nums[i:j] inclusively
+    long long sumRange(int i, int j) {    
+        return queryPreSum(j)-queryPreSum(i-1);
+    }
     
-int rightBound = right;
-auto pos2=Map.upper_bound(right);
-if (pos2!=Map.begin() && prev(pos2,1)->first <= right)  //右边界部分重合
-    rightBound = max(right, prev(pos2,1)->second);
+public:
+    int subarraysWithMoreZerosThanOnes(vector<int>& nums) 
+    {
+        cout<<nums.size()<<endl;
+        int diff = 0;
+        LL ret = 0;
+        updateDelta(0+OFFSET, 1);
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            if (nums[i]==1) diff++;
+            else diff--;
+            
+            ret = (ret + queryPreSum(diff-1+OFFSET)) % M;                    
+            updateDelta(diff+OFFSET, 1);
+        }        
+        return ret;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/2179.Count-Good-Triplets-in-an-Array/Readme.md <==
+snippet 2179.Count-Good-Triplets-in-an-Array "2179.Count-Good-Triplets-in-an-Array" b
+### 2179.Count-Good-Triplets-in-an-Array
+
+本题的入手思路如下。我们容易确定相同数字在两个数组中的位置，类似nums1[i]==nums2[j]
+```
+X X X i X X X X X X X 
+X X X X X X j X X X X
+```
+自然地，我们希望知道有多少```x>i```和```y>j```，使得nums1[x]==nums2[y]. 比较暴力的方法是遍历大于i的所有位置x，查看nums[j+1:n-1]区间内是否有与nums1[x]相同的数。但从这个算法来看并没有优化的空间，因为能有多少配对完全是随机事件。如何更高效地去做呢？
+
+考虑到所有的元素都互不相同，这里有一个技巧：因为我们对nums1里面的元素大小并不关心，我们其实可以只看编号不看数值，这样nums1在我们眼里可以就只是```0,1,2,3...,```，这样就构建了一个映射。将nums1所做的映射也应用在nums2里面，则nums2重新变换成了一个新的乱序排列。这里就发现了规律，变换后nums1里面在i后面的元素，意味着在nums2里面必然都比nums[j]的数值大。反过来说，nums2里那些比nums2[j]大的数，意味着在nums1里时一定排在i后面。所以我们需要根据nums2[j]计算一个新数组largerAfterSelf[j]，表示nums2[j]后面有多少元素比自己大，那么这些元素必然也存在于nums1[i]的后面。
+
+同理，我们可以构造smallerBeforeSelf[j]，表示nums2[j]前面有多少元素比自己小，那么这些元素必然也存在于nums1[i]的后面。
+
+最终的答案就是```sum{smallerBeforeSelf[j] * largerAfterSelf[j]}, for i=0,1,2,..,n-1```. 这个思路在```1713.Minimum-Operations-to-Make-a-Subsequence```里也有应用。
+
+计算largerAfterSelf的方法同```315.Count-of-Smaller-Numbers-After-Self```，可以用分治+归并排序，也可以套用树状数组。
+
+对于BIT的解法，我们注意到所有数值的大小不超过1e5，所以开辟长度为1e5的树状数组作为篮子，每考察nums[i]，就需要在树状数组的[nums[i]+1: INT_MAX]区间内累加所有的数据之和，这个就是largerAfterSelf[i]. 之后记得在idex = nums[i]的位置自增1. 
+
+$0
+endsnippet
+
+# ==> ./Segment_Tree/2179.Count-Good-Triplets-in-an-Array/2179.Count-Good-Triplets-in-an-Array.cpp <==
+snippet 2179.Count-Good-Triplets-in-an-Array "2179.Count-Good-Triplets-in-an-Array" b
+class BIT{
+    public:
+    int N;    
+    vector<long long>bitArr; // Note: all arrays are 1-index
+    vector<long long>nums;
+    long long M = 1e9+7;
     
-Map.erase(pos1,pos2) // 删除一个前闭后开的迭代器区间
-Map[leftBound]=rightBound;
-```
+    BIT(int N)
+    {
+        this->N = N;
+        bitArr.resize(N+1);
+        nums.resize(N+1);        
+    }
 
-删除一个interval时，要考虑这么几点：
-
-1. 要删除的区间是否和左边的某个区间部分重合？是的话，那么左边的那个区间就要缩短，重新赋值其右边界。
-2. 要删除的区间是否和右边的某个区间部分重合？是的话，那么右边的那个区间就要缩短，重新定义其左边界。
-3. 要删除的区间范围内的任何key都是需要抹去的。
-
-代码如下：
-```cpp
-auto pos1=Map.lower_bound(left);
-bool flag1=0;
-if (pos1!=Map.begin() && prev(pos1,1)->second >= left)
-{
-    flag1=1;
-    temp1=prev(pos1,1)->second;
-}
-
-auto pos2=Map.lower_bound(right);
-bool flag=0;
-int temp2;
-if (pos2!=Map.begin() && prev(pos2,1)->second > right)
-{
-    flag2=1;
-    temp2=prev(pos2,1)->second;
-}
-
-Map.erase(pos1,pos2);
-if (flag1) Map[temp1]=left;
-if (flag2) Map[right]=temp2;
-```
-特别注意，对于迭代器的修改操作，得安排在删除操作之后进行。
-
-
-#### 解法2：使用线段树
-
-此题适合标准的线段树模型和数据结构。从难度上将，本题是基于307和370基础上的更进一步，因为我们需要再设计一个remove的操作。
-
-在segTree类中，按照常规的操作，需要有如下成员变量
-```
-int begin, end;
-bool status;
-segTree* left;
-setTree* right;
-```
-这个类需要定义三个方法，除了之前我们已经学习实践过的setStatus和getStatus之外，需要一个remove.这个是用来保证线段树在空间上高效的重要操作。
-```
-1. void remove(setTree* & node)
-2. bool setStatus(int a, int b, bool tracking)
-3. bool getStatus(int a, int b)
-```
-首先我们特别关注一下remove。它是用来干什么的呢？我们设想，当我们在一个很大的范围内```[a,b)```做setStatus操作（比如设置为true)的时候，如果这个这个区间内已经有很多的子树（即说明其中有些区域是true，有些区域是false，这些子区间们可能犬牙交错），那么这些分支其实在这个操作之后都是完全可以“抹平”的。所以我们试图把这些子节点都删除，并把当前节点范围```[start,end)```内的status整体比标记为true。
-```cpp
-        void remove(SegTree* &node)
+    // increase nums[i] by delta
+    void updateDelta(int i, long long delta) {
+        int idx = i;
+        while (idx <= N)
         {
-            if (!node) return;
-            remove(node->left);
-            remove(node->right);
-            delete node;
-            node = NULL;
+            bitArr[idx]+=delta;
+            bitArr[idx] %= M;
+            idx+=idx&(-idx);
         }
-```   
-接下来再看setStatus。线段树模板写熟了之后，就能知道我们总是根据三种情况讨论：1.[a,b]与这个区间完全不相交（一般就是返回） 2.[a,b]包括了整个区间（一般就是整体赋值），3. [a,b]与该区间相交，这种情况下基本都是要再递归处理。
+    }
 
-在这里，第二种情况下，我们需要添加一个remove操作，以保证线段树的空间高效。因为整体抹平的区间后，我们是不需要再有任何子区间的。另外，需要提醒的是，递归操作后，我们还需要及时更新当前区间的status。和之前的线段树的题目不同，我们这里，即使是非底层节点的status也是有意义的，true表示该区间都是tracked，反之就说明没有全部被tracked。这个对于getStatus函数是很有用的信息，这样我们就不用总是递归到最低层节点即可返回结果。
-```cpp        
-        void setStatus(int a, int b, int s)
+    // sum of a range nums[1:j] inclusively
+    long long queryPreSum(int idx){
+        long long result = 0;
+        while (idx){
+            result += bitArr[idx];
+            result %= M;
+            idx-=idx&(-idx);
+        }
+        return result;
+    }
+
+    // sum of a range nums[i:j] inclusively
+    long long sumRange(int i, int j) {    
+        return queryPreSum(j)-queryPreSum(i-1);
+    } 
+};
+
+class Solution {
+public:    
+    long long goodTriplets(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int n = nums1.size();
+        unordered_map<int,int>Map;
+        for (int i=0; i<n; i++)
+            Map[nums1[i]] = i;
+        
+        for (int i=0; i<n; i++)
+            nums2[i] = Map[nums2[i]]+1;
+        
+        vector<int>smallerBefore(n,0);
+        BIT bit1(100005);
+        for (int i=0; i<n; i++)
         {
-            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回原先的状态
-                return;                        
-            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，将该区间抹平
-            {
-                remove(left);
-                remove(right);
-                status = s;
-                return;
-            }         
-                                                // 3. 其他情况，[a,b]与该区间相交，需考虑其子树。
-            if (!left)                          // 没有子树？那就自己建立子树，子树的status从当前节点继承。
-            {
-                int mid = (end-begin)/2+begin;
-                left = new SegTree(begin,mid,status);
-                right = new SegTree(mid,end,status);
-            }            
-            leftStatus = left->setStatus(a,b,s);
-            rightStatus = right->setStatus(a,b,s);
-            status = left->status && right->status;     //记得更新当前节点的status
-            return;
+            smallerBefore[i] = bit1.sumRange(1,nums2[i]);
+            bit1.updateDelta(nums2[i], 1);
         }
-```
-第三个方法就是getStatus。依然是套路，分三类讨论：1.完全不相交（这里就返回一个无关紧要的true），2.完全包含（这里就返回该节点区间的status），3.部分相交，基本上需要用到递归。当然，这里有个额外的小trick，也就是，如果当前节点已经没有子树了，也可以直接返回它的status。
-```cpp
-        int getStatus(int a, int b)
+        
+        vector<int>largerAfter(n,0);
+        BIT bit2(100005);
+        for (int i=n-1; i>=0; i--)
         {
-            if (begin>=b || end<=a)            // 1. [a,b]与这个区间不相交，返回一个不影响结果的状态
-                return true;            
-            if (a<=begin && end<=b)            // 2. [a,b]包括了整个区间，返回该区间的状态
-                return status;                        
-            if (!left)                         // 3. [a,b]与该区间相交，但又没有子树，返回整个区间状态
-                return status;
-            int mid = (end-begin)/2+begin;      // 4. [a,b]与该区间相交，需要考虑其子树
-            int leftStatus = left->getStatus(a,b);
-            int rightStatus = right->getStatus(a,b);
-            return leftStatus && rightStatus;            
+            largerAfter[i] = bit2.sumRange(nums2[i], 100000);
+            bit2.updateDelta(nums2[i], 1);
         }
-```        
+        
+        long long ret = 0;
+        for (int i=0; i<n; i++)
+            ret += (long long)smallerBefore[i] * (long long)largerAfter[i];
+        return ret;
+    }    
+};
 
-
-[Leetcode Link](https://leetcode.com/problems/range-module)
+$0
+endsnippet

@@ -1,319 +1,32 @@
-::::::::::::::
-Design/1146.Snapshot-Array/1146.Snapshot-Array.cpp
-::::::::::::::
-class SnapshotArray {        
-    int vals[50000];
-    vector<vector<pair<int,int>>>snaps;
-    unordered_set<int>changed;
-    int snapId;
-public:
-    SnapshotArray(int length) 
-    {    
-        snapId = 0;
-        snaps.resize(length);
-        for (int i=0; i<length; i++)
-            snaps[i].push_back({-1,0});
-    }
-    
-    void set(int index, int val) 
-    {
-        vals[index] = val;
-        changed.insert(index);
-    }
-    
-    int snap() 
-    {
-        for (int index: changed)
-        {
-            snaps[index].push_back({snapId, vals[index]});
-        }
-        snapId++;
-        changed.clear();
-        return snapId-1;
-    }
-    
-    int get(int index, int snap_id) 
-    {
-        auto iter = upper_bound(snaps[index].begin(), snaps[index].end(), make_pair(snap_id, INT_MAX));
-        iter = prev(iter,1);
-        return iter->second;                                        
-    }
-};
 
-/**
- * Your SnapshotArray object will be instantiated and called as such:
- * SnapshotArray* obj = new SnapshotArray(length);
- * obj->set(index,val);
- * int param_2 = obj->snap();
- * int param_3 = obj->get(index,snap_id);
- */
-::::::::::::::
-Design/1146.Snapshot-Array/Readme.md
-::::::::::::::
-### 1146.Snapshot-Array
+# ==> ./Design/0146.LRU-Cache/Readme.md <==
+snippet 0146.LRU-Cache "0146.LRU-Cache" b
+146.LRU-Cache
 
-最直观的想法就是给每个元素设立快照，即snaps[index]记录了关于index这个元素所有的{snapId, val}。
+本题类似460，更简单些。考虑到o(1)的时间要求，所以用C++自带的链表结构list。访问list类似于访问vector，但对于非首尾两端的元素，只能通过迭代器（可以理解为指针）来访问。
 
-接下来我们需要考虑一个效率的问题。我们每调用一次snap()是否需要给每个元素都新建一次快照呢？显然如果大多数元素都没有更新过的话，再添加一次快照的效率不高。所以我们可以设置一个changed的集合，里面只存放上一次snap()之后变动过的元素，也就是被set()过的元素。
+设计如下的数据结构：
+```cpp
+unordered_map<int,int>key2val; //记录 key -> val
+list<int>List; //把所有key按照recently visited的先后顺序排列
+unordered_map<int,list<int>::iterator>key2iter; //记录key对应的在List中的迭代器位置
+```
 
-这样的话，我们会发现对于每个元素而言，它被记录的snapId并不是连续的。比如说snaps[index]={{1,4},{3,8}}，即该元素在第一次拍快照时的值是4，第三次拍快照时的值是8. 那么我们在第二次拍快照的时候，该元素的值是什么呢？显然哪个时候它的值应该是与snapId==1时的值是一样的。所以我们应该在snaps[index]里面找到最后一个小于等于snapId的那个时间戳。
+对于get函数，首先考虑是否在key2val中有key的记录，没有就只能退出。然后在List里删除key，并把key再装在List的末尾。显然，访问List里的Key需要通过key2iter[Key],最后也要更新key2iter[Key]。
 
-此外还有一个细节，如果某个元素从来没有被更新过，那么snaps[index]里面就是空的，二分搜值就得不到结果。解决方法是，考虑到每个元素的初始值是0，我们给它虚拟地加一个快照{-1,0}，即它的snapId可以认为是-1. 这样get(index,snap_id)的时候至少能得到初始值0.
-::::::::::::::
-Design/1172.Dinner-Plate-Stacks/1172.Dinner-Plate-Stacks.cpp
-::::::::::::::
-class DinnerPlates {
-    unordered_map<int, vector<int>>Plate;
-    int leftNotFull;
-    int rightNotEmpty;
-    int cap;
-    
-public:
-    DinnerPlates(int capacity) {
-        leftNotFull = 0;
-        rightNotEmpty = -1;
-        cap = capacity; 
-    }
-    
-    void push(int val) {
-        Plate[leftNotFull].push_back(val);
-        while (Plate[leftNotFull].size()==cap)
-            leftNotFull++;
-        
-        rightNotEmpty = max(rightNotEmpty, (Plate[leftNotFull].size()==0)?leftNotFull-1:leftNotFull);
-    }
-    
-    int pop() {
-        if (rightNotEmpty==-1)
-            return -1;
-        return popAtStack(rightNotEmpty);
-    }
-    
-    int popAtStack(int index) {
-        if (Plate[index].size()==0)
-            return -1;
-        
-        int ret = Plate[index].back();
-        Plate[index].pop_back();
-        
-        if (index==rightNotEmpty && Plate[rightNotEmpty].size()==0)
-        {
-            while (Plate[rightNotEmpty].size()==0 && rightNotEmpty>=0)
-                rightNotEmpty--;
-        }
-        
-        leftNotFull = min(leftNotFull, index);
-        
-        return ret;
-    }
-};
+对于put函数，首先调用get(key)查看是否已经存在。如果已经存在，则只需要更新key2val[key]。另外注意到一个trick，在调用get(key)的时候，已经更新了key在List中的顺序，所以这个情况下，就可以安心退出了。
 
-/**
- * Your DinnerPlates object will be instantiated and called as such:
- * DinnerPlates* obj = new DinnerPlates(capacity);
- * obj->push(val);
- * int param_2 = obj->pop();
- * int param_3 = obj->popAtStack(index);
- */
+如果get(key)==-1，那么就需要加入一个key。两种情况：一种是List.size()<cap，那么直接加key（需要添加key2val[key]、添加List、添加key2iter[key]）；另一种是List.size()==cap，那么需要先删除一个元素，再加上key.删除key需要的操作有：确定要删除的keyDel（就在List最首），在List里删除keyDel，在key2val里删除keyDel.
+
+总之，既然建立了三个数据结构 key2val, List, key2iter，那么在每一步操作的时候，注意都要更新这三个东西，就不会遗漏操作了。对于460题也是如此。
 
 
-    
-::::::::::::::
-Design/1172.Dinner-Plate-Stacks/Readme.md
-::::::::::::::
-### 1172.Dinner-Plate-Stacks
+[Leetcode Link](https://leetcode.com/problems/lru-cache)
+$0
+endsnippet
 
-本题的关键就是维护两个索引指针，leftNotFull和RightNotEmpty。顾名思义，leftNotFull表示左边第一个没有放满的盘子的编号，rightNotEmpty表示右边第一个非空的盘子的编号。如果这两个索引指针维护的好，那么push和pop就是分别对应这两个盘子进行操作即可。
-
-本题的关键是，任何的操作都需要对这两个指针进行更新和维护。
-
-对于push(val)，意味着往leftNotFull上面再加一个数。如果该盘子满了，就要对leftNotFull进行自增操作来定位下一个非满的盘子。同时，rightNotEmpty也可能增长，基本原理是rightNotEmpty不可能比leftNotFull小（除非leftNotFull对应的是一个空盘子，那样的话rightNotEmpty==leftNotFull-1）。
-
-对于popAtStack(index)，意味着对于index这个盘子要弹出一个数。这个操作会对leftNotFull有什么影响呢？显然，它就有被更新的可能，即```leftNotFull=min(leftNotFull,index)```。这个操作会对rightNotEmpty有什么影响呢？那就是当index==rightNotEmpty的时候，如果index这个盘子被清空了，则rightNotEmpty就要往下降（特别注意，最小降为-1为止）。
-
-对于pop()，其实就是```popAtStack(rightNotEmpty)```。
-
-特别注意，rightNotEmpty允许为-1，表示当前所有的盘子都为空。
-
-
-[Leetcode Link](https://leetcode.com/problems/dinner-plate-stacks)::::::::::::::
-Design/1352.Product-of-the-Last-K-Numbers/1352.Product-of-the-Last-K-Numbers.cpp
-::::::::::::::
-class ProductOfNumbers {
-    vector<int>pre;
-    int id;
-    int lastZero = 0;
-public:
-    ProductOfNumbers() 
-    {
-        id = 0;        
-        pre.push_back(1);
-    }
-    
-    void add(int num) 
-    {   
-        id++;     
-        if (num!=0)
-        {
-            pre.push_back(pre.back()*num);
-        }
-            
-        else
-        {
-            pre.push_back(1);
-            lastZero = id;
-        }
-    }
-    
-    int getProduct(int k) 
-    {
-        if (lastZero <= id-k)
-            return pre[id]/pre[id-k];
-        else
-            return 0;
-    }
-};
-
-/**
- * Your ProductOfNumbers object will be instantiated and called as such:
- * ProductOfNumbers* obj = new ProductOfNumbers();
- * obj->add(num);
- * int param_2 = obj->getProduct(k);
- */
-::::::::::::::
-Design/1352.Product-of-the-Last-K-Numbers/Readme.md
-::::::::::::::
-### 1352.Product-of-the-Last-K-Numbers
-
-本题看第一眼就知道解法是构造前缀乘积的数组，令pre[i]表示从nums[1]连续乘到nums[i]的积。假设当前已经有n个元素，那么最后k个元素的乘积就是pre[n]/pre[n-k]。注意本题的约束条件里保证了前缀乘积数组不会溢出。
-
-但是本题就这么简单吗？其实本题需要考察的是当年nums[i]=0的情况。我们发现一旦加入了0，那么会使得当前乃至之后的pre永远都是0，于是在getProduct时的计算公式pre[n]/pre[n-k]的表达式就会有除数为0的风险。那么如何解决这个问题呢？
-
-首先，如果从n往前数的k个数包括了0，那么最终答案就是返回0. 其次，如果这k个数不包括0的话，那么如何保证pre[n]/pre[n-k]一定合法呢？我们可以认为把最近的0之前的数字都忽略掉，将整个pre数组从最近的0之后开始重新计数：也就是当nums[i]==1时，令pre[i]=1。
-::::::::::::::
-Design/1381.Design-a-Stack-With-Increment-Operation/1381.Design-a-Stack-With-Increment-Operation.cpp
-::::::::::::::
-class CustomStack {
-    vector<int>nums;
-    vector<int>offset;
-    int maxSize;
-    int count = 0;
-    int diff = 0;
-public:
-    CustomStack(int maxSize) 
-    {
-        this->maxSize =  maxSize;
-        nums.resize(maxSize, 0);
-        offset.resize(maxSize, 0);
-    }
-    
-    void push(int x) 
-    {
-        if (count==maxSize) return;
-        
-        if (count>=1)
-            offset[count-1] += diff;
-        diff = 0;
-        
-        nums[count] = x;
-        offset[count] = 0;
-        count++;        
-    }
-    
-    int pop() 
-    {
-        if (count==0) return -1;
-        
-        diff += offset[count-1];
-        int ret = nums[count-1] + diff;
-        count -= 1;
-        return ret;        
-    }
-    
-    void increment(int k, int val) 
-    {
-        if (count == 0) return;
-        offset[min(k-1, count-1)] += val;
-    }
-};
-
-/**
- * Your CustomStack object will be instantiated and called as such:
- * CustomStack* obj = new CustomStack(maxSize);
- * obj->push(x);
- * int param_2 = obj->pop();
- * obj->increment(k,val);
- */
-::::::::::::::
-Design/1381.Design-a-Stack-With-Increment-Operation/Readme.md
-::::::::::::::
-### 1381.Design-a-Stack-With-Increment-Operation
-
-本题虽然暴力解可以AC，但是有o(N)的优秀解法。用到的就是差分数组的原理。类似的题有```1109.Corporate Flight Bookings```
-
-假设当我们遇到increment(k,val)操作时，我们设置offset[k]=value。这样当我们退栈的过程中遇到第k个元素的时候，就知道从此往下继续退栈的话，所有的元素都要加上一个diff = value。如果往下退栈的过程中再遇到另一个offset[k2] = value2，就知道从k2往下继续退栈出的元素都要加上一个diff = value+value2.
-
-特别注意的是，当如果你需要入栈第k个元素的时候，你需要记录offset[k-1] = diff，同时将手头的diff清空。
-::::::::::::::
-Design/1418.Display-Table-of-Food-Orders-in-a-Restaurant/1418.Display-Table-of-Food-Orders-in-a-Restaurant.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<vector<string>> displayTable(vector<vector<string>>& orders) 
-    {
-        map<int, unordered_map<string, int>>table2Order;
-        set<string>foodNames;
-        for (auto order:orders)
-        {
-            table2Order[stoi(order[1])][order[2]]++;
-            foodNames.insert(order[2]);
-        }
-        
-        int i = 1;
-        unordered_map<string,int>food2index;
-        for (auto food: foodNames)        
-        {
-            food2index[food] = i;
-            i++;
-        }
-        
-        vector<vector<string>>rets;
-
-        vector<string>header({"Table"});
-        for (auto x:foodNames) header.push_back(x);        
-        rets.push_back(header);
-        
-        for (auto x:table2Order)
-        {            
-            int id = x.first;
-            auto order = x.second;
-
-            vector<string>row(foodNames.size()+1, "0");
-            row[0] = to_string(id);
-            
-            for (auto y: order)
-            {
-                int col = food2index[y.first];
-                int num = y.second;
-                row[col] = to_string(num);
-            }            
-            rets.push_back(row);            
-        }
-        
-        return rets;
-    }
-};
-::::::::::::::
-Design/1418.Display-Table-of-Food-Orders-in-a-Restaurant/Readme.md
-::::::::::::::
-### 1418.Display-Table-of-Food-Orders-in-a-Restaurant
-
-本题有很多数据结构的设计方法，但是彼此之间的时间复杂度差别很大。
-
-比较快的方法是：设计```map<int, unordered_map<string, int>>table2Order```，用来记录每个桌号、每道food被点单的次数。其中桌号已经满足了升序排列。这其实已经和最终的表格样式很接近了。我们还需要知道每道food的点单次数应该填在哪个列。故我们把所有food name经过排序后，就可以得到每道food所对应的Column编号的映射。
-::::::::::::::
-Design/146.LRU-Cache/146.LRU-Cache.cpp
-::::::::::::::
+# ==> ./Design/0146.LRU-Cache/146.LRU-Cache.cpp <==
+snippet 0146.LRU-Cache "0146.LRU-Cache" b
 class LRUCache {
     unordered_map<int,int>key2val;
     list<int>List;
@@ -368,271 +81,47 @@ public:
 
 
 //key1, key3, ..., key_n, key2, 
-::::::::::::::
-Design/146.LRU-Cache/Readme.md
-::::::::::::::
-146.LRU-Cache
 
-本题类似460，更简单些。考虑到o(1)的时间要求，所以用C++自带的链表结构list。访问list类似于访问vector，但对于非首尾两端的元素，只能通过迭代器（可以理解为指针）来访问。
+$0
+endsnippet
 
-设计如下的数据结构：
+# ==> ./Design/0355.Design-Twitter/Readme.md <==
+snippet 0355.Design-Twitter "0355.Design-Twitter" b
+### 355.Design-Twitter
+
+设计如下的数据结构：    
+unordered_map<int,set<int>>Friends; //记录每个用户的好友（包括自己）   
+int global_id; // 全局变量，记录所有推文的时间顺序。    
+unordered_map<int,vector<pair<int,int>>>Tweets; // 记录每个用户发推的global_id和tweetID。   
+
+在getNewsFeed时，遍历所有好友的推文记录，寻找最近的10个。   
+基本思路是构造一个数据结构news，每次放进一个推文，news能够自动保持根据global_id保持有序。什么数据结构能实现这个功能呢？有两个方案：priority_queue，或者有序set。考虑到set里的元素已经是pair，并且其自动排序就是依照pair的第一个key从小到大，在这里更为方便。
 ```cpp
-unordered_map<int,int>key2val; //记录 key -> val
-list<int>List; //把所有key按照recently visited的先后顺序排列
-unordered_map<int,list<int>::iterator>key2iter; //记录key对应的在List中的迭代器位置
-```
-
-对于get函数，首先考虑是否在key2val中有key的记录，没有就只能退出。然后在List里删除key，并把key再装在List的末尾。显然，访问List里的Key需要通过key2iter[Key],最后也要更新key2iter[Key]。
-
-对于put函数，首先调用get(key)查看是否已经存在。如果已经存在，则只需要更新key2val[key]。另外注意到一个trick，在调用get(key)的时候，已经更新了key在List中的顺序，所以这个情况下，就可以安心退出了。
-
-如果get(key)==-1，那么就需要加入一个key。两种情况：一种是List.size()<cap，那么直接加key（需要添加key2val[key]、添加List、添加key2iter[key]）；另一种是List.size()==cap，那么需要先删除一个元素，再加上key.删除key需要的操作有：确定要删除的keyDel（就在List最首），在List里删除keyDel，在key2val里删除keyDel.
-
-总之，既然建立了三个数据结构 key2val, List, key2iter，那么在每一步操作的时候，注意都要更新这三个东西，就不会遗漏操作了。对于460题也是如此。
-
-
-[Leetcode Link](https://leetcode.com/problems/lru-cache)::::::::::::::
-Design/1622.Fancy-Sequence/1622.Fancy-Sequence.cpp
-::::::::::::::
-#define LL long long
-LL M = 1e9+7;
-
-class Fancy {
-    LL add, mul;
-    vector<LL>nums;
-    
-    LL quickPow(int x, int y) 
-    {
-        int ret = 1;
-        int cur = x;
-        while (y) 
-        {
-            if (y & 1) 
-            {
-                ret = (long long)ret * cur % M;
-            }
-            cur = (long long)cur * cur % M;
-            y >>= 1;
-        }
-        return ret;
-    }
-    
-    LL inv(int x) 
-    {
-        return quickPow(x, M - 2);
-    }
-    
-public:
-    Fancy() {
-        mul = 1;
-        add = 0;
-    }
-    
-    void append(int val) 
-    {
-        val = (val-add+M) % M;
-        val = (val * inv(mul)) % M;
-        nums.push_back(val);
-    }
-    
-    void addAll(int inc) 
-    {
-        add = (add + inc) % M;
-    }
-    
-    void multAll(int m) 
-    {
-        mul = (mul*m) % M;
-        add = (add*m) % M;
-
-    }
-    
-    int getIndex(int idx) 
-    {
-        if (idx >= nums.size())
-            return -1;
-        return (nums[idx]*mul % M + add) % M;
-    }
-};
-
-/**
- * Your Fancy object will be instantiated and called as such:
- * Fancy* obj = new Fancy();
- * obj->append(val);
- * obj->addAll(inc);
- * obj->multAll(m);
- * int param_4 = obj->getIndex(idx);
- */
-::::::::::::::
-Design/1622.Fancy-Sequence/Readme.md
-::::::::::::::
-### 1622.Fancy-Sequence
-
-我们想象一个这样的序列
-```
-0 1 2 3 4 5  6  7 8 9 ...
-   *     + ** +
-   a     b cd e
-```
-此时我们如果想getIdx(0)的话，除了取出nums[0]之外，还必须经过一系列的乘法和加法操作```(((((num[0]*a)+b)*c)*d)+e)...```，当然，最终我们肯定可以将其化简为```nums[0]*mul+add```.
-
-此时我们如果想getIdx(1)的话，其实处理方法和nums[0]是一模一样的，所以我们可以直接用```nums[1]*mul+add```.
-
-此时我们如果想getIdx(2)的话，情况就不一样了，不能用```nums[2]*mul+add```了，因为我们实际需要计算的是```(((((num[2])+b)*c)*d)+e)...```。那么我们还需要再重新把这一票算符再走一遍吗？可否直接利用之前化简得到的mul和add呢？其实是可以的。当我们在存nums[2]的时候，不存原始的数值，而是存入的是val = nums[2]/a的话，那么我们当我们调取getIdx(2)时，就可以使用```val*mul+add```这个表达式，因为它本质算的是```(((((num[2]/a*a)+b)*c)*d)+e)...```，恰好就是我们想要的结果。
-
-所以我们发现了一个规律，如果当前的化简算子是{mul,add}的时候，我们想要append一个新的数字nums[i]时，我们不直接append原始的数值，我们append一个虚拟的数值val用来“抵消”这对算子的影响，即使得```nums[i] = val*mul+add```。这样我们调用getIdx(i)的时候，仍然apply当前的化简算子{mul,add}得到```val*mul+add```，恰好就还原了真实的nums[i]。即使此后的{mul,add}可能会更新为{mul',add'}，但是val只是抵消了i之前的运算符的效果，并不会影响i之后的运算的作用，所以当再次调用getIdx(i)的时候，就可以放心地将{mul',add'}用在val上然后输出答案。
-
-接下来的一个关键问题，我们试图得到这个“抵消”后的val时，发现```nums[i] = val*mul+add```并不能保证得到一个整数的```val= (nums[i]-add) / mul```，如果存储的是小数的话，此后的误差会越来越大。另外一个更重要的问题是，mul会随着时间的推移有可能非常大直至越界。而如果为了避免mul越界而对其做了%M的操作的话，那么上面val的计算方法得到的结果就是错误的。```因为(a/b)%M != a / (b%M)```
-
-怎么办呢？事实上，我们并不需要存一个真实的val，我们只要存一个与val关于M同余的值就行了，我们记做val'。因为val'与val（关于M）同余，那么```val'*mul+add```就会与```val*mul+add```同余，也就是和最终的答案同余。而题目要求输出的就只是将答案对M取模的结果。
-
-想求```(nums[i]-add) / mul```关于M的同余，不能用“(nums[i]-add)关于M的同余”去除以“mul关于M的同余”，因为除法不满足 (a/b)%M = (a%M) / (b%M) 。正确的答案是 ```(nums[i]-add) * inv(mul)```。其中inv(mul)称之为mul的逆元。满足如下关系的a和b称之为逆元：
-```
-x / a ≡ x * b (mod M)
-```
-写作```b=inv(a)```。存在a的逆元的充要条件是a与M互质。
-
-有了以上的知识，我们求val时，不要计算```val= (nums[i]-add) / mul```，而是计算```val= (nums[i]-add) * inv(mul) % M```。有人会疑问，前者是个小数，后者是个整数，怎么可能相等呢？确实不是相等的，而是同余的。注意查看之前的表达式，有了逆元的概念，同余并不依赖于x/a是否为整数。也就是说，允许小数val与某个整数val'同余，这样当我们同时乘以某个数k时，```val*k```依然与```val'*k```同余，而此时前者可能已经是个整数了。
-
-关于逆元的解法inv(a)，请参见这里的[笔记](https://github.com/wisdompeak/LeetCode/tree/master/Template/Inverse_Element)。
-
-
-::::::::::::::
-Design/1801.Number-of-Orders-in-the-Backlog/1801.Number-of-Orders-in-the-Backlog.cpp
-::::::::::::::
-typedef pair<long,long> PII; //{price,amount}
-
-class Solution {    
-public:
-    int getNumberOfBacklogOrders(vector<vector<int>>& orders) 
-    {
-        priority_queue<PII>buy;
-        priority_queue<PII, vector<PII>, greater<>>sell;
-        
-        long ret = 0;
-        long M = 1e9+7;
-        
-        for (auto order: orders)
-        {
-            ret = (ret+order[1]) % M;
-            
-            if (order[2]==0)
-            {
-                while (order[1]>0 && !sell.empty() && sell.top().first <= order[0])
-                {
-                    auto [price, amount] = sell.top();
-                    sell.pop();
-                    long num = min(amount, (long)order[1]);
-                    amount-=num;
-                    order[1]-=num;
-                    ret = (ret - num*2 + M) % M;
-                    if (amount > 0)
-                        sell.push({price, amount});                    
-                }
-                if (order[1] > 0)
-                    buy.push({order[0], order[1]});
-            } 
-            else
-            {
-                while (order[1]>0 && !buy.empty() && buy.top().first >= order[0])
-                {
-                    auto [price, amount] = buy.top();
-                    buy.pop();
-                    long num = min(amount, (long)order[1]);
-                    amount-=num;
-                    order[1]-=num;
-                    ret = (ret - num*2 + M) % M;
-                    if (amount > 0)
-                        buy.push({price, amount});                    
-                }
-                if (order[1] > 0)
-                    sell.push({order[0], order[1]});
+        set<pair<int,int>>news;  //第一个key是推文的global_id，第二个才是其tweetId
+        for (auto i:friends[userId]) //遍历所有userId的好友
+        {
+            for (int j=tweets[i].size()-1; j>=0; j--) //遍历该好友的所有推文，从最近的开始
+            {
+                if (news.size()<10)
+                    news.insert(tweets[i][j]);   // 加入新元素后，news会自动排序
+                else if (tweets[i][j].first> news.begin()->first)  //如果新元素比news的首元素更新，说明可以入列
+                {
+                    news.erase(news.begin());  //删除map的首元素
+                    news.insert(tweets[i][j]);  //在map里加入元素
+                }
+                else
+                    break;
             }
         }
-        
-        return ret;
-    }
-};
-::::::::::::::
-Design/1801.Number-of-Orders-in-the-Backlog/Readme.md
-::::::::::::::
-### 1801.Number-of-Orders-in-the-Backlog
+```
 
-设计两个优先队列。buy表示未完成的待买订单，按照价格从高到低排序；sell表示未完成的待卖订单，按照价格从到高排序。
 
-每处理一个待买订单，我们就与sell队列队首的订单进行匹配。考察能消除多少sell里面的订单。记得如果仍有待买订单未完成，需要加入buy队列。
+[Leetcode Link](https://leetcode.com/problems/design-twitter)
+$0
+endsnippet
 
-同理，每处理一个待待订单，我们就与buy队列队首的订单进行匹配。考察能消除多少biy里面的订单。记得如果仍有待卖订单未完成，需要加入sell队列。
-::::::::::::::
-Design/2166.Design-Bitset/2166.Design-Bitset.cpp
-::::::::::::::
-class Bitset {
-    int flips[100000];
-    int totalFlip = 0;
-    int m;
-    int cnt = 0;
-public:
-    Bitset(int size) {
-        m = size;
-        for (int i=0; i<m; i++)
-            flips[i] = 0;
-    }
-    
-    void fix(int idx) 
-    {
-        if ((flips[idx]+totalFlip)%2==0)
-        {
-            flips[idx]+=1;
-            cnt++;
-        }
-    }
-    
-    void unfix(int idx) {
-        if ((flips[idx]+totalFlip)%2==1)
-        {
-            flips[idx]+=1;
-            cnt--;
-        }
-    }
-    
-    void flip() {
-        totalFlip += 1;
-        cnt = m - cnt;
-    }
-    
-    bool all() {
-        return cnt == m;
-    }
-    
-    bool one() {
-        return cnt >= 1;
-    }
-    
-    int count() {
-        return cnt;
-    }
-    
-    string toString() {
-        string s;
-        for (int i=0; i<m; i++)
-        {
-            int t = (flips[i]+totalFlip)%2;
-            s += t==0?"0":"1";
-        }
-        return s;
-    }
-};
-::::::::::::::
-Design/2166.Design-Bitset/Readme.md
-::::::::::::::
-### 2166.Design-Bitset
-
-本题不要试图用C++自带的bitset做。C++的bitset在初始化时不能自定义空间大小，如果开满了N=1e5，那么就会TLE。
-
-本题设立两个变量分别是flip[i]和totalFlip。前者表示第i个元素被单独翻转了几次，后者表示所有元素被翻转了几次。那么任意元素在任意时刻的最终状态就是```(flip[i]+totalFlip)%2```.
-::::::::::::::
-Design/355.Design-Twitter/355.Design-Twitter.cpp
-::::::::::::::
+# ==> ./Design/0355.Design-Twitter/355.Design-Twitter.cpp <==
+snippet 0355.Design-Twitter "0355.Design-Twitter" b
 class Twitter {
     unordered_map<int,set<int>>friends;
     unordered_map<int,vector<pair<int,int>>>tweets;
@@ -704,41 +193,46 @@ public:
  * obj.follow(followerId,followeeId);
  * obj.unfollow(followerId,followeeId);
  */
-::::::::::::::
-Design/355.Design-Twitter/Readme.md
-::::::::::::::
-### 355.Design-Twitter
 
-设计如下的数据结构：    
-unordered_map<int,set<int>>Friends; //记录每个用户的好友（包括自己）   
-int global_id; // 全局变量，记录所有推文的时间顺序。    
-unordered_map<int,vector<pair<int,int>>>Tweets; // 记录每个用户发推的global_id和tweetID。   
+$0
+endsnippet
 
-在getNewsFeed时，遍历所有好友的推文记录，寻找最近的10个。   
-基本思路是构造一个数据结构news，每次放进一个推文，news能够自动保持根据global_id保持有序。什么数据结构能实现这个功能呢？有两个方案：priority_queue，或者有序set。考虑到set里的元素已经是pair，并且其自动排序就是依照pair的第一个key从小到大，在这里更为方便。
+# ==> ./Design/0380.Insert-Delete-GetRandom-O-1/Readme.md <==
+snippet 0380.Insert-Delete-GetRandom-O-1 "0380.Insert-Delete-GetRandom-O-1" b
+### 380.Insert-Delete-GetRandom-O(1)
+
+插入是o(1)操作的，只有数组的push_back，否则用链表至少o(logn)，还得保证是有序的； 
+
+同理，删除是o(1)操作的，只有数组的pop_back，否则至少o(logn)；  
+
+查找是o(1)操作的只有哈希表。
+
+因此考虑到用Map和数组。Map记录元素和数组位置之间的对应关系。
+
+特别注意remove所需要的几个操作，把val和数组尾的元素对调：
 ```cpp
-        set<pair<int,int>>news;  //第一个key是推文的global_id，第二个才是其tweetId
-        for (auto i:friends[userId]) //遍历所有userId的好友
-        {
-            for (int j=tweets[i].size()-1; j>=0; j--) //遍历该好友的所有推文，从最近的开始
-            {
-                if (news.size()<10)
-                    news.insert(tweets[i][j]);   // 加入新元素后，news会自动排序
-                else if (tweets[i][j].first> news.begin()->first)  //如果新元素比news的首元素更新，说明可以入列
-                {
-                    news.erase(news.begin());  //删除map的首元素
-                    news.insert(tweets[i][j]);  //在map里加入元素
-                }
-                else
-                    break;
-            }
+        if (Map.find(val)==Map.end())
+            return false;
+        else
+        {
+            q[Map[val]] = q.back();  //  将数组尾元素放在val的位置上
+            Map[q.back()] = Map[val];  // 修改数组尾元素的新位置映射
+            q.pop_back();  // 数组丢弃尾元素
+            Map.erase(val);  // 映射丢弃原来的val
+            return true;
         }
 ```
+特别需要小心的细节就是，Map.erase(val)和Map[q.back()]=pos的操作顺序，前者必须放在最后。否则若 val=q.back()时，val并不能真正从Map里删除，因为Map[q.back()]=pos又会把其加回去。
+
+另外，随机生成整形随机数的函数 rand(); 如果需要0~N-1范围内的随机数，就是 rand() % N
 
 
-[Leetcode Link](https://leetcode.com/problems/design-twitter)::::::::::::::
-Design/380.Insert-Delete-GetRandom-O-1/380.Insert Delete GetRandom O(1).cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/insert-delete-getrandom-o-1)
+$0
+endsnippet
+
+# ==> ./Design/0380.Insert-Delete-GetRandom-O-1/380.Insert Delete GetRandom O(1).cpp <==
+snippet 0380.Insert-Delete-GetRandom-O-1 "0380.Insert-Delete-GetRandom-O-1" b
 class RandomizedSet {
 public:
     /** Initialize your data structure here. */
@@ -794,40 +288,35 @@ private:
  * bool param_2 = obj.remove(val);
  * int param_3 = obj.getRandom();
  */
-::::::::::::::
-Design/380.Insert-Delete-GetRandom-O-1/Readme.md
-::::::::::::::
-### 380.Insert-Delete-GetRandom-O(1)
 
-插入是o(1)操作的，只有数组的push_back，否则用链表至少o(logn)，还得保证是有序的； 
+$0
+endsnippet
 
-同理，删除是o(1)操作的，只有数组的pop_back，否则至少o(logn)；  
+# ==> ./Design/0381.Insert-Delete-GetRandom-O1-Duplicates-allowed/Readme.md <==
+snippet 0381.Insert-Delete-GetRandom-O1-Duplicates-allowed "0381.Insert-Delete-GetRandom-O1-Duplicates-allowed" b
+### 381.Insert-Delete-GetRandom-O1-Duplicates-allowed
 
-查找是o(1)操作的只有哈希表。
+此题是380的follow up。
 
-因此考虑到用Map和数组。Map记录元素和数组位置之间的对应关系。
+设计数据结构的突破口就是在于getRandom的时间要求，o(1)必然说明我们需要维护一个数组nums，这样直接通过```nums[rand()% nums.size()]```就可以直接随机访问一个元素。
 
-特别注意remove所需要的几个操作，把val和数组尾的元素对调：
-```cpp
-        if (Map.find(val)==Map.end())
-            return false;
-        else
-        {
-            q[Map[val]] = q.back();  //  将数组尾元素放在val的位置上
-            Map[q.back()] = Map[val];  // 修改数组尾元素的新位置映射
-            q.pop_back();  // 数组丢弃尾元素
-            Map.erase(val);  // 映射丢弃原来的val
-            return true;
-        }
-```
-特别需要小心的细节就是，Map.erase(val)和Map[q.back()]=pos的操作顺序，前者必须放在最后。否则若 val=q.back()时，val并不能真正从Map里删除，因为Map[q.back()]=pos又会把其加回去。
+那么如何处理remove的操作呢？对于数组而言删除一个中间元素的代价很大。一个常见的想法就是，将最后一个元素挪到被删除的元素的位置上去。这样保证了数组依然是线性连续的。所以我们需要维护一个hash表来存储每个数值所出现的（所有）index。具体的操作包括：
+1. 从Map[val]中挑一个位置pos，将nums.back()移过来。
+2. 从Map[val]中删除pos
+3. 更新Map[nums.back()]的位置，将原先的nums.size()-1改为pos
+4. nums.pop_back()
+5. 注意，如果Map[val]已经为空，那么请将val这个key从hash表中删除。
 
-另外，随机生成整形随机数的函数 rand(); 如果需要0~N-1范围内的随机数，就是 rand() % N
+特别注意：如果val就是nums末尾的元素，最好单独处理，否则容易出错。
 
 
-[Leetcode Link](https://leetcode.com/problems/insert-delete-getrandom-o-1)::::::::::::::
-Design/381.Insert-Delete-GetRandom-O1-Duplicates-allowed/381.Insert-Delete-GetRandom-O1-Duplicates-allowed.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed)
+
+$0
+endsnippet
+
+# ==> ./Design/0381.Insert-Delete-GetRandom-O1-Duplicates-allowed/381.Insert-Delete-GetRandom-O1-Duplicates-allowed.cpp <==
+snippet 0381.Insert-Delete-GetRandom-O1-Duplicates-allowed "0381.Insert-Delete-GetRandom-O1-Duplicates-allowed" b
 class RandomizedCollection {
     vector<int>nums;
     unordered_map<int,unordered_set<int>>val2pos;
@@ -894,29 +383,41 @@ public:
  * bool param_2 = obj->remove(val);
  * int param_3 = obj->getRandom();
  */
-::::::::::::::
-Design/381.Insert-Delete-GetRandom-O1-Duplicates-allowed/Readme.md
-::::::::::::::
-### 381.Insert-Delete-GetRandom-O1-Duplicates-allowed
 
-此题是380的follow up。
+$0
+endsnippet
 
-设计数据结构的突破口就是在于getRandom的时间要求，o(1)必然说明我们需要维护一个数组nums，这样直接通过```nums[rand()% nums.size()]```就可以直接随机访问一个元素。
+# ==> ./Design/0432.All-O-one-Data-Structure/Readme.md <==
+snippet 0432.All-O-one-Data-Structure "0432.All-O-one-Data-Structure" b
+### 432.All-O-one-Data-Structure
 
-那么如何处理remove的操作呢？对于数组而言删除一个中间元素的代价很大。一个常见的想法就是，将最后一个元素挪到被删除的元素的位置上去。这样保证了数组依然是线性连续的。所以我们需要维护一个hash表来存储每个数值所出现的（所有）index。具体的操作包括：
-1. 从Map[val]中挑一个位置pos，将nums.back()移过来。
-2. 从Map[val]中删除pos
-3. 更新Map[nums.back()]的位置，将原先的nums.size()-1改为pos
-4. nums.pop_back()
-5. 注意，如果Map[val]已经为空，那么请将val这个key从hash表中删除。
+此题和[146.LRU](https://github.com/wisdompeak/LeetCode/tree/master/Design/146.LRU-Cache)和[460.LFU](https://github.com/wisdompeak/LeetCode/tree/master/Design/460.LFU-Cache)的解法非常相似．我们需要一个数据结构存储着所有的val，并且这个val是实时有序的（方便我们最快找到最大和最小的val），还要求所有的插入和删除都是o(1)。
 
-特别注意：如果val就是nums末尾的元素，最好单独处理，否则容易出错。
+解决方案还是链表(list<int>)。设计如下的数据结构
+```cpp
+list<int>List;
+unordered_map<int,list<int>iterator>val2iter;
+```
+其中List是一个链表，存储着顺序的value．只要给出了迭代器的位置（可以理解为指针），那么在特定位置的插入和删除都是o(1)的操作．那么假设已知value，如何在这个链表里找到这个对应value的位置呢？就需要另一个Hash表val2iter来存储．总结来说，就是给出一个value，那么val2iter[value]给出了这个value在链表里的位置，可以进行删除或添加的操作．
+
+为什么List可以一直保持是顺序的呢？对于任何一个key的操作，题意要求就是将其value增（或者减）一．假设我们在链表中定位了value（如前所说：通过val2iter）,只需要在其后面相邻的地址插入一个value+1（或者在其前面相邻的地址插入一个vlaue-1)即可，所以这个链表始终可以保持顺序．
+
+解决了以上的问题之后，剩下的数据结构就不难设计:
+```cpp
+unordered_map<string,int>key2val;   // key->val
+unordered_map<int,unordered_set<string>>val2set;  //val->set of keys
+```
+我们需要一个Hash表val2set，来存储从val到对应的key的集合。于是inc(key)的操作，就是将key从value对应的集合中删除，再把key加入value+1对应的集合中。对于dec(key)的操作同理。
+
+本题的一个细节之处是，对于val==0的处理。我们可以在list中加入一个dummy head，也就是```val0=0```来方便操作。但是要注意避免任何对于val2set[0]的删除操作（因为在初始化时，我们不可能在这个集合中加入无限多的元素，所以干脆永远保持val2set[0]是空的）。
 
 
-[Leetcode Link](https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed)
-::::::::::::::
-Design/432.All-O-one-Data-Structure/432.All-O-one-Data-Structure.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/all-o-one-data-structure)
+$0
+endsnippet
+
+# ==> ./Design/0432.All-O-one-Data-Structure/432.All-O-one-Data-Structure.cpp <==
+snippet 0432.All-O-one-Data-Structure "0432.All-O-one-Data-Structure" b
 class AllOne {
     list<int>List; // ordered sequence of values
     unordered_map<string,int>key2val;   // key->val
@@ -1006,35 +507,81 @@ public:
  * string param_4 = obj->getMinKey();
  */
 
-::::::::::::::
-Design/432.All-O-one-Data-Structure/Readme.md
-::::::::::::::
-### 432.All-O-one-Data-Structure
 
-此题和[146.LRU](https://github.com/wisdompeak/LeetCode/tree/master/Design/146.LRU-Cache)和[460.LFU](https://github.com/wisdompeak/LeetCode/tree/master/Design/460.LFU-Cache)的解法非常相似．我们需要一个数据结构存储着所有的val，并且这个val是实时有序的（方便我们最快找到最大和最小的val），还要求所有的插入和删除都是o(1)。
+$0
+endsnippet
 
-解决方案还是链表(list<int>)。设计如下的数据结构
+# ==> ./Design/0460.LFU-Cache/Readme.md <==
+snippet 0460.LFU-Cache "0460.LFU-Cache" b
+### 460.LFU-Cache
+
+本题用到了STL里的一个新的数据结构，list。list和vector的用法差不多，但其在内存中的存储并不是线性的，而是链表状的，所以它的插入、删除都很方便（因为已经被封装好了，我们不必实现链表插入、删除的细节）。
+
+删除list中一个元素，可以有这些操作：pop_front(), pop_back(), erase(iterator);     
+在list中加入一个元素，push_back(value), 其对应的iterator就是 --List.end()
+
+本题的数据结构需要如下三个：
 ```cpp
-list<int>List;
-unordered_map<int,list<int>iterator>val2iter;
+    int cap, minfreq;
+    unordered_map<int,pair<int,int>>Map; // key -> value, freq;
+    unordered_map<int,list<int>>freq; // freq -> keys
+    unordered_map<int,list<int>::iterator>iter; // key -> the iterator of key in freq
 ```
-其中List是一个链表，存储着顺序的value．只要给出了迭代器的位置（可以理解为指针），那么在特定位置的插入和删除都是o(1)的操作．那么假设已知value，如何在这个链表里找到这个对应value的位置呢？就需要另一个Hash表val2iter来存储．总结来说，就是给出一个value，那么val2iter[value]给出了这个value在链表里的位置，可以进行删除或添加的操作．
+Map记录了一个key所对应的value和操作频率；    
+freq记录了对应一个操作频率的key有哪些；   
+iter记录了对应一个key，其在freq数据结构中的迭代器（或者说指针、内存位置）。   
 
-为什么List可以一直保持是顺序的呢？对于任何一个key的操作，题意要求就是将其value增（或者减）一．假设我们在链表中定位了value（如前所说：通过val2iter）,只需要在其后面相邻的地址插入一个value+1（或者在其前面相邻的地址插入一个vlaue-1)即可，所以这个链表始终可以保持顺序．
-
-解决了以上的问题之后，剩下的数据结构就不难设计:
+对于get函数：
 ```cpp
-unordered_map<string,int>key2val;   // key->val
-unordered_map<int,unordered_set<string>>val2set;  //val->set of keys
+    int get(int key) 
+    {
+        if (Map.find(key)==Map.end()) return -1;
+        int f=Map[key].second;
+        freq[f].erase(iter[key]); // 原频次f里去除key，通过迭代器iter[key]来删除。
+        freq[f+1].push_back(key);  // 新频次f+1里增加key，直接塞在链表的最末
+        iter[key]=--freq[f+1].end();  //key的迭代器位置需要更新，现在是在freq[f+1]的链表末尾
+        Map[key].second++;    // Map[key]的信息
+        if (freq[minfreq].size()==0)
+            minfreq++;
+        return Map[key].first;
+    }
+```    
+
+对于put函数
+```cpp
+    void put(int key, int value) 
+    {
+        if (cap<=0) return;
+        if (get(key)!=-1)  //已经收录了这个key，则get(key)包括了更新频次的操作
+        {
+            Map[key].first=value;  //此时只需要更新value
+            return;
+        }
+        else
+        {
+            if (Map.size()>=cap)
+            {
+                int minKey=freq[minfreq].front();  //找到需要弹出的minKey，位于freq[minfreq]链表的最前端
+                iter.erase(minKey);     //不再需要保留记录这个minKey的迭代器地址
+                Map.erase(minKey);      //不再需要保留记录这个minKey的值信息
+                freq[minfreq].pop_front();  //频次映射里也不再需要保留记录这个minKey的频次信息
+            }
+            Map[key]={value,1};
+            freq[1].push_back(key);   //频次为1的映射里需要添加这个key
+            iter[key]=--freq[1].end();  //迭代器映射里要添加这个key的指针地址
+            minfreq=1;
+            return;
+        }
+    }
 ```
-我们需要一个Hash表val2set，来存储从val到对应的key的集合。于是inc(key)的操作，就是将key从value对应的集合中删除，再把key加入value+1对应的集合中。对于dec(key)的操作同理。
-
-本题的一个细节之处是，对于val==0的处理。我们可以在list中加入一个dummy head，也就是```val0=0```来方便操作。但是要注意避免任何对于val2set[0]的删除操作（因为在初始化时，我们不可能在这个集合中加入无限多的元素，所以干脆永远保持val2set[0]是空的）。
 
 
-[Leetcode Link](https://leetcode.com/problems/all-o-one-data-structure)::::::::::::::
-Design/460.LFU-Cache/460.LFU Cache.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/lfu-cache)
+$0
+endsnippet
+
+# ==> ./Design/0460.LFU-Cache/460.LFU Cache.cpp <==
+snippet 0460.LFU-Cache "0460.LFU-Cache" b
 class LFUCache {
     int cap, minfreq;
     unordered_map<int,pair<int,int>>Map; // key -> value, freq;
@@ -1091,9 +638,12 @@ public:
  * int param_1 = obj.get(key);
  * obj.put(key,value);
  */
-::::::::::::::
-Design/460.LFU-Cache/460.LFU-Cache_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Design/0460.LFU-Cache/460.LFU-Cache_v2.cpp <==
+snippet 0460.LFU-Cache "0460.LFU-Cache" b
 class LFUCache {
     unordered_map<int,int>key2value;
     unordered_map<int, list<int>::iterator> key2iter;
@@ -1162,75 +712,29 @@ public:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
-::::::::::::::
-Design/460.LFU-Cache/Readme.md
-::::::::::::::
-### 460.LFU-Cache
 
-本题用到了STL里的一个新的数据结构，list。list和vector的用法差不多，但其在内存中的存储并不是线性的，而是链表状的，所以它的插入、删除都很方便（因为已经被封装好了，我们不必实现链表插入、删除的细节）。
+$0
+endsnippet
 
-删除list中一个元素，可以有这些操作：pop_front(), pop_back(), erase(iterator);     
-在list中加入一个元素，push_back(value), 其对应的iterator就是 --List.end()
+# ==> ./Design/0535.Encode-and-Decode-TinyURL/Readme.md <==
+snippet 0535.Encode-and-Decode-TinyURL "0535.Encode-and-Decode-TinyURL" b
+### 535.Encode-and-Decode-TinyURL
 
-本题的数据结构需要如下三个：
+利用62位的dict随机生成一个6位的字符串来作为短链接
 ```cpp
-    int cap, minfreq;
-    unordered_map<int,pair<int,int>>Map; // key -> value, freq;
-    unordered_map<int,list<int>>freq; // freq -> keys
-    unordered_map<int,list<int>::iterator>iter; // key -> the iterator of key in freq
+dict=""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"";
+for (int i=0; i<6; i++) 
+  shortUrl+=dict[rand()%62];
 ```
-Map记录了一个key所对应的value和操作频率；    
-freq记录了对应一个操作频率的key有哪些；   
-iter记录了对应一个key，其在freq数据结构中的迭代器（或者说指针、内存位置）。   
-
-对于get函数：
-```cpp
-    int get(int key) 
-    {
-        if (Map.find(key)==Map.end()) return -1;
-        int f=Map[key].second;
-        freq[f].erase(iter[key]); // 原频次f里去除key，通过迭代器iter[key]来删除。
-        freq[f+1].push_back(key);  // 新频次f+1里增加key，直接塞在链表的最末
-        iter[key]=--freq[f+1].end();  //key的迭代器位置需要更新，现在是在freq[f+1]的链表末尾
-        Map[key].second++;    // Map[key]的信息
-        if (freq[minfreq].size()==0)
-            minfreq++;
-        return Map[key].first;
-    }
-```    
-
-对于put函数
-```cpp
-    void put(int key, int value) 
-    {
-        if (cap<=0) return;
-        if (get(key)!=-1)  //已经收录了这个key，则get(key)包括了更新频次的操作
-        {
-            Map[key].first=value;  //此时只需要更新value
-            return;
-        }
-        else
-        {
-            if (Map.size()>=cap)
-            {
-                int minKey=freq[minfreq].front();  //找到需要弹出的minKey，位于freq[minfreq]链表的最前端
-                iter.erase(minKey);     //不再需要保留记录这个minKey的迭代器地址
-                Map.erase(minKey);      //不再需要保留记录这个minKey的值信息
-                freq[minfreq].pop_front();  //频次映射里也不再需要保留记录这个minKey的频次信息
-            }
-            Map[key]={value,1};
-            freq[1].push_back(key);   //频次为1的映射里需要添加这个key
-            iter[key]=--freq[1].end();  //迭代器映射里要添加这个key的指针地址
-            minfreq=1;
-            return;
-        }
-    }
-```
+将longUrl和shortUrl的配对放入两个哈希表中，用于查验短链接的生成是否重复、以及解码。
 
 
-[Leetcode Link](https://leetcode.com/problems/lfu-cache)::::::::::::::
-Design/535.Encode-and-Decode-TinyURL/535.Encode and Decode TinyURL.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/encode-and-decode-tinyurl)
+$0
+endsnippet
+
+# ==> ./Design/0535.Encode-and-Decode-TinyURL/535.Encode and Decode TinyURL.cpp <==
+snippet 0535.Encode-and-Decode-TinyURL "0535.Encode-and-Decode-TinyURL" b
 class Solution {
     string dict="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     unordered_map<string,string>Map1;
@@ -1261,23 +765,35 @@ public:
 // Your Solution object will be instantiated and called as such:
 // Solution solution;
 // solution.decode(solution.encode(url));
-::::::::::::::
-Design/535.Encode-and-Decode-TinyURL/Readme.md
-::::::::::::::
-### 535.Encode-and-Decode-TinyURL
 
-利用62位的dict随机生成一个6位的字符串来作为短链接
-```cpp
-dict=""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"";
-for (int i=0; i<6; i++) 
-  shortUrl+=dict[rand()%62];
+$0
+endsnippet
+
+# ==> ./Design/0631.Design-Excel-Sum-Formula/Readme.md <==
+snippet 0631.Design-Excel-Sum-Formula "0631.Design-Excel-Sum-Formula" b
+### 631.Design-Excel-Sum-Formula
+
+我们定义两个数据结构：
 ```
-将longUrl和shortUrl的配对放入两个哈希表中，用于查验短链接的生成是否重复、以及解码。
+    int Val[27][26];
+    vector<string> Exp[27][26];
+```
+前者存数值，后者存表达式。
+
+Set：对Val的对应位置赋值。如果该位置已经有Exp，则需要将Exp清空。
+
+Get：如果该位置没有Exp，则从Val里读取。否则就需要解析表达式，对每个位置上递归调用Get，然后相加。
+
+Sum：对Exp的对应位置赋值，然后调用Get。
 
 
-[Leetcode Link](https://leetcode.com/problems/encode-and-decode-tinyurl)::::::::::::::
-Design/631.Design-Excel-Sum-Formula/631.Design-Excel-Sum-Formula.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/design-excel-sum-formula)
+
+$0
+endsnippet
+
+# ==> ./Design/0631.Design-Excel-Sum-Formula/631.Design-Excel-Sum-Formula.cpp <==
+snippet 0631.Design-Excel-Sum-Formula "0631.Design-Excel-Sum-Formula" b
 class Excel {    
     int Val[27][26];
     vector<string> Exp[27][26];
@@ -1346,29 +862,47 @@ public:
  * int param_2 = obj.get(r,c);
  * int param_3 = obj.sum(r,c,strs);
  */
-::::::::::::::
-Design/631.Design-Excel-Sum-Formula/Readme.md
-::::::::::::::
-### 631.Design-Excel-Sum-Formula
 
-我们定义两个数据结构：
+$0
+endsnippet
+
+# ==> ./Design/0642.Design-Search-Autocomplete-System/Readme.md <==
+snippet 0642.Design-Search-Autocomplete-System "0642.Design-Search-Autocomplete-System" b
+### 642.Design-Search-Autocomplete-System
+
+如果不用trie来做的话，可以比较简单地用priority_queue来实现对所有候选语句的排序，选择最终未被弹出的三个字符串。
+
+核心代码非常简单：
 ```
-    int Val[27][26];
-    vector<string> Exp[27][26];
-```
-前者存数值，后者存表达式。
+    struct cmp
+    {
+        bool operator()(pair<string,int>a, pair<string,int>b)
+        {
+            if (a.second==b.second)
+                return a.first<b.first;
+            else
+                return a.second>b.second;
+        }
+    };
+    priority_queue<pair<string,int>,vector<pair<string,int>>,cmp>pq;              
+    for (auto x:Map)
+    {
+         string a=x.first;
+         if (match(data,a))
+         {                
+             pq.push({a,Map[a]});
+             if (pq.size()>3) pq.pop();
+         }
+    }    
+```    
 
-Set：对Val的对应位置赋值。如果该位置已经有Exp，则需要将Exp清空。
 
-Get：如果该位置没有Exp，则从Val里读取。否则就需要解析表达式，对每个位置上递归调用Get，然后相加。
+[Leetcode Link](https://leetcode.com/problems/design-search-autocomplete-system)
+$0
+endsnippet
 
-Sum：对Exp的对应位置赋值，然后调用Get。
-
-
-[Leetcode Link](https://leetcode.com/problems/design-excel-sum-formula)
-::::::::::::::
-Design/642.Design-Search-Autocomplete-System/642.Design-Search-Autocomplete-System.cpp
-::::::::::::::
+# ==> ./Design/0642.Design-Search-Autocomplete-System/642.Design-Search-Autocomplete-System.cpp <==
+snippet 0642.Design-Search-Autocomplete-System "0642.Design-Search-Autocomplete-System" b
 class AutocompleteSystem {
     unordered_map<string,int>Map;
     string data;
@@ -1439,41 +973,29 @@ public:
  * AutocompleteSystem obj = new AutocompleteSystem(sentences, times);
  * vector<string> param_1 = obj.input(c);
  */
-::::::::::::::
-Design/642.Design-Search-Autocomplete-System/Readme.md
-::::::::::::::
-### 642.Design-Search-Autocomplete-System
 
-如果不用trie来做的话，可以比较简单地用priority_queue来实现对所有候选语句的排序，选择最终未被弹出的三个字符串。
+$0
+endsnippet
 
-核心代码非常简单：
-```
-    struct cmp
-    {
-        bool operator()(pair<string,int>a, pair<string,int>b)
-        {
-            if (a.second==b.second)
-                return a.first<b.first;
-            else
-                return a.second>b.second;
-        }
-    };
-    priority_queue<pair<string,int>,vector<pair<string,int>>,cmp>pq;              
-    for (auto x:Map)
-    {
-         string a=x.first;
-         if (match(data,a))
-         {                
-             pq.push({a,Map[a]});
-             if (pq.size()>3) pq.pop();
-         }
-    }    
-```    
+# ==> ./Design/0716.Max-Stack/Readme.md <==
+snippet 0716.Max-Stack "0716.Max-Stack" b
+### 716.Max-Stack
+
+此题初看很像 155.Min Stack，但本质有很大的不同，问题就在于popMax()这个操作，从一个数据结构的中段弹出元素，完全不是stack的风格。所以需要果断放弃155题的思路。那么哪些数据结构可以方便的删除中段的元素呢？似乎只有list了。
+
+回顾 460.LFU Cache，我们已经接触过了list。其操作非常类似vector，而且还有一个非常巨大的优势，可以根据iterator来删除任意元素。本题的思路和460也非常相似，就是用到了一个有序的map，其key是list里的元素的数值，而value就是对应key的所有list元素的迭代器（可以理解为地址或指针）。
+
+设计了以上的数据结构，操作就很容易了。对于popMax()，我们直接在Map的尾元素得到当前链表的最大值 x=(--Map.end())->first。然后auto it = Map[x].back()就是当前链表最顶端的最大值的地址。直接在list中删除即可 List.erase(it)。
+
+特别注意，popMax(x)和pop(x)操之后，可能Map[x]的元素个数就是0了，此时一定要将Map删除这个key！
 
 
-[Leetcode Link](https://leetcode.com/problems/design-search-autocomplete-system)::::::::::::::
-Design/716.Max-Stack/716.Max-Stack.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/max-stack)
+$0
+endsnippet
+
+# ==> ./Design/0716.Max-Stack/716.Max-Stack.cpp <==
+snippet 0716.Max-Stack "0716.Max-Stack" b
 class MaxStack {
     list<int>List;
     map<int,vector<list<int>::iterator>>Map;
@@ -1530,23 +1052,27 @@ public:
  * int param_4 = obj.peekMax();
  * int param_5 = obj.popMax();
  */
-::::::::::::::
-Design/716.Max-Stack/Readme.md
-::::::::::::::
-### 716.Max-Stack
 
-此题初看很像 155.Min Stack，但本质有很大的不同，问题就在于popMax()这个操作，从一个数据结构的中段弹出元素，完全不是stack的风格。所以需要果断放弃155题的思路。那么哪些数据结构可以方便的删除中段的元素呢？似乎只有list了。
+$0
+endsnippet
 
-回顾 460.LFU Cache，我们已经接触过了list。其操作非常类似vector，而且还有一个非常巨大的优势，可以根据iterator来删除任意元素。本题的思路和460也非常相似，就是用到了一个有序的map，其key是list里的元素的数值，而value就是对应key的所有list元素的迭代器（可以理解为地址或指针）。
+# ==> ./Design/0895.Maximum-Frequency-Stack/Readme.md <==
+snippet 0895.Maximum-Frequency-Stack "0895.Maximum-Frequency-Stack" b
+### 895.Maximum-Frequency-Stack
 
-设计了以上的数据结构，操作就很容易了。对于popMax()，我们直接在Map的尾元素得到当前链表的最大值 x=(--Map.end())->first。然后auto it = Map[x].back()就是当前链表最顶端的最大值的地址。直接在list中删除即可 List.erase(it)。
+很显然我们会设计```unordered_map<int, vector<int>> freq2nums```用来记录当前拥有相同频次的那些数。然后用```unordered_map<int, int> count```来记录每个元素对应出现的频次也是很好想的。
 
-特别注意，popMax(x)和pop(x)操之后，可能Map[x]的元素个数就是0了，此时一定要将Map删除这个key！
+那么我们push(x)的时候，提取```freq=count[x]```，然后会更新```freq2nums[freq+1].push_back(x)```。但是注意，我们不需要对freq2nums[freq]做任何关于x的改动（指从里面删去x的记录）。事实上，我们需要保留x在freq2nums[freq]中的位置，这样当maxFreq再次回落到freq的时候，我们就可以从freq2nums[freq]对应的数组里面得到应该优先弹出哪个元素。
+
+同理，我们pop()的时候，提取```x=freq2nums[maxFreq].back()```，然后我们会更新```freq2nums[maxFreq].pop_back()```。但是注意，我们不需要再对freq2nums[maxFreq-1]做任何关于x的改动（指从里面增加x的记录）。这是因为在之前加入第maxFreq-1个x的时候，我们已经在freq2nums[maxFreq-1]里面保留了关于x的位置。现在最高频次回落了，我们就可以从freq2nums[maxFreq-1]的末尾直接得到以后应该弹出的元素（因此它是最后一个放入freq2nums[maxFreq-1]里面的）。
 
 
-[Leetcode Link](https://leetcode.com/problems/max-stack)::::::::::::::
-Design/895.Maximum-Frequency-Stack/895.Maximum-Frequency-Stack.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/maximum-frequency-stack)
+$0
+endsnippet
+
+# ==> ./Design/0895.Maximum-Frequency-Stack/895.Maximum-Frequency-Stack.cpp <==
+snippet 0895.Maximum-Frequency-Stack "0895.Maximum-Frequency-Stack" b
 class FreqStack {
     unordered_map<int, vector<int>> freq2nums;  // freq -> a series of nums
     unordered_map<int, int> count; // num -> freq
@@ -1587,16 +1113,606 @@ public:
  * obj->push(x);
  * int param_2 = obj->pop();
  */
-::::::::::::::
-Design/895.Maximum-Frequency-Stack/Readme.md
-::::::::::::::
-### 895.Maximum-Frequency-Stack
 
-很显然我们会设计```unordered_map<int, vector<int>> freq2nums```用来记录当前拥有相同频次的那些数。然后用```unordered_map<int, int> count```来记录每个元素对应出现的频次也是很好想的。
+$0
+endsnippet
 
-那么我们push(x)的时候，提取```freq=count[x]```，然后会更新```freq2nums[freq+1].push_back(x)```。但是注意，我们不需要对freq2nums[freq]做任何关于x的改动（指从里面删去x的记录）。事实上，我们需要保留x在freq2nums[freq]中的位置，这样当maxFreq再次回落到freq的时候，我们就可以从freq2nums[freq]对应的数组里面得到应该优先弹出哪个元素。
+# ==> ./Design/1146.Snapshot-Array/Readme.md <==
+snippet 1146.Snapshot-Array "1146.Snapshot-Array" b
+### 1146.Snapshot-Array
 
-同理，我们pop()的时候，提取```x=freq2nums[maxFreq].back()```，然后我们会更新```freq2nums[maxFreq].pop_back()```。但是注意，我们不需要再对freq2nums[maxFreq-1]做任何关于x的改动（指从里面增加x的记录）。这是因为在之前加入第maxFreq-1个x的时候，我们已经在freq2nums[maxFreq-1]里面保留了关于x的位置。现在最高频次回落了，我们就可以从freq2nums[maxFreq-1]的末尾直接得到以后应该弹出的元素（因此它是最后一个放入freq2nums[maxFreq-1]里面的）。
+最直观的想法就是给每个元素设立快照，即snaps[index]记录了关于index这个元素所有的{snapId, val}。
+
+接下来我们需要考虑一个效率的问题。我们每调用一次snap()是否需要给每个元素都新建一次快照呢？显然如果大多数元素都没有更新过的话，再添加一次快照的效率不高。所以我们可以设置一个changed的集合，里面只存放上一次snap()之后变动过的元素，也就是被set()过的元素。
+
+这样的话，我们会发现对于每个元素而言，它被记录的snapId并不是连续的。比如说snaps[index]={{1,4},{3,8}}，即该元素在第一次拍快照时的值是4，第三次拍快照时的值是8. 那么我们在第二次拍快照的时候，该元素的值是什么呢？显然哪个时候它的值应该是与snapId==1时的值是一样的。所以我们应该在snaps[index]里面找到最后一个小于等于snapId的那个时间戳。
+
+此外还有一个细节，如果某个元素从来没有被更新过，那么snaps[index]里面就是空的，二分搜值就得不到结果。解决方法是，考虑到每个元素的初始值是0，我们给它虚拟地加一个快照{-1,0}，即它的snapId可以认为是-1. 这样get(index,snap_id)的时候至少能得到初始值0.
+
+$0
+endsnippet
+
+# ==> ./Design/1146.Snapshot-Array/1146.Snapshot-Array.cpp <==
+snippet 1146.Snapshot-Array "1146.Snapshot-Array" b
+class SnapshotArray {        
+    int vals[50000];
+    vector<vector<pair<int,int>>>snaps;
+    unordered_set<int>changed;
+    int snapId;
+public:
+    SnapshotArray(int length) 
+    {    
+        snapId = 0;
+        snaps.resize(length);
+        for (int i=0; i<length; i++)
+            snaps[i].push_back({-1,0});
+    }
+    
+    void set(int index, int val) 
+    {
+        vals[index] = val;
+        changed.insert(index);
+    }
+    
+    int snap() 
+    {
+        for (int index: changed)
+        {
+            snaps[index].push_back({snapId, vals[index]});
+        }
+        snapId++;
+        changed.clear();
+        return snapId-1;
+    }
+    
+    int get(int index, int snap_id) 
+    {
+        auto iter = upper_bound(snaps[index].begin(), snaps[index].end(), make_pair(snap_id, INT_MAX));
+        iter = prev(iter,1);
+        return iter->second;                                        
+    }
+};
+
+/**
+ * Your SnapshotArray object will be instantiated and called as such:
+ * SnapshotArray* obj = new SnapshotArray(length);
+ * obj->set(index,val);
+ * int param_2 = obj->snap();
+ * int param_3 = obj->get(index,snap_id);
+ */
+
+$0
+endsnippet
+
+# ==> ./Design/1172.Dinner-Plate-Stacks/Readme.md <==
+snippet 1172.Dinner-Plate-Stacks "1172.Dinner-Plate-Stacks" b
+### 1172.Dinner-Plate-Stacks
+
+本题的关键就是维护两个索引指针，leftNotFull和RightNotEmpty。顾名思义，leftNotFull表示左边第一个没有放满的盘子的编号，rightNotEmpty表示右边第一个非空的盘子的编号。如果这两个索引指针维护的好，那么push和pop就是分别对应这两个盘子进行操作即可。
+
+本题的关键是，任何的操作都需要对这两个指针进行更新和维护。
+
+对于push(val)，意味着往leftNotFull上面再加一个数。如果该盘子满了，就要对leftNotFull进行自增操作来定位下一个非满的盘子。同时，rightNotEmpty也可能增长，基本原理是rightNotEmpty不可能比leftNotFull小（除非leftNotFull对应的是一个空盘子，那样的话rightNotEmpty==leftNotFull-1）。
+
+对于popAtStack(index)，意味着对于index这个盘子要弹出一个数。这个操作会对leftNotFull有什么影响呢？显然，它就有被更新的可能，即```leftNotFull=min(leftNotFull,index)```。这个操作会对rightNotEmpty有什么影响呢？那就是当index==rightNotEmpty的时候，如果index这个盘子被清空了，则rightNotEmpty就要往下降（特别注意，最小降为-1为止）。
+
+对于pop()，其实就是```popAtStack(rightNotEmpty)```。
+
+特别注意，rightNotEmpty允许为-1，表示当前所有的盘子都为空。
 
 
-[Leetcode Link](https://leetcode.com/problems/maximum-frequency-stack)
+[Leetcode Link](https://leetcode.com/problems/dinner-plate-stacks)
+$0
+endsnippet
+
+# ==> ./Design/1172.Dinner-Plate-Stacks/1172.Dinner-Plate-Stacks.cpp <==
+snippet 1172.Dinner-Plate-Stacks "1172.Dinner-Plate-Stacks" b
+class DinnerPlates {
+    unordered_map<int, vector<int>>Plate;
+    int leftNotFull;
+    int rightNotEmpty;
+    int cap;
+    
+public:
+    DinnerPlates(int capacity) {
+        leftNotFull = 0;
+        rightNotEmpty = -1;
+        cap = capacity; 
+    }
+    
+    void push(int val) {
+        Plate[leftNotFull].push_back(val);
+        while (Plate[leftNotFull].size()==cap)
+            leftNotFull++;
+        
+        rightNotEmpty = max(rightNotEmpty, (Plate[leftNotFull].size()==0)?leftNotFull-1:leftNotFull);
+    }
+    
+    int pop() {
+        if (rightNotEmpty==-1)
+            return -1;
+        return popAtStack(rightNotEmpty);
+    }
+    
+    int popAtStack(int index) {
+        if (Plate[index].size()==0)
+            return -1;
+        
+        int ret = Plate[index].back();
+        Plate[index].pop_back();
+        
+        if (index==rightNotEmpty && Plate[rightNotEmpty].size()==0)
+        {
+            while (Plate[rightNotEmpty].size()==0 && rightNotEmpty>=0)
+                rightNotEmpty--;
+        }
+        
+        leftNotFull = min(leftNotFull, index);
+        
+        return ret;
+    }
+};
+
+/**
+ * Your DinnerPlates object will be instantiated and called as such:
+ * DinnerPlates* obj = new DinnerPlates(capacity);
+ * obj->push(val);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->popAtStack(index);
+ */
+
+
+    
+
+$0
+endsnippet
+
+# ==> ./Design/1352.Product-of-the-Last-K-Numbers/Readme.md <==
+snippet 1352.Product-of-the-Last-K-Numbers "1352.Product-of-the-Last-K-Numbers" b
+### 1352.Product-of-the-Last-K-Numbers
+
+本题看第一眼就知道解法是构造前缀乘积的数组，令pre[i]表示从nums[1]连续乘到nums[i]的积。假设当前已经有n个元素，那么最后k个元素的乘积就是pre[n]/pre[n-k]。注意本题的约束条件里保证了前缀乘积数组不会溢出。
+
+但是本题就这么简单吗？其实本题需要考察的是当年nums[i]=0的情况。我们发现一旦加入了0，那么会使得当前乃至之后的pre永远都是0，于是在getProduct时的计算公式pre[n]/pre[n-k]的表达式就会有除数为0的风险。那么如何解决这个问题呢？
+
+首先，如果从n往前数的k个数包括了0，那么最终答案就是返回0. 其次，如果这k个数不包括0的话，那么如何保证pre[n]/pre[n-k]一定合法呢？我们可以认为把最近的0之前的数字都忽略掉，将整个pre数组从最近的0之后开始重新计数：也就是当nums[i]==1时，令pre[i]=1。
+
+$0
+endsnippet
+
+# ==> ./Design/1352.Product-of-the-Last-K-Numbers/1352.Product-of-the-Last-K-Numbers.cpp <==
+snippet 1352.Product-of-the-Last-K-Numbers "1352.Product-of-the-Last-K-Numbers" b
+class ProductOfNumbers {
+    vector<int>pre;
+    int id;
+    int lastZero = 0;
+public:
+    ProductOfNumbers() 
+    {
+        id = 0;        
+        pre.push_back(1);
+    }
+    
+    void add(int num) 
+    {   
+        id++;     
+        if (num!=0)
+        {
+            pre.push_back(pre.back()*num);
+        }
+            
+        else
+        {
+            pre.push_back(1);
+            lastZero = id;
+        }
+    }
+    
+    int getProduct(int k) 
+    {
+        if (lastZero <= id-k)
+            return pre[id]/pre[id-k];
+        else
+            return 0;
+    }
+};
+
+/**
+ * Your ProductOfNumbers object will be instantiated and called as such:
+ * ProductOfNumbers* obj = new ProductOfNumbers();
+ * obj->add(num);
+ * int param_2 = obj->getProduct(k);
+ */
+
+$0
+endsnippet
+
+# ==> ./Design/1381.Design-a-Stack-With-Increment-Operation/Readme.md <==
+snippet 1381.Design-a-Stack-With-Increment-Operation "1381.Design-a-Stack-With-Increment-Operation" b
+### 1381.Design-a-Stack-With-Increment-Operation
+
+本题虽然暴力解可以AC，但是有o(N)的优秀解法。用到的就是差分数组的原理。类似的题有```1109.Corporate Flight Bookings```
+
+假设当我们遇到increment(k,val)操作时，我们设置offset[k]=value。这样当我们退栈的过程中遇到第k个元素的时候，就知道从此往下继续退栈的话，所有的元素都要加上一个diff = value。如果往下退栈的过程中再遇到另一个offset[k2] = value2，就知道从k2往下继续退栈出的元素都要加上一个diff = value+value2.
+
+特别注意的是，当如果你需要入栈第k个元素的时候，你需要记录offset[k-1] = diff，同时将手头的diff清空。
+
+$0
+endsnippet
+
+# ==> ./Design/1381.Design-a-Stack-With-Increment-Operation/1381.Design-a-Stack-With-Increment-Operation.cpp <==
+snippet 1381.Design-a-Stack-With-Increment-Operation "1381.Design-a-Stack-With-Increment-Operation" b
+class CustomStack {
+    vector<int>nums;
+    vector<int>offset;
+    int maxSize;
+    int count = 0;
+    int diff = 0;
+public:
+    CustomStack(int maxSize) 
+    {
+        this->maxSize =  maxSize;
+        nums.resize(maxSize, 0);
+        offset.resize(maxSize, 0);
+    }
+    
+    void push(int x) 
+    {
+        if (count==maxSize) return;
+        
+        if (count>=1)
+            offset[count-1] += diff;
+        diff = 0;
+        
+        nums[count] = x;
+        offset[count] = 0;
+        count++;        
+    }
+    
+    int pop() 
+    {
+        if (count==0) return -1;
+        
+        diff += offset[count-1];
+        int ret = nums[count-1] + diff;
+        count -= 1;
+        return ret;        
+    }
+    
+    void increment(int k, int val) 
+    {
+        if (count == 0) return;
+        offset[min(k-1, count-1)] += val;
+    }
+};
+
+/**
+ * Your CustomStack object will be instantiated and called as such:
+ * CustomStack* obj = new CustomStack(maxSize);
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * obj->increment(k,val);
+ */
+
+$0
+endsnippet
+
+# ==> ./Design/1418.Display-Table-of-Food-Orders-in-a-Restaurant/Readme.md <==
+snippet 1418.Display-Table-of-Food-Orders-in-a-Restaurant "1418.Display-Table-of-Food-Orders-in-a-Restaurant" b
+### 1418.Display-Table-of-Food-Orders-in-a-Restaurant
+
+本题有很多数据结构的设计方法，但是彼此之间的时间复杂度差别很大。
+
+比较快的方法是：设计```map<int, unordered_map<string, int>>table2Order```，用来记录每个桌号、每道food被点单的次数。其中桌号已经满足了升序排列。这其实已经和最终的表格样式很接近了。我们还需要知道每道food的点单次数应该填在哪个列。故我们把所有food name经过排序后，就可以得到每道food所对应的Column编号的映射。
+
+$0
+endsnippet
+
+# ==> ./Design/1418.Display-Table-of-Food-Orders-in-a-Restaurant/1418.Display-Table-of-Food-Orders-in-a-Restaurant.cpp <==
+snippet 1418.Display-Table-of-Food-Orders-in-a-Restaurant "1418.Display-Table-of-Food-Orders-in-a-Restaurant" b
+class Solution {
+public:
+    vector<vector<string>> displayTable(vector<vector<string>>& orders) 
+    {
+        map<int, unordered_map<string, int>>table2Order;
+        set<string>foodNames;
+        for (auto order:orders)
+        {
+            table2Order[stoi(order[1])][order[2]]++;
+            foodNames.insert(order[2]);
+        }
+        
+        int i = 1;
+        unordered_map<string,int>food2index;
+        for (auto food: foodNames)        
+        {
+            food2index[food] = i;
+            i++;
+        }
+        
+        vector<vector<string>>rets;
+
+        vector<string>header({"Table"});
+        for (auto x:foodNames) header.push_back(x);        
+        rets.push_back(header);
+        
+        for (auto x:table2Order)
+        {            
+            int id = x.first;
+            auto order = x.second;
+
+            vector<string>row(foodNames.size()+1, "0");
+            row[0] = to_string(id);
+            
+            for (auto y: order)
+            {
+                int col = food2index[y.first];
+                int num = y.second;
+                row[col] = to_string(num);
+            }            
+            rets.push_back(row);            
+        }
+        
+        return rets;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Design/1622.Fancy-Sequence/Readme.md <==
+snippet 1622.Fancy-Sequence "1622.Fancy-Sequence" b
+### 1622.Fancy-Sequence
+
+我们想象一个这样的序列
+```
+0 1 2 3 4 5  6  7 8 9 ...
+   *     + ** +
+   a     b cd e
+```
+此时我们如果想getIdx(0)的话，除了取出nums[0]之外，还必须经过一系列的乘法和加法操作```(((((num[0]*a)+b)*c)*d)+e)...```，当然，最终我们肯定可以将其化简为```nums[0]*mul+add```.
+
+此时我们如果想getIdx(1)的话，其实处理方法和nums[0]是一模一样的，所以我们可以直接用```nums[1]*mul+add```.
+
+此时我们如果想getIdx(2)的话，情况就不一样了，不能用```nums[2]*mul+add```了，因为我们实际需要计算的是```(((((num[2])+b)*c)*d)+e)...```。那么我们还需要再重新把这一票算符再走一遍吗？可否直接利用之前化简得到的mul和add呢？其实是可以的。当我们在存nums[2]的时候，不存原始的数值，而是存入的是val = nums[2]/a的话，那么我们当我们调取getIdx(2)时，就可以使用```val*mul+add```这个表达式，因为它本质算的是```(((((num[2]/a*a)+b)*c)*d)+e)...```，恰好就是我们想要的结果。
+
+所以我们发现了一个规律，如果当前的化简算子是{mul,add}的时候，我们想要append一个新的数字nums[i]时，我们不直接append原始的数值，我们append一个虚拟的数值val用来“抵消”这对算子的影响，即使得```nums[i] = val*mul+add```。这样我们调用getIdx(i)的时候，仍然apply当前的化简算子{mul,add}得到```val*mul+add```，恰好就还原了真实的nums[i]。即使此后的{mul,add}可能会更新为{mul',add'}，但是val只是抵消了i之前的运算符的效果，并不会影响i之后的运算的作用，所以当再次调用getIdx(i)的时候，就可以放心地将{mul',add'}用在val上然后输出答案。
+
+接下来的一个关键问题，我们试图得到这个“抵消”后的val时，发现```nums[i] = val*mul+add```并不能保证得到一个整数的```val= (nums[i]-add) / mul```，如果存储的是小数的话，此后的误差会越来越大。另外一个更重要的问题是，mul会随着时间的推移有可能非常大直至越界。而如果为了避免mul越界而对其做了%M的操作的话，那么上面val的计算方法得到的结果就是错误的。```因为(a/b)%M != a / (b%M)```
+
+怎么办呢？事实上，我们并不需要存一个真实的val，我们只要存一个与val关于M同余的值就行了，我们记做val'。因为val'与val（关于M）同余，那么```val'*mul+add```就会与```val*mul+add```同余，也就是和最终的答案同余。而题目要求输出的就只是将答案对M取模的结果。
+
+想求```(nums[i]-add) / mul```关于M的同余，不能用“(nums[i]-add)关于M的同余”去除以“mul关于M的同余”，因为除法不满足 (a/b)%M = (a%M) / (b%M) 。正确的答案是 ```(nums[i]-add) * inv(mul)```。其中inv(mul)称之为mul的逆元。满足如下关系的a和b称之为逆元：
+```
+x / a ≡ x * b (mod M)
+```
+写作```b=inv(a)```。存在a的逆元的充要条件是a与M互质。
+
+有了以上的知识，我们求val时，不要计算```val= (nums[i]-add) / mul```，而是计算```val= (nums[i]-add) * inv(mul) % M```。有人会疑问，前者是个小数，后者是个整数，怎么可能相等呢？确实不是相等的，而是同余的。注意查看之前的表达式，有了逆元的概念，同余并不依赖于x/a是否为整数。也就是说，允许小数val与某个整数val'同余，这样当我们同时乘以某个数k时，```val*k```依然与```val'*k```同余，而此时前者可能已经是个整数了。
+
+关于逆元的解法inv(a)，请参见这里的[笔记](https://github.com/wisdompeak/LeetCode/tree/master/Template/Inverse_Element)。
+
+
+
+$0
+endsnippet
+
+# ==> ./Design/1622.Fancy-Sequence/1622.Fancy-Sequence.cpp <==
+snippet 1622.Fancy-Sequence "1622.Fancy-Sequence" b
+#define LL long long
+LL M = 1e9+7;
+
+class Fancy {
+    LL add, mul;
+    vector<LL>nums;
+    
+    LL quickPow(int x, int y) 
+    {
+        int ret = 1;
+        int cur = x;
+        while (y) 
+        {
+            if (y & 1) 
+            {
+                ret = (long long)ret * cur % M;
+            }
+            cur = (long long)cur * cur % M;
+            y >>= 1;
+        }
+        return ret;
+    }
+    
+    LL inv(int x) 
+    {
+        return quickPow(x, M - 2);
+    }
+    
+public:
+    Fancy() {
+        mul = 1;
+        add = 0;
+    }
+    
+    void append(int val) 
+    {
+        val = (val-add+M) % M;
+        val = (val * inv(mul)) % M;
+        nums.push_back(val);
+    }
+    
+    void addAll(int inc) 
+    {
+        add = (add + inc) % M;
+    }
+    
+    void multAll(int m) 
+    {
+        mul = (mul*m) % M;
+        add = (add*m) % M;
+
+    }
+    
+    int getIndex(int idx) 
+    {
+        if (idx >= nums.size())
+            return -1;
+        return (nums[idx]*mul % M + add) % M;
+    }
+};
+
+/**
+ * Your Fancy object will be instantiated and called as such:
+ * Fancy* obj = new Fancy();
+ * obj->append(val);
+ * obj->addAll(inc);
+ * obj->multAll(m);
+ * int param_4 = obj->getIndex(idx);
+ */
+
+$0
+endsnippet
+
+# ==> ./Design/1801.Number-of-Orders-in-the-Backlog/Readme.md <==
+snippet 1801.Number-of-Orders-in-the-Backlog "1801.Number-of-Orders-in-the-Backlog" b
+### 1801.Number-of-Orders-in-the-Backlog
+
+设计两个优先队列。buy表示未完成的待买订单，按照价格从高到低排序；sell表示未完成的待卖订单，按照价格从到高排序。
+
+每处理一个待买订单，我们就与sell队列队首的订单进行匹配。考察能消除多少sell里面的订单。记得如果仍有待买订单未完成，需要加入buy队列。
+
+同理，每处理一个待待订单，我们就与buy队列队首的订单进行匹配。考察能消除多少biy里面的订单。记得如果仍有待卖订单未完成，需要加入sell队列。
+
+$0
+endsnippet
+
+# ==> ./Design/1801.Number-of-Orders-in-the-Backlog/1801.Number-of-Orders-in-the-Backlog.cpp <==
+snippet 1801.Number-of-Orders-in-the-Backlog "1801.Number-of-Orders-in-the-Backlog" b
+typedef pair<long,long> PII; //{price,amount}
+
+class Solution {    
+public:
+    int getNumberOfBacklogOrders(vector<vector<int>>& orders) 
+    {
+        priority_queue<PII>buy;
+        priority_queue<PII, vector<PII>, greater<>>sell;
+        
+        long ret = 0;
+        long M = 1e9+7;
+        
+        for (auto order: orders)
+        {
+            ret = (ret+order[1]) % M;
+            
+            if (order[2]==0)
+            {
+                while (order[1]>0 && !sell.empty() && sell.top().first <= order[0])
+                {
+                    auto [price, amount] = sell.top();
+                    sell.pop();
+                    long num = min(amount, (long)order[1]);
+                    amount-=num;
+                    order[1]-=num;
+                    ret = (ret - num*2 + M) % M;
+                    if (amount > 0)
+                        sell.push({price, amount});                    
+                }
+                if (order[1] > 0)
+                    buy.push({order[0], order[1]});
+            } 
+            else
+            {
+                while (order[1]>0 && !buy.empty() && buy.top().first >= order[0])
+                {
+                    auto [price, amount] = buy.top();
+                    buy.pop();
+                    long num = min(amount, (long)order[1]);
+                    amount-=num;
+                    order[1]-=num;
+                    ret = (ret - num*2 + M) % M;
+                    if (amount > 0)
+                        buy.push({price, amount});                    
+                }
+                if (order[1] > 0)
+                    sell.push({order[0], order[1]});
+            }
+        }
+        
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Design/2166.Design-Bitset/Readme.md <==
+snippet 2166.Design-Bitset "2166.Design-Bitset" b
+### 2166.Design-Bitset
+
+本题不要试图用C++自带的bitset做。C++的bitset在初始化时不能自定义空间大小，如果开满了N=1e5，那么就会TLE。
+
+本题设立两个变量分别是flip[i]和totalFlip。前者表示第i个元素被单独翻转了几次，后者表示所有元素被翻转了几次。那么任意元素在任意时刻的最终状态就是```(flip[i]+totalFlip)%2```.
+
+$0
+endsnippet
+
+# ==> ./Design/2166.Design-Bitset/2166.Design-Bitset.cpp <==
+snippet 2166.Design-Bitset "2166.Design-Bitset" b
+class Bitset {
+    int flips[100000];
+    int totalFlip = 0;
+    int m;
+    int cnt = 0;
+public:
+    Bitset(int size) {
+        m = size;
+        for (int i=0; i<m; i++)
+            flips[i] = 0;
+    }
+    
+    void fix(int idx) 
+    {
+        if ((flips[idx]+totalFlip)%2==0)
+        {
+            flips[idx]+=1;
+            cnt++;
+        }
+    }
+    
+    void unfix(int idx) {
+        if ((flips[idx]+totalFlip)%2==1)
+        {
+            flips[idx]+=1;
+            cnt--;
+        }
+    }
+    
+    void flip() {
+        totalFlip += 1;
+        cnt = m - cnt;
+    }
+    
+    bool all() {
+        return cnt == m;
+    }
+    
+    bool one() {
+        return cnt >= 1;
+    }
+    
+    int count() {
+        return cnt;
+    }
+    
+    string toString() {
+        string s;
+        for (int i=0; i<m; i++)
+        {
+            int t = (flips[i]+totalFlip)%2;
+            s += t==0?"0":"1";
+        }
+        return s;
+    }
+};
+
+$0
+endsnippet

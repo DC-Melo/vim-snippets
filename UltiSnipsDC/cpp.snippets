@@ -1,3 +1,304 @@
+priority -50
+
+extends c
+
+# We want to overwrite everything in parent ft.
+priority -49
+###########################################################################
+#			    Global functions 						  #
+###########################################################################
+
+global !p
+
+def write_docstring_args(arglist, snip):
+	args = str(arglist).split(',')
+
+	if len(args) > 1:
+		c = 0
+		for arg in args:
+			if c == 0:
+				snip.rv += arg
+				c = 1
+			else:
+				snip += '*       : %s' % arg.strip()
+	else:
+		snip.rv = args[0]
+
+
+endglobal
+
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+snippet mainAppFW "main and App"
+/* code by 王江 DC-Melo */
+#include <string>
+#include <vector>
+#include <chrono>
+#include <iostream>
+using namespace std;
+class App
+{
+public:
+    App() {}
+    ~App() {}
+private:
+};
+int main() {
+    return 0;
+}
+$0
+endsnippet
+
+snippet printDuration "print duration"
+/* timestamp begin */
+auto tBegin = std::chrono::high_resolution_clock::now();
+/* code heer */
+
+/* timestamp end */
+auto tEnd = std::chrono::high_resolution_clock::now();
+auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tBegin).count();
+std::cout << "\nprogram cust " <<  duration <<" microseconds" << std::endl;
+$0
+endsnippet
+
+snippet initInclude "init include "
+using namespace std;
+// #include <bits/stdc++.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include "math.h"
+#include <string>
+#include <set>
+#include <sstream>
+#include <cstring>
+#include <ctime>
+#include <vector>
+#include <iostream>
+#include <unordered_map>
+#include <chrono>
+$0
+endsnippet
+######################################################################
+#   Array                                                            #
+######################################################################
+snippet initArray "Initializing a array"
+int ${1:arr}[] = { 1, 2, 3, 4, 5 };
+$0
+endsnippet
+snippet printArray "loop through the array elements"
+for (size_t i = 0; i < sizeof(${1:arr})/sizeof($1[0]); i++) std::cout << $1[i] << '\t'; std::cout << std::endl;
+$0
+endsnippet
+snippet printArray "Print contents of an array in C++ using range-based for-loop"
+for (const auto &value : ${1:arr})  std::cout << value << '\t'; std::cout << std::endl;
+$0
+endsnippet
+
+######################################################################
+#   2D Array                                                         #
+######################################################################
+
+snippet initArray2D "Initializing a array"
+int ${1:arr2d}[][4] = { {1,2,3,4}, {5,6,7,8} };
+$0
+endsnippet
+snippet printArray2D "loop through the array elements"
+for (int i = 0; i < sizeof(${1:arr2d}) / sizeof($1[0]); ++i) {for (int j = 0; j < sizeof($1[0]) / sizeof($1[0][0]); ++j) std::cout << $1[i][j] << "\t"; std::cout << std::endl;}
+$0
+endsnippet
+
+######################################################################
+#   vector                                                           #
+######################################################################
+snippet initVector "Initializing like arrays"
+vector<int> ${1:vect}{ 10, 20, 30 };
+$0
+endsnippet
+snippet initVector "Initializing from an array"
+int arr[] = { 10, 20, 30 };
+int n = sizeof(arr) / sizeof(arr[0]);
+vector<int> ${1:vect}(arr, arr + n);
+$0
+endsnippet
+snippet initVector "Specifying size and initializing all values"
+vector<int> ${1:vect}(3, 10);
+$0
+endsnippet
+snippet initVector "Initializing by pushing values one by one"
+vector<int> ${1:vect};
+$1.push_back(10);
+$1.push_back(20);
+$1.push_back(30);
+$0
+endsnippet
+snippet printVector " print vector "
+for (auto x : ${1:vect}) std::cout << x << "\t"; std::cout << std::endl;
+$0
+endsnippet
+snippet printVector " print vector "
+for (auto i = ${1:vect}.begin(); i != $1.end(); ++i) std::cout << *i << '\t';std::cout << std::endl;
+$0
+endsnippet
+snippet printVector " print vector "
+for (int i = 0; i < ${1:vect}.size(); i++)  std::cout << $1[i] << "\t";std::cout << std::endl;
+$0
+endsnippet
+
+######################################################################
+#   matrix                                                           #
+######################################################################
+snippet initMatrix "Initializing a 2D Vector i.e. vector of vectors"
+vector<vector<char>> matrix = { {'1','2' ,'3' ,'4' ,'a'  },
+								{'6','7' ,'8' ,'9' ,'b'  },
+								{'5','6' ,'8' ,'1' ,'c'  },
+								{'1','7' ,'2' ,'4' ,'d'  },
+							 };
+$0
+endsnippet
+snippet printMatrix "Initializing a 2D Vector i.e. vector of vectors"
+for ( const auto &v : matrix ) { for ( auto x : v ) std::cout << x << '\t'; std::cout << std::endl; }
+$0
+endsnippet
+snippet printMatrix "Initializing a 2D Vector i.e. vector of vectors"
+for (int i = 0; i < ${1:matrix}.size(); i++) { for (int j = 0; j < $1[i].size(); j++)  cout << $1[i][j] << "\t"; std::cout << endl; }
+$0
+endsnippet
+
+######################################################################
+#  singly linked list                                                #
+######################################################################
+snippet singlyLinkedListDefinition "Definition for singly-linked list."
+struct ListNode {
+	int val;
+	ListNode *next;
+	ListNode() : val(0), next(nullptr) {}
+	ListNode(int x) : val(x), next(nullptr) {}
+	ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+$0
+endsnippet
+snippet printListNode "init list node"
+ListNode* head = new ListNode(0);
+for(ListNode* pi =l2;pi!=NULL;pi=pi->next) cout<<pi->val << " "; std::cout << std::endl;
+ListNode* ptr =head;
+while(ptr!=NULL){
+	cout<<ptr->val<<"\t";
+	ptr = ptr->next;
+}
+$0
+endsnippet
+
+
+######################################################################
+#  tree                                                              #
+######################################################################
+snippet treeNodeDefination "Definition for a binary tree node.  "
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+$0
+endsnippet
+
+snippet printBinaryTree "Print binary tree structure with its contents"
+// Data structure to store a binary tree node
+struct Trunk
+{
+    Trunk *prev;
+    string str;
+
+    Trunk(Trunk *prev, string str)
+    {
+        this->prev = prev;
+        this->str = str;
+    }
+};
+
+// Helper function to print branches of the binary tree
+void showTrunks(Trunk *p)
+{
+    if (p == nullptr) {
+        return;
+    }
+
+    showTrunks(p->prev);
+    cout << p->str;
+}
+
+void printTree(TreeNode* root, Trunk *prev, bool isLeft)
+{
+    if (root == nullptr) {
+        return;
+    }
+
+    string prev_str = "    ";
+    Trunk *trunk = new Trunk(prev, prev_str);
+
+    printTree(root->right, trunk, true);
+
+    if (!prev) {
+        trunk->str = "———";
+    }
+    else if (isLeft)
+    {
+        trunk->str = ".———";
+        prev_str = "   |";
+    }
+    else {
+        trunk->str = "\`———";
+        prev->str = prev_str;
+    }
+
+    showTrunks(trunk);
+    cout << " " << root->val << endl;
+
+    if (prev) {
+        prev->str = prev_str;
+    }
+    trunk->str = "   |";
+
+    printTree(root->left, trunk, false);
+}
+
+int main()
+{
+    // Construct above tree
+    TreeNode* root = new TreeNode(1);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(3);
+    root->left->left = new TreeNode(4);
+    root->left->right = new TreeNode(5);
+    root->right->left = new TreeNode(6);
+    root->right->right = new TreeNode(7);
+    root->left->left->left = new TreeNode(8);
+    root->left->left->right = new TreeNode(9);
+    root->left->right->left = new TreeNode(10);
+    root->left->right->right = new TreeNode(11);
+    root->right->left->left = new TreeNode(12);
+    root->right->left->right = new TreeNode(13);
+    root->right->right->left = new TreeNode(14);
+    root->right->right->right = new TreeNode(15);
+
+    // print constructed binary tree
+    printTree(root, nullptr, false);
+
+    return 0;
+}
+
+$0
+endsnippet
+######################################################################
+#  graph                                                             #
+######################################################################
+
 # 2  sort
 # 3  search
 # 4  array
@@ -11,19 +312,19 @@ snippet btMinDepth "Recursion=Given the root of a binary tree, return its maximu
 #include<math.h>
 using namespace std;
 
-struct Node
+struct TreeNode
 {
 int data;
-struct Node *left;
-struct Node *right;
-Node(int k){
+struct TreeNode *left;
+struct TreeNode *right;
+TreeNode(int k){
 	data = k;
 	left = right = NULL;
 }
 };
 
 /* Function to calculate the minimum depth of the tree */
-int minimumDepth(Node *root, int level)
+int minimumDepth(TreeNode *root, int level)
 {
 
 		if (root == NULL)
@@ -39,11 +340,11 @@ int main()
 {
 
 	// Let us create binary tree shown in above diagram
-	Node *root = new Node(1);
-	root->left = new Node(2);
-	root->right = new Node(3);
-	root->left->left = new Node(4);
-	root->left->right = new Node(5);
+	TreeNode *root = new TreeNode(1);
+	root->left = new TreeNode(2);
+	root->right = new TreeNode(3);
+	root->left->left = new TreeNode(4);
+	root->left->right = new TreeNode(5);
 
 	cout << minimumDepth(root, 0);
 	return 0;
@@ -91,25 +392,25 @@ int maxDepth(node* node)
 
 /* Helper function that allocates a new node with the
 given data and NULL left and right pointers. */
-node* newNode(int data)
+node* newTreeNode(int data)
 {
-	node* Node = new node();
-	Node->data = data;
-	Node->left = NULL;
-	Node->right = NULL;
+	node* TreeNode = new node();
+	TreeNode->data = data;
+	TreeNode->left = NULL;
+	TreeNode->right = NULL;
 
-	return(Node);
+	return(TreeNode);
 }
 
 // Driver code
 int main()
 {
-	node *root = newNode(1);
+	node *root = newTreeNode(1);
 
-	root->left = newNode(2);
-	root->right = newNode(3);
-	root->left->left = newNode(4);
-	root->left->right = newNode(5);
+	root->left = newTreeNode(2);
+	root->right = newTreeNode(3);
+	root->left->left = newTreeNode(4);
+	root->left->right = newTreeNode(5);
 
 	cout << "Height of tree is " << maxDepth(root);
 	return 0;
@@ -125,35 +426,35 @@ snippet btMaxDepth "Level Order Traversal=Given the root of a binary tree, retur
 using namespace std;
 
 // A Tree node
-struct Node
+struct TreeNode
 {
 	int key;
-	struct Node* left, *right;
+	struct TreeNode* left, *right;
 };
 
 // Utility function to create a new node
-Node* newNode(int key)
+TreeNode* newTreeNode(int key)
 {
-	Node* temp = new Node;
+	TreeNode* temp = new TreeNode;
 	temp->key = key;
 	temp->left = temp->right = NULL;
 	return (temp);
 }
 
 /*Function to find the height(depth) of the tree*/
-int height(struct Node* root){
+int height(struct TreeNode* root){
 
 	//Initialising a variable to count the
 	//height of tree
 	int depth = 0;
 
-	queue<Node*>q;
+	queue<TreeNode*>q;
 
 	//Pushing first level element along with NULL
 	q.push(root);
 	q.push(NULL);
 	while(!q.empty()){
-		Node* temp = q.front();
+		TreeNode* temp = q.front();
 		q.pop();
 
 		//When NULL encountered, increment the value
@@ -184,17 +485,17 @@ int height(struct Node* root){
 int main()
 {
 	// Let us create Binary Tree shown in above example
-	Node *root = newNode(1);
-	root->left = newNode(12);
-	root->right = newNode(13);
+	TreeNode *root = newTreeNode(1);
+	root->left = newTreeNode(12);
+	root->right = newTreeNode(13);
 
-	root->right->left = newNode(14);
-	root->right->right = newNode(15);
+	root->right->left = newTreeNode(14);
+	root->right->right = newTreeNode(15);
 
-	root->right->left->left = newNode(21);
-	root->right->left->right = newNode(22);
-	root->right->right->left = newNode(23);
-	root->right->right->right = newNode(24);
+	root->right->left->left = newTreeNode(21);
+	root->right->left->right = newTreeNode(22);
+	root->right->right->left = newTreeNode(23);
+	root->right->right->right = newTreeNode(24);
 
 	cout<<"Height(Depth) of tree is: "<<height(root);
 }
@@ -209,14 +510,14 @@ using namespace std;
 
 /* A binary tree node has data, pointer to
 left child and a pointer to right child */
-struct Node
+struct TreeNode
 {
 	int data;
-	struct Node* left, *right;
+	struct TreeNode* left, *right;
 };
 
 // Returns true if given tree is BST.
-bool isBST(Node* root, Node* l=NULL, Node* r=NULL)
+bool isBST(TreeNode* root, TreeNode* l=NULL, TreeNode* r=NULL)
 {
 	// Base condition
 	if (root == NULL)
@@ -241,9 +542,9 @@ bool isBST(Node* root, Node* l=NULL, Node* r=NULL)
 
 /* Helper function that allocates a new node with the
 given data and NULL left and right pointers. */
-struct Node* newNode(int data)
+struct TreeNode* newTreeNode(int data)
 {
-	struct Node* node = new Node;
+	struct TreeNode* node = new TreeNode;
 	node->data = data;
 	node->left = node->right = NULL;
 	return (node);
@@ -252,11 +553,11 @@ struct Node* newNode(int data)
 /* Driver program to test above functions*/
 int main()
 {
-	struct Node *root = newNode(3);
-	root->left	 = newNode(2);
-	root->right	 = newNode(5);
-	root->left->left = newNode(1);
-	root->left->right = newNode(4);
+	struct TreeNode *root = newTreeNode(3);
+	root->left	 = newTreeNode(2);
+	root->right	 = newTreeNode(5);
+	root->left->left = newTreeNode(1);
+	root->left->right = newTreeNode(4);
 
 	if (isBST(root,NULL,NULL))
 		cout << "Is BST";
@@ -275,12 +576,12 @@ using namespace std;
 
 /* A binary tree node has data, pointer to
 left child and a pointer to right child */
-struct Node
+struct TreeNode
 {
 	int data;
-	struct Node* left, *right;
+	struct TreeNode* left, *right;
 
-	Node(int data)
+	TreeNode(int data)
 	{
 		this->data = data;
 		left = right = NULL;
@@ -288,7 +589,7 @@ struct Node
 };
 
 
-bool isBSTUtil(struct Node* root, Node *&prev)
+bool isBSTUtil(struct TreeNode* root, TreeNode *&prev)
 {
 	// traverse the tree in inorder fashion and
 	// keep track of prev node
@@ -309,20 +610,20 @@ bool isBSTUtil(struct Node* root, Node *&prev)
 	return true;
 }
 
-bool isBST(Node *root)
+bool isBST(TreeNode *root)
 {
-Node *prev = NULL;
+TreeNode *prev = NULL;
 return isBSTUtil(root, prev);
 }
 
 /* Driver program to test above functions*/
 int main()
 {
-	struct Node *root = new Node(3);
-	root->left	 = new Node(2);
-	root->right	 = new Node(5);
-	root->left->left = new Node(1);
-	root->left->right = new Node(4);
+	struct TreeNode *root = new TreeNode(3);
+	root->left	 = new TreeNode(2);
+	root->right	 = new TreeNode(5);
+	root->left->left = new TreeNode(1);
+	root->left->right = new TreeNode(4);
 
 	if (isBST(root))
 		cout << "Is BST";
@@ -341,17 +642,17 @@ snippet btIsMirror "Recursion=Given a binary tree, check whether it is a mirror 
 #include <bits/stdc++.h>
 using namespace std;
 
-// A Binary Tree Node
-struct Node
+// A Binary Tree TreeNode
+struct TreeNode
 {
 	int key;
-	struct Node *left, *right;
+	struct TreeNode *left, *right;
 };
 
-// Utility function to create new Node
-Node* newNode(int key)
+// Utility function to create new TreeNode
+TreeNode* newTreeNode(int key)
 {
-	Node* temp = new Node;
+	TreeNode* temp = new TreeNode;
 	temp->key = key;
 	temp->left = temp->right = NULL;
 	return (temp);
@@ -359,7 +660,7 @@ Node* newNode(int key)
 
 // Returns true if trees
 // with roots as root1 and root2 are mirror
-bool isMirror(struct Node* root1, struct Node* root2)
+bool isMirror(struct TreeNode* root1, struct TreeNode* root2)
 {
 	// If both trees are empty,
 	// then they are mirror images
@@ -386,7 +687,7 @@ bool isMirror(struct Node* root1, struct Node* root2)
 
 // Returns true if a tree is
 // symmetric i.e. mirror image of itself
-bool isSymmetric(struct Node* root)
+bool isSymmetric(struct TreeNode* root)
 {
 	// Check if tree is mirror of itself
 	return isMirror(root, root);
@@ -396,13 +697,13 @@ bool isSymmetric(struct Node* root)
 int main()
 {
 	// Let us construct the Tree shown in the above figure
-	Node* root = newNode(1);
-	root->left = newNode(2);
-	root->right = newNode(2);
-	root->left->left = newNode(3);
-	root->left->right = newNode(4);
-	root->right->left = newNode(4);
-	root->right->right = newNode(3);
+	TreeNode* root = newTreeNode(1);
+	root->left = newTreeNode(2);
+	root->right = newTreeNode(2);
+	root->left->left = newTreeNode(3);
+	root->left->right = newTreeNode(4);
+	root->right->left = newTreeNode(4);
+	root->right->right = newTreeNode(3);
 
 	if(isSymmetric(root))
 	cout<<"Symmetric";
@@ -432,7 +733,7 @@ public:
 /* Function prototypes */
 void printCurrentLevel(node* root, int level);
 int height(node* node);
-node* newNode(int data);
+node* newTreeNode(int data);
 
 /* Function to print level
 order traversal a tree*/
@@ -482,24 +783,24 @@ int height(node* node)
 /* Helper function that allocates
 a new node with the given data and
 NULL left and right pointers. */
-node* newNode(int data)
+node* newTreeNode(int data)
 {
-	node* Node = new node();
-	Node->data = data;
-	Node->left = NULL;
-	Node->right = NULL;
+	node* TreeNode = new node();
+	TreeNode->data = data;
+	TreeNode->left = NULL;
+	TreeNode->right = NULL;
 
-	return (Node);
+	return (TreeNode);
 }
 
 /* Driver code*/
 int main()
 {
-	node* root = newNode(1);
-	root->left = newNode(2);
-	root->right = newNode(3);
-	root->left->left = newNode(4);
-	root->left->right = newNode(5);
+	node* root = newTreeNode(1);
+	root->left = newTreeNode(2);
+	root->right = newTreeNode(3);
+	root->left->left = newTreeNode(4);
+	root->left->right = newTreeNode(5);
 
 	cout << "Level Order traversal of binary tree is \n";
 	printLevelOrder(root);
@@ -517,28 +818,28 @@ snippet btLevelOrderTraversal "Using queue = Level order traversal of a tree" b
 #include <bits/stdc++.h>
 using namespace std;
 
-// A Binary Tree Node
-struct Node {
+// A Binary Tree TreeNode
+struct TreeNode {
 	int data;
-	struct Node *left, *right;
+	struct TreeNode *left, *right;
 };
 
 // Iterative method to find height of Binary Tree
-void printLevelOrder(Node* root)
+void printLevelOrder(TreeNode* root)
 {
 	// Base Case
 	if (root == NULL)
 		return;
 
 	// Create an empty queue for level order traversal
-	queue<Node*> q;
+	queue<TreeNode*> q;
 
 	// Enqueue Root and initialize height
 	q.push(root);
 
 	while (q.empty() == false) {
 		// Print front of queue and remove it from queue
-		Node* node = q.front();
+		TreeNode* node = q.front();
 		cout << node->data << " ";
 		q.pop();
 
@@ -553,9 +854,9 @@ void printLevelOrder(Node* root)
 }
 
 // Utility function to create a new tree node
-Node* newNode(int data)
+TreeNode* newTreeNode(int data)
 {
-	Node* temp = new Node;
+	TreeNode* temp = new TreeNode;
 	temp->data = data;
 	temp->left = temp->right = NULL;
 	return temp;
@@ -565,11 +866,11 @@ Node* newNode(int data)
 int main()
 {
 	// Let us create binary tree shown in above diagram
-	Node* root = newNode(1);
-	root->left = newNode(2);
-	root->right = newNode(3);
-	root->left->left = newNode(4);
-	root->left->right = newNode(5);
+	TreeNode* root = newTreeNode(1);
+	root->left = newTreeNode(2);
+	root->right = newTreeNode(3);
+	root->left->left = newTreeNode(4);
+	root->left->right = newTreeNode(5);
 
 	cout << "Level Order traversal of binary tree is \n";
 	printLevelOrder(root);
@@ -585,18 +886,18 @@ snippet btSortArray2BalaneceBinaryTree "Given a sorted array convert  Balanced B
 using namespace std;
 
 /* A Binary Tree node */
-class TNode
+class TTreeNode
 {
 	public:
 	int data;
-	TNode* left;
-	TNode* right;
+	TTreeNode* left;
+	TTreeNode* right;
 };
 
-TNode* newNode(int data);
+TTreeNode* newTreeNode(int data);
 
 /* A function that constructs Balanced Binary Search Tree from a sorted array */
-TNode* sortedArrayToBST(int arr[],
+TTreeNode* sortedArrayToBST(int arr[],
 						int start, int end)
 {
 	/* Base Case */
@@ -605,7 +906,7 @@ TNode* sortedArrayToBST(int arr[],
 
 	/* Get the middle element and make it root */
 	int mid = (start + end)/2;
-	TNode *root = newNode(arr[mid]);
+	TTreeNode *root = newTreeNode(arr[mid]);
 
 	/* Recursively construct the left subtree and make it left child of root */
 	root->left = sortedArrayToBST(arr, start,
@@ -620,9 +921,9 @@ TNode* sortedArrayToBST(int arr[],
 /* Helper function that allocates a new node
 with the given data and NULL left and right
 pointers. */
-TNode* newNode(int data)
+TTreeNode* newTreeNode(int data)
 {
-	TNode* node = new TNode();
+	TTreeNode* node = new TTreeNode();
 	node->data = data;
 	node->left = NULL;
 	node->right = NULL;
@@ -632,7 +933,7 @@ TNode* newNode(int data)
 
 /* A utility function to print
 preorder traversal of BST */
-void preOrder(TNode* node)
+void preOrder(TTreeNode* node)
 {
 	if (node == NULL)
 		return;
@@ -648,7 +949,7 @@ int main()
 	int n = sizeof(arr) / sizeof(arr[0]);
 
 	/* Convert List to BST */
-	TNode *root = sortedArrayToBST(arr, 0, n-1);
+	TTreeNode *root = sortedArrayToBST(arr, 0, n-1);
 	cout << "PreOrder Traversal of constructed BST \n";
 	preOrder(root);
 
@@ -910,183 +1211,6 @@ endsnippet
 
 # 10 math
 # 11 other
-priority -50
-
-extends c
-
-# We want to overwrite everything in parent ft.
-priority -49
-###########################################################################
-#			    Global functions 						  #
-###########################################################################
-
-global !p
-
-def write_docstring_args(arglist, snip):
-	args = str(arglist).split(',')
-
-	if len(args) > 1:
-		c = 0
-		for arg in args:
-			if c == 0:
-				snip.rv += arg
-				c = 1
-			else:
-				snip += '*       : %s' % arg.strip()
-	else:
-		snip.rv = args[0]
-
-
-endglobal
-
-###########################################################################
-#                            TextMate Snippets                            #
-###########################################################################
-
-snippet mainAppFW "main and App"
-/* code by 王江 DC-Melo */
-#include <string>
-#include <vector>
-#include <chrono>
-#include <iostream>
-using namespace std;
-class App
-{
-public:
-    App() {}
-    ~App() {}
-private:
-};
-int main() {
-	/* timestamp begin */
-    auto tBegin = std::chrono::high_resolution_clock::now();
-	/* code heer */
-
-	/* timestamp end */
-    auto tEnd = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tBegin).count();
-    std::cout << "\nprogram cust " <<  duration <<" microseconds" << std::endl;
-    return 0;
-}
-$0
-endsnippet
-
-snippet initInclude "init include "
-using namespace std;
-// #include <bits/stdc++.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include "math.h"
-#include <string>
-#include <set>
-#include <sstream>
-#include <cstring>
-#include <ctime>
-#include <vector>
-#include <iostream>
-#include <unordered_map>
-#include <chrono>
-$0
-endsnippet
-
-snippet initArray "array init"
-// Initializing a array
-int arr[] = { 1, 2, 3, 4, 5 };
-// loop through the array elements
-for (size_t i = 0; i < sizeof(arr)/sizeof(arr[0]); i++) std::cout << arr[i] << ' '; std::cout << endl;
-// Print contents of an array in C++ using range-based for-loop
-for (const auto &value: arr)  std::cout << value << ' '; std::cout << endl;
-// Print contents of an array in C++ using iterators
-for (auto it = std::cbegin(arr); it != std::cend(arr); it++) std::cout << *it << ' ';std::cout << endl;
-// Print contents of an array in C++ using `std::for_each`
-std::for_each(std::begin(arr), std::end(arr), print);
-$0
-endsnippet
-
-snippet initVector "vector init"
-// 1. Initializing by pushing values one by one :
-vector<int> vect;
-vect.push_back(10);
-vect.push_back(20);
-vect.push_back(30);
-// 2. Specifying size and initializing all values :
-vector<int> vect(3, 10);
-// 3. Initializing like arrays :
-vector<int> vect{ 10, 20, 30 };
-// 4. Initializing from an array :
-int arr[] = { 10, 20, 30 };
-int n = sizeof(arr) / sizeof(arr[0]);
-vector<int> vect(arr, arr + n);
-// print vector
-for (int x : vect) cout << x << " ";
-$0
-endsnippet
-
-snippet initMatrix "matrix init"
-// Initializing a 2D Vector i.e. vector of vectors
-vector<vector<int>> matrix = {  {1, 2, 3, 4, 5  },
-								{6, 7, 8, 9, 10 },
-								{5, 6, 8, 1, 12 },
-								{1, 7, 2, 4, 18 },
-							 };
-App app = new App();
-// Print 2D vector matrix
-for_each(matrix.begin(), matrix.end(),
-	[](const auto & row ) {
-		for_each(row.begin(), row.end(),
-				[](const auto & elem){
-					cout<<elem<<", ";
-				});
-		cout<<endl;
-	});
-cout<<endl;
-int array[3][4] = {1,1,2,3,4,5,6,7,8,9,0,10}
-$0
-endsnippet
-
-snippet listnodeStruct "int listlode struct formwork"
-/* code by 王江 DC-Melo */
-// Definition for singly-linked list.
-struct ListNode {
-	int val;
-	ListNode *next;
-	ListNode() : val(0), next(nullptr) {}
-	ListNode(int x) : val(x), next(nullptr) {}
-	ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-$0
-endsnippet
-
-snippet appendListNodeStruct "append listnode"
-/* code by 王江 DC-Melo */
-void appendListNode(struct ListNode *head, int n) {
-	ListNode *newNode = new ListNode;
-	newNode->val = n;
-	newNode->next = NULL;
-	ListNode *cur = head;
-	while(cur) {
-		if(cur->next == NULL) {
-			cur->next = newNode;
-			return;
-		}
-		cur = cur->next;
-	}
-}
-$0
-endsnippet
-
-snippet initListNode "init list node"
-ListNode* head = new ListNode(0);
-for(ListNode* pi =l2;pi!=NULL;pi=pi->next) cout<<pi->val << " "; std::cout << std::endl;
-ListNode* ptr =head;
-while(ptr!=NULL){
-	cout<<ptr->val<<endl;
-	ptr = ptr->next;
-}
-$0
-endsnippet
-
 # 001
 snippet twoSum "(vector<int>)index=find two sum target(vector<int> &numbers, int target) "
 /* code by 王江 DC-Melo */
@@ -1587,7 +1711,7 @@ endsnippet
 # 014
 snippet commonPrefix "(string)prefix=find common prefix(vector<string> &strs)" b
 /* code by 王江 DC-Melo */
-string commonPrefix(vector<string> &strs) {
+string ${1:function}(vector<string> &strs) {
     if( strs.size() == 0) return "";
     string prefix = strs[0];
     for(int i = 0;i<strs.size();i++) {
@@ -3544,15 +3668,15 @@ endsnippet
 # 056
 snippet mergeAreaIntervals "(vector<Interval>)merge=all overlapping intervals(vector<Interval> &intervals)" b
 /* code by 王江 DC-Melo */
-
-// Definition for an interval.
-struct Interval {
-    int start;
-    int end;
-    Interval() : start(0), end(0) {}
-    Interval(int s, int e) : start(s), end(e) {}
-};
-
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 bool cmp(struct Interval in1,struct Interval in2) { return in1.start < in2.start; }
 vector<Interval> merge(vector<Interval> &intervals) {
 	sort(intervals.begin(),intervals.end(),cmp);
@@ -3580,15 +3704,15 @@ endsnippet
 # 057
 snippet insertAreaInterval "(vector<Interval>)area=insert merge interval into the intervals(vector<Interval> &intervals, Interval newInterval)" b
 /* code by 王江 DC-Melo */
-
-// Definition for an interval.
-struct Interval {
-    int start;
-    int end;
-    Interval() : start(0), end(0) {}
-    Interval(int s, int e) : start(s), end(e) {}
-};
-
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	int i = 0;
 	int len = intervals.size();
@@ -3709,14 +3833,14 @@ endsnippet
 # 061
 snippet reverseNodeBykthrotateList "(ListNode *)rotate=the list to the right by k places(ListNode *head, int k)" b
 /* code by 王江 DC-Melo */
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *rotateRight(ListNode *head, int k) {
 	if(k == 0 || head == NULL) return head;
 	int length = 0;
@@ -4255,12 +4379,13 @@ endsnippet
 # 082
 snippet removeDuplicatesAllFromSortedListII "(ListNode *)Given a sorted linked list, delete all nodes that have duplicate numbers(ListNode *head)" b
 /* code by 王江 DC-Melo */
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *deleteDuplicates(ListNode *head) {
 	ListNode** curNext = &head;
 	ListNode* cur = head;
@@ -4282,14 +4407,14 @@ endsnippet
 # 083
 snippet removeDuplicatesFromSortedList "(ListNode *)Given a sorted linked list, delete all duplicates such that each element appear only once(ListNode *head)" b
 /* code by 王江 DC-Melo */
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *deleteDuplicates(ListNode *head) {
 	if(head == NULL) return head;
 	ListNode *last = head;
@@ -4388,14 +4513,14 @@ endsnippet
 # 086
 snippet partitionList "(ListNode *)Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.(ListNode *head, int x)" b
 /* code by 王江 DC-Melo */
-
-//Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *partition(ListNode *head, int x) {
 	ListNode *list1 = new ListNode(0);
 	ListNode *first = list1;
@@ -4517,14 +4642,14 @@ endsnippet
 # 092
 snippet reverseLinkedListWindowMN "Reverse a linked list from position m to n. Do it in-place and in one-pass." b
 /* code by 王江 DC-Melo */
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *reverseBetween(ListNode *head, int m, int n) {
 	if (head == NULL) return NULL;
 	ListNode *q = NULL;
@@ -4595,15 +4720,15 @@ endsnippet
 # 094
 snippet binaryTreeInorderTraversal "Given a binary tree, return the inorder traversal of its nodes’ values." b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
     vector<int> result;
     void dfs(TreeNode *root) {
         if(root == NULL) return;
@@ -4623,15 +4748,15 @@ endsnippet
 # 095
 snippet uniqueBinarySearchTreesII "Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1 ... n." b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 vector<TreeNode *> generateTrees(int n) { return createTree(1,n); }
 vector<TreeNode *> createTree(int start, int end) {
 	vector<TreeNode *> results;
@@ -4708,15 +4833,15 @@ endsnippet
 # 098
 snippet isValidateBinarySearchTree "Given the root of a binary tree, determine if it is a valid binary search tree (BST)." b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 int tmp;
 bool tag;
 bool key;
@@ -4745,15 +4870,15 @@ endsnippet
 # 099
 snippet recoverBinarySearchTree "Two elements of a binary search tree (BST) are swapped by mistake" b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 TreeNode *node1;
 TreeNode *node2;
 TreeNode *pre;
@@ -4780,15 +4905,15 @@ endsnippet
 # 100
 snippet isSameTree "Given two binary trees, write a function to check if they are the same or not" b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 bool dfs(TreeNode *p, TreeNode *q) {
 	if( p == NULL && q == NULL) return true;
 	else if( p == NULL || q == NULL) return false;
@@ -4806,15 +4931,15 @@ endsnippet
 # 101
 snippet isSymmetricTree "Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center)." b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 bool dfs(TreeNode *left,TreeNode *right) {
 	if(!left && !right) return true;
 	if((left && !right) || (!left && right) || (left->val!=right->val)) return false;
@@ -4831,15 +4956,15 @@ endsnippet
 snippet binaryTreeLevelOrderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 
 class Solution 
 {
@@ -4890,15 +5015,15 @@ endsnippet
 # 103
 snippet zTraversalBinaryTree "(vector<vector<int> >)Binary Tree Zigzag Level Order Traversal(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
 vector<vector<int> >result;
 if (!root) return result;
@@ -4936,15 +5061,15 @@ endsnippet
 # 104
 snippet maximumDepthOfBinaryTree "(int)Given a binary tree, find its maximum depth.(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -4959,15 +5084,15 @@ endsnippet
 snippet constructBinaryTreefromPreorderAndInorderTraversal "(TreeNode *)Given preorder and inorder traversal of a tree, construct the binary tree.(vector<int> &preorder, vector<int> &inorder)" b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -5006,15 +5131,15 @@ endsnippet
 snippet constructBinaryTreeFromInorderAndPostorderTraversal "Given inorder and postorder traversal of a tree, construct the binary tree." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -5053,15 +5178,15 @@ endsnippet
 snippet binaryTreeLevelOrderTraversalII "eturn the bottom-up level order traversal of its nodes values" b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -5103,15 +5228,15 @@ endsnippet
 snippet convertSortedArrayToBinarySearchTree "convert it to a height balanced BST." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
     TreeNode* createTree(vector<int> &num,int left, int right) {
         if(left > right) return NULL;
         int mid = (left+right)/2;
@@ -5130,23 +5255,23 @@ endsnippet
 snippet convertSortedListToBinarySearchTree "convert linked list to a height balanced BST." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 
     TreeNode* createTree(vector<int> &num,int left, int right) {
         if(left > right) return NULL;
@@ -5173,15 +5298,15 @@ endsnippet
 # 110
 snippet isBalancedBinaryTree "(bool)Given a binary tree, determine if it is height-balanced.(TreeNode *root)" b
 /* code by 王江 DC-Melo */
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 int isBalancedUtil(TreeNode* root, bool& isValid) {
 	if(root == NULL) return 0;
 	if(!isValid) return -1;
@@ -5202,15 +5327,15 @@ endsnippet
 snippet minimumDepthOfBinaryTree "Given a binary tree, find its minimum depth" b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 int minDepth(TreeNode *root) {
 	if(root == NULL) return 0;
   
@@ -5225,15 +5350,15 @@ endsnippet
 snippet findPathSumOfTree "he tree has a root-to-leaf path such that adding up all the values" b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 bool dfs(TreeNode *node, int sum, int curSum) {
 	if (node == NULL) return false;
 	if (node->left == NULL && node->right == NULL) return curSum + node->val == sum;
@@ -5247,15 +5372,15 @@ endsnippet
 snippet findAllPathSumII "where each path's sum equals the given sum." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 vector<vector<int> > result;
 void dfs(TreeNode *node, int sum, vector<int> curPath, int curSum) {
 	if (node == NULL) return;
@@ -5279,15 +5404,15 @@ endsnippet
 snippet convertBinaryTreeToLinkedList "Given a binary tree, flatten it to a linked list in-place." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 TreeNode *pre;
 Solution() {
 	pre = NULL;
@@ -5337,14 +5462,14 @@ endsnippet
 snippet populatingNextRightPointersInEachNode "Populate each next pointer to point to its next right node " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree with next pointer.
-struct TreeLinkNode {
- int val;
- TreeLinkNode *left, *right, *next;
- TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
-};
-
+/**
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
 void connect(TreeLinkNode *root) {
 	if(root == NULL || root->left == NULL) return;
 	TreeLinkNode *p = root;
@@ -5362,14 +5487,14 @@ endsnippet
 snippet populatingNextRightPointersInEachNodeII "Follow up for problem Populating Next Right Pointers in Each Node." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree with next pointer.
-struct TreeLinkNode {
- int val;
- TreeLinkNode *left, *right, *next;
- TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
-};
-
+/**
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
 void broadSearch(TreeLinkNode* queueS) {
 	if(queueS == NULL) return;
 	TreeLinkNode* newQueueH = NULL;
@@ -5552,15 +5677,15 @@ endsnippet
 snippet maximumSumbinaryTreeMaximumPathSum "Given a non-empty binary tree, find the maximum path sum." b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 
 #define INT_MAX ((int)(~0U>>1))
 #define INT_MIN (-INT_MAX - 1)
@@ -5871,7 +5996,7 @@ $0
 endsnippet
 
 # 132
-snippet minCutsPalindromePartitioningII "Return the minimum cuts needed for a palindrome partitioning of s." b
+snippet minimumCutsPalindromePartitioningII "Return the minimum cuts needed for a palindrome partitioning of s." b
 /* code by 王江 DC-Melo */
 int minCut(string s) {
 	int n = s.size();
@@ -5896,14 +6021,14 @@ endsnippet
 # 133
 snippet copyCloneGraph "a deep copy (clone) of the graph" b
 /* code by 王江 DC-Melo */
-
-// Definition for undirected graph.
-struct UndirectedGraphNode {
-    int label;
-    vector<UndirectedGraphNode *> neighbors;
-    UndirectedGraphNode(int x) : label(x) {};
-};
-
+/**
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
 UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
 	if( node == NULL ) return NULL;
 	unordered_map<UndirectedGraphNode * , UndirectedGraphNode *> otn;
@@ -5965,17 +6090,17 @@ $0
 endsnippet
 
 # 135
-snippet minCandiesMustGiveCandy "minimum candies you must give" b
+snippet minimumCandiesMustGiveCandy "minimum candies you must give" b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 ListNode *sortList(ListNode *head) {
 	if(!head||!head->next) return head;
 	return mergeSort(head);
@@ -6018,7 +6143,7 @@ $0
 endsnippet
 
 # 136
-snippet singleNumberInArray "every element appears twice except for one. Find that single one" b
+snippet findSingleNumberInArray "every element appears twice except for one. Find that single one" b
 /* code by 王江 DC-Melo */
 int singleNumber(vector<int>& nums) {
 	set<int> S;
@@ -6049,14 +6174,14 @@ endsnippet
 snippet copyListWithRandomPointer "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list with a random pointer.
-struct RandomListNode {
-    int label;
-    RandomListNode *next, *random;
-    RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6192,14 +6317,14 @@ endsnippet
 snippet linkedListCycle "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {   
 public:
@@ -6226,14 +6351,14 @@ endsnippet
 snippet linkedListCycleII "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6269,14 +6394,14 @@ endsnippet
 snippet reorderList "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6336,15 +6461,15 @@ endsnippet
 snippet binaryTreePreorderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6374,15 +6499,15 @@ endsnippet
 snippet binaryTreePostorderTraversal "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6473,14 +6598,14 @@ endsnippet
 snippet insertionSortList "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6533,14 +6658,14 @@ endsnippet
 snippet sortList "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6604,15 +6729,15 @@ endsnippet
 snippet maxPointsOnALine "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for a point.
-struct Point {
-    int x;
-    int y;
-    Point() : x(0), y(0) {}
-    Point(int a, int b) : x(a), y(b) {}
-};
-
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -6864,14 +6989,14 @@ endsnippet
 snippet intersectionOfTwoLinkedLists "comment " b
 /* code by 王江 DC-Melo */
 
-
-// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -7232,13 +7357,15 @@ endsnippet
 snippet binarySearchTreeIterator "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class BSTIterator 
 {
 private:
@@ -7276,9 +7403,10 @@ public:
     }
 };
 
-Your BSTIterator will be called like this:
-BSTIterator i = BSTIterator(root);
-while (i.hasNext()) cout << i.next();
+/**
+ * Your BSTIterator will be called like this:
+ * BSTIterator i = BSTIterator(root);
+ * while (i.hasNext()) cout << i.next();
 $0
 endsnippet
  # */::::::::::::::
@@ -7550,13 +7678,15 @@ endsnippet
 snippet binaryTreeRightSideView "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for binary tree
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -7687,12 +7817,14 @@ endsnippet
 snippet removeLinkedListElements "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -7802,12 +7934,14 @@ endsnippet
 snippet reverseLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -8658,13 +8792,15 @@ endsnippet
 snippet invertBinaryTree "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -8688,13 +8824,15 @@ endsnippet
 snippet kthSmallestElementInABST "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -8787,12 +8925,14 @@ endsnippet
 snippet palindromeLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -8841,13 +8981,15 @@ endsnippet
 snippet lowestCommonAncestorOfABinarySearchTree "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -8872,12 +9014,14 @@ endsnippet
 snippet deleteNodeInALinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -9043,13 +9187,15 @@ endsnippet
 snippet binaryTreePaths "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -9541,9 +9687,10 @@ public:
     }
 };
 
-Your NumMatrix object will be instantiated and called as such:
-NumMatrix obj = new NumMatrix(matrix);
-int param_1 = obj.sumRegion(row1,col1,row2,col2);
+/**
+ * Your NumMatrix object will be instantiated and called as such:
+ * NumMatrix obj = new NumMatrix(matrix);
+ * int param_1 = obj.sumRegion(row1,col1,row2,col2);
 $0
 endsnippet
  # */::::::::::::::
@@ -9671,12 +9818,14 @@ endsnippet
 snippet oddEvenLinkedList "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
     ListNode* oddEvenList(ListNode* head) 
@@ -10030,12 +10179,14 @@ endsnippet
 snippet linkedListRandomNode "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -10066,9 +10217,10 @@ public:
     ListNode* head;
 };
 
-Your Solution object will be instantiated and called as such:
-Solution obj = new Solution(head);
-int param_1 = obj.getRandom();
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(head);
+ * int param_1 = obj.getRandom();
 $0
 endsnippet
  # */::::::::::::::
@@ -10128,10 +10280,11 @@ public:
     }
 };
 
-Your Solution object will be instantiated and called as such:
-Solution obj = new Solution(nums);
-vector<int> param_1 = obj.reset();
-vector<int> param_2 = obj.shuffle();
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(nums);
+ * vector<int> param_1 = obj.reset();
+ * vector<int> param_2 = obj.shuffle();
 $0
 endsnippet
  # */::::::::::::::
@@ -10483,13 +10636,15 @@ endsnippet
 snippet sumOfLeftLeaves "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -10864,13 +11019,15 @@ endsnippet
 snippet nonOverlappingIntervals "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for an interval.
-struct Interval {
-    int start;
-    int end;
-    Interval() : start(0), end(0) {}
-    Interval(int s, int e) : start(s), end(e) {}
-};
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 class Solution {
 public:
     int eraseOverlapIntervals(vector<Interval>& intervals) {
@@ -10883,13 +11040,15 @@ endsnippet
 snippet findRightInterval "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for an interval.
-struct Interval {
-    int start;
-    int end;
-    Interval() : start(0), end(0) {}
-    Interval(int s, int e) : start(s), end(e) {}
-};
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 
 bool cmp(pair<Interval,int> a,pair<Interval,int> b)
 {
@@ -10928,13 +11087,15 @@ endsnippet
 snippet pathSumIII "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution 
 {
 public:
@@ -11817,13 +11978,15 @@ endsnippet
 snippet increasingOrderSearchTree "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
     TreeNode *nt;
@@ -12062,13 +12225,15 @@ endsnippet
 snippet completeBinaryTreeInserter "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class CBTInserter {
 public:
     TreeNode* r;
@@ -12108,10 +12273,12 @@ public:
     }
 };
 
-Your CBTInserter object will be instantiated and called as such:
-CBTInserter obj = new CBTInserter(root);
-int param_1 = obj.insert(v);
-TreeNode* param_2 = obj.get_root();
+/**
+ * Your CBTInserter object will be instantiated and called as such:
+ * CBTInserter obj = new CBTInserter(root);
+ * int param_1 = obj.insert(v);
+ * TreeNode* param_2 = obj.get_root();
+ */
 $0
 endsnippet
 
@@ -12292,9 +12459,11 @@ public:
     }
 };
 
-Your RecentCounter object will be instantiated and called as such:
-RecentCounter* obj = new RecentCounter();
-int param_1 = obj->ping(t);
+/**
+ * Your RecentCounter object will be instantiated and called as such:
+ * RecentCounter* obj = new RecentCounter();
+ * int param_1 = obj->ping(t);
+ */
 $0
 endsnippet
 
@@ -12442,13 +12611,15 @@ endsnippet
 snippet rangeSumOfBST "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
     int preOrder(TreeNode* root, int L, int R){
@@ -12952,13 +13123,15 @@ endsnippet
 snippet flipEquivalentBinaryTrees "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
     bool eq(TreeNode* n1, TreeNode* n2){
@@ -13216,13 +13389,15 @@ endsnippet
 snippet checkCompletenessOfABinaryTree "comment " b
 /* code by 王江 DC-Melo */
 
-// definition for a binary tree node.
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
     bool isCompleteTree(TreeNode* root) {

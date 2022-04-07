@@ -46,16 +46,20 @@ public:
 private:
 };
 int main() {
-	/* timestamp begin */
-    auto tBegin = std::chrono::high_resolution_clock::now();
-	/* code heer */
-
-	/* timestamp end */
-    auto tEnd = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tBegin).count();
-    std::cout << "\nprogram cust " <<  duration <<" microseconds" << std::endl;
     return 0;
 }
+$0
+endsnippet
+
+snippet printDuration "print duration"
+/* timestamp begin */
+auto tBegin = std::chrono::high_resolution_clock::now();
+/* code heer */
+
+/* timestamp end */
+auto tEnd = std::chrono::high_resolution_clock::now();
+auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tBegin).count();
+std::cout << "\nprogram cust " <<  duration <<" microseconds" << std::endl;
 $0
 endsnippet
 
@@ -77,65 +81,97 @@ using namespace std;
 #include <chrono>
 $0
 endsnippet
-
-snippet initArray "array init"
-// Initializing a array
-int arr[] = { 1, 2, 3, 4, 5 };
-// loop through the array elements
-for (size_t i = 0; i < sizeof(arr)/sizeof(arr[0]); i++) std::cout << arr[i] << ' '; std::cout << endl;
-// Print contents of an array in C++ using range-based for-loop
-for (const auto &value: arr)  std::cout << value << ' '; std::cout << endl;
-// Print contents of an array in C++ using iterators
-for (auto it = std::cbegin(arr); it != std::cend(arr); it++) std::cout << *it << ' ';std::cout << endl;
-// Print contents of an array in C++ using `std::for_each`
-std::for_each(std::begin(arr), std::end(arr), print);
+######################################################################
+#   Array                                                            #
+######################################################################
+snippet initArray "Initializing a array"
+int ${1:arr}[] = { 1, 2, 3, 4, 5 };
+int $1[100] = {0};
+$0
+endsnippet
+snippet printArray "loop through the array elements"
+for (size_t i = 0; i < sizeof(${1:arr})/sizeof($1[0]); i++) std::cout << $1[i] << '\t'; std::cout << std::endl;
+$0
+endsnippet
+snippet printArray "Print contents of an array in C++ using range-based for-loop"
+for (const auto &value : ${1:arr})  std::cout << value << '\t'; std::cout << std::endl;
 $0
 endsnippet
 
-snippet initVector "vector init"
-// 1. Initializing by pushing values one by one :
-vector<int> vect;
-vect.push_back(10);
-vect.push_back(20);
-vect.push_back(30);
-// 2. Specifying size and initializing all values :
-vector<int> vect(3, 10);
-// 3. Initializing like arrays :
-vector<int> vect{ 10, 20, 30 };
-// 4. Initializing from an array :
+######################################################################
+#   2D Array                                                         #
+######################################################################
+
+snippet initArray2D "Initializing a array"
+int ${1:arr2d}[][4] = { {1,2,3,4}, {5,6,7,8} };
+$0
+endsnippet
+snippet printArray2D "loop through the array elements"
+for (int i = 0; i < sizeof(${1:arr2d}) / sizeof($1[0]); ++i) {for (int j = 0; j < sizeof($1[0]) / sizeof($1[0][0]); ++j) std::cout << $1[i][j] << "\t"; std::cout << std::endl;}
+$0
+endsnippet
+
+######################################################################
+#   vector                                                           #
+######################################################################
+snippet initVector "Initializing like arrays"
+vector<int> ${1:vect}{ 10, 20, 30 };
+$0
+endsnippet
+snippet initVector "Initializing from an array"
 int arr[] = { 10, 20, 30 };
 int n = sizeof(arr) / sizeof(arr[0]);
-vector<int> vect(arr, arr + n);
-// print vector
-for (int x : vect) cout << x << " ";
+vector<int> ${1:vect}(arr, arr + n);
+$0
+endsnippet
+snippet initVector "Specifying size and initializing all values"
+vector<int> ${1:vect}(3, 10);
+$0
+endsnippet
+snippet initVector "Initializing by pushing values one by one"
+vector<int> ${1:vect};
+$1.push_back(10);
+$1.push_back(20);
+$1.push_back(30);
+$0
+endsnippet
+snippet printVector " print vector "
+for (auto x : ${1:vect}) std::cout << x << "\t"; std::cout << std::endl;
+$0
+endsnippet
+snippet printVector " print vector "
+for (auto i = ${1:vect}.begin(); i != $1.end(); ++i) std::cout << *i << '\t';std::cout << std::endl;
+$0
+endsnippet
+snippet printVector " print vector "
+for (int i = 0; i < ${1:vect}.size(); i++)  std::cout << $1[i] << "\t";std::cout << std::endl;
 $0
 endsnippet
 
-snippet initMatrix "matrix init"
-// Initializing a 2D Vector i.e. vector of vectors
-vector<vector<int>> matrix = {  {1, 2, 3, 4, 5  },
-								{6, 7, 8, 9, 10 },
-								{5, 6, 8, 1, 12 },
-								{1, 7, 2, 4, 18 },
+######################################################################
+#   matrix                                                           #
+######################################################################
+snippet initMatrix "Initializing a 2D Vector i.e. vector of vectors"
+vector<vector<char>> matrix = { {'1','2' ,'3' ,'4' ,'a'  },
+								{'6','7' ,'8' ,'9' ,'b'  },
+								{'5','6' ,'8' ,'1' ,'c'  },
+								{'1','7' ,'2' ,'4' ,'d'  },
 							 };
-App app = new App();
-// Print 2D vector matrix
-for_each(matrix.begin(), matrix.end(),
-	[](const auto & row ) {
-		for_each(row.begin(), row.end(),
-				[](const auto & elem){
-					cout<<elem<<", ";
-				});
-		cout<<endl;
-	});
-cout<<endl;
-int array[3][4] = {1,1,2,3,4,5,6,7,8,9,0,10}
+$0
+endsnippet
+snippet printMatrix "Initializing a 2D Vector i.e. vector of vectors"
+for ( const auto &v : matrix ) { for ( auto x : v ) std::cout << x << '\t'; std::cout << std::endl; }
+$0
+endsnippet
+snippet printMatrix "Initializing a 2D Vector i.e. vector of vectors"
+for (int i = 0; i < ${1:matrix}.size(); i++) { for (int j = 0; j < $1[i].size(); j++)  cout << $1[i][j] << "\t"; std::cout << endl; }
 $0
 endsnippet
 
-snippet listnodeStruct "int listlode struct formwork"
-/* code by 王江 DC-Melo */
-// Definition for singly-linked list.
+######################################################################
+#  singly linked list                                                #
+######################################################################
+snippet singlyLinkedListDefinition "Definition for singly-linked list."
 struct ListNode {
 	int val;
 	ListNode *next;
@@ -145,33 +181,122 @@ struct ListNode {
 };
 $0
 endsnippet
-
-snippet appendListNodeStruct "append listnode"
-/* code by 王江 DC-Melo */
-void appendListNode(struct ListNode *head, int n) {
-	ListNode *newNode = new ListNode;
-	newNode->val = n;
-	newNode->next = NULL;
-	ListNode *cur = head;
-	while(cur) {
-		if(cur->next == NULL) {
-			cur->next = newNode;
-			return;
-		}
-		cur = cur->next;
-	}
-}
-$0
-endsnippet
-
-snippet initListNode "init list node"
+snippet printListNode "init list node"
 ListNode* head = new ListNode(0);
 for(ListNode* pi =l2;pi!=NULL;pi=pi->next) cout<<pi->val << " "; std::cout << std::endl;
 ListNode* ptr =head;
 while(ptr!=NULL){
-	cout<<ptr->val<<endl;
+	cout<<ptr->val<<"\t";
 	ptr = ptr->next;
 }
 $0
 endsnippet
+
+
+######################################################################
+#  tree                                                              #
+######################################################################
+snippet treeNodeDefination "Definition for a binary tree node.  "
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+$0
+endsnippet
+
+snippet printBinaryTree "Print binary tree structure with its contents"
+// Data structure to store a binary tree node
+struct Trunk
+{
+    Trunk *prev;
+    string str;
+
+    Trunk(Trunk *prev, string str)
+    {
+        this->prev = prev;
+        this->str = str;
+    }
+};
+
+// Helper function to print branches of the binary tree
+void showTrunks(Trunk *p)
+{
+    if (p == nullptr) {
+        return;
+    }
+
+    showTrunks(p->prev);
+    cout << p->str;
+}
+
+void printTree(TreeNode* root, Trunk *prev, bool isLeft)
+{
+    if (root == nullptr) {
+        return;
+    }
+
+    string prev_str = "    ";
+    Trunk *trunk = new Trunk(prev, prev_str);
+
+    printTree(root->right, trunk, true);
+
+    if (!prev) {
+        trunk->str = "———";
+    }
+    else if (isLeft)
+    {
+        trunk->str = ".———";
+        prev_str = "   |";
+    }
+    else {
+        trunk->str = "\`———";
+        prev->str = prev_str;
+    }
+
+    showTrunks(trunk);
+    cout << " " << root->val << endl;
+
+    if (prev) {
+        prev->str = prev_str;
+    }
+    trunk->str = "   |";
+
+    printTree(root->left, trunk, false);
+}
+
+int main()
+{
+    // Construct above tree
+    TreeNode* root = new TreeNode(1);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(3);
+    root->left->left = new TreeNode(4);
+    root->left->right = new TreeNode(5);
+    root->right->left = new TreeNode(6);
+    root->right->right = new TreeNode(7);
+    root->left->left->left = new TreeNode(8);
+    root->left->left->right = new TreeNode(9);
+    root->left->right->left = new TreeNode(10);
+    root->left->right->right = new TreeNode(11);
+    root->right->left->left = new TreeNode(12);
+    root->right->left->right = new TreeNode(13);
+    root->right->right->left = new TreeNode(14);
+    root->right->right->right = new TreeNode(15);
+
+    // print constructed binary tree
+    printTree(root, nullptr, false);
+
+    return 0;
+}
+
+$0
+endsnippet
+######################################################################
+#  graph                                                             #
+######################################################################
 

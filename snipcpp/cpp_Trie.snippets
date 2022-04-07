@@ -1,6 +1,1486 @@
-::::::::::::::
-Trie/1268.Search-Suggestions-System/1268.Search-Suggestions-System_v1.cpp
-::::::::::::::
+
+# ==> ./Trie/0139.Word-Break/Readme.md <==
+snippet 0139.Word-Break "0139.Word-Break" b
+### 139.Word-Break
+
+#### 解法1： DP
+
+本题和```322.Coin Change```很相似，令dp[i]表示前i个字符是否能够break成功。转移方法是找到一个小于i的序号j,使得s[j:i]恰是一个单词，并且dp[j-1]也能成功。所以遍历一下j即可。
+
+初始条件需要稍微注意一下.此题里,改成1-index更加方便,这样初始条件就是dp[0]需要设置为True即可.
+
+补充：相比于在内层循环中遍历j的位置，有一种更高效的方法。就是在内存循环中遍历wordDict，查看是否有任何一个单词word能够匹配s[0:i]的后缀。这种解法在s很长而wordDict很小的情况下，优势非常明显。
+
+#### 解法2：DFS+Trie
+我们将所有的单词构建一棵字典树。我们从前往后遍历字符串，如果发现字符串的某段前缀[0:i]对应着Trie中的一个单词，那么我们就可以从对前缀之后的子串[i+1:n-1]进行递归处理。直至发现恰好递归到字符串尾部。
+
+注意DFS要配合记忆化使用，用memo[i]来标记[i:n-1]是否能够已经失败过。
+
+[Leetcode Link](https://leetcode.com/problems/word-break)
+
+$0
+endsnippet
+
+# ==> ./Trie/0139.Word-Break/139.Word-Break_DP.cpp <==
+snippet 0139.Word-Break "0139.Word-Break" b
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) 
+    {
+        int N = s.size();
+        s = "#"+s;
+        vector<bool>dp(N+1,0);
+        
+        dp[0] = true;
+        
+        for (int i=1; i<=N; i++)
+        {
+            // updaet dp[i]
+            for (auto x: wordDict)
+            {
+                if (i>=x.size() && s.substr(i-x.size()+1,x.size())==x && dp[i-x.size()])
+                {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        
+        return dp[N];
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0139.Word-Break/139.Word-Break_Trie.cpp <==
+snippet 0139.Word-Break "0139.Word-Break" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool end;
+        TrieNode()
+        {
+            end = false;
+            for (int i=0;i<26;i++)
+                next[i] = NULL;
+        }
+    };
+    TrieNode* root;
+    int memo[300];
+public:
+    bool wordBreak(string s, vector<string>& wordDict) 
+    {
+        root = new TrieNode();
+        for (auto word: wordDict)
+        {
+            TrieNode* node = root;
+            for (auto ch: word)
+            {
+                if (node->next[ch-'a']==NULL)
+                    node->next[ch-'a'] = new TrieNode();
+                node = node->next[ch-'a'];
+            }
+            node->end = true;
+        }
+        
+        return dfs(s,0);          
+    }
+    
+    bool dfs(string&s, int cur)
+    {
+        if (memo[cur]==1) return false;
+        
+        if (cur==s.size())
+            return true;
+        
+        TrieNode* node = root;
+        for (int i=cur; i<s.size(); i++)
+        {           
+            if (node->next[s[i]-'a']!=NULL)
+            {
+                node = node->next[s[i]-'a'];
+                if (node->end==true && dfs(s, i+1))
+                    return true;
+            } else
+            {
+                break;
+            }
+        }
+        
+        memo[cur] = 1;
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0140.Word-Break-II/Readme.md <==
+snippet 0140.Word-Break-II "0140.Word-Break-II" b
+### 140.Word-Break-II
+
+此题是130.Word Break的follow up，只需要在其基础上，遍历的时候把所经过的单词存下来即可。如果遍历到字符串末尾正好完成分割，就把沿途的单词存入rets。
+
+因为本题要求输出所有的答案，所以DFS的过程中要回溯，也就是说ans要pop_back()。
+
+同样，如果用记忆化手段令memo[i]标记从[i:n-1]是否能正好完成分割，则可以加速剪枝。
+
+$0
+endsnippet
+
+# ==> ./Trie/0140.Word-Break-II/140.Word-Break-II.cpp <==
+snippet 0140.Word-Break-II "0140.Word-Break-II" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool end;
+        TrieNode()
+        {
+            end = false;
+            for (int i=0;i<26;i++)
+                next[i] = NULL;
+        }
+    };
+    TrieNode* root;
+    int memo[300];
+    vector<string>rets;
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) 
+    {
+        root = new TrieNode();
+        for (auto word: wordDict)
+        {
+            TrieNode* node = root;
+            for (auto ch: word)
+            {
+                if (node->next[ch-'a']==NULL)
+                    node->next[ch-'a'] = new TrieNode();
+                node = node->next[ch-'a'];
+            }
+            node->end = true;
+        }
+        
+        vector<string>ans;
+        dfs(s,0,ans);
+        return rets;
+    }
+    
+    bool dfs(string&s, int cur, vector<string>&ans)
+    {
+        if (memo[cur]==1) return false;
+        
+        if (cur==s.size())
+        {
+            string t;
+            for (auto word: ans)
+                t+=word+" ";
+            t.pop_back();
+            rets.push_back(t);
+            return true;
+        }
+                    
+        TrieNode* node = root;
+        bool flag = false;
+        for (int i=cur; i<s.size(); i++)
+        {           
+            if (node->next[s[i]-'a']!=NULL)
+            {
+                node = node->next[s[i]-'a'];
+                if (node->end==true)
+                {
+                    ans.push_back(s.substr(cur, i-cur+1));
+                    if (dfs(s, i+1, ans))
+                        flag = true;
+                    ans.pop_back();
+                }
+            } else 
+            {
+                break;
+            }
+        }
+        
+        if (flag==false) memo[cur] = 1;
+        return flag;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0208.Implement-Trie--Prefix-Tree/Readme.md <==
+snippet 0208.Implement-Trie--Prefix-Tree "0208.Implement-Trie--Prefix-Tree" b
+### 208.Implement-Trie--Prefix-Tree
+
+对于Trie类型的基本功操作包括：
+1. Trie类型的定义：包括两个成员变量，构造函数
+2. Trie的单词添加
+3. 在Trie树中找指定的完整单词（需要找到叶子节点）
+4. 在Trie树中找指定的前缀（不需要找到叶子节点）
+
+
+[Leetcode Link](https://leetcode.com/problems/implement-trie--prefix-tree)
+$0
+endsnippet
+
+# ==> ./Trie/0208.Implement-Trie--Prefix-Tree/208.Implement-Trie--Prefix-Tree.cpp <==
+snippet 0208.Implement-Trie--Prefix-Tree "0208.Implement-Trie--Prefix-Tree" b
+class Trie {
+    class TrieNode
+    {
+        public:
+            TrieNode* next[26];
+            bool isEnd;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+        }
+    };
+    TrieNode* root;
+        
+public:
+    /** Initialize your data structure here. */
+    Trie() 
+    {
+        root = new TrieNode();
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        node->isEnd=true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                return false;
+            node=node->next[ch-'a'];
+        }
+        if (node->isEnd==false)
+            return false;
+        else
+            return true;
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<prefix.size(); i++)
+        {
+            char ch=prefix[i];
+            if (node->next[ch-'a']==NULL)
+                return false;
+            node=node->next[ch-'a'];
+        }
+        return true;        
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * bool param_2 = obj.search(word);
+ * bool param_3 = obj.startsWith(prefix);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/0211.Add-and-Search-Word/Readme.md <==
+snippet 0211.Add-and-Search-Word "0211.Add-and-Search-Word" b
+### 211.Add-and-Search-Word
+
+这是字典树的典型题，考察了Trie的各种基本操作。
+
+首先是TrieNode的类型及构造函数:
+```cpp
+class TrieNode
+{
+    public:
+    TrieNode* next[26];
+    bool isEnd;
+    TrieNode()
+    {
+       for (int i=0; i<26; i++)
+         next[i]=NULL;
+       isEnd=false;
+    }
+};
+```
+注意：1.类定义结束之后要加分号。2.构造函数必须显式地声明为public（否则默认为private）。
+
+其次是字典树的数据添加:
+```cpp
+    void addWord(string word) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        node->isEnd=true;
+    }
+```
+本质是不断开辟子树的过程，将原本是NULL的子节点new出一个实际的内存空间。
+
+最后的字典树的查询，则是用到了DFS，根据索引下沉到相应的子节点，和二叉树的遍历类似。
+
+
+[Leetcode Link](https://leetcode.com/problems/add-and-search-word)
+$0
+endsnippet
+
+# ==> ./Trie/0211.Add-and-Search-Word/211.Add and Search Word.cpp <==
+snippet 0211.Add-and-Search-Word "0211.Add-and-Search-Word" b
+class WordDictionary {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+        }
+    };
+    TrieNode* root;
+    
+public:
+    /** Initialize your data structure here. */
+    WordDictionary() 
+    {
+        root = new TrieNode();
+    }
+    
+    /** Adds a word into the data structure. */
+    void addWord(string word) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        node->isEnd=true;
+    }
+    
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    bool search(string word) 
+    {
+        return DFS(word, 0, root);
+    }
+    
+    bool DFS(string word, int i, TrieNode* node)
+    {
+        if (node==NULL)
+            return false;
+        if (i==word.size())
+            return (node->isEnd);
+
+        if (word[i]!='.')
+            return DFS(word, i+1, node->next[ch=word[i]-'a']);
+        else
+        {
+            bool flag=false;
+            for (int k=0; k<26; k++)
+            {
+                if (DFS(word,i+1,node->next[k]))
+                {
+                    flag=true;
+                    break;
+                }    
+            }
+            return flag;
+        }
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * bool param_2 = obj.search(word);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/0212.Word-Search-II/Readme.md <==
+snippet 0212.Word-Search-II "0212.Word-Search-II" b
+### 212.Word-Search-II
+
+此题是用将常规的DFS算法与Trie的数据结构相结合。设计DFS函数
+```
+void DFS(int i, int j, TrieNode* node, string word, vector<vector<int>>&visited, vector<vector<char>>& board)
+```
+表示(i,j)为起点、node为Trie树的当前节点、visited为已经经过的路径，求是否能在board里继续遍历出可以拼成字典树里面任意的完整单词。能拼出完整单词的依据是走到某个节点时```node->isEnd==true```，无法继续的判据是```node->next[board[i][j]-'a']==NULL```
+
+在新的数据集中，上面的方法会TLE。改进之处是每探索到一个单词之后，就将该单词从字典树里移出，避免重复搜索同一个单词。怎么修改字典树呢？我们不需要真地去删除节点，只需要给每个节点添加一个count标记。在最初建立字典树的时候，每添加一个单词，我们就给沿途的节点的count加一。删除单词的时候，就给每个节点的count减一。当我们遍历字典树的时候，如果发现某个节点的count等于0时，就可以认为这个节点已经不存在了。
+
+[Leetcode Link](https://leetcode.com/problems/word-search-ii)
+
+$0
+endsnippet
+
+# ==> ./Trie/0212.Word-Search-II/212.Word-Search-II_v1.cpp <==
+snippet 0212.Word-Search-II "0212.Word-Search-II" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+        }
+    };
+    TrieNode* root;
+    unordered_set<string>Set;
+    int M, N;
+    bool visited[12][12];
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) 
+    {
+        M=board.size();
+        N=board[0].size(); 
+        root=new TrieNode();        
+        for (int i=0; i<words.size(); i++)
+        {
+            TrieNode* node=root;
+            for (auto ch: words[i])
+            {            
+                if (node->next[ch-'a']==NULL)
+                    node->next[ch-'a']=new TrieNode();
+                node=node->next[ch-'a'];
+            }
+            node->isEnd=true;
+        }            
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {   
+             TrieNode* node = root;          
+             string word;
+             visited[i][j]=1;
+             DFS(i,j,node,word,board);
+             visited[i][j]=0;
+         }
+        
+        vector<string>results(Set.begin(),Set.end());
+        return results;
+    }
+    
+    void DFS(int i, int j, TrieNode* node, string& word, vector<vector<char>>& board)
+    {
+        if (node->next[board[i][j]-'a']==NULL) return;        
+        node = node->next[board[i][j]-'a'];
+        word.push_back(board[i][j]);
+        
+        if (node->isEnd==true) Set.insert(word);
+        
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};        
+        
+        for (int k=0; k<4; k++)
+        {
+            int x=i+dir[k].first;
+            int y=j+dir[k].second;
+            if (x<0||x>=M||y<0||y>=N) continue;
+            if (visited[x][y]==1) continue;
+            
+            visited[x][y]=1;            
+            DFS(x,y,node,word,board);
+            visited[x][y]=0;                           
+        }        
+
+        word.pop_back();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0212.Word-Search-II/212.Word-Search-II_v2.cpp <==
+snippet 0212.Word-Search-II "0212.Word-Search-II" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        int count = 0;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+            count=0;
+        }
+    };
+    TrieNode* root;
+    vector<string>rets;
+    int M, N;
+    bool visited[12][12];
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) 
+    {
+        M=board.size();
+        N=board[0].size(); 
+        root=new TrieNode();        
+        for (int i=0; i<words.size(); i++)
+        {
+            TrieNode* node=root;
+            for (auto ch: words[i])
+            {            
+                if (node->next[ch-'a']==NULL)
+                    node->next[ch-'a']=new TrieNode();
+                node=node->next[ch-'a'];
+                node->count++;
+            }
+            node->isEnd=true;
+        }            
+        
+        for (int i=0; i<M; i++)
+         for (int j=0; j<N; j++)
+         {   
+             TrieNode* node = root;          
+             string word;
+             visited[i][j]=1;
+             DFS(i,j,node,word,board);
+             visited[i][j]=0;
+         }
+        
+        return rets;
+    }
+    
+    void DFS(int i, int j, TrieNode* node, string& word, vector<vector<char>>& board)
+    {
+        if (node->next[board[i][j]-'a']==NULL) return;        
+        if (node->next[board[i][j]-'a']->count==0) return;
+
+        node = node->next[board[i][j]-'a'];
+        word.push_back(board[i][j]);
+        
+        if (node->isEnd==true)
+        {
+            node->isEnd = false;
+            rets.push_back(word);
+            remove(root, word);
+        }
+        
+        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};        
+        
+        for (int k=0; k<4; k++)
+        {
+            int x=i+dir[k].first;
+            int y=j+dir[k].second;
+            if (x<0||x>=M||y<0||y>=N) continue;
+            if (visited[x][y]==1) continue;
+            
+            visited[x][y]=1;            
+            DFS(x,y,node,word,board);
+            visited[x][y]=0;                           
+        }        
+
+        word.pop_back();
+    }
+
+    void remove(TrieNode* root, string word)
+    {
+        TrieNode* node = root;
+        for (auto ch: word)
+        {
+            node = node->next[ch-'a'];
+            node->count --;
+        }
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0212.Word-Search-II/212.Word-Search-II_v3.cpp <==
+snippet 0212.Word-Search-II "0212.Word-Search-II" b
+class Solution {
+    typedef pair<int,int> PII;
+    unordered_set<string> rets;
+    vector<int> dirs;
+    int m, n;
+    int freq[26];
+
+    bool frequencyCheck(string& word) {
+        vector<int> freq(26, 0);
+
+        for(auto ch: word) {
+            ++freq[ch-'a'];
+        }
+
+        for(int i = 0; i < 26; ++i) {
+            if(this->freq[i] < freq[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool dfs(int x, int y, string& word, vector<vector<char>>& board, int idx, vector<vector<int>>& visited) {
+        if(board[x][y] != word[idx]) return false;
+        if(idx == word.size() - 1 && word[idx] == board[x][y]) {
+            rets.insert(word);
+            return true;
+        }
+
+        for(int i = 0; i < 4; ++i) {
+            int nx = x + dirs[i];
+            int ny = y + dirs[i+1];
+
+            if(nx < 0 || ny < 0 || nx >= m || ny >= n || visited[nx][ny]) continue;
+            visited[x][y] = 1;
+            if(dfs(nx, ny, word, board, idx+1, visited)) {
+                visited[x][y] = 0;
+                return true;
+            }
+            visited[x][y] = 0;
+        }
+
+        return false;
+    }
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        m = board.size();
+        n = board[0].size();
+        unordered_map<char, vector<PII>> char2pos;
+        vector<vector<int>> visited(m, vector<int>(n, 0));
+        dirs =  {-1, 0, 1, 0, -1};
+
+        for(int i = 0; i < m; ++i) {
+            for(int j = 0; j < n; ++j) {
+                char2pos[board[i][j]].push_back({i, j});
+            }
+        }
+
+        for(auto& row: board) {
+            for(char ch: row) {
+                ++freq[ch-'a'];
+            }
+        } 
+
+        for(auto word: words) {
+            // word frequency check
+            if(!frequencyCheck(word)) continue;
+            
+            for(auto [x, y]: char2pos[word[0]]) {
+                visited[x][y] = 1;
+                dfs(x, y, word, board, 0, visited);
+                visited[x][y] = 0;
+            }
+        }
+        return {rets.begin(), rets.end()};
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0421.Maximum-XOR-of-Two-Numbers-in-an-Array/Readme.md <==
+snippet 0421.Maximum-XOR-of-Two-Numbers-in-an-Array "0421.Maximum-XOR-of-Two-Numbers-in-an-Array" b
+### 421.Maximum-XOR-of-Two-Numbers-in-an-Array
+
+本题涉及到一个新的数据结构叫做Trie（字典树）。关于字典树的基本概念可以参见： http://www.cnblogs.com/huangxincheng/archive/2012/11/25/2788268.html
+
+相比于 Binary Indexed Tree 本质是一个数组，那么 Trie 本质上就是一个真正的多叉树。Trie把重复的前缀作为节点固定下来，可以省下很多空间。
+
+首选我们需要结合本题，构建多叉树这种数据类型。    
+显然，它需要有递归的树状结构：即每一个节点下面有若干个该相同数据结构的指针。其次，需要设计相应的节点构造函数，以便于进行初始化(复习一下C++面向对象的概念，构造函数的无参默认函数)。
+```cpp
+    class TrieNode
+    {
+        public:
+         TrieNode* next[2];
+         TrieNode()
+         {
+             next[0]=NULL;
+             next[1]=NULL;
+         }
+    };
+```
+然后一项重要的工作就是用给定的一堆数据（比如数组）来构建这个字典树。
+```cpp
+TreeNode* buildTree(vector<int>nums)
+{
+   TrieNode* root=new TrieNode();   // 创建根节点
+   for (int i=0; i<nums.size(); i++)  // 给定一个数据
+   {
+      int num = nums[i];
+      TreeNode* node=root;
+      for (int j=31; j>=0; j--)
+      {
+          int bit = ((num>>j)&1);
+          if (node->next[bit]==NULL)    // 朝一个方向扩展 
+              node->next[bit]=new TrieNode();
+          node = node->next[bit];
+      }      
+   }   
+   return root;
+}
+```
+回到这题本身，对于一个存于Trie中的整数 N，可以在这颗字典树里从试图寻找另一个与 N 逢位必反的整数 M ，这样找到的M一定是与N亦或之后得到最大值。
+```cpp
+    int findMaximumXOR(vector<int>& nums) 
+    {
+        TrieNode* root=buildTree(nums);
+        int result=0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            result = max(result, oppositePath(root,nums[i]));
+        }
+        return result;
+    }
+```    
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array)
+$0
+endsnippet
+
+# ==> ./Trie/0421.Maximum-XOR-of-Two-Numbers-in-an-Array/421.Maximum-XOR-of-Two-Numbers-in-an-Array.cpp <==
+snippet 0421.Maximum-XOR-of-Two-Numbers-in-an-Array "0421.Maximum-XOR-of-Two-Numbers-in-an-Array" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[2];
+    };
+public:
+    int findMaximumXOR(vector<int>& nums) 
+    {
+        TrieNode* root = new TrieNode();
+        for (auto num: nums)
+        {
+            TrieNode* node = root;
+            for (int k=31; k>=0; k--)
+            {
+                if (node->next[(num>>k)&1]==NULL)
+                    node->next[(num>>k)&1] = new TrieNode();
+                node = node->next[(num>>k)&1];
+            }
+        }
+
+        int ret = 0;
+        for (auto num: nums)
+        {
+            TrieNode* node = root;
+            int ans = 0;
+            for (int k=31; k>=0; k--)
+            {
+                if (node->next[1 - (num>>k)&1]!=NULL)
+                {
+                    ans = ans*2+1;
+                    node = node->next[1 - (num>>k)&1];
+                }                    
+                else
+                {
+                    ans = ans*2+0;
+                    node = node->next[(num>>k)&1];
+                }
+            }
+            ret = max(ret, ans);
+        }
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0472.Concatenated-Words/Readme.md <==
+snippet 0472.Concatenated-Words "0472.Concatenated-Words" b
+### 472.Concatenated-Words
+
+此题就是```LC 140.Word-Break-II```的翻版。
+
+我们将所有单词按照长度从小到大排序，然后依次加入字典树里。当我们考察一个新单词word时，就查看已有的字典树里是否有单词能够是word的前缀。如果存在的话，就把前缀刨掉，递归处理，继续查看字典树立是否有单词能match此时word的前缀，直至把整个word恰好都匹配完。
+
+$0
+endsnippet
+
+# ==> ./Trie/0472.Concatenated-Words/472.Concatenated-Words.cpp <==
+snippet 0472.Concatenated-Words "0472.Concatenated-Words" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i] = NULL;
+            isEnd = false;
+        }
+    };
+    TrieNode* root;
+public:
+    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) 
+    {       
+        sort(words.begin(), words.end(), [](string&a, string&b){return a.size()<b.size();});
+        root = new TrieNode();
+
+        vector<string>rets;
+        for (auto word: words)
+        {
+            if (word!="" && check(word, root))
+                rets.push_back(word);
+
+            TrieNode* node = root;
+            for (auto ch:word)
+            {
+                if (node->next[ch-'a']==NULL)
+                    node->next[ch-'a'] = new TrieNode();
+                node = node->next[ch-'a'];
+            }
+            node->isEnd = true;
+        }
+        return rets;
+    }
+
+    bool check(string& word, TrieNode* root)
+    {
+        int n = word.size();
+        vector<int>visited(n,0);
+        return dfs(word, 0, visited);
+    }
+
+    bool dfs(string& word, int cur, vector<int>&visited)
+    {
+        if (cur==word.size()) return true;
+
+        if (visited[cur]==1)
+            return false;
+
+        TrieNode* node = root;
+
+        for (int i=cur; i<word.size(); i++)
+        {
+            if (node->next[word[i]-'a']!=NULL)
+            {
+                node = node->next[word[i]-'a'];
+                if (node->isEnd && dfs(word, i+1, visited))
+                    return true;                
+            } 
+            else
+            {
+                break;
+            }
+        }
+
+        visited[cur] = 1;
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0588.Design-In-Memory-File-System/Readme.md <==
+snippet 0588.Design-In-Memory-File-System "0588.Design-In-Memory-File-System" b
+### 588.Design-In-Memory-File-System
+
+这种明显带有层级结构、从上而下的搜索，提示了可以用典型的Trie数据结构。
+
+以前的Tire树，都是通过字符-若干字符的跨接。这里则是字符串-若干字符串的跨接。该怎么设计呢？答案是用哈希表。
+```cpp
+class TrieNode
+{
+    public:
+    map<string,TrieNode*>Map;
+    bool isFile;
+};
+```
+这样的话，从上到下的转移可以通过```node = node->Map[str]```来实现。
+
+
+[Leetcode Link](https://leetcode.com/problems/design-in-memory-file-system)
+$0
+endsnippet
+
+# ==> ./Trie/0588.Design-In-Memory-File-System/588.Design-In-Memory-File-System.cpp <==
+snippet 0588.Design-In-Memory-File-System "0588.Design-In-Memory-File-System" b
+class FileSystem {
+    class TrieNode
+    {
+        public:
+        map<string,TrieNode*>Map;
+        bool isFile;
+    };
+    TrieNode* root;
+    unordered_map<string,string>FileContents;
+    
+public:
+    FileSystem() 
+    {
+        root=new TrieNode();
+    }
+    
+    vector<string> ls(string path) 
+    {
+        TrieNode* node=root;
+        string str;
+        for (int i=1; i<path.size(); i++)
+        {
+            int i0=i;
+            while (i<path.size() && path[i]!='/')
+                i++;
+            str=path.substr(i0,i-i0);
+            node=node->Map[str];
+        }
+        
+        if (node->isFile)
+            return {str};
+        else
+        {
+            vector<string>results;
+            for (auto a:node->Map)
+                results.push_back(a.first);
+            return results;
+        }
+    }
+    
+    void mkdir(string path) 
+    {
+        TrieNode* node=root;
+        for (int i=1; i<path.size(); i++)
+        {
+            int i0=i;
+            while (i<path.size() && path[i]!='/')
+                i++;
+            string str=path.substr(i0,i-i0);
+            if (node->Map.find(str)==node->Map.end())
+                node->Map[str]=new TrieNode();                        
+            node=node->Map[str];
+        }
+    }
+    
+    void addContentToFile(string filePath, string content) 
+    {
+        TrieNode* node=root;
+        for (int i=1; i<filePath.size(); i++)
+        {
+            int i0=i;
+            while (i<filePath.size() && filePath[i]!='/')
+                i++;
+            string str=filePath.substr(i0,i-i0);
+            if (node->Map.find(str)==node->Map.end())
+                node->Map[str]=new TrieNode();                        
+            node=node->Map[str];
+        }
+        node->isFile=1;
+        FileContents[filePath]+=content;
+    }
+    
+    string readContentFromFile(string filePath) 
+    {
+        return FileContents[filePath];
+    }
+};
+
+/**
+ * Your FileSystem object will be instantiated and called as such:
+ * FileSystem obj = new FileSystem();
+ * vector<string> param_1 = obj.ls(path);
+ * obj.mkdir(path);
+ * obj.addContentToFile(filePath,content);
+ * string param_4 = obj.readContentFromFile(filePath);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/0648.Replace-Words/Readme.md <==
+snippet 0648.Replace-Words "0648.Replace-Words" b
+### 648.Replace-Words
+
+此题显而易见，是用Trie来实现单词（词根）的查找。
+
+对于Trie类型的基本功操作包括：
+1. Trie类型的定义：包括两个成员变量，构造函数
+```cpp
+class TrieNode
+{
+  public:
+   TrieNode* next[26];
+   bool isEnd;
+  
+  TrieNode()
+  {
+    for (int i=0; i<26; i++)
+      next[i]=NULL;
+    isEnd=false; 
+  }  
+};
+```
+2. Trie的单词添加
+```cpp
+void addWord(TrieNode* root, string word)
+{
+    TrieNode* node=root;
+    for (int i=0; i<word.size(); i++)
+    {
+        char ch=word[i];
+        if (node->next[ch-'a']==NULL)
+          node->next[ch-'a']==new TrieNode();
+        node = node->next[ch-'a'];
+    }
+    node->isEnd=1;
+}
+```
+3. Trie的单词查找。在本题中，只要能追踪到叶子节点 isEnd==true 即说明找到词根
+```cpp
+bool flag = DFS(root,word,0); // 递归调用
+
+bool DFS(TrieNode* root, string word, int k)
+{
+    if (root->isEnd==true)
+      return true;
+    if (k==word.size())
+      return false;
+    for (int i=0; i<26; i++)
+    {
+       if (DFS(root->next[word[i]-'a'],word,k+1))
+          return true;
+    }
+    return false;
+}
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/replace-words)
+$0
+endsnippet
+
+# ==> ./Trie/0648.Replace-Words/648.Replace-Words.cpp <==
+snippet 0648.Replace-Words "0648.Replace-Words" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+        }        
+    };
+    
+    void addWord(TrieNode* root, string word)
+    {
+        TrieNode* node=root;
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        node->isEnd=true;
+    }
+    
+    string replace(TrieNode* root, string word)
+    {
+        string result;
+        string str;
+        DFS(root,word,0,str,result);
+        if (result!="")
+            return result;
+        else
+            return word;
+    }
+    
+    void DFS(TrieNode* root, string word, int k, string str, string &result)
+    {
+        if (root->isEnd==1)
+        {
+            if (result=="")
+                result=str;
+            else if (result.size()>str.size())
+                result=str;
+            return;
+        }
+        
+        if (k==word.size())
+            return;
+                
+        for (int i=0; i<26; i++)
+        {
+            if (root->next[word[k]-'a']!=NULL)
+            {
+                DFS(root->next[word[k]-'a'],word,k+1,str+word[k],result);
+            }
+        }
+        return;
+    }
+    
+public:
+    string replaceWords(vector<string>& dict, string sentence) 
+    {
+        TrieNode* root=new TrieNode();
+        for (int i=0; i<dict.size(); i++)
+            addWord(root,dict[i]);
+        
+        int i=0;
+        while (i<sentence.size() && sentence[i]==' ') i++;
+        
+        string result;
+        while (i<sentence.size())
+        {
+            int i0=i;
+            while (i<sentence.size() && sentence[i]!=' ') i++;
+            string str=sentence.substr(i0,i-i0);
+            string str2 = replace(root,str);
+            
+            result+=str2;
+            result+=' ';
+            i++;
+        }
+        result.pop_back();
+        
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Trie/0676.Implement-Magic-Dictionary/Readme.md <==
+snippet 0676.Implement-Magic-Dictionary "0676.Implement-Magic-Dictionary" b
+### 676.Implement-Magic-Dictionary
+
+此题特征就是用Trie树，实现高效的单词搜索。Trie树的一些基本操作应数量掌握，包括构建树 buildTree(string word, TrieNode* node)，搜索一个单词是否在此字典树内 inDictionary(string word, TrieNode* node).
+
+对于单词abcdefg，先考虑置换第一个字母a，换成其他字母后，考察bcdefg是否是在这个字典树node内，需要调用inDictionary。如果从a到z的置换都不成功，则将根节点下降一层node=node->next['a'-'a']，同时word=word.substr(1)，于是就将原问题转化为在新的字典树node理考察新的word（bcdefg），这样可以递归调用整个search的过程。
+
+
+[Leetcode Link](https://leetcode.com/problems/implement-magic-dictionary)
+$0
+endsnippet
+
+# ==> ./Trie/0676.Implement-Magic-Dictionary/676.Implement-Magic-Dictionary.cpp <==
+snippet 0676.Implement-Magic-Dictionary "0676.Implement-Magic-Dictionary" b
+class MagicDictionary {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        bool isEnd;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            isEnd=false;
+        }
+    };
+    TrieNode* root;
+public:
+    /** Initialize your data structure here. */
+    MagicDictionary() 
+    {
+        root = new TrieNode();
+    }
+    
+    /** Build a dictionary through a list of words */
+    void buildDict(vector<string> dict) 
+    {        
+        for (int i=0; i<dict.size(); i++)
+        {
+            TrieNode* node=root;
+            string str=dict[i];
+            for (int j=0; j<str.size(); j++)
+            {
+                if (node->next[str[j]-'a']==NULL)
+                    node->next[str[j]-'a']=new TrieNode();
+                node=node->next[str[j]-'a'];
+            }
+            node->isEnd=true;
+        }
+    }
+    
+    /** Returns if there is any word in the trie that equals to the given word after modifying exactly one character */
+    bool search(string word) 
+    {
+         return DFS_search(word,root);
+    }
+    
+    bool DFS_search(string word, TrieNode* node)
+    {
+        if (word=="") return false;
+        if (node==NULL) return false;
+        
+        for (char ch='a'; ch<='z'; ch++)
+        {
+            if (ch==word[0]) continue;
+            if (inDict(word.substr(1),node->next[ch-'a']))
+                return true;            
+        }
+        return DFS_search(word.substr(1),node->next[word[0]-'a']);
+    }
+    
+    bool inDict(string word, TrieNode* node)
+    {
+        if (node==NULL) return false;
+        
+        for (int i=0; i<word.size(); i++)
+        {
+            char ch=word[i];
+            if (node->next[ch-'a']==NULL)
+                return false;
+            node=node->next[ch-'a'];
+        }
+        
+        return (node->isEnd);            
+    }
+};
+
+/**
+ * Your MagicDictionary object will be instantiated and called as such:
+ * MagicDictionary obj = new MagicDictionary();
+ * obj.buildDict(dict);
+ * bool param_2 = obj.search(word);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/0677.Map-Sum-Pairs/Readme.md <==
+snippet 0677.Map-Sum-Pairs "0677.Map-Sum-Pairs" b
+### 677.Map-Sum-Pairs-My-SubmissionsBack-to-Contest
+
+常规的Trie操作。
+
+注意，在类的公告区域里定义了```TrieNode* root```之后，在构造函数里就只需要直接```root=TrieNode()```即可，千万不能```TrieNode* root=TrieNode()```。否则会有意想不到的错误。
+
+
+[Leetcode Link](https://leetcode.com/problems/map-sum-pairs)
+$0
+endsnippet
+
+# ==> ./Trie/0677.Map-Sum-Pairs/677.Map-Sum-Pairs.cpp <==
+snippet 0677.Map-Sum-Pairs "0677.Map-Sum-Pairs" b
+class MapSum {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+        int val;
+        TrieNode()
+        {
+            for (int i=0; i<26; i++)
+                next[i]=NULL;
+            val=0;
+        }
+    };
+    TrieNode* root;
+public:
+    /** Initialize your data structure here. */
+    MapSum() 
+    {
+        root=new TrieNode();
+    }
+    
+    void insert(string key, int val) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<key.size(); i++)
+        {
+            char ch=key[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        node->val=val;
+    }
+    
+    int sum(string prefix) 
+    {
+        TrieNode* node=root;
+        for (int i=0; i<prefix.size(); i++)
+        {
+            char ch=prefix[i];
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a']=new TrieNode();
+            node=node->next[ch-'a'];
+        }
+        int SUM=0;
+        DFS(node,SUM);
+        return SUM;
+    }
+    
+    void DFS(TrieNode* node, int & SUM)
+    {
+        if (node==NULL) return;
+        
+        SUM+=node->val;
+        for (int i=0; i<26; i++)
+            DFS(node->next[i],SUM);
+    }
+};
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum obj = new MapSum();
+ * obj.insert(key,val);
+ * int param_2 = obj.sum(prefix);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/0745.Prefix-and-Suffix-Search/Readme.md <==
+snippet 0745.Prefix-and-Suffix-Search "0745.Prefix-and-Suffix-Search" b
+### 745.Prefix-and-Suffix-Search
+
+此题仍然考察基本的TrieNode的数据结构，但是需要稍微设计一下。
+
+如果根据前缀和后缀的双重信息来在字典树里找到一个单词呢？一个巧妙的设计就是把后缀加在单词前面，中间用"{"分隔，拼成一个新的单词，将这种新的单词加入字典树中，并在querry的时候查找。需要注意的是，一个正常的单词可能有k种后缀，k就是单词的长度，所以我们需要把这些所有的变化都加进字典树里。
+
+为什么要用“{”做分隔符呢？因为它在ASCII中的位置恰好就在'z'后面，所以我们直接在每个TrieNode里开27个TrieNode*数组就行了。
+
+如何快速查找weight呢？其实只要在加入字符串的时候，在每个node都标记该单词的id，而且后来的字符串id可以覆盖前面的，因为后面的认为是更大的weight。
+
+
+[Leetcode Link](https://leetcode.com/problems/prefix-and-suffix-search)
+$0
+endsnippet
+
+# ==> ./Trie/0745.Prefix-and-Suffix-Search/745.Prefix-and-Suffix-Search.cpp <==
+snippet 0745.Prefix-and-Suffix-Search "0745.Prefix-and-Suffix-Search" b
+class WordFilter {
+    class TrieNode
+    {
+        public:
+        bool isEnd;
+        TrieNode* next[27];
+        vector<int>ids;
+        TrieNode()
+        {
+            isEnd = false;
+            for (int i=0; i<27; i++)
+                next[i] = NULL;
+        }
+        
+    };
+    TrieNode* root;
+    
+public:
+    
+    void buildTree(TrieNode* root, string S, int id)
+    {
+        TrieNode* node = root;
+        for (char ch:S)
+        {
+            if (node->next[ch-'a']==NULL)
+                node->next[ch-'a'] = new TrieNode();
+            node = node->next[ch-'a'];
+            node->ids.push_back(id);
+        }
+    }    
+    
+    WordFilter(vector<string> words) 
+    {
+        root = new TrieNode();
+        for (int i=0; i<words.size(); i++)
+        {
+            string word = words[i];
+            string rWord;
+            for (int j=0; j<word.size(); j++)
+            {
+                rWord = word.substr(j);
+                reverse(rWord.begin(),rWord.end());
+                buildTree(root, rWord+"{"+word,i);
+            }
+            buildTree(root, "{"+word,i);
+        }
+    }
+    
+    int f(string prefix, string suffix) 
+    {
+        reverse(suffix.begin(),suffix.end());
+        string S = suffix+"{"+prefix;
+        TrieNode* node = root;
+        for (char ch:S)
+        {
+            if (node->next[ch-'a']==NULL)
+                return -1;
+            else
+                node = node->next[ch-'a'];
+        }
+        return node->ids.back();
+    }
+};
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
+
+$0
+endsnippet
+
+# ==> ./Trie/1268.Search-Suggestions-System/Readme.md <==
+snippet 1268.Search-Suggestions-System "1268.Search-Suggestions-System" b
+### 1268.Search-Suggestions-System
+
+#### 解法1：
+比较严谨的做法是用Trie。根据searchWord的前缀（比如说前k个字母）在Trie中推进直至某个节点，然后以这个节点为根，用DFS的方法、根据先左后右的规则，找出最多三个合法的子路径（即能够拼成一个product）。
+
+特别注意，此题中的product允许有重复，所以在TrieNode定义中，传统的bool isEnd需要改造为int count，并在构造整颗树的时候用它来计算有多少个重复（即共享完全相同的路径）的product。在DFS的过程中，如果推进到某个节点的count>1，说明会有多于1个product有着相同的名字，我们需要把它们都算上。
+
+#### 解法2：
+有一种非常取巧的方法，那就是将所有product按照字典排序。然后查找searchWord在里面的位置（用lower_bound定位），得到的就是字典序恰好大于等于searchWord的那个单词。我们查看以这个单词开始的连续三个单词，是否与searchWord共享指定书目的前缀，是的话就相应收入囊中。
+
+这种方法可以不必理会products中是否存在重复。但是第一步排序的过程其实比较耗时，不过题目给出了```1 <= Σ products[i].length <= 2 * 10^4```，这就是暗示了字符串排序的复杂度是可以接受的。
+
+
+[Leetcode Link](https://leetcode.com/problems/search-suggestions-system)
+$0
+endsnippet
+
+# ==> ./Trie/1268.Search-Suggestions-System/1268.Search-Suggestions-System_v1.cpp <==
+snippet 1268.Search-Suggestions-System "1268.Search-Suggestions-System" b
 class Solution {
     class TrieNode
     {
@@ -88,9 +1568,12 @@ public:
     
     
 };
-::::::::::::::
-Trie/1268.Search-Suggestions-System/1268.Search-Suggestions-System_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Trie/1268.Search-Suggestions-System/1268.Search-Suggestions-System_v2.cpp <==
+snippet 1268.Search-Suggestions-System "1268.Search-Suggestions-System" b
 class Solution {
 public:
     vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) 
@@ -116,223 +1599,25 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Trie/1268.Search-Suggestions-System/Readme.md
-::::::::::::::
-### 1268.Search-Suggestions-System
 
-#### 解法1：
-比较严谨的做法是用Trie。根据searchWord的前缀（比如说前k个字母）在Trie中推进直至某个节点，然后以这个节点为根，用DFS的方法、根据先左后右的规则，找出最多三个合法的子路径（即能够拼成一个product）。
+$0
+endsnippet
 
-特别注意，此题中的product允许有重复，所以在TrieNode定义中，传统的bool isEnd需要改造为int count，并在构造整颗树的时候用它来计算有多少个重复（即共享完全相同的路径）的product。在DFS的过程中，如果推进到某个节点的count>1，说明会有多于1个product有着相同的名字，我们需要把它们都算上。
+# ==> ./Trie/1707.Maximum-XOR-With-an-Element-From-Array/Readme.md <==
+snippet 1707.Maximum-XOR-With-an-Element-From-Array "1707.Maximum-XOR-With-an-Element-From-Array" b
+### 1707.Maximum-XOR-With-an-Element-From-Array
 
-#### 解法2：
-有一种非常取巧的方法，那就是将所有product按照字典排序。然后查找searchWord在里面的位置（用lower_bound定位），得到的就是字典序恰好大于等于searchWord的那个单词。我们查看以这个单词开始的连续三个单词，是否与searchWord共享指定书目的前缀，是的话就相应收入囊中。
+我们将query按照m的大小逐个处理。对于每个query而言，就是在一堆数里面挑选一个与x亦或值最大的数。因此，本题的本质就是```421. Maximum XOR of Two Numbers in an Array```.具体算法是：我们将这堆数按照32位二进制编码构造一个Trie，然后在这棵前缀树里，尽量按照x的相反数（bit-flipped）去探索，只需要移动32次就能找到与x亦或值最大的数。
 
-这种方法可以不必理会products中是否存在重复。但是第一步排序的过程其实比较耗时，不过题目给出了```1 <= Σ products[i].length <= 2 * 10^4```，这就是暗示了字符串排序的复杂度是可以接受的。
+接下来再处理下一个query时，我们只需要在已有的前缀树里再增加若干节点即可（也就是比当前m小的数），然后同样地重复之前的步骤。
 
+这种对于query排序的思路，很像```1697.Checking-Existence-of-Edge-Length-Limited-Paths```。在1697中，每次处理新query之前，会在一个已有的union网络里添加一些新的连接。
 
-[Leetcode Link](https://leetcode.com/problems/search-suggestions-system)::::::::::::::
-Trie/139.Word-Break/139.Word-Break_DP.cpp
-::::::::::::::
-class Solution {
-public:
-    bool wordBreak(string s, vector<string>& wordDict) 
-    {
-        int N = s.size();
-        s = "#"+s;
-        vector<bool>dp(N+1,0);
-        
-        dp[0] = true;
-        
-        for (int i=1; i<=N; i++)
-        {
-            // updaet dp[i]
-            for (auto x: wordDict)
-            {
-                if (i>=x.size() && s.substr(i-x.size()+1,x.size())==x && dp[i-x.size()])
-                {
-                    dp[i] = true;
-                    break;
-                }
-            }
-        }
-        
-        return dp[N];
-    }
-};
-::::::::::::::
-Trie/139.Word-Break/139.Word-Break_Trie.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool end;
-        TrieNode()
-        {
-            end = false;
-            for (int i=0;i<26;i++)
-                next[i] = NULL;
-        }
-    };
-    TrieNode* root;
-    int memo[300];
-public:
-    bool wordBreak(string s, vector<string>& wordDict) 
-    {
-        root = new TrieNode();
-        for (auto word: wordDict)
-        {
-            TrieNode* node = root;
-            for (auto ch: word)
-            {
-                if (node->next[ch-'a']==NULL)
-                    node->next[ch-'a'] = new TrieNode();
-                node = node->next[ch-'a'];
-            }
-            node->end = true;
-        }
-        
-        return dfs(s,0);          
-    }
-    
-    bool dfs(string&s, int cur)
-    {
-        if (memo[cur]==1) return false;
-        
-        if (cur==s.size())
-            return true;
-        
-        TrieNode* node = root;
-        for (int i=cur; i<s.size(); i++)
-        {           
-            if (node->next[s[i]-'a']!=NULL)
-            {
-                node = node->next[s[i]-'a'];
-                if (node->end==true && dfs(s, i+1))
-                    return true;
-            } else
-            {
-                break;
-            }
-        }
-        
-        memo[cur] = 1;
-        return false;
-    }
-};
-::::::::::::::
-Trie/139.Word-Break/Readme.md
-::::::::::::::
-### 139.Word-Break
+$0
+endsnippet
 
-#### 解法1： DP
-
-本题和```322.Coin Change```很相似，令dp[i]表示前i个字符是否能够break成功。转移方法是找到一个小于i的序号j,使得s[j:i]恰是一个单词，并且dp[j-1]也能成功。所以遍历一下j即可。
-
-初始条件需要稍微注意一下.此题里,改成1-index更加方便,这样初始条件就是dp[0]需要设置为True即可.
-
-补充：相比于在内层循环中遍历j的位置，有一种更高效的方法。就是在内存循环中遍历wordDict，查看是否有任何一个单词word能够匹配s[0:i]的后缀。这种解法在s很长而wordDict很小的情况下，优势非常明显。
-
-#### 解法2：DFS+Trie
-我们将所有的单词构建一棵字典树。我们从前往后遍历字符串，如果发现字符串的某段前缀[0:i]对应着Trie中的一个单词，那么我们就可以从对前缀之后的子串[i+1:n-1]进行递归处理。直至发现恰好递归到字符串尾部。
-
-注意DFS要配合记忆化使用，用memo[i]来标记[i:n-1]是否能够已经失败过。
-
-[Leetcode Link](https://leetcode.com/problems/word-break)
-::::::::::::::
-Trie/140.Word-Break-II/140.Word-Break-II.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool end;
-        TrieNode()
-        {
-            end = false;
-            for (int i=0;i<26;i++)
-                next[i] = NULL;
-        }
-    };
-    TrieNode* root;
-    int memo[300];
-    vector<string>rets;
-public:
-    vector<string> wordBreak(string s, vector<string>& wordDict) 
-    {
-        root = new TrieNode();
-        for (auto word: wordDict)
-        {
-            TrieNode* node = root;
-            for (auto ch: word)
-            {
-                if (node->next[ch-'a']==NULL)
-                    node->next[ch-'a'] = new TrieNode();
-                node = node->next[ch-'a'];
-            }
-            node->end = true;
-        }
-        
-        vector<string>ans;
-        dfs(s,0,ans);
-        return rets;
-    }
-    
-    bool dfs(string&s, int cur, vector<string>&ans)
-    {
-        if (memo[cur]==1) return false;
-        
-        if (cur==s.size())
-        {
-            string t;
-            for (auto word: ans)
-                t+=word+" ";
-            t.pop_back();
-            rets.push_back(t);
-            return true;
-        }
-                    
-        TrieNode* node = root;
-        bool flag = false;
-        for (int i=cur; i<s.size(); i++)
-        {           
-            if (node->next[s[i]-'a']!=NULL)
-            {
-                node = node->next[s[i]-'a'];
-                if (node->end==true)
-                {
-                    ans.push_back(s.substr(cur, i-cur+1));
-                    if (dfs(s, i+1, ans))
-                        flag = true;
-                    ans.pop_back();
-                }
-            } else 
-            {
-                break;
-            }
-        }
-        
-        if (flag==false) memo[cur] = 1;
-        return flag;
-    }
-};
-::::::::::::::
-Trie/140.Word-Break-II/Readme.md
-::::::::::::::
-### 140.Word-Break-II
-
-此题是130.Word Break的follow up，只需要在其基础上，遍历的时候把所经过的单词存下来即可。如果遍历到字符串末尾正好完成分割，就把沿途的单词存入rets。
-
-因为本题要求输出所有的答案，所以DFS的过程中要回溯，也就是说ans要pop_back()。
-
-同样，如果用记忆化手段令memo[i]标记从[i:n-1]是否能正好完成分割，则可以加速剪枝。
-::::::::::::::
-Trie/1707.Maximum-XOR-With-an-Element-From-Array/1707.Maximum-XOR-With-an-Element-From-Array.cpp
-::::::::::::::
+# ==> ./Trie/1707.Maximum-XOR-With-an-Element-From-Array/1707.Maximum-XOR-With-an-Element-From-Array.cpp <==
+snippet 1707.Maximum-XOR-With-an-Element-From-Array "1707.Maximum-XOR-With-an-Element-From-Array" b
 class Solution {
     class TrieNode
     {
@@ -395,19 +1680,49 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Trie/1707.Maximum-XOR-With-an-Element-From-Array/Readme.md
-::::::::::::::
-### 1707.Maximum-XOR-With-an-Element-From-Array
 
-我们将query按照m的大小逐个处理。对于每个query而言，就是在一堆数里面挑选一个与x亦或值最大的数。因此，本题的本质就是```421. Maximum XOR of Two Numbers in an Array```.具体算法是：我们将这堆数按照32位二进制编码构造一个Trie，然后在这棵前缀树里，尽量按照x的相反数（bit-flipped）去探索，只需要移动32次就能找到与x亦或值最大的数。
+$0
+endsnippet
 
-接下来再处理下一个query时，我们只需要在已有的前缀树里再增加若干节点即可（也就是比当前m小的数），然后同样地重复之前的步骤。
+# ==> ./Trie/1803.Count-Pairs-With-XOR-in-a-Range/Readme.md <==
+snippet 1803.Count-Pairs-With-XOR-in-a-Range "1803.Count-Pairs-With-XOR-in-a-Range" b
+### 1803.Count-Pairs-With-XOR-in-a-Range
 
-这种对于query排序的思路，很像```1697.Checking-Existence-of-Edge-Length-Limited-Paths```。在1697中，每次处理新query之前，会在一个已有的union网络里添加一些新的连接。
-::::::::::::::
-Trie/1803.Count-Pairs-With-XOR-in-a-Range/1803.Count-Pairs-With-XOR-in-a-Range.cpp
-::::::::::::::
+针对一个数组的元素进行XOR操作，一个比较常见的套路就是使用字典树。相似的题目有```421.Maximum-XOR-of-Two-Numbers-in-an-Array```。如果我们在数组中枚举所有的配对nums[i]和nums[j]，需要o(N^2)的复杂度。但是如果我们能根据nums[j]直接找到符合要求的nums[i]，那么会高效很多。关键的操作是利用Trie把所有的元素都集中在了一起。根据nums[j]的特点，我们只需要在字典树里面最多深度搜索32层，即可定位我们期待的nums[i]（如果存在的话）。
+
+此题的第二个技巧是，我们不同时寻找符合区间[low,high]要求的配对数目。而是先计算XOR小于high+1的配对数目，再减去XOR小于low的配对数目。两者之差就是答案。这样的好处是，我们本质上只需要求解一个问题即可：统计XOR小于某个阈值的配对数目；而不用考虑另一个大于等于low的问题。类似思想的题目有```992.Subarrays-with-K-Different-Integers```.
+
+为了在统计pairs时不重复计数，我们选定nums[j]时，只在前j-1个元素组成的字典树里寻找与之合适的配对。寻找完之后再将nums[j]添加进字典树中。
+
+有了以上的基础，我们现在来实现```countPairsSmallerThan(int num, int th)```，即字典树里有多少元素与num异或之后小于th。
+
+搜索的关键是在字典树里试图找到一个数（也就是一条根到叶子的路径），其与num异或之后能等于th。这条路径可以帮助我们将字典树分割、并统计能够符合条件的配对元素。
+
+假设我们从最高位开始，向下走到了第i层，总共考察了i个bit位。并假设这一路走来，在字典树中存在若干个元素的前i-1位，与num的前i-1位异或的结果，等于th的前i-1位。现在令num的第i为是b，th的第i为是c。那么我们期望当前所在的字典树的位置（第i层的某个节点），存在一个分支a（即0或者1），满足```a^b=c```，也就是```a=b^c```。我们分情况讨论。
+
+1. 如果a==1, c==1.    
+  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相反的0。而这个0是比c小的。这就说明如果走0分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位小于了th的第i位（也就是c）。那么必然整个异或的结果就会小于th。所以我们可以直接将0分支下面的元素总数统计进来即可，不必一一遍历到底。    
+  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
+2. 如果a==1, c==0.    
+  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相反的1。而这个1是比c大的。这就说明如果走0分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位大于了th的第i位（也就是c）。那么必然整个异或的结果就会大于th。所以我们就果断舍弃该分支的探索。
+  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
+
+类似地：    
+
+3. 如果a==0, c==1.    
+  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相反的0。而这个0是比c小的。这就说明如果走1分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位小于了th的第i位（也就是c）。那么必然整个异或的结果就会小于th。所以我们可以直接将1分支下面的元素总数统计进来即可，不必一一遍历到底。    
+  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
+4. 如果a==0, c==0.    
+  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相反的1。而这个1是比c大的。这就说明如果走1分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位大于了th的第i位（也就是c）。那么必然整个异或的结果就会大于th。所以我们就果断舍弃该分支的探索。
+  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相同的0。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
+
+按照这样的方法，深入32层之后，我们就可以把字典树里所有与num异或小于th的元素数目统计出来了。注意，我们的字典树节点除了常规的next[0]、next[1]之外，还需要一个cnt，来统计该节点下面有多少个数组元素。这个cnt是在往字典树里插入元素时就可以统计得到的。
+
+$0
+endsnippet
+
+# ==> ./Trie/1803.Count-Pairs-With-XOR-in-a-Range/1803.Count-Pairs-With-XOR-in-a-Range.cpp <==
+snippet 1803.Count-Pairs-With-XOR-in-a-Range "1803.Count-Pairs-With-XOR-in-a-Range" b
 class Solution {
     class TrieNode
     {
@@ -496,43 +1811,27 @@ public:
         }
     }
 };
-::::::::::::::
-Trie/1803.Count-Pairs-With-XOR-in-a-Range/Readme.md
-::::::::::::::
-### 1803.Count-Pairs-With-XOR-in-a-Range
 
-针对一个数组的元素进行XOR操作，一个比较常见的套路就是使用字典树。相似的题目有```421.Maximum-XOR-of-Two-Numbers-in-an-Array```。如果我们在数组中枚举所有的配对nums[i]和nums[j]，需要o(N^2)的复杂度。但是如果我们能根据nums[j]直接找到符合要求的nums[i]，那么会高效很多。关键的操作是利用Trie把所有的元素都集中在了一起。根据nums[j]的特点，我们只需要在字典树里面最多深度搜索32层，即可定位我们期待的nums[i]（如果存在的话）。
+$0
+endsnippet
 
-此题的第二个技巧是，我们不同时寻找符合区间[low,high]要求的配对数目。而是先计算XOR小于high+1的配对数目，再减去XOR小于low的配对数目。两者之差就是答案。这样的好处是，我们本质上只需要求解一个问题即可：统计XOR小于某个阈值的配对数目；而不用考虑另一个大于等于low的问题。类似思想的题目有```992.Subarrays-with-K-Different-Integers```.
+# ==> ./Trie/1804.Implement-Trie-II-(Prefix-Tree)/Readme.md <==
+snippet 1804.Implement-Trie-II-(Prefix-Tree) "1804.Implement-Trie-II-(Prefix-Tree)" b
+### 1804.Implement-Trie-II-(Prefix-Tree)
 
-为了在统计pairs时不重复计数，我们选定nums[j]时，只在前j-1个元素组成的字典树里寻找与之合适的配对。寻找完之后再将nums[j]添加进字典树中。
+这道题比较全面地考察了trie的操作。
 
-有了以上的基础，我们现在来实现```countPairsSmallerThan(int num, int th)```，即字典树里有多少元素与num异或之后小于th。
+我们对于每个node，设置两个成员变量count1和count2. 每添加一个单词，我们将该单词沿途经过的所有节点的count1都增1，并且将该单词最后一个字母的节点的count2增1.
 
-搜索的关键是在字典树里试图找到一个数（也就是一条根到叶子的路径），其与num异或之后能等于th。这条路径可以帮助我们将字典树分割、并统计能够符合条件的配对元素。
+对于```int countWordsEqualTo(string word)```，我们返回该单词最后一个字母的节点的count2. 对于```int countWordsStartingWith(string prefix)```，我们返回该前缀最后一个字母的节点的count2。
 
-假设我们从最高位开始，向下走到了第i层，总共考察了i个bit位。并假设这一路走来，在字典树中存在若干个元素的前i-1位，与num的前i-1位异或的结果，等于th的前i-1位。现在令num的第i为是b，th的第i为是c。那么我们期望当前所在的字典树的位置（第i层的某个节点），存在一个分支a（即0或者1），满足```a^b=c```，也就是```a=b^c```。我们分情况讨论。
+对于```erase(word)```操作，我们将该单词沿途所经过的所有节点的count1都减1，如果某个节点减1之后的count1变成了0，说明该支路往下都只属于这个word，可以直接将次节点删除。另外，记得将该单词最后一个字母的节点的count2减1（如果该节点还存在的话）。
 
-1. 如果a==1, c==1.    
-  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相反的0。而这个0是比c小的。这就说明如果走0分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位小于了th的第i位（也就是c）。那么必然整个异或的结果就会小于th。所以我们可以直接将0分支下面的元素总数统计进来即可，不必一一遍历到底。    
-  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
-2. 如果a==1, c==0.    
-  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相反的1。而这个1是比c大的。这就说明如果走0分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位大于了th的第i位（也就是c）。那么必然整个异或的结果就会大于th。所以我们就果断舍弃该分支的探索。
-  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
+$0
+endsnippet
 
-类似地：    
-
-3. 如果a==0, c==1.    
-  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相反的0。而这个0是比c小的。这就说明如果走1分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位小于了th的第i位（也就是c）。那么必然整个异或的结果就会小于th。所以我们可以直接将1分支下面的元素总数统计进来即可，不必一一遍历到底。    
-  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相同的1。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
-4. 如果a==0, c==0.    
-  假设从当前节点往下走1分支的话，那么a^b的结果就是与c相反的1。而这个1是比c大的。这就说明如果走1分支下去所有的元素，他们与num的异或的结果：前i-1位与th都相同，但在第i位大于了th的第i位（也就是c）。那么必然整个异或的结果就会大于th。所以我们就果断舍弃该分支的探索。
-  假设从当前节点往下走0分支的话，那么a^b的结果就是与c相同的0。说明截止到第i位为止，这些字典树的元素与num的异或结果仍然等于th。所以我们就下沉到到i+1层，递归处理。
-
-按照这样的方法，深入32层之后，我们就可以把字典树里所有与num异或小于th的元素数目统计出来了。注意，我们的字典树节点除了常规的next[0]、next[1]之外，还需要一个cnt，来统计该节点下面有多少个数组元素。这个cnt是在往字典树里插入元素时就可以统计得到的。
-::::::::::::::
-Trie/1804.Implement-Trie-II-(Prefix-Tree)/1804.Implement-Trie-II-(Prefix-Tree).cpp
-::::::::::::::
+# ==> ./Trie/1804.Implement-Trie-II-(Prefix-Tree)/1804.Implement-Trie-II-(Prefix-Tree).cpp <==
+snippet 1804.Implement-Trie-II-(Prefix-Tree) "1804.Implement-Trie-II-(Prefix-Tree)" b
 class Trie {
     class TrieNode
     {
@@ -620,21 +1919,21 @@ public:
  * int param_3 = obj->countWordsStartingWith(prefix);
  * obj->erase(word);
  */
-::::::::::::::
-Trie/1804.Implement-Trie-II-(Prefix-Tree)/Readme.md
-::::::::::::::
-### 1804.Implement-Trie-II-(Prefix-Tree)
 
-这道题比较全面地考察了trie的操作。
+$0
+endsnippet
 
-我们对于每个node，设置两个成员变量count1和count2. 每添加一个单词，我们将该单词沿途经过的所有节点的count1都增1，并且将该单词最后一个字母的节点的count2增1.
+# ==> ./Trie/1858.Longest-Word-With-All-Prefixes/Readme.md <==
+snippet 1858.Longest-Word-With-All-Prefixes "1858.Longest-Word-With-All-Prefixes" b
+### 1858.Longest-Word-With-All-Prefixes
 
-对于```int countWordsEqualTo(string word)```，我们返回该单词最后一个字母的节点的count2. 对于```int countWordsStartingWith(string prefix)```，我们返回该前缀最后一个字母的节点的count2。
+首先是构造字典树的基本操作。然后我们要在这个字典树里，从根开始找一个最长的路径，使得路径上的每一个节点都是某个单词的end（即节点的isEnd属性为true）。DFS即可。
 
-对于```erase(word)```操作，我们将该单词沿途所经过的所有节点的count1都减1，如果某个节点减1之后的count1变成了0，说明该支路往下都只属于这个word，可以直接将次节点删除。另外，记得将该单词最后一个字母的节点的count2减1（如果该节点还存在的话）。
-::::::::::::::
-Trie/1858.Longest-Word-With-All-Prefixes/1858.Longest-Word-With-All-Prefixes.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Trie/1858.Longest-Word-With-All-Prefixes/1858.Longest-Word-With-All-Prefixes.cpp <==
+snippet 1858.Longest-Word-With-All-Prefixes "1858.Longest-Word-With-All-Prefixes" b
 class Solution {
     class TrieNode {
         public:
@@ -685,15 +1984,29 @@ public:
     }
 
 };
-::::::::::::::
-Trie/1858.Longest-Word-With-All-Prefixes/Readme.md
-::::::::::::::
-### 1858.Longest-Word-With-All-Prefixes
 
-首先是构造字典树的基本操作。然后我们要在这个字典树里，从根开始找一个最长的路径，使得路径上的每一个节点都是某个单词的end（即节点的isEnd属性为true）。DFS即可。
-::::::::::::::
-Trie/1938.Maximum-Genetic-Difference-Query/1938.Maximum-Genetic-Difference-Query.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Trie/1938.Maximum-Genetic-Difference-Query/Readme.md <==
+snippet 1938.Maximum-Genetic-Difference-Query "1938.Maximum-Genetic-Difference-Query" b
+### 1938.Maximum-Genetic-Difference-Query
+
+本题的题意是：给出一棵树。对于query(node, val)，我们需要在从node到root的路径中，找一个节点的nodeVal，使得val^nodeVal的结果最大。
+
+在一堆数nums里面挑一个数，使得其与指定的一个数a的XOR值最大，是一个老题，参见```421.Maximum-XOR-of-Two-Numbers-in-an-Array```。具体的做法是将nums里面的数都写成32位的二进制串，然后拼接成一棵前缀树。基于a的二进制表达式，我们尽量沿着二叉树向下走，每一位都尽量相对于a取反。这样一路走下来得到的数b，就是a^b最大的结果。
+
+对于本题，因为query的数量太多，显然我们不会对每个query都重新建一棵Trie。我们发现，对于同一个路径上的节点A->B->C...，它们的Trie只会彼此相差一条支链。这让我们想到了从上往下的DFS。从根节点按深度优先遍历所有的支路，每深入一个节点，就把该节点的值加入Trie（即Trie增加了一条新支链），这样就最大程度地利用了已有的Trie。这样对于query(A,val), query(B,val), query(C,val) .... 这些结果，都可以在DFS的过程中一并得到解决。
+
+但是DFS有一个很重要的步骤就是回溯。当我们结束A->B->C这条路径的探索，想要转而探索A->B->D的话，那么我们就需要在原有的Trie里删去C元素所对应的支链。那么如何高效地删除一条支链呢？显然不应该把C的所有bit位对应的节点都从Trie里删除，因为它们可能是与其他支链共享的。其次，物理上删除一个节点释放空间也很耗时。我们的解决技巧是：对于Trie里的每个节点都添加cnt属性。如果这个节点被Trie的一条支链使用了，那么就将它的cnt增一。如果我们想要删除一个支链，那么就将这条支链上的所有节点的cnt都减一。如果某个TrieNode的cnt为零，那么就可以认为该节点（及其子孙节点）都被删除了。这个技巧我们在```212.Word-Search-II```里已经用到过。
+
+注意，因为cnt的引入，我们在遍历Trie的时候，不应该去访问那些cnt为零的节点。
+
+$0
+endsnippet
+
+# ==> ./Trie/1938.Maximum-Genetic-Difference-Query/1938.Maximum-Genetic-Difference-Query.cpp <==
+snippet 1938.Maximum-Genetic-Difference-Query "1938.Maximum-Genetic-Difference-Query" b
 class Solution {
     class TrieNode
     {
@@ -792,1200 +2105,6 @@ public:
         }
     }
 };
-::::::::::::::
-Trie/1938.Maximum-Genetic-Difference-Query/Readme.md
-::::::::::::::
-### 1938.Maximum-Genetic-Difference-Query
 
-本题的题意是：给出一棵树。对于query(node, val)，我们需要在从node到root的路径中，找一个节点的nodeVal，使得val^nodeVal的结果最大。
-
-在一堆数nums里面挑一个数，使得其与指定的一个数a的XOR值最大，是一个老题，参见```421.Maximum-XOR-of-Two-Numbers-in-an-Array```。具体的做法是将nums里面的数都写成32位的二进制串，然后拼接成一棵前缀树。基于a的二进制表达式，我们尽量沿着二叉树向下走，每一位都尽量相对于a取反。这样一路走下来得到的数b，就是a^b最大的结果。
-
-对于本题，因为query的数量太多，显然我们不会对每个query都重新建一棵Trie。我们发现，对于同一个路径上的节点A->B->C...，它们的Trie只会彼此相差一条支链。这让我们想到了从上往下的DFS。从根节点按深度优先遍历所有的支路，每深入一个节点，就把该节点的值加入Trie（即Trie增加了一条新支链），这样就最大程度地利用了已有的Trie。这样对于query(A,val), query(B,val), query(C,val) .... 这些结果，都可以在DFS的过程中一并得到解决。
-
-但是DFS有一个很重要的步骤就是回溯。当我们结束A->B->C这条路径的探索，想要转而探索A->B->D的话，那么我们就需要在原有的Trie里删去C元素所对应的支链。那么如何高效地删除一条支链呢？显然不应该把C的所有bit位对应的节点都从Trie里删除，因为它们可能是与其他支链共享的。其次，物理上删除一个节点释放空间也很耗时。我们的解决技巧是：对于Trie里的每个节点都添加cnt属性。如果这个节点被Trie的一条支链使用了，那么就将它的cnt增一。如果我们想要删除一个支链，那么就将这条支链上的所有节点的cnt都减一。如果某个TrieNode的cnt为零，那么就可以认为该节点（及其子孙节点）都被删除了。这个技巧我们在```212.Word-Search-II```里已经用到过。
-
-注意，因为cnt的引入，我们在遍历Trie的时候，不应该去访问那些cnt为零的节点。
-::::::::::::::
-Trie/208.Implement-Trie--Prefix-Tree/208.Implement-Trie--Prefix-Tree.cpp
-::::::::::::::
-class Trie {
-    class TrieNode
-    {
-        public:
-            TrieNode* next[26];
-            bool isEnd;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-        }
-    };
-    TrieNode* root;
-        
-public:
-    /** Initialize your data structure here. */
-    Trie() 
-    {
-        root = new TrieNode();
-    }
-    
-    /** Inserts a word into the trie. */
-    void insert(string word) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        node->isEnd=true;
-    }
-    
-    /** Returns if the word is in the trie. */
-    bool search(string word) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                return false;
-            node=node->next[ch-'a'];
-        }
-        if (node->isEnd==false)
-            return false;
-        else
-            return true;
-    }
-    
-    /** Returns if there is any word in the trie that starts with the given prefix. */
-    bool startsWith(string prefix) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<prefix.size(); i++)
-        {
-            char ch=prefix[i];
-            if (node->next[ch-'a']==NULL)
-                return false;
-            node=node->next[ch-'a'];
-        }
-        return true;        
-    }
-};
-
-/**
- * Your Trie object will be instantiated and called as such:
- * Trie obj = new Trie();
- * obj.insert(word);
- * bool param_2 = obj.search(word);
- * bool param_3 = obj.startsWith(prefix);
- */
-::::::::::::::
-Trie/208.Implement-Trie--Prefix-Tree/Readme.md
-::::::::::::::
-### 208.Implement-Trie--Prefix-Tree
-
-对于Trie类型的基本功操作包括：
-1. Trie类型的定义：包括两个成员变量，构造函数
-2. Trie的单词添加
-3. 在Trie树中找指定的完整单词（需要找到叶子节点）
-4. 在Trie树中找指定的前缀（不需要找到叶子节点）
-
-
-[Leetcode Link](https://leetcode.com/problems/implement-trie--prefix-tree)::::::::::::::
-Trie/211.Add-and-Search-Word/211.Add and Search Word.cpp
-::::::::::::::
-class WordDictionary {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-        }
-    };
-    TrieNode* root;
-    
-public:
-    /** Initialize your data structure here. */
-    WordDictionary() 
-    {
-        root = new TrieNode();
-    }
-    
-    /** Adds a word into the data structure. */
-    void addWord(string word) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        node->isEnd=true;
-    }
-    
-    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
-    bool search(string word) 
-    {
-        return DFS(word, 0, root);
-    }
-    
-    bool DFS(string word, int i, TrieNode* node)
-    {
-        if (node==NULL)
-            return false;
-        if (i==word.size())
-            return (node->isEnd);
-
-        if (word[i]!='.')
-            return DFS(word, i+1, node->next[ch=word[i]-'a']);
-        else
-        {
-            bool flag=false;
-            for (int k=0; k<26; k++)
-            {
-                if (DFS(word,i+1,node->next[k]))
-                {
-                    flag=true;
-                    break;
-                }    
-            }
-            return flag;
-        }
-    }
-};
-
-/**
- * Your WordDictionary object will be instantiated and called as such:
- * WordDictionary obj = new WordDictionary();
- * obj.addWord(word);
- * bool param_2 = obj.search(word);
- */
-::::::::::::::
-Trie/211.Add-and-Search-Word/Readme.md
-::::::::::::::
-### 211.Add-and-Search-Word
-
-这是字典树的典型题，考察了Trie的各种基本操作。
-
-首先是TrieNode的类型及构造函数:
-```cpp
-class TrieNode
-{
-    public:
-    TrieNode* next[26];
-    bool isEnd;
-    TrieNode()
-    {
-       for (int i=0; i<26; i++)
-         next[i]=NULL;
-       isEnd=false;
-    }
-};
-```
-注意：1.类定义结束之后要加分号。2.构造函数必须显式地声明为public（否则默认为private）。
-
-其次是字典树的数据添加:
-```cpp
-    void addWord(string word) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        node->isEnd=true;
-    }
-```
-本质是不断开辟子树的过程，将原本是NULL的子节点new出一个实际的内存空间。
-
-最后的字典树的查询，则是用到了DFS，根据索引下沉到相应的子节点，和二叉树的遍历类似。
-
-
-[Leetcode Link](https://leetcode.com/problems/add-and-search-word)::::::::::::::
-Trie/212.Word-Search-II/212.Word-Search-II_v1.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-        }
-    };
-    TrieNode* root;
-    unordered_set<string>Set;
-    int M, N;
-    bool visited[12][12];
-public:
-    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) 
-    {
-        M=board.size();
-        N=board[0].size(); 
-        root=new TrieNode();        
-        for (int i=0; i<words.size(); i++)
-        {
-            TrieNode* node=root;
-            for (auto ch: words[i])
-            {            
-                if (node->next[ch-'a']==NULL)
-                    node->next[ch-'a']=new TrieNode();
-                node=node->next[ch-'a'];
-            }
-            node->isEnd=true;
-        }            
-        
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {   
-             TrieNode* node = root;          
-             string word;
-             visited[i][j]=1;
-             DFS(i,j,node,word,board);
-             visited[i][j]=0;
-         }
-        
-        vector<string>results(Set.begin(),Set.end());
-        return results;
-    }
-    
-    void DFS(int i, int j, TrieNode* node, string& word, vector<vector<char>>& board)
-    {
-        if (node->next[board[i][j]-'a']==NULL) return;        
-        node = node->next[board[i][j]-'a'];
-        word.push_back(board[i][j]);
-        
-        if (node->isEnd==true) Set.insert(word);
-        
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};        
-        
-        for (int k=0; k<4; k++)
-        {
-            int x=i+dir[k].first;
-            int y=j+dir[k].second;
-            if (x<0||x>=M||y<0||y>=N) continue;
-            if (visited[x][y]==1) continue;
-            
-            visited[x][y]=1;            
-            DFS(x,y,node,word,board);
-            visited[x][y]=0;                           
-        }        
-
-        word.pop_back();
-    }
-};
-::::::::::::::
-Trie/212.Word-Search-II/212.Word-Search-II_v2.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        int count = 0;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-            count=0;
-        }
-    };
-    TrieNode* root;
-    vector<string>rets;
-    int M, N;
-    bool visited[12][12];
-public:
-    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) 
-    {
-        M=board.size();
-        N=board[0].size(); 
-        root=new TrieNode();        
-        for (int i=0; i<words.size(); i++)
-        {
-            TrieNode* node=root;
-            for (auto ch: words[i])
-            {            
-                if (node->next[ch-'a']==NULL)
-                    node->next[ch-'a']=new TrieNode();
-                node=node->next[ch-'a'];
-                node->count++;
-            }
-            node->isEnd=true;
-        }            
-        
-        for (int i=0; i<M; i++)
-         for (int j=0; j<N; j++)
-         {   
-             TrieNode* node = root;          
-             string word;
-             visited[i][j]=1;
-             DFS(i,j,node,word,board);
-             visited[i][j]=0;
-         }
-        
-        return rets;
-    }
-    
-    void DFS(int i, int j, TrieNode* node, string& word, vector<vector<char>>& board)
-    {
-        if (node->next[board[i][j]-'a']==NULL) return;        
-        if (node->next[board[i][j]-'a']->count==0) return;
-
-        node = node->next[board[i][j]-'a'];
-        word.push_back(board[i][j]);
-        
-        if (node->isEnd==true)
-        {
-            node->isEnd = false;
-            rets.push_back(word);
-            remove(root, word);
-        }
-        
-        vector<pair<int,int>>dir={{1,0},{-1,0},{0,1},{0,-1}};        
-        
-        for (int k=0; k<4; k++)
-        {
-            int x=i+dir[k].first;
-            int y=j+dir[k].second;
-            if (x<0||x>=M||y<0||y>=N) continue;
-            if (visited[x][y]==1) continue;
-            
-            visited[x][y]=1;            
-            DFS(x,y,node,word,board);
-            visited[x][y]=0;                           
-        }        
-
-        word.pop_back();
-    }
-
-    void remove(TrieNode* root, string word)
-    {
-        TrieNode* node = root;
-        for (auto ch: word)
-        {
-            node = node->next[ch-'a'];
-            node->count --;
-        }
-    }
-};
-::::::::::::::
-Trie/212.Word-Search-II/212.Word-Search-II_v3.cpp
-::::::::::::::
-class Solution {
-    typedef pair<int,int> PII;
-    unordered_set<string> rets;
-    vector<int> dirs;
-    int m, n;
-    int freq[26];
-
-    bool frequencyCheck(string& word) {
-        vector<int> freq(26, 0);
-
-        for(auto ch: word) {
-            ++freq[ch-'a'];
-        }
-
-        for(int i = 0; i < 26; ++i) {
-            if(this->freq[i] < freq[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool dfs(int x, int y, string& word, vector<vector<char>>& board, int idx, vector<vector<int>>& visited) {
-        if(board[x][y] != word[idx]) return false;
-        if(idx == word.size() - 1 && word[idx] == board[x][y]) {
-            rets.insert(word);
-            return true;
-        }
-
-        for(int i = 0; i < 4; ++i) {
-            int nx = x + dirs[i];
-            int ny = y + dirs[i+1];
-
-            if(nx < 0 || ny < 0 || nx >= m || ny >= n || visited[nx][ny]) continue;
-            visited[x][y] = 1;
-            if(dfs(nx, ny, word, board, idx+1, visited)) {
-                visited[x][y] = 0;
-                return true;
-            }
-            visited[x][y] = 0;
-        }
-
-        return false;
-    }
-public:
-    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
-        m = board.size();
-        n = board[0].size();
-        unordered_map<char, vector<PII>> char2pos;
-        vector<vector<int>> visited(m, vector<int>(n, 0));
-        dirs =  {-1, 0, 1, 0, -1};
-
-        for(int i = 0; i < m; ++i) {
-            for(int j = 0; j < n; ++j) {
-                char2pos[board[i][j]].push_back({i, j});
-            }
-        }
-
-        for(auto& row: board) {
-            for(char ch: row) {
-                ++freq[ch-'a'];
-            }
-        } 
-
-        for(auto word: words) {
-            // word frequency check
-            if(!frequencyCheck(word)) continue;
-            
-            for(auto [x, y]: char2pos[word[0]]) {
-                visited[x][y] = 1;
-                dfs(x, y, word, board, 0, visited);
-                visited[x][y] = 0;
-            }
-        }
-        return {rets.begin(), rets.end()};
-    }
-};
-::::::::::::::
-Trie/212.Word-Search-II/Readme.md
-::::::::::::::
-### 212.Word-Search-II
-
-此题是用将常规的DFS算法与Trie的数据结构相结合。设计DFS函数
-```
-void DFS(int i, int j, TrieNode* node, string word, vector<vector<int>>&visited, vector<vector<char>>& board)
-```
-表示(i,j)为起点、node为Trie树的当前节点、visited为已经经过的路径，求是否能在board里继续遍历出可以拼成字典树里面任意的完整单词。能拼出完整单词的依据是走到某个节点时```node->isEnd==true```，无法继续的判据是```node->next[board[i][j]-'a']==NULL```
-
-在新的数据集中，上面的方法会TLE。改进之处是每探索到一个单词之后，就将该单词从字典树里移出，避免重复搜索同一个单词。怎么修改字典树呢？我们不需要真地去删除节点，只需要给每个节点添加一个count标记。在最初建立字典树的时候，每添加一个单词，我们就给沿途的节点的count加一。删除单词的时候，就给每个节点的count减一。当我们遍历字典树的时候，如果发现某个节点的count等于0时，就可以认为这个节点已经不存在了。
-
-[Leetcode Link](https://leetcode.com/problems/word-search-ii)
-::::::::::::::
-Trie/421.Maximum-XOR-of-Two-Numbers-in-an-Array/421.Maximum-XOR-of-Two-Numbers-in-an-Array.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[2];
-    };
-public:
-    int findMaximumXOR(vector<int>& nums) 
-    {
-        TrieNode* root = new TrieNode();
-        for (auto num: nums)
-        {
-            TrieNode* node = root;
-            for (int k=31; k>=0; k--)
-            {
-                if (node->next[(num>>k)&1]==NULL)
-                    node->next[(num>>k)&1] = new TrieNode();
-                node = node->next[(num>>k)&1];
-            }
-        }
-
-        int ret = 0;
-        for (auto num: nums)
-        {
-            TrieNode* node = root;
-            int ans = 0;
-            for (int k=31; k>=0; k--)
-            {
-                if (node->next[1 - (num>>k)&1]!=NULL)
-                {
-                    ans = ans*2+1;
-                    node = node->next[1 - (num>>k)&1];
-                }                    
-                else
-                {
-                    ans = ans*2+0;
-                    node = node->next[(num>>k)&1];
-                }
-            }
-            ret = max(ret, ans);
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Trie/421.Maximum-XOR-of-Two-Numbers-in-an-Array/Readme.md
-::::::::::::::
-### 421.Maximum-XOR-of-Two-Numbers-in-an-Array
-
-本题涉及到一个新的数据结构叫做Trie（字典树）。关于字典树的基本概念可以参见： http://www.cnblogs.com/huangxincheng/archive/2012/11/25/2788268.html
-
-相比于 Binary Indexed Tree 本质是一个数组，那么 Trie 本质上就是一个真正的多叉树。Trie把重复的前缀作为节点固定下来，可以省下很多空间。
-
-首选我们需要结合本题，构建多叉树这种数据类型。    
-显然，它需要有递归的树状结构：即每一个节点下面有若干个该相同数据结构的指针。其次，需要设计相应的节点构造函数，以便于进行初始化(复习一下C++面向对象的概念，构造函数的无参默认函数)。
-```cpp
-    class TrieNode
-    {
-        public:
-         TrieNode* next[2];
-         TrieNode()
-         {
-             next[0]=NULL;
-             next[1]=NULL;
-         }
-    };
-```
-然后一项重要的工作就是用给定的一堆数据（比如数组）来构建这个字典树。
-```cpp
-TreeNode* buildTree(vector<int>nums)
-{
-   TrieNode* root=new TrieNode();   // 创建根节点
-   for (int i=0; i<nums.size(); i++)  // 给定一个数据
-   {
-      int num = nums[i];
-      TreeNode* node=root;
-      for (int j=31; j>=0; j--)
-      {
-          int bit = ((num>>j)&1);
-          if (node->next[bit]==NULL)    // 朝一个方向扩展 
-              node->next[bit]=new TrieNode();
-          node = node->next[bit];
-      }      
-   }   
-   return root;
-}
-```
-回到这题本身，对于一个存于Trie中的整数 N，可以在这颗字典树里从试图寻找另一个与 N 逢位必反的整数 M ，这样找到的M一定是与N亦或之后得到最大值。
-```cpp
-    int findMaximumXOR(vector<int>& nums) 
-    {
-        TrieNode* root=buildTree(nums);
-        int result=0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            result = max(result, oppositePath(root,nums[i]));
-        }
-        return result;
-    }
-```    
-
-
-[Leetcode Link](https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array)::::::::::::::
-Trie/472.Concatenated-Words/472.Concatenated-Words.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i] = NULL;
-            isEnd = false;
-        }
-    };
-    TrieNode* root;
-public:
-    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) 
-    {       
-        sort(words.begin(), words.end(), [](string&a, string&b){return a.size()<b.size();});
-        root = new TrieNode();
-
-        vector<string>rets;
-        for (auto word: words)
-        {
-            if (word!="" && check(word, root))
-                rets.push_back(word);
-
-            TrieNode* node = root;
-            for (auto ch:word)
-            {
-                if (node->next[ch-'a']==NULL)
-                    node->next[ch-'a'] = new TrieNode();
-                node = node->next[ch-'a'];
-            }
-            node->isEnd = true;
-        }
-        return rets;
-    }
-
-    bool check(string& word, TrieNode* root)
-    {
-        int n = word.size();
-        vector<int>visited(n,0);
-        return dfs(word, 0, visited);
-    }
-
-    bool dfs(string& word, int cur, vector<int>&visited)
-    {
-        if (cur==word.size()) return true;
-
-        if (visited[cur]==1)
-            return false;
-
-        TrieNode* node = root;
-
-        for (int i=cur; i<word.size(); i++)
-        {
-            if (node->next[word[i]-'a']!=NULL)
-            {
-                node = node->next[word[i]-'a'];
-                if (node->isEnd && dfs(word, i+1, visited))
-                    return true;                
-            } 
-            else
-            {
-                break;
-            }
-        }
-
-        visited[cur] = 1;
-        return false;
-    }
-};
-::::::::::::::
-Trie/472.Concatenated-Words/Readme.md
-::::::::::::::
-### 472.Concatenated-Words
-
-此题就是```LC 140.Word-Break-II```的翻版。
-
-我们将所有单词按照长度从小到大排序，然后依次加入字典树里。当我们考察一个新单词word时，就查看已有的字典树里是否有单词能够是word的前缀。如果存在的话，就把前缀刨掉，递归处理，继续查看字典树立是否有单词能match此时word的前缀，直至把整个word恰好都匹配完。
-::::::::::::::
-Trie/588.Design-In-Memory-File-System/588.Design-In-Memory-File-System.cpp
-::::::::::::::
-class FileSystem {
-    class TrieNode
-    {
-        public:
-        map<string,TrieNode*>Map;
-        bool isFile;
-    };
-    TrieNode* root;
-    unordered_map<string,string>FileContents;
-    
-public:
-    FileSystem() 
-    {
-        root=new TrieNode();
-    }
-    
-    vector<string> ls(string path) 
-    {
-        TrieNode* node=root;
-        string str;
-        for (int i=1; i<path.size(); i++)
-        {
-            int i0=i;
-            while (i<path.size() && path[i]!='/')
-                i++;
-            str=path.substr(i0,i-i0);
-            node=node->Map[str];
-        }
-        
-        if (node->isFile)
-            return {str};
-        else
-        {
-            vector<string>results;
-            for (auto a:node->Map)
-                results.push_back(a.first);
-            return results;
-        }
-    }
-    
-    void mkdir(string path) 
-    {
-        TrieNode* node=root;
-        for (int i=1; i<path.size(); i++)
-        {
-            int i0=i;
-            while (i<path.size() && path[i]!='/')
-                i++;
-            string str=path.substr(i0,i-i0);
-            if (node->Map.find(str)==node->Map.end())
-                node->Map[str]=new TrieNode();                        
-            node=node->Map[str];
-        }
-    }
-    
-    void addContentToFile(string filePath, string content) 
-    {
-        TrieNode* node=root;
-        for (int i=1; i<filePath.size(); i++)
-        {
-            int i0=i;
-            while (i<filePath.size() && filePath[i]!='/')
-                i++;
-            string str=filePath.substr(i0,i-i0);
-            if (node->Map.find(str)==node->Map.end())
-                node->Map[str]=new TrieNode();                        
-            node=node->Map[str];
-        }
-        node->isFile=1;
-        FileContents[filePath]+=content;
-    }
-    
-    string readContentFromFile(string filePath) 
-    {
-        return FileContents[filePath];
-    }
-};
-
-/**
- * Your FileSystem object will be instantiated and called as such:
- * FileSystem obj = new FileSystem();
- * vector<string> param_1 = obj.ls(path);
- * obj.mkdir(path);
- * obj.addContentToFile(filePath,content);
- * string param_4 = obj.readContentFromFile(filePath);
- */
-::::::::::::::
-Trie/588.Design-In-Memory-File-System/Readme.md
-::::::::::::::
-### 588.Design-In-Memory-File-System
-
-这种明显带有层级结构、从上而下的搜索，提示了可以用典型的Trie数据结构。
-
-以前的Tire树，都是通过字符-若干字符的跨接。这里则是字符串-若干字符串的跨接。该怎么设计呢？答案是用哈希表。
-```cpp
-class TrieNode
-{
-    public:
-    map<string,TrieNode*>Map;
-    bool isFile;
-};
-```
-这样的话，从上到下的转移可以通过```node = node->Map[str]```来实现。
-
-
-[Leetcode Link](https://leetcode.com/problems/design-in-memory-file-system)::::::::::::::
-Trie/648.Replace-Words/648.Replace-Words.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-        }        
-    };
-    
-    void addWord(TrieNode* root, string word)
-    {
-        TrieNode* node=root;
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        node->isEnd=true;
-    }
-    
-    string replace(TrieNode* root, string word)
-    {
-        string result;
-        string str;
-        DFS(root,word,0,str,result);
-        if (result!="")
-            return result;
-        else
-            return word;
-    }
-    
-    void DFS(TrieNode* root, string word, int k, string str, string &result)
-    {
-        if (root->isEnd==1)
-        {
-            if (result=="")
-                result=str;
-            else if (result.size()>str.size())
-                result=str;
-            return;
-        }
-        
-        if (k==word.size())
-            return;
-                
-        for (int i=0; i<26; i++)
-        {
-            if (root->next[word[k]-'a']!=NULL)
-            {
-                DFS(root->next[word[k]-'a'],word,k+1,str+word[k],result);
-            }
-        }
-        return;
-    }
-    
-public:
-    string replaceWords(vector<string>& dict, string sentence) 
-    {
-        TrieNode* root=new TrieNode();
-        for (int i=0; i<dict.size(); i++)
-            addWord(root,dict[i]);
-        
-        int i=0;
-        while (i<sentence.size() && sentence[i]==' ') i++;
-        
-        string result;
-        while (i<sentence.size())
-        {
-            int i0=i;
-            while (i<sentence.size() && sentence[i]!=' ') i++;
-            string str=sentence.substr(i0,i-i0);
-            string str2 = replace(root,str);
-            
-            result+=str2;
-            result+=' ';
-            i++;
-        }
-        result.pop_back();
-        
-        return result;
-    }
-};
-::::::::::::::
-Trie/648.Replace-Words/Readme.md
-::::::::::::::
-### 648.Replace-Words
-
-此题显而易见，是用Trie来实现单词（词根）的查找。
-
-对于Trie类型的基本功操作包括：
-1. Trie类型的定义：包括两个成员变量，构造函数
-```cpp
-class TrieNode
-{
-  public:
-   TrieNode* next[26];
-   bool isEnd;
-  
-  TrieNode()
-  {
-    for (int i=0; i<26; i++)
-      next[i]=NULL;
-    isEnd=false; 
-  }  
-};
-```
-2. Trie的单词添加
-```cpp
-void addWord(TrieNode* root, string word)
-{
-    TrieNode* node=root;
-    for (int i=0; i<word.size(); i++)
-    {
-        char ch=word[i];
-        if (node->next[ch-'a']==NULL)
-          node->next[ch-'a']==new TrieNode();
-        node = node->next[ch-'a'];
-    }
-    node->isEnd=1;
-}
-```
-3. Trie的单词查找。在本题中，只要能追踪到叶子节点 isEnd==true 即说明找到词根
-```cpp
-bool flag = DFS(root,word,0); // 递归调用
-
-bool DFS(TrieNode* root, string word, int k)
-{
-    if (root->isEnd==true)
-      return true;
-    if (k==word.size())
-      return false;
-    for (int i=0; i<26; i++)
-    {
-       if (DFS(root->next[word[i]-'a'],word,k+1))
-          return true;
-    }
-    return false;
-}
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/replace-words)::::::::::::::
-Trie/676.Implement-Magic-Dictionary/676.Implement-Magic-Dictionary.cpp
-::::::::::::::
-class MagicDictionary {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        bool isEnd;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            isEnd=false;
-        }
-    };
-    TrieNode* root;
-public:
-    /** Initialize your data structure here. */
-    MagicDictionary() 
-    {
-        root = new TrieNode();
-    }
-    
-    /** Build a dictionary through a list of words */
-    void buildDict(vector<string> dict) 
-    {        
-        for (int i=0; i<dict.size(); i++)
-        {
-            TrieNode* node=root;
-            string str=dict[i];
-            for (int j=0; j<str.size(); j++)
-            {
-                if (node->next[str[j]-'a']==NULL)
-                    node->next[str[j]-'a']=new TrieNode();
-                node=node->next[str[j]-'a'];
-            }
-            node->isEnd=true;
-        }
-    }
-    
-    /** Returns if there is any word in the trie that equals to the given word after modifying exactly one character */
-    bool search(string word) 
-    {
-         return DFS_search(word,root);
-    }
-    
-    bool DFS_search(string word, TrieNode* node)
-    {
-        if (word=="") return false;
-        if (node==NULL) return false;
-        
-        for (char ch='a'; ch<='z'; ch++)
-        {
-            if (ch==word[0]) continue;
-            if (inDict(word.substr(1),node->next[ch-'a']))
-                return true;            
-        }
-        return DFS_search(word.substr(1),node->next[word[0]-'a']);
-    }
-    
-    bool inDict(string word, TrieNode* node)
-    {
-        if (node==NULL) return false;
-        
-        for (int i=0; i<word.size(); i++)
-        {
-            char ch=word[i];
-            if (node->next[ch-'a']==NULL)
-                return false;
-            node=node->next[ch-'a'];
-        }
-        
-        return (node->isEnd);            
-    }
-};
-
-/**
- * Your MagicDictionary object will be instantiated and called as such:
- * MagicDictionary obj = new MagicDictionary();
- * obj.buildDict(dict);
- * bool param_2 = obj.search(word);
- */
-::::::::::::::
-Trie/676.Implement-Magic-Dictionary/Readme.md
-::::::::::::::
-### 676.Implement-Magic-Dictionary
-
-此题特征就是用Trie树，实现高效的单词搜索。Trie树的一些基本操作应数量掌握，包括构建树 buildTree(string word, TrieNode* node)，搜索一个单词是否在此字典树内 inDictionary(string word, TrieNode* node).
-
-对于单词abcdefg，先考虑置换第一个字母a，换成其他字母后，考察bcdefg是否是在这个字典树node内，需要调用inDictionary。如果从a到z的置换都不成功，则将根节点下降一层node=node->next['a'-'a']，同时word=word.substr(1)，于是就将原问题转化为在新的字典树node理考察新的word（bcdefg），这样可以递归调用整个search的过程。
-
-
-[Leetcode Link](https://leetcode.com/problems/implement-magic-dictionary)::::::::::::::
-Trie/677.Map-Sum-Pairs/677.Map-Sum-Pairs.cpp
-::::::::::::::
-class MapSum {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-        int val;
-        TrieNode()
-        {
-            for (int i=0; i<26; i++)
-                next[i]=NULL;
-            val=0;
-        }
-    };
-    TrieNode* root;
-public:
-    /** Initialize your data structure here. */
-    MapSum() 
-    {
-        root=new TrieNode();
-    }
-    
-    void insert(string key, int val) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<key.size(); i++)
-        {
-            char ch=key[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        node->val=val;
-    }
-    
-    int sum(string prefix) 
-    {
-        TrieNode* node=root;
-        for (int i=0; i<prefix.size(); i++)
-        {
-            char ch=prefix[i];
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a']=new TrieNode();
-            node=node->next[ch-'a'];
-        }
-        int SUM=0;
-        DFS(node,SUM);
-        return SUM;
-    }
-    
-    void DFS(TrieNode* node, int & SUM)
-    {
-        if (node==NULL) return;
-        
-        SUM+=node->val;
-        for (int i=0; i<26; i++)
-            DFS(node->next[i],SUM);
-    }
-};
-
-/**
- * Your MapSum object will be instantiated and called as such:
- * MapSum obj = new MapSum();
- * obj.insert(key,val);
- * int param_2 = obj.sum(prefix);
- */
-::::::::::::::
-Trie/677.Map-Sum-Pairs/Readme.md
-::::::::::::::
-### 677.Map-Sum-Pairs-My-SubmissionsBack-to-Contest
-
-常规的Trie操作。
-
-注意，在类的公告区域里定义了```TrieNode* root```之后，在构造函数里就只需要直接```root=TrieNode()```即可，千万不能```TrieNode* root=TrieNode()```。否则会有意想不到的错误。
-
-
-[Leetcode Link](https://leetcode.com/problems/map-sum-pairs)::::::::::::::
-Trie/745.Prefix-and-Suffix-Search/745.Prefix-and-Suffix-Search.cpp
-::::::::::::::
-class WordFilter {
-    class TrieNode
-    {
-        public:
-        bool isEnd;
-        TrieNode* next[27];
-        vector<int>ids;
-        TrieNode()
-        {
-            isEnd = false;
-            for (int i=0; i<27; i++)
-                next[i] = NULL;
-        }
-        
-    };
-    TrieNode* root;
-    
-public:
-    
-    void buildTree(TrieNode* root, string S, int id)
-    {
-        TrieNode* node = root;
-        for (char ch:S)
-        {
-            if (node->next[ch-'a']==NULL)
-                node->next[ch-'a'] = new TrieNode();
-            node = node->next[ch-'a'];
-            node->ids.push_back(id);
-        }
-    }    
-    
-    WordFilter(vector<string> words) 
-    {
-        root = new TrieNode();
-        for (int i=0; i<words.size(); i++)
-        {
-            string word = words[i];
-            string rWord;
-            for (int j=0; j<word.size(); j++)
-            {
-                rWord = word.substr(j);
-                reverse(rWord.begin(),rWord.end());
-                buildTree(root, rWord+"{"+word,i);
-            }
-            buildTree(root, "{"+word,i);
-        }
-    }
-    
-    int f(string prefix, string suffix) 
-    {
-        reverse(suffix.begin(),suffix.end());
-        string S = suffix+"{"+prefix;
-        TrieNode* node = root;
-        for (char ch:S)
-        {
-            if (node->next[ch-'a']==NULL)
-                return -1;
-            else
-                node = node->next[ch-'a'];
-        }
-        return node->ids.back();
-    }
-};
-
-/**
- * Your WordFilter object will be instantiated and called as such:
- * WordFilter obj = new WordFilter(words);
- * int param_1 = obj.f(prefix,suffix);
- */
-::::::::::::::
-Trie/745.Prefix-and-Suffix-Search/Readme.md
-::::::::::::::
-### 745.Prefix-and-Suffix-Search
-
-此题仍然考察基本的TrieNode的数据结构，但是需要稍微设计一下。
-
-如果根据前缀和后缀的双重信息来在字典树里找到一个单词呢？一个巧妙的设计就是把后缀加在单词前面，中间用"{"分隔，拼成一个新的单词，将这种新的单词加入字典树中，并在querry的时候查找。需要注意的是，一个正常的单词可能有k种后缀，k就是单词的长度，所以我们需要把这些所有的变化都加进字典树里。
-
-为什么要用“{”做分隔符呢？因为它在ASCII中的位置恰好就在'z'后面，所以我们直接在每个TrieNode里开27个TrieNode*数组就行了。
-
-如何快速查找weight呢？其实只要在加入字符串的时候，在每个node都标记该单词的id，而且后来的字符串id可以覆盖前面的，因为后面的认为是更大的weight。
-
-
-[Leetcode Link](https://leetcode.com/problems/prefix-and-suffix-search)
+$0
+endsnippet

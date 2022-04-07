@@ -1,6 +1,6 @@
-::::::::::::::
-tests/BFS/1036.Escape-a-Large-Maze/1036.Escape-a-Large-Maze.t.cpp
-::::::::::::::
+
+# ==> ./tests/BFS/1036.Escape-a-Large-Maze/1036.Escape-a-Large-Maze.t.cpp <==
+snippet BFS "BFS" b
 #include "gtest/gtest.h"
 #include <climits>
 #include <algorithm>
@@ -66,9 +66,12 @@ TEST(escape_a_large_maze_test, III)
   std::vector<int> target {999, 999};
 
   ASSERT_FALSE(Solution().isEscapePossible(blocked, source, target));
-}::::::::::::::
-tests/Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.binary-indexed-tree.cpp
-::::::::::::::
+}
+$0
+endsnippet
+
+# ==> ./tests/Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.binary-indexed-tree.cpp <==
+snippet Divide_Conquer "Divide_Conquer" b
 #include <315.binary-indexed-tree.h>
 #include <Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.Count-of-Smaller-Numbers-After-Self-v2.cpp>
 
@@ -78,9 +81,12 @@ std::vector<int> count_v2(std::vector<int> &nums)
 {
   static Solution s;
   return s.countSmaller(nums);
-}::::::::::::::
-tests/Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.divided-conquer.cpp
-::::::::::::::
+}
+$0
+endsnippet
+
+# ==> ./tests/Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.divided-conquer.cpp <==
+snippet Divide_Conquer "Divide_Conquer" b
 #include <315.divided-conquer.h>
 #include <Divide_Conquer/315.Count-of-Smaller-Numbers-After-Self/315.Count-of-Smaller-Numbers-After-Self.cpp>
 
@@ -90,9 +96,12 @@ std::vector<int> count_v1(std::vector<int> &nums)
 {
   static Solution s;
   return s.countSmaller(nums);
-}::::::::::::::
-tests/Dynamic_Programming/072.Edit-Distance/072.Edit-Distance.t.cpp
-::::::::::::::
+}
+$0
+endsnippet
+
+# ==> ./tests/Dynamic_Programming/072.Edit-Distance/072.Edit-Distance.t.cpp <==
+snippet Dynamic_Programming "Dynamic_Programming" b
 #include "gtest/gtest.h"
 #include <climits>   // INT_MAX
 #include <algorithm> // std::min({})
@@ -169,9 +178,12 @@ TEST(edit_distance_72_test, benchmark)
   }
 
   ASSERT_EQ(ed1, ed2);
-}::::::::::::::
-tests/Dynamic_Programming/1027.Longest-Arithmetic-Sequence/1027.Longest-Arithmetic-Sequence.t.cpp
-::::::::::::::
+}
+$0
+endsnippet
+
+# ==> ./tests/Dynamic_Programming/1027.Longest-Arithmetic-Sequence/1027.Longest-Arithmetic-Sequence.t.cpp <==
+snippet Dynamic_Programming "Dynamic_Programming" b
 #include "gtest/gtest.h"
 #include <vector>
 #include <string>
@@ -199,3 +211,6 @@ TEST(longest_arithmetic_sequence_test, III)
 
   ASSERT_EQ(Solution().longestArithSeqLength(arr), 4);
 }
+
+$0
+endsnippet

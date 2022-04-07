@@ -1,6 +1,17 @@
-::::::::::::::
-Math/046.Permutations/046.Permutations.cpp
-::::::::::::::
+
+# ==> ./Math/0046.Permutations/Readme.md <==
+snippet 0046.Permutations "0046.Permutations" b
+### 046.Permutations
+
+考虑将第n个数字，插入到已有的n-1个数字组成的全排列中去，注意有n个位置的插空。
+
+
+[Leetcode Link](https://leetcode.com/problems/permutations)
+$0
+endsnippet
+
+# ==> ./Math/0046.Permutations/046.Permutations.cpp <==
+snippet 0046.Permutations "0046.Permutations" b
 class Solution {
 public:
     vector<vector<int>> permute(vector<int>& nums) 
@@ -36,17 +47,36 @@ public:
         return results;
     }
 };
-::::::::::::::
-Math/046.Permutations/Readme.md
-::::::::::::::
-### 046.Permutations
 
-考虑将第n个数字，插入到已有的n-1个数字组成的全排列中去，注意有n个位置的插空。
+$0
+endsnippet
+
+# ==> ./Math/0047.Permutations-II/Readme.md <==
+snippet 0047.Permutations-II "0047.Permutations-II" b
+### 047.Permutations-II
+
+此题是对046.Permutations的follow-up.我们知道，对于46题这种常规的排列，最巧妙的方法就是插入法。对于ｎ个数字组成的全排列，我们只要把第n+1个数字依次插入每个数字间隔之中（包括首尾），那么得到的就是n+1个数字组成的全排列。
+
+但对于此题，这种全排列就会有重复的情况。
+
+比如对于1,1,2三个数字组成的不重复的全排列有这三个：112,121,211.如果此时我们想再加上一个１，该怎么做呢？如果按照之前的方法，第一个会衍生出这四种1112，1112，1112，1121，而第二个会衍生出1121,1121,1211,1211,第三个会衍生出1211,2111,2111,2111。可见不仅每个分支内部的衍生会有重复，不同的分支之间也会有重复。
+
+解决的方法非常巧妙。那就是挨个空插入，但直到遇见相同的元素就停下来。比如，对于112，现在需要插入一个1，那么我们在队首插完之后就停止(因为seq[0]==1),得到的是1112。然后考虑121，同样，也只在队首插入一个１之后停止（因为seq[0]==1），得到的是1121。对于211，我们就可以插入在队首、以及第一个数字之后，然后停止（因为seq[1]==1），得到的分别是1211, 2111。
+
+这个方法能有效避免重复且不遗漏的原因是，112,121,211已经包含了所有n==3的全排列，已有的１已经充分地分布在其中。比如对于112，我们不需要对每个空都插入１，要相信其他序列（121，211)能够覆盖所有情况。
+
+补充：
+
+对于这种改进的“插板法”的理解，可以这么来看。我们将数列中相同的1做区分[1a,1b,2,1c]。按照上述的算法，我们能够保证新插入的1永远是在已经插入的1的前面，即四个数字插完后，里面的三个1永远是1c,1b,1a的顺序，这样就杜绝了因为三个1的乱序而造成的重复的全排列。
 
 
-[Leetcode Link](https://leetcode.com/problems/permutations)::::::::::::::
-Math/047.Permutations-II/047.Permutations-II_iterative.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/permutations-ii)
+
+$0
+endsnippet
+
+# ==> ./Math/0047.Permutations-II/047.Permutations-II_iterative.cpp <==
+snippet 0047.Permutations-II "0047.Permutations-II" b
 class Solution {
 public:    
     vector<vector<int>> permuteUnique(vector<int>& nums) 
@@ -76,9 +106,12 @@ public:
     }
 
 };
-::::::::::::::
-Math/047.Permutations-II/047.Permutations-II_recursive.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/0047.Permutations-II/047.Permutations-II_recursive.cpp <==
+snippet 0047.Permutations-II "0047.Permutations-II" b
 class Solution {
 public:
     vector<vector<int>> results;
@@ -111,30 +144,31 @@ public:
             
     }
 };
-::::::::::::::
-Math/047.Permutations-II/Readme.md
-::::::::::::::
-### 047.Permutations-II
 
-此题是对046.Permutations的follow-up.我们知道，对于46题这种常规的排列，最巧妙的方法就是插入法。对于ｎ个数字组成的全排列，我们只要把第n+1个数字依次插入每个数字间隔之中（包括首尾），那么得到的就是n+1个数字组成的全排列。
+$0
+endsnippet
 
-但对于此题，这种全排列就会有重复的情况。
+# ==> ./Math/0060.Permutation-Sequence/Readme.md <==
+snippet 0060.Permutation-Sequence "0060.Permutation-Sequence" b
+### 060.Permutation-Sequence
 
-比如对于1,1,2三个数字组成的不重复的全排列有这三个：112,121,211.如果此时我们想再加上一个１，该怎么做呢？如果按照之前的方法，第一个会衍生出这四种1112，1112，1112，1121，而第二个会衍生出1121,1121,1211,1211,第三个会衍生出1211,2111,2111,2111。可见不仅每个分支内部的衍生会有重复，不同的分支之间也会有重复。
+首先，创建一个集合，存储数字选项1,2,3,4,5,6,7,8,9。
 
-解决的方法非常巧妙。那就是挨个空插入，但直到遇见相同的元素就停下来。比如，对于112，现在需要插入一个1，那么我们在队首插完之后就停止(因为seq[0]==1),得到的是1112。然后考虑121，同样，也只在队首插入一个１之后停止（因为seq[0]==1），得到的是1121。对于211，我们就可以插入在队首、以及第一个数字之后，然后停止（因为seq[1]==1），得到的分别是1211, 2111。
+假设第一个位置的数字是1，那么总共有多少个这样的全排列呢？显然就是考虑第2\~N位上用数字2~N去做全排列，就是(N-1)\!个可能。同理，第一个位置如果是2的话，那么也有(N-1)\!个可能；第一个数字是3，同理也有(N-1)\!个可能……
 
-这个方法能有效避免重复且不遗漏的原因是，112,121,211已经包含了所有n==3的全排列，已有的１已经充分地分布在其中。比如对于112，我们不需要对每个空都插入１，要相信其他序列（121，211)能够覆盖所有情况。
+所以，用k除以(N-1)!得到的结果，就可以确定第一个位置的数字。例如：4xxxxxxxx符合要求的全排列共有```(N-1)!*4```个，形如5xxxxxxxx符合要求的全排列共有```(N-1)!*5```个，假设k除以```(N-1)!```的结果大于4且小于5，那么说明所需要的第k大的全排列一定在这两者之间。故它的第一个位置的数字一定是5。这里需要注意一个技巧，我们预先将k减去1，这样我们其实寻找的是0-index标准下的第k个全排列。这样```a=k/(N-1)!```无论是否整除，a的值就意味着我们需要在digit（剩余）的集合里面找第a个元素（同样是0-index）。
 
-补充：
+同理，接下来考虑第二个位置的数字。注意到刚才已经排除了形如4xxxxxxxx的排列，剩下来我们其实寻找的就是以5开头的、第```k-(N-1)!*4```个全排列。所以我们更新```k-=(N-1)!*4```，此时的任务演变成了：求由N-1个元素组成的全排列里面第k个是多少。我们可以重复上面的方法，通过查看```k/(N-2)!```的结果来判定第二位上的数字是什么。注意，每确定了一个数字，就需要从digit集合中删除那一个避免重复使用。
 
-对于这种改进的“插板法”的理解，可以这么来看。我们将数列中相同的1做区分[1a,1b,2,1c]。按照上述的算法，我们能够保证新插入的1永远是在已经插入的1的前面，即四个数字插完后，里面的三个1永远是1c,1b,1a的顺序，这样就杜绝了因为三个1的乱序而造成的重复的全排列。
+依次类推，就可以确定所有位置上的数字。值得指出的是，当n降为1的时候，此时的k一定会是零。
 
 
-[Leetcode Link](https://leetcode.com/problems/permutations-ii)
-::::::::::::::
-Math/060.Permutation-Sequence/060.Permutation-Sequence.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/permutation-sequence)
+$0
+endsnippet
+
+# ==> ./Math/0060.Permutation-Sequence/060.Permutation-Sequence.cpp <==
+snippet 0060.Permutation-Sequence "0060.Permutation-Sequence" b
 class Solution {
 public:
     string getPermutation(int n, int k) 
@@ -168,25 +202,33 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Math/060.Permutation-Sequence/Readme.md
-::::::::::::::
-### 060.Permutation-Sequence
 
-首先，创建一个集合，存储数字选项1,2,3,4,5,6,7,8,9。
+$0
+endsnippet
 
-假设第一个位置的数字是1，那么总共有多少个这样的全排列呢？显然就是考虑第2\~N位上用数字2~N去做全排列，就是(N-1)\!个可能。同理，第一个位置如果是2的话，那么也有(N-1)\!个可能；第一个数字是3，同理也有(N-1)\!个可能……
+# ==> ./Math/0077.Combinations/Readme.md <==
+snippet 0077.Combinations "0077.Combinations" b
+### 077.Combinations
 
-所以，用k除以(N-1)!得到的结果，就可以确定第一个位置的数字。例如：4xxxxxxxx符合要求的全排列共有```(N-1)!*4```个，形如5xxxxxxxx符合要求的全排列共有```(N-1)!*5```个，假设k除以```(N-1)!```的结果大于4且小于5，那么说明所需要的第k大的全排列一定在这两者之间。故它的第一个位置的数字一定是5。这里需要注意一个技巧，我们预先将k减去1，这样我们其实寻找的是0-index标准下的第k个全排列。这样```a=k/(N-1)!```无论是否整除，a的值就意味着我们需要在digit（剩余）的集合里面找第a个元素（同样是0-index）。
+比较容易实现的是递归的算法，就是最基本的DFS。
 
-同理，接下来考虑第二个位置的数字。注意到刚才已经排除了形如4xxxxxxxx的排列，剩下来我们其实寻找的就是以5开头的、第```k-(N-1)!*4```个全排列。所以我们更新```k-=(N-1)!*4```，此时的任务演变成了：求由N-1个元素组成的全排列里面第k个是多少。我们可以重复上面的方法，通过查看```k/(N-2)!```的结果来判定第二位上的数字是什么。注意，每确定了一个数字，就需要从digit集合中删除那一个避免重复使用。
+还有一种更优秀的数学构造法，值得学习一下。我们的目的是用n个数字构造一个逐位递增的k位数，现在尝试从小到大构造next combination.
 
-依次类推，就可以确定所有位置上的数字。值得指出的是，当n降为1的时候，此时的k一定会是零。
+以n=5，k=7为例子。最小的combination应该就是12345.那么我们会如何构造next comb呢？很显然我们会在最低位尝试加1，写出12346。再下一个，我们会写出12347.那么再下一个呢？显然最低位我们无法再增加1了，只好考虑十位数，发现可以在数字4上可以增加1也就是5；之后在最低位上，我们肯定会取最小的选择6，于是我们就写出了12356。
+
+依次类推，假设当前的comb是12367，它的next comb是什么呢？个位数不能增加了；十位数也不能增加了（否则十位数是7的话，个位数就没法填写了）；我们只有考虑在百位数上增加1.于是我们最终得到的是12456，
+
+至此我们可以大致总结出做法。我们会从最低位开始看，尝试能否加1，如果那一位的数字已经到顶，我们就往前面找，知道能找到一位可以加1的地方comb[i]；然后对于comb[i]后面的数字，我们会设置最小的组合，也就是依次令comb[j]=comb[j-1]+1。
+
+一个最关键的分析，comb[i]的数字封顶是多少呢？简单的分析可以知道是i+1+n-k（注意我们这里的i是0-index）。理由是如果comb[i]取得再大的话，就没有足够的数字来填充i之后的位置了。
 
 
-[Leetcode Link](https://leetcode.com/problems/permutation-sequence)::::::::::::::
-Math/077.Combinations/077.Combinations_interative.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/combinations)
+$0
+endsnippet
+
+# ==> ./Math/0077.Combinations/077.Combinations_interative.cpp <==
+snippet 0077.Combinations "0077.Combinations" b
 class Solution {
 public:
     vector<vector<int>> combine(int n, int k) 
@@ -211,9 +253,12 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Math/077.Combinations/077.Combinations_recursive.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/0077.Combinations/077.Combinations_recursive.cpp <==
+snippet 0077.Combinations "0077.Combinations" b
 class Solution {
     vector<vector<int>>rets;
 public:
@@ -240,27 +285,34 @@ public:
         }
     }
 };
-::::::::::::::
-Math/077.Combinations/Readme.md
-::::::::::::::
-### 077.Combinations
 
-比较容易实现的是递归的算法，就是最基本的DFS。
+$0
+endsnippet
 
-还有一种更优秀的数学构造法，值得学习一下。我们的目的是用n个数字构造一个逐位递增的k位数，现在尝试从小到大构造next combination.
+# ==> ./Math/0089.Gray-Code/Readme.md <==
+snippet 0089.Gray-Code "0089.Gray-Code" b
+### 089.Gray-Code
 
-以n=5，k=7为例子。最小的combination应该就是12345.那么我们会如何构造next comb呢？很显然我们会在最低位尝试加1，写出12346。再下一个，我们会写出12347.那么再下一个呢？显然最低位我们无法再增加1了，只好考虑十位数，发现可以在数字4上可以增加1也就是5；之后在最低位上，我们肯定会取最小的选择6，于是我们就写出了12356。
+一个比较好理解、记忆和实现的生成算法如下：
 
-依次类推，假设当前的comb是12367，它的next comb是什么呢？个位数不能增加了；十位数也不能增加了（否则十位数是7的话，个位数就没法填写了）；我们只有考虑在百位数上增加1.于是我们最终得到的是12456，
+假设我们已经有了两位的格雷码：```00,01,11,10```，如何生成三位的格雷码呢？
 
-至此我们可以大致总结出做法。我们会从最低位开始看，尝试能否加1，如果那一位的数字已经到顶，我们就往前面找，知道能找到一位可以加1的地方comb[i]；然后对于comb[i]后面的数字，我们会设置最小的组合，也就是依次令comb[j]=comb[j-1]+1。
+第一步将其镜像翻转并添加到自身的队列后面，得到```00,01,11,10,||10,11,01,00```。显然，除了镜像边缘的两个数（10和10），其他的数相邻之间都满足differ by 1 bit的关系。
 
-一个最关键的分析，comb[i]的数字封顶是多少呢？简单的分析可以知道是i+1+n-k（注意我们这里的i是0-index）。理由是如果comb[i]取得再大的话，就没有足够的数字来填充i之后的位置了。
+然后，我们再将前一半的数最高位设为0，后一半的数最高位设为1，就得到```000,001,011,010,||110,111,101,100```.此时，镜像边缘的两个数也满足differ by 1 bit的关系，而其他位置的数相邻之间的格雷码约束依然不变。于是，这就得到了三位的格雷码！
+
+我们循环利用上述的算法，不断往后推进，可以得到任意n位数的格雷码！
+
+LC 1238. Circular Permutation in Binary Representation 和本题一模一样。
 
 
-[Leetcode Link](https://leetcode.com/problems/combinations)::::::::::::::
-Math/089.Gray-Code/089.Gray-Code.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/gray-code)
+
+$0
+endsnippet
+
+# ==> ./Math/0089.Gray-Code/089.Gray-Code.cpp <==
+snippet 0089.Gray-Code "0089.Gray-Code" b
 class Solution {
 public:
     vector<int> grayCode(int n) 
@@ -278,9 +330,12 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Math/089.Gray-Code/089.Gray-Code_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/0089.Gray-Code/089.Gray-Code_v2.cpp <==
+snippet 0089.Gray-Code "0089.Gray-Code" b
 class Solution {
 public:
     vector<int> grayCode(int n) 
@@ -291,28 +346,1896 @@ public:
         return results;
     }
 };
-::::::::::::::
-Math/089.Gray-Code/Readme.md
-::::::::::::::
-### 089.Gray-Code
 
-一个比较好理解、记忆和实现的生成算法如下：
+$0
+endsnippet
 
-假设我们已经有了两位的格雷码：```00,01,11,10```，如何生成三位的格雷码呢？
+# ==> ./Math/0223.Rectangle-Area/Readme.md <==
+snippet 0223.Rectangle-Area "0223.Rectangle-Area" b
+### 223.Rectangle-Area
 
-第一步将其镜像翻转并添加到自身的队列后面，得到```00,01,11,10,||10,11,01,00```。显然，除了镜像边缘的两个数（10和10），其他的数相邻之间都满足differ by 1 bit的关系。
+整体而言这是一个容斥原理的应用。```A并B = A + B - A交B```
 
-然后，我们再将前一半的数最高位设为0，后一半的数最高位设为1，就得到```000,001,011,010,||110,111,101,100```.此时，镜像边缘的两个数也满足differ by 1 bit的关系，而其他位置的数相邻之间的格雷码约束依然不变。于是，这就得到了三位的格雷码！
+其中“A交B”的面积计算，通过确定相交区域的左下角和右上角来得到。
+```
+x_left_bottom = max(x1_left_bottom, x2_left_bottom)
+y_left_bottom = max(y1_left_bottom, y2_left_bottom)
+x_right_top = min(x1_right_top, x2_right_top)
+y_right_top = min(y1_right_top, y2_right_top)
+```
 
-我们循环利用上述的算法，不断往后推进，可以得到任意n位数的格雷码！
-
-LC 1238. Circular Permutation in Binary Representation 和本题一模一样。
+特别注意要检查 ```x_left_bottom < x_right_top```和 ```y_left_bottom < y_right_top```，才能说明有真正意义的相交矩形。
 
 
-[Leetcode Link](https://leetcode.com/problems/gray-code)
-::::::::::::::
-Math/1012.Numbers-With-Repeated-Digits/1012.Numbers-With-Repeated-Digits.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/rectangle-area)
+$0
+endsnippet
+
+# ==> ./Math/0223.Rectangle-Area/223.Rectangle-Area.cpp <==
+snippet 0223.Rectangle-Area "0223.Rectangle-Area" b
+class Solution {
+public:
+    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) 
+    {
+        long x1 = max(A,E);
+        long y1 = max(B,F);
+        long x2 = min(C,G);
+        long y2 = min(D,H);
+        
+        long overlap;
+        if (x1>=x2 || y1>=y2)
+            overlap = 0;
+        else
+        
+        return (long)(C-A)*(D-B) + (long)(G-E)*(H-F) - overlap;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0233.Number-of-Digit-One/Readme.md <==
+snippet 0233.Number-of-Digit-One "0233.Number-of-Digit-One" b
+### 233.Number-of-Digit-One
+
+本题的想法有很多，其中比较清晰容易实现的思路是：逐位查看，看该位上为1的符合条件的整数有多少个，然后将该整数的个数累加进最后的答案。这样虽然看上去是在数整数的个数，但其实最终得到的就是digit为1的总个数。
+
+举个例子。考虑n=345Y78，（Y是任意的数，待定），我们想考察有多少个符合要求的整数，使得其百位上可以是1.
+
+(1) 如果前三位任取000-344之一（共345种可能），那么最低两位可以任意取00-99（共100种可能）都不会超过n。这样的数有345\*100=34500个。第一个乘数就是n的前三位，第二个乘数就是10的二次方。
+
+(2) 如果前三位取345 (不可能更大了)，我们就要考虑Y的影响。
+
+a.  如果Y>1，那么最低两位可以任意取00-99（共100种可能）都不会超过n。这样的数有100个。
+
+b.  如果Y==1，那么最低两位不可以随便取，只能取00-78（共79种可能）。这个数字就是n的末两位加上1.
+
+c.  如果Y<1，那么最低两位如论取什么，都会导致这个数大于n，不符合条件。
+
+综合整理上述的分类讨论方案，可以将它适用于任何一个数位（个位、十位、千位、万位...），将这些数的统计全部加起来就是答案。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-digit-one)
+$0
+endsnippet
+
+# ==> ./Math/0233.Number-of-Digit-One/233.Number-of-Digit-One.cpp <==
+snippet 0233.Number-of-Digit-One "0233.Number-of-Digit-One" b
+class Solution {
+public:
+    int countDigitOne(int n) 
+    {
+        string N = to_string(n);
+        long len = N.size();
+        long count = 0;
+        
+        for (int i=1; i<=len; i++)
+        {   
+            long divisor = pow(10,i);
+            count += n/divisor*1*pow(10,i-1);
+
+            int digit = N[len-i]-'0';
+            
+            if (digit > 1)
+                count += pow(10,i-1);
+            else if (digit == 1)
+                count += n%(int)pow(10,i-1) + 1;
+        }
+        return count;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0296.Best-Meeting-Point/Readme.md <==
+snippet 0296.Best-Meeting-Point "0296.Best-Meeting-Point" b
+### 296.Best-Meeting-Point
+
+本题的笨方法，就是存下所有persons的位置，然后遍历每个点，计算该点到所有person的曼哈顿距离之后。时间复杂度是o(M*N*K).
+
+比较聪明的办法就是利用数学的性质。对于任意的序列x1,x2,x3,...,xn,我们要找到其中的一个k，使得
+
+```min_{k} |xi-k| for i=1,2,..,n```
+
+利用求导（非连续函数的特殊求导定义）的方法，可以得到如下的结论，最优的k是这个数列的中位数，注意不是平均数。如果序列里面有偶数个，那么中位数就是中间两个数的平均值。
+
+在本题里，最优点坐标的X可以直接判定是所有persons横坐标的中位数，Y就是所有persons纵坐标的中位数。知道了（X，Y）就可以直接计算所有人到该点的曼哈顿距离。
+
+
+
+[Leetcode Link](https://leetcode.com/problems/best-meeting-point)
+$0
+endsnippet
+
+# ==> ./Math/0296.Best-Meeting-Point/296.Best-Meeting-Point.cpp <==
+snippet 0296.Best-Meeting-Point "0296.Best-Meeting-Point" b
+class Solution {
+public:
+    int minTotalDistance(vector<vector<int>>& grid) 
+    {
+        vector<vector<int>>persons;
+        int M = grid.size();
+        int N = grid[0].size();
+        
+        vector<int>rows;
+        vector<int>cols;
+        for (int i=0; i<M; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (grid[i][j]==0) continue;
+                rows.push_back(i);
+                cols.push_back(j);
+            }
+        sort(cols.begin(),cols.end());
+        int X = rows[rows.size()/2];
+        int Y = cols[cols.size()/2];
+                
+        int result=0;
+        for (int i=0; i<M; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (grid[i][j]==0) continue;
+                result+=abs(i-X)+abs(j-Y);
+            }
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0335.Self-Crossing/Readme.md <==
+snippet 0335.Self-Crossing "0335.Self-Crossing" b
+### 335.Self-Crossing
+
+通过画图分析可以得知，要想不相交，就只有三种模式：
+
+1. 不断地螺旋形膨胀，时刻满足 x[i]>x[i-2]
+
+2. 不断地螺旋形收缩，时刻满足 x[i]<x[i-2]
+
+3. 先螺旋膨胀，再螺旋收缩。假设其中的转折点是x[i]，即第i步是第一次出现x[i]<x[i-2]的线段。根据之前的分析，从i+1开始，就进入了螺旋收缩模式，需要时刻满足 x[i]<x[i-2]。但通过作图可以发现，x[i]的长短，还会略微影响x[i+1]的取值：
+
+(a) 如果x[i]<x[i-2]-x[i-4]的话，接下来的x[i+1]只需要简单地满足小于x[i-1]即可（也就是它之前的对边），之后也是只要服从螺旋收缩的基本规则就行。
+
+(b) 但是如果x[i]>=x[i-2]-x[i-4]的话，为了避免相交，x[i+1]不能超过x[i-1]-x[i-3]。这个等价于我们将x[i-1]-=x[i-3]，之后从x[i+1]开始，只要仍服从螺旋收缩的基本规则即可。
+
+特别注意，为了保证x[i-4]之类的操作不会下标越界，一个巧妙的方法是在x序列的前面添加四个零，模拟一圈螺旋膨胀的路径，然后从i=4开始考察它接下来的模式。
+
+
+[Leetcode Link](https://leetcode.com/problems/self-crossing)
+$0
+endsnippet
+
+# ==> ./Math/0335.Self-Crossing/Readme2.md <==
+snippet 0335.Self-Crossing "0335.Self-Crossing" b
+### 335.Self-Crossing
+
+此题的解法非常精妙。
+
+试想一下，如果这样的操作能够无限进行下去而不相交，那必然是一个螺旋膨胀的图形，需要满足什么条件呢？很简单，只要永远比对面的那个线段更长即可
+```cpp
+while (x[i]>x[i-2])
+  i++;
+```
+
+一旦这种趋势无法保持，但仍想要不self-crossing的话，那么之后必然形成的是一个螺旋收缩的图形了（因为永远是逆时针地行进）。条件也很简单，只要永远比对面的那个线段更短即可：
+```cpp
+while (x[i]<x[i-2])
+  i++;
+```
+当然这种螺旋收缩的趋势不会是无限的。
+
+但是，对于从膨胀到收缩的临界线段x[i]，我们需要有一个额外的判断：
+```cpp
+if (x[i]>x[i-2]-x[i-4])
+   x[i-1]-=x[i-3];
+i++;
+```
+以上这步操作其实框定了螺旋收缩的范围。需要仔细体会。
+
+
+[Leetcode Link](https://leetcode.com/problems/self-crossing)
+$0
+endsnippet
+
+# ==> ./Math/0335.Self-Crossing/335.Self-Crossing.cpp <==
+snippet 0335.Self-Crossing "0335.Self-Crossing" b
+class Solution {
+public:
+    bool isSelfCrossing(vector<int>& x) 
+    {
+        x.insert(x.begin(), 4, 0);
+        
+        int i = 4;
+        while (i<x.size() && x[i]>x[i-2])
+            i++;
+        if (i==x.size()) return false;
+        
+        if (x[i] >= x[i-2]-x[i-4])
+            x[i-1] = x[i-1] - x[i-3];
+        i++;
+        
+        while (i<x.size() &&  x[i]<x[i-2])
+            i++;
+        
+        if (i==x.size()) return false;
+        else return true;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0343.Integer-Break/Readme.md <==
+snippet 0343.Integer-Break "0343.Integer-Break" b
+### 343.Integer-Break
+
+此题最傻的方法是DFS，挨个尝试所有将n拆分为若干数之和的组合形式。
+
+稍微聪明点的可以想到递归。先将n拆分为两个数之和，找出它们乘积最大的一种拆分形式。而每个数又可以递归往下继续拆分为两个数，规模越来越小。所以记忆化搜索或者DP都是比较好写的算法。
+
+最好的想法是利用数学上的技巧。在限定和一定的条件下，我们尽量拆分成接近自然对数e的整数，也就是2或者3，就能使总乘积最大。考虑到以6为例子，3\*3>2\*2\*2，所以我们的目标还是尽量拆成3.所以我们只要计算n除以3的各种情况就行。
+
+1. n能被3整除，则结果就是pow(3,n/3)
+2. n被3除余2，则结果就是pow(3,n/3)\*2
+3. n被3除余1，稍微有些变化，因为pow(3,n/3)\*1并不合算，我们就退一步，写成pow(3,n/3-1)\*4会得到更大的结果。
+
+
+[Leetcode Link](https://leetcode.com/problems/integer-break)
+$0
+endsnippet
+
+# ==> ./Math/0343.Integer-Break/343.Integer-Break.cpp <==
+snippet 0343.Integer-Break "0343.Integer-Break" b
+class Solution {
+public:
+    int integerBreak(int n) 
+    {
+        if (n==2) return 1*1;
+        if (n==3) return 1*2;
+        if (n==4) return 2*2;
+        if (n%3==0) return pow(3,n/3);
+        else if (n%3==1) return pow(3,n/3-1)*4;
+        else return pow(3,n/3)*2;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0343.Integer-Break/343.Integer-Break_dp.cpp <==
+snippet 0343.Integer-Break "0343.Integer-Break" b
+class Solution {
+public:
+    int integerBreak(int n) 
+    {
+        if (n==2) return 1;
+        if (n==3) return 2;
+        vector<int>dp(n+1,0);
+        dp[2] = 2;
+        dp[3] = 3;
+        for (int i=4; i<=n; i++)
+        {
+            int temp = 0;
+            for (int j=2; j<=i/2; j++)
+            {
+                if (dp[j]*dp[i-j]>temp)
+                    temp = dp[j]*dp[i-j];
+            }
+            dp[i] = temp;
+        }
+        return dp[n];
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0365.Water-and-Jug-Problem/Readme.md <==
+snippet 0365.Water-and-Jug-Problem "0365.Water-and-Jug-Problem" b
+### 365.Water-and-Jug-Problem
+
+一种比较容易理解的方法是，虚拟出一个第三方的水罐，容积就是x+y。对于这个第三方水罐，我们定义两个操作：1.成功地加入x升水或者y升水，保证不溢出。2.成功地取出x升水或者y升水，注意需要保证水箱中有对应足量的水能够满足这个操作。
+
+接下来我们将上面两个操作与本题的真实情景相对应。
+
+1.“成功地（往第三方水罐）加入x升水或者y升水”，对应的是在第一个水罐或者第二个水罐灌满水。如果那个水罐已经有部分水了，那就先将其移到另外一个水罐中。注意的是，我们保证“成功地（往第三方水罐）加入x升水或者y升水”，说明此操作之前留存的水不会导致这次操作有溢出，否则就不算是成功的操作，因此在本题的场景中，“将某个水罐存留的水移到另外一个水罐”这个操作肯定是合法的。
+
+2.“成功地（从第三方水罐）取出x升水或者y升水”，对应的是将第一个水罐或者第二个水罐在充满的情况下放空。如果那个水罐之前没有充满，那就先将另外一个水罐里存留的水转移至其充满。注意的是，我们保证“成功地（从第三方水罐）取出x升水或者y升水”，说明此操作之前留存的水足够这次操作，否则就不算是成功的操作，因此在本题的场景中，“先将另外一个水罐里存留的水转移至其充满”这个操作肯定是合法的。
+
+至此，我们做一个暂时的小结：如果在虚拟场景中，通过上述两个操作能够在第三方水罐中得到z升的水，那么同样我们也一定能够在本题的真实场景中，得到z升的水。只要将相应的操作对应起来即可。
+
+然后，我们需要反思一下，有什么操作是在真实场景中可以做到的，但是在虚拟场景中做不到的呢？也就是说，会不会有什么操作，使得在真实场景下得到z，但是在虚拟场景下得不到z呢？或许有可能。比如，在真实场景中，第一个水罐非满状态但存有a，我们此时将第一个水罐放空，就得到了“放空a升水”的操作，而这个操作似乎是在虚拟场景中无法实现的。但是，注意，“放空a升水”的前提是水罐里已经有了a升水，而这个恰恰又可以考虑成一个递归问题。所以，“放空a升水”并不是一个独立的操作，而也是基于之前两个基本操作得到的中间产物。
+
+所以，我们的一个结论是，真实场景下，并没有什么特别的操作是虚拟场景中两个基本操作所实现不了的。所以这个虚拟场景和真实场景是完全等价的。
+
+既然如此，我们就考虑最初的那个虚拟场景。这个非常好理解，就是判断是否有一系列的+x/-x/+y/-y的操作，使得最后的结果是z。也就是判断mx+ny=z是否有整数解。这个有解的条件显然就是z必须是gcd(x,y)的倍数。
+
+
+[Leetcode Link](https://leetcode.com/problems/water-and-jug-problem)
+$0
+endsnippet
+
+# ==> ./Math/0365.Water-and-Jug-Problem/365.Water-and-Jug-Problem.cpp <==
+snippet 0365.Water-and-Jug-Problem "0365.Water-and-Jug-Problem" b
+class Solution {
+public:
+    bool canMeasureWater(int x, int y, int z) 
+    {
+        if(x + y < z) return false;
+        if (z==x||z==y||z==x+y) return true;
+        return z% __gcd(x, y) ==0;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0382.Linked-List-Random-Node/Readme.md <==
+snippet 0382.Linked-List-Random-Node "0382.Linked-List-Random-Node" b
+### 382.Linked-List-Random-Node
+
+这是一个非常实用的随机数生成方法，叫做 reservoire sampling。不需要事先遍历所有的元素，也不需要记录任何元素。
+
+假设只有一个元素a，输出结果就是result = a。
+
+假设读入第二个元素b，让result取一半的概率变为b：于是此时result相当于有一半概率是a，一半概率是b。
+
+假设读入第三个元素c，让result取1/3的概率变为c：于是此时result相当于1/3的概率是c，那么剩下非c的概率里a、b各是多少呢？根据前面的分析，各一半。所以result相当于1/3的概率是b，1/3的概率是c。
+
+假设读入第四个元素d，让result取1/4的概率变为c：于是此时，根据前面的分析不难推广，result各有1/4的概率等于a,b,c,d。
+
+于是算法就很容易归纳了。
+
+更常见的问题是，如何得到k个均匀分布的随机数？只要把result当做一个能容纳k个元素的reservoire。每次遇到的新元素以 k/i的概率保留，再在这个reservoir里以均匀概率选取一个替换成新元素就行。可以证明，当所有的元素遍历完之后，剩下的result里就是以均匀概率选取的k个数。
+
+类似的题是：398.Random Pick Index
+
+
+[Leetcode Link](https://leetcode.com/problems/linked-list-random-node)
+$0
+endsnippet
+
+# ==> ./Math/0382.Linked-List-Random-Node/382.Linked-List-Random-Node.cpp <==
+snippet 0382.Linked-List-Random-Node "0382.Linked-List-Random-Node" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* node;
+    /** @param head The linked list's head.
+        Note that the head is guaranteed to be not null, so it contains at least one node. */
+    Solution(ListNode* head) {
+        node = head;
+    }
+    
+    /** Returns a random node's value. */
+    int getRandom() 
+    {
+        ListNode* h = node;
+        int k = 0;
+        int x = 0;
+        
+        while (h!=NULL)
+        {
+            k++;
+            int r = rand()%k;
+            if (r==0)
+                x = h->val;
+            h = h->next;
+        }
+        
+        return x;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0391.Perfect-Rectangle/Readme.md <==
+snippet 0391.Perfect-Rectangle "0391.Perfect-Rectangle" b
+### 391.Perfect-Rectangle
+
+将每个单位矩形的四个顶点坐标作为key放入一个HashMap里。最终符合要求的顶点集合，必然只有四个点的value是1（作为最终大矩形的顶点），其余点的value必须是偶数。或者把顶点坐标放入一个set里，已经存在话就删除，不存在的话就加入，那么最终符合要求的顶点集合，必然只剩下四个点作为最终大矩形的四个顶点。
+
+然后把这四个顶点按x，y方向排个序。第一个和最后一个顶点就应该是大矩形的左上和右下角。根据这两个角算出的面积，应该等于之前所有小矩形的总面积。
+
+满足以上两个条件的顶点集合，必然可以无缝拼接成一个完整的大矩形。
+
+
+[Leetcode Link](https://leetcode.com/problems/perfect-rectangle)
+$0
+endsnippet
+
+# ==> ./Math/0391.Perfect-Rectangle/391.Perfect-Rectangle.cpp <==
+snippet 0391.Perfect-Rectangle "0391.Perfect-Rectangle" b
+class Solution {
+    static bool cmp(pair<int,int>a, pair<int,int>b)
+    {
+        if (a.first==b.first)
+            return a.second<b.second;
+        else
+            return a.first<b.first;
+    }
+public:
+    bool isRectangleCover(vector<vector<int>>& rectangles) 
+    {
+        long long area=0;
+        unordered_set<string>Set;
+        for (int i=0; i<rectangles.size(); i++)
+        {
+            string str;
+            str=to_string(rectangles[i][0]);
+            str+=",";
+            str+=to_string(rectangles[i][1]);
+            if (Set.find(str)==Set.end())
+                Set.insert(str);
+            else
+                Set.erase(str);
+            
+            str=to_string(rectangles[i][0]);
+            str+=",";
+            str+=to_string(rectangles[i][3]);
+            if (Set.find(str)==Set.end())
+                Set.insert(str);
+            else
+                Set.erase(str);
+            
+            str=to_string(rectangles[i][2]);
+            str+=",";
+            str+=to_string(rectangles[i][1]);
+            if (Set.find(str)==Set.end())
+                Set.insert(str);
+            else
+                Set.erase(str);
+            
+            str=to_string(rectangles[i][2]);
+            str+=",";
+            str+=to_string(rectangles[i][3]);
+            if (Set.find(str)==Set.end())
+                Set.insert(str);
+            else
+                Set.erase(str);         
+            
+            area+= (long long)(rectangles[i][3]-rectangles[i][1])*(long long)(rectangles[i][2]-rectangles[i][0]);
+        }
+        
+        if (Set.size()!=4) return false;
+        
+        vector<pair<int,int>>points;
+        for (auto a:Set)
+        {
+            int i=0;
+            while (a[i]!=',') i++;
+            int x = stoi(a.substr(0,i));
+            int y = stoi(a.substr(i+1));
+            points.push_back({x,y});
+        }
+        
+        sort(points.begin(),points.end(),cmp);
+        
+        long long A=(long long)(points[3].second-points[0].second)*(long long)(points[3].first-points[0].first);
+        
+        return (A==area);
+        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0400.n-th-digit/Readme.md <==
+snippet 0400.n-th-digit "0400.n-th-digit" b
+### 400.n-th-digit
+
+首先判断这个n-th digit所属的数字t总共有几个digit。我们将这个n不断减去"所有一位数的digit的总数"，再减去"所有两位数的digit的总数"，再减去"所有三位数的digit的总数"...最后一次n大于零的时候，就可以确定我们其实要求的，就是所有k位数中的第n个digit。
+
+我们将此时的n除以k，其实就可以确定是第几个k位数；然后将n对于k取余数，就可以确定是那个数的第几位。答案就出来了。
+
+
+[Leetcode Link](https://leetcode.com/problems/n-th-digit)
+$0
+endsnippet
+
+# ==> ./Math/0400.n-th-digit/400.n-th-digit.cpp <==
+snippet 0400.n-th-digit "0400.n-th-digit" b
+class Solution {
+public:
+    int findNthDigit(int N) 
+    {
+        int k = 0;
+        long n = N;
+        long nums = 0;
+        while (n > 0)
+        {        
+            k++;    
+            nums = kDigitNums(k);
+            n -= nums;
+        }
+
+        if (n==0) return 9;
+
+        n += nums;
+        int m = n/k;
+        if (n%k==0) m--;
+        int r = n%k;
+        if (r==0) r=k;
+
+        int ret = pow(10,k-1) + m;
+        return to_string(ret)[r-1] - '0';
+    }
+
+    long kDigitNums(int k)
+    {
+        return  (pow(10, k) - pow(10, k-1)) * k;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0441.Arranging-Coins/Readme.md <==
+snippet 0441.Arranging-Coins "0441.Arranging-Coins" b
+### 441.Arranging-Coins
+
+假设答案是k，那么n一定是介于等差数列求和公式sum(k)与sum(k+1)之间，即
+```
+(1+k)*k/2 <=n < (1+k+1)*(k+1)/2     （*）
+```
+化简
+```
+k(k+1) <= 2n <= (k+1)(k+2)
+```
+缩放
+```
+k^2 < 2n < (k+2)^2
+```
+所以有k的范围是
+```
+sqrt(2n)-2 < k < sqrt(2n)
+```
+可以见只有两个整数解: k = sqrt(2n)-1 或者 sqrt(2n)。我们只要检查一下这两个是否满足原始的(*)式即可。
+
+$0
+endsnippet
+
+# ==> ./Math/0441.Arranging-Coins/441.Arranging-Coins.cpp <==
+snippet 0441.Arranging-Coins "0441.Arranging-Coins" b
+class Solution {
+public:
+    int arrangeCoins(int n) 
+    {
+        if (n==0) return 0;
+        long m = n;
+        for (long k = sqrt(2*m)-1;  k < sqrt(2*m); k++)
+        {
+            if (k*(k+1) <= 2*m && 2*m < (k+1)*(k+2))
+                return k;
+        }
+        return -1;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0458.Poor-Pigs/Readme.md <==
+snippet 0458.Poor-Pigs "0458.Poor-Pigs" b
+### 458.Poor-Pigs
+
+#### 1.从信息论的角度考虑
+
+根据信息论，要从N个桶里面挑出有毒的那一个，需要的信息量是 log_2^(N).
+
+根据题意，对于一个猪，它在一个小时内可以进行t次尝试 t = 60min/15min = 4.
+
+对于一个猪的t次尝试，总共会有t+1种结果，即不中毒、第15min中毒、第30min中毒、... 第60min中毒。根据信息论，从中可以抽取的信息量是 log_2^(t+1)。
+
+所以总共需要猪的个数是: log_2^(N) / log_2^(t+1) = log_(t+1)^N.
+
+#### 2.从策略的角度考虑
+
+先思考一只猪，在题意的15min/60min的条件下，能鉴别出几桶水？答案是5. 因为这5瓶水对应了这只猪第15分钟死（第一桶有毒）、第30分钟死（第二桶有毒）、第45分钟死（第三桶有毒）、第60分钟死（第四桶有毒）、不死（前四桶都没毒，根据题意，必然是第五桶有毒）。
+
+既然一只猪能鉴别五桶，那么两只猪就是25桶，为什么？因为这25桶水可以按照五进制编码两个bit：比如01，表示这瓶水不给A猪喝，但给B猪第一批次喝；又比如34，表示这瓶水给A猪第三批次喝，给B猪第四批次喝。最后，根据AB两只猪死亡的状态（死或不死、在什么时候死）可以鉴别出有毒的那一桶的编码。
+
+同理引申，那么三只猪就是可以鉴别5^3=125桶。最后，想鉴别1000桶就话，需要log(5)(1000)=5只猪。
+
+
+[Leetcode Link](https://leetcode.com/problems/poor-pigs)
+$0
+endsnippet
+
+# ==> ./Math/0458.Poor-Pigs/458.Poor-Pigs.cpp <==
+snippet 0458.Poor-Pigs "0458.Poor-Pigs" b
+class Solution {
+public:
+    int poorPigs(int buckets, int minutesToDie, int minutesToTest) 
+    {
+        return ceil(log(buckets)/log(minutesToTest/minutesToDie+1));
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0470.Implement-Rand10--Using-Rand7/Readme.md <==
+snippet 0470.Implement-Rand10--Using-Rand7 "0470.Implement-Rand10--Using-Rand7" b
+### 470.Implement-Rand10--Using-Rand7
+
+#### 解法１：
+所谓实现Rand10()，本质就是保证：(1) 输出是1-10， (2) 每个输出都是等概率的。
+
+感觉可以实现的方法有很多。我想到的是，Rand7()输出的是1-7,七种等概率的输出对Rand10()有帮助吗？好像差点什么。如果给我们的函数有五种等概率的输出，好歹还可将其映射到1-2,3-4,5-6,7-8,9-10这五类，每一类（两个数字）出现的概率还能够平均一点。怎么办呢？思路立马就有了，如果Rand7()给出七种可能，我们就取前五种呗，如果抽到了6或者7，那就不算，重新再来不就行了。这样，我们就能通过Rand7()得到五种等概率的输出。
+
+有了这个思路，接下来也好办了。刚才通过一次Rand7()，得到等概率的五种输出，但是每种输出可以包含两个数字。如何将这两个数字再等概率地分开呢？那就再摇一次Rand7()呗。如果是奇数就选这两个数字中的奇数，如果是偶数就选这两个数字中的偶数。当然Rand7()会得到四个奇数和三个偶数并不公平，那我们就采用相同的思路，抽到７就不算，重来就行了。这样，对于奇偶性的抽取总是均等概率的。
+
+综上，我们的Rand10()是分两步走，第一步利用Rand7()得到等概率的五种可能，然后再利用Rand7()得到等概率的两种可能。
+
+对于这道题，面试官肯定会问，抽出一个数，需要调用Rand7()的次数的期望是多少。之所以我们抽一个Rand10()可能不止需要两次Rand7()操作，是因为可能会遇到retry的情况。我们可以大致算一算：
+
+第一步：
+```1*5/7+2*(2/7)*5/7+3*(2/7)^2*5/7+...+k*(2/7)^(k-1)*5/7```
+
+第二步：
+```1*6/7+2*(1/7)*6/7+3*(1/7)^2*6/7+...+k*(1/7)^(k-1)*6/7```
+
+可以用等差等比数列的方法算一下，大概是2.6次左右。
+
+#### 解法２：
+我们先想一个简单的问题，如何通过rand10()实现rand7()？因为rand10()能够等概率地得到[0,1,2,3,4,5,6,7,8,9]，假如永远不会出现7,8,9的话那岂不就是rand7()了？因此一个简单的想法就是，如果rand10()得到了7,8,9就retry，直至rand10()出现的数在[0,6]范围内，然后把答案输出。
+
+OK，接下来我们思考如何通过rand7()实现rand10()？有人会想，通过两次rand7()再相加，得到均匀分布的[0,1,2,3,4,5,6,7,8,9,10,11,12,13]，再对出现大于10的结果时进行retry就可以了。这个思路很正确，但是可惜的是，对于两个独立同均匀分布的随机变量X,Y，它们的加和不是均匀分布，而是二项分布。我们无法通过两次rand7()得到[0,13]均匀分布的随机数。
+
+但是，我们可以用两次rand7()得到[0,48]均匀分布的随机数！我们考虑一个包含两位digit的七进制数ab，并且令a和b都是由rand7()得到的。那么ab代表了七进制的[00,66]之间连续、等概率的分布。转化为十进制的话，就是[0,48]之间连续、等概率的分布。利用之前的retry大法，对于X\~U[0,48]的随机变量，当大于等于40时就进行retry，可以得到Y\~U[0,39]。进一步，Y%10~U[0,9]，就得到了我们需要的答案!
+
+可以计算，得到一个rand10()所需要调用的rand7()的次数的期望是2.45。
+
+### 解法3：
+从信息论的角度来看，rand7()给出的信息量是log(7)，rand10()给出的信息量是log(10)，因此理论上的极限应该是log(10)/log(7)=1.183。如何接近这个答案呢？如果只是生成一个rand10()，这是如论如何也做不到的。但是这个标准答案的隐含意思是，如果想生成1000个rand10()，我们可能只需要调用1183次rand7().
+
+我们可以扩展解法2，考虑一个7位的七进制数abcdefg，其中每一位都是rand7()得到的随机数。那么我们就得到了X\~U[0,823542]。利用retry大法，对于大于等于800000的进行retry，就可以得到随机变量Y\~U[0,799999]。我们发现对于Y，除了最高位之外，其他所有位置的digit都是符合[0,9]的均匀随机分布的，因此我们就可以通过拆解Y得到五个在[0,9]的均匀随机数，也就是答案。
+
+所以，我们call了7次rand7()，得到了五个rand10()，近乎每7/5=1.2次调用就能实现结果（忽略了retry），效率是非常高的。
+
+
+[Leetcode Link](https://leetcode.com/problems/implement-rand10--using-rand7)
+$0
+endsnippet
+
+# ==> ./Math/0470.Implement-Rand10--Using-Rand7/470.Implement-Rand10()-Using-Rand7().cpp <==
+snippet 0470.Implement-Rand10--Using-Rand7 "0470.Implement-Rand10--Using-Rand7" b
+// The rand7() API is already defined for you.
+// int rand7();
+// @return a random integer in the range 1 to 7
+
+class Solution {
+public:
+    int rand10() 
+    {
+        int m = rand7();
+        while (m>5)
+            m = rand7();
+        int n = rand7();
+        while (n==7)
+            n = rand7();        
+        return (m-1)*2+n%2+1;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0470.Implement-Rand10--Using-Rand7/470.Implement-Rand10--Using-Rand7_v2.cpp <==
+snippet 0470.Implement-Rand10--Using-Rand7 "0470.Implement-Rand10--Using-Rand7" b
+// The rand7() API is already defined for you.
+// int rand7();
+// @return a random integer in the range 1 to 7
+
+class Solution {
+public:
+    int rand10() 
+    {
+        int a = rand7();
+        int b = rand7();
+        int x = (a-1)*7+(b-1);
+        if (x>=40) return rand10();
+        return x%10+1;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0470.Implement-Rand10--Using-Rand7/470.Implement-Rand10--Using-Rand7_v3.cpp <==
+snippet 0470.Implement-Rand10--Using-Rand7 "0470.Implement-Rand10--Using-Rand7" b
+// The rand7() API is already defined for you.
+// int rand7();
+// @return a random integer in the range 1 to 7
+
+class Solution {
+    stack<int>Stack;
+public:
+    int rand10() 
+    {
+        int n = 7;
+        int upper = pow(7,n)/10*10;
+        int digits = log(upper)/log(10);     
+        
+        while (Stack.empty())
+        {
+            int x = 0;
+            for (int i=0; i<n; i++)
+                x = x*7+rand7()-1;
+                   
+            if (x<upper)
+            {                
+                for (int j=0; j<digits; j++)
+                {
+                    Stack.push(x%10+1);
+                    x = x/10;
+                }                
+            }            
+        }
+        int ret = Stack.top();
+        Stack.pop();
+        return ret;
+    }    
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0478.Generate-Random-Point-in-a-Circle/Readme.md <==
+snippet 0478.Generate-Random-Point-in-a-Circle "0478.Generate-Random-Point-in-a-Circle" b
+### 478.Generate-Random-Point-in-a-Circle.cpp
+
+对于一个圆中的任意一点，如果用```(x,y)```表示的话，我们需要分别生成均匀分布的x和y，但要使得```x^2+y^2<R^2```.所以一种简单粗暴的方法就是随机生成在```[-R,R]```均匀分布的x和y，再考察```x^2+y^2```以reject那些超出范围的采样点。如果```(x,y)```超出范围那就重新再run一遍这个程序，直到所得的```(x,y)```符合要求。很显然，这个方法的缺点就是不够高效，每每跑一次不见得就能得到一个有效的点，运气不好可能会需要跑好几次。
+
+另一种很容易想到的思路，就是尝试用极坐标表示法```(r,theta)```，其中r表示到原点的距离，theta表示射线的角度。在这里定义域就是```r<1```，theta属于```[0,2*Pi)```.直观上，我们可以知道，想要这个点在圆内尽可能随机分布，那么它的角度theta应该是等概率出现的。所以毫无疑问theta应该是一个在```[0,2*Pi)```上均匀分布的。
+
+那么r应该怎么生成呢？r是不是也该在```[0,R)```上均匀分布呢？如果我们自己做一做实验，在一个圆内画几条等角度分布的直径作为“轮辐”，再在直径上等距离的画点，可以发现，我们得到的点的分布在圆内并不是均匀的，很明显这个时候里面的点更密集，外面的点更稀疏。所以这就提示我们，对r做采样的时候不应该在```[0,R)```上均匀分布，而是越靠外越密集些，以补偿刚才这种“内密外疏”的趋势。该怎么调整呢？
+
+一种直观的思路：我们可以这么想，假设当前的半径是r，圆的面积是r^2（忽略常系数），并且认为r^2是一个单位的面积。如果我们将半径扩大一倍变成2r，圆的面积就是4\*r^2，多出了三份单位面积，我们为了保持每份圆环面积的大小r^2不变，我们需要在直径扩大的部分区间```[r,2r]```上取三个采样点。再往外走一步，如果半径变成了3r，那么我们需要在```[2r,3r)```的区间上取9-4=5个点...可见规律是，半径越大的位置，我们沿半径采集的点就需要越密集（以保证每层圆环的面积是均匀一致的），这种取点的累积密集（就是概率分布函数，但注意不是概率密度函数）显然就是r的平方关系。
+
+所以，简单来说，现在有随机变量S的概率分布函数满足S = r^2，如果想要S是沿半径方向```[0,R)```区间呈现均匀分布（也就是一条直线），那么随机变量r（也就是在半径方向上进行取点的抽样）的概率分布函数也必然就是对一个均匀分布的随机变量进行开平方。
+
+Follow Up: 请问如何通过一个在[0,1]上均匀分布的随机变量t，来实现对s的采样，要求采样得到一个新的随机变量s，使得s满足某种概率密度函数分布PDF.（答案就是```CDF^(-1)(t)```，注意CDF是PDF的积分)
+
+
+[Leetcode Link](https://leetcode.com/problems/generate-random-point-in-a-circle)
+$0
+endsnippet
+
+# ==> ./Math/0478.Generate-Random-Point-in-a-Circle/478.Generate-Random-Point-in-a-Circle_v1.cpp <==
+snippet 0478.Generate-Random-Point-in-a-Circle "0478.Generate-Random-Point-in-a-Circle" b
+class Solution {
+    double R, x0, y0;
+public:
+    Solution(double radius, double x_center, double y_center) 
+    {
+        R = radius;
+        x0 = x_center;
+        y0 = y_center;
+    }
+    
+    vector<double> randPoint() 
+    {
+        double r1 = (double)rand()/RAND_MAX;  // [0,1) 
+        double x = r1*2*R-R+x0;
+        double r2 = (double)rand()/RAND_MAX; 
+        double y = r2*2*R-R+y0;
+        
+        if ((x-x0)*(x-x0)+(y-y0)*(y-y0)<=R*R)
+            return {x,y};
+        else
+            return randPoint();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0478.Generate-Random-Point-in-a-Circle/478.Generate-Random-Point-in-a-Circle_v2.cpp <==
+snippet 0478.Generate-Random-Point-in-a-Circle "0478.Generate-Random-Point-in-a-Circle" b
+class Solution {
+    double R;
+    double x0;
+    double y0;
+public:
+    double PI = 3.1415926;
+    Solution(double radius, double x_center, double y_center) 
+    {
+        R = radius;
+        x0 = x_center;
+        y0 = y_center;
+    }
+    
+    vector<double> randPoint() 
+    {        
+        double r = (double)rand()/RAND_MAX;
+        r = sqrt(r)*R;
+        double theta = (double)rand()/RAND_MAX*PI*2;
+        double x = x0+r*sin(theta);
+        double y = y0+r*cos(theta);
+        return {x,y};        
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(radius, x_center, y_center);
+ * vector<double> param_1 = obj.randPoint();
+ */
+
+$0
+endsnippet
+
+# ==> ./Math/0497.Random-Point-in-Non-overlapping-Rectangles/Readme.md <==
+snippet 0497.Random-Point-in-Non-overlapping-Rectangles "0497.Random-Point-in-Non-overlapping-Rectangles" b
+### 497.Random-Point-in-Non-overlapping-Rectangles
+
+我们手头的随机数生成器```rand()%M```只能生成[0,M-1]范围内的均匀随机数。如何利用它来实现题目的要求呢？
+
+我们可以将所有的矩形的点都拉成一个序列，然后连续地拼接起来。假设所有矩形所覆盖的点有M个，那么我们通过```rand()%M+1```就能够得到一个均匀的随机数k，有着相等的概率来代表这M个点的序号（第一个是1号，最后一个是M号）。
+
+接下来我们需要判定k号点是在哪个矩形里。我们只需要利用前缀和的思想，提前准备好一个数组q，其中q[i]表示前i个矩形所覆盖的点的个数，例如[4,10,11]。于是我们在q里面找第一个大于等于k的元素位置，就是k号点所在的矩形的编号i。
+
+有了这个矩形编号i，我们就可以知道k号点在第i个矩形内的相对编号k'，继而通过矩形的宽/高得到其内部第k'个点的行/列位置。
+
+
+[Leetcode Link](https://leetcode.com/problems/random-point-in-non-overlapping-rectangles)
+$0
+endsnippet
+
+# ==> ./Math/0497.Random-Point-in-Non-overlapping-Rectangles/497.Random-Point-in-Non-overlapping-Rectangles.cpp <==
+snippet 0497.Random-Point-in-Non-overlapping-Rectangles "0497.Random-Point-in-Non-overlapping-Rectangles" b
+class Solution {
+    vector<int>q;
+    vector<vector<int>>rects;
+public:
+    Solution(vector<vector<int>>& rects) 
+    {
+        int sum = 0;
+        for (int i=0; i<rects.size(); i++)
+        {
+            sum += (rects[i][2]-rects[i][0]+1)*(rects[i][3]-rects[i][1]+1);
+            q.push_back(sum);
+        }
+        this->rects = rects;
+    }
+    
+    vector<int> pick() 
+    {
+        int idx = rand()%q.back()+1;
+        int i = lower_bound(q.begin(),q.end(), idx) - q.begin();
+        
+        int D1 = rects[i][2]-rects[i][0]+1;
+        int D2 = rects[i][3]-rects[i][1]+1;
+        int j = rand()%D1;
+        int k = rand()%D2;
+        return {rects[i][0]+j, rects[i][1]+k};
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(rects);
+ * vector<int> param_1 = obj->pick();
+ */
+
+$0
+endsnippet
+
+# ==> ./Math/0519.Random-Flip-Matrix/Readme.md <==
+snippet 0519.Random-Flip-Matrix "0519.Random-Flip-Matrix" b
+### 519.Random-Flip-Matrix
+
+此题和	710.Random Pick with Blacklist 有些类似。
+
+总共有M\*N个格子。我们每次随机取走一个，count++，那么下一轮可供选择的数目就是M\*N-count个。所以随机数的生成只要在0~M\*N-count-1里面取就行，假设是k，那么问题来了，如果这个随机数k对应的格子我们在之前已经取走了怎么办呢？
+
+为了保证我们每次生成的随机数都可以对应一个依然为0的格子，我们就需要保证，每次取走一个格子，都需要有另外一个合法的格子能够补上这个空缺。举个例子，在第一个回合，我们得到随机数是k，我们把第k个格子返回，但是为了保证以后再抽到k时依然能返回一个0格子，我们就把此时序号最高的0格子，标号是M\*N-1-count，将它指定给第k个位置。于是我们要建立一个Map，建立映射Map[k]=M\*N-1-count，这样下次抽到k时就返回Map[k]即可。
+
+但是，还有问题，如果序号为M\*N-1-count的格子已经在之前被取走过了，怎么办呢？没有关系，虽然序号为M\*N-1-count的格子不在了，但是它所在的位置必然有一个映射Map[M\*N-1-count]标记着一个有效的0格子。这个格子是在之前的某回合中，抽到随机数M\*N-1-count时，如前述所作的相同的映射操作。
+
+因为每个回合都会将count++，所以序号最高的0格子（确切的说是序号最高的key）也会不断下降。所以对于任意抽取的k，要么k是从来没有取走的格子，要么你总能找到Map[k]。
+
+
+
+
+[Leetcode Link](https://leetcode.com/problems/random-flip-matrix)
+$0
+endsnippet
+
+# ==> ./Math/0519.Random-Flip-Matrix/519.Random-Flip-Matrix.cpp <==
+snippet 0519.Random-Flip-Matrix "0519.Random-Flip-Matrix" b
+class Solution {
+    int m,n;
+    int count;
+    unordered_map<int,int>Map;
+public:
+    Solution(int n_rows, int n_cols) {
+        m = n_rows;
+        n = n_cols;
+        count = 0;
+    }
+    
+    vector<int> flip() 
+    {
+        int k = rand()%(m*n-count);
+        int ret;
+        
+        count++;
+        
+        if (Map.find(k)!=Map.end())
+            ret = Map[k];
+        else
+            ret = k;
+        
+        if (Map.find(m*n-count)!=Map.end())
+            Map[k] = Map[m*n-count];
+        else
+            Map[k] = m*n-count;
+        
+        return {ret/n,ret%n};
+        
+    }
+    
+    void reset() 
+    {
+        Map.clear();
+        count = 0;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0528.Random-Pick-with-Weight/Readme.md <==
+snippet 0528.Random-Pick-with-Weight "0528.Random-Pick-with-Weight" b
+### 528.Random-Pick-with-Weight
+
+计算权重函数的前缀和数组，这样得到了一个类似累积概率分布的数组```p=[w0,w0+w1,w0+w1+w2,...,W]```。这个新数组的最后一个元素代表这权重的总份数W。
+
+我们取一个[0,W]上的均匀分布随机变量t，然后查看t在p中的位置。因为t落在p的哪个位置，是和p里面各个元素之间的“区间大小”直接相关的，所以t被随机在哪里，直接反映了p中各个元素被采样的概率。比如，t落在p_k和p_k+1之间，就意味着这个t对应于采样了第k+1个元素。“区间间隔”越大的元素，t就越可能落在那里。
+
+这就是inverse probability distribution method. 思考：我们利用一个均匀随机变量t，如何实现采样一个新的随机变量s，使得s的概率密度函数是pdf？方法就是s = cdf_{-1}(t).
+
+
+[Leetcode Link](https://leetcode.com/problems/random-pick-with-weight)
+$0
+endsnippet
+
+# ==> ./Math/0528.Random-Pick-with-Weight/528.Random-Pick-with-Weight.cpp <==
+snippet 0528.Random-Pick-with-Weight "0528.Random-Pick-with-Weight" b
+class Solution {
+    vector<int>p;
+public:
+    Solution(vector<int>& w) 
+    {
+        int sum = -1;
+        for (auto ww: w)
+        {
+            sum+=ww;
+            p.push_back(sum);
+        }
+    }
+    
+    int pickIndex() 
+    {
+        int r = rand()%(p.back()+1);
+        auto iter = lower_bound(p.begin(),p.end(),r);
+        return iter-p.begin();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0587.Erect-the-Fence/Readme.md <==
+snippet 0587.Erect-the-Fence "0587.Erect-the-Fence" b
+### 587.Erect-the-Fence
+
+此题的本质就是根据一群点，找出覆盖全部点的凸多边形。
+
+首先，将所有点按从左到右、从低到高排序。
+
+先考虑凸多边形的下边界。在hull_lower先入列points[0]。假设已经在hull_lower队列里有C,D两点，则考察points[i]作为候选点X，我们判断CD和DX两条矢量的夹角是否是凸的（即DX相对于CD是往上翘的）。如果是的话，则将X加入队列作为E；不是的话，则我们将D踢出队列，再查看此时队列末尾的B、C和X点的关系，以此类推，直至满足三点成凸，或者队列中只剩一个（最左下角的初始点），就不再踢了，直接将X加入。
+
+考虑凸多边形的上边界，用类似的方法。在hull_upper先入列points.back()。然后在points里倒序遍历所有点，依然要保证所有入列的点，满足三点成凸的关系。
+
+最后，将hull_lower和hull_upper归并至一处，去除掉重复的点，就是所求凸多边形的边界点。
+
+注：向量a=(x1,y1),b=(x2,y2)，则叉乘axb=(x1y2-y1x2)表示一个朝向z方向的向量。如果为正，则说明从a到b转过了一个逆时针的角度；如果为负，则说明从a到b转过了一个顺时针的角度。这可以用右手螺旋定则来记忆。
+
+
+[Leetcode Link](https://leetcode.com/problems/erect-the-fence)
+$0
+endsnippet
+
+# ==> ./Math/0587.Erect-the-Fence/587.Erect-the-Fence.cpp <==
+snippet 0587.Erect-the-Fence "0587.Erect-the-Fence" b
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+    static bool cmp(Point a, Point b)
+    {
+        if (a.x==b.x)
+            return a.y<b.y;
+        else
+            return a.x<b.x;
+    }
+    static bool eqn(Point a, Point b)
+    {
+        
+        return (a.x==b.x)&&(a.y==b.y);
+    }    
+        
+public:
+    vector<Point> outerTrees(vector<Point>& points) 
+    {
+        sort(points.begin(),points.end(),cmp);
+        
+        vector<Point>down;
+        down.push_back(points[0]);
+        for (int i=1; i<points.size(); i++)
+        {
+            while (down.size()>=2 && crossProduct(down[down.size()-2],down.back(),points[i])<0)
+                down.pop_back();
+            down.push_back(points[i]);
+        }
+        
+        vector<Point>up;
+        up.push_back(points.back());
+        for (int i=points.size()-1; i>=0; i--)
+        {
+            while (up.size()>=2 && crossProduct(up[up.size()-2],up.back(),points[i])<0)
+                up.pop_back();
+            up.push_back(points[i]);
+        }
+        
+        vector<Point>results(down.begin(),down.end());
+        for (int i=0; i<up.size();i++)
+            results.push_back(up[i]);
+        
+        sort(results.begin(),results.end(),cmp);
+        results.erase(unique(results.begin(),results.end(),eqn),results.end());
+        return results;        
+    }
+    
+    long long crossProduct(Point A, Point B, Point C)
+    {
+        return (long long)(B.x - A.x) * (long long)(C.y - B.y) - (long long)(B.y - A.y) * (long long)(C.x - B.x);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0593.Valid-Square/Readme.md <==
+snippet 0593.Valid-Square "0593.Valid-Square" b
+### 593.Valid-Square
+
+计算这四个点两两之间的距离，共6条边。把这六条边放进一个set里，如果这个集合只有两个元素，且没有零元素，则说明这六条边构成的是正方形。
+
+
+[Leetcode Link](https://leetcode.com/problems/valid-square)
+$0
+endsnippet
+
+# ==> ./Math/0593.Valid-Square/593.Valid Square.cpp <==
+snippet 0593.Valid-Square "0593.Valid-Square" b
+class Solution {
+public:
+    bool validSquare(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) 
+    {
+        unordered_set<int>Set;
+        
+        Set.insert(distance(p1,p2));
+        Set.insert(distance(p1,p3));
+        Set.insert(distance(p1,p4));
+        Set.insert(distance(p2,p3));
+        Set.insert(distance(p2,p4));
+        Set.insert(distance(p3,p4));
+        
+        return (Set.count(0)==0 && Set.size()==2);
+    }
+    
+    int distance(vector<int>a, vector<int>b)
+    {
+        return (a[0]-b[0])*(a[0]-b[0])+(a[1]-b[1])*(a[1]-b[1]);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0628.Maximum-Product-of-Three-Numbers/Readme.md <==
+snippet 0628.Maximum-Product-of-Three-Numbers "0628.Maximum-Product-of-Three-Numbers" b
+### 628.Maximum-Product-of-Three-Numbers
+
+1. 所有元素大于0：	| X... X X X  	
+   	肯定取最大的三个正数。即 nums[N-3]*nums[N-2]*nums[N-1]
+
+2. 仅有一个元素小于0：	X | X... X X X  	
+	单个负数无法使用，依然只能取最大的三个正数。即 nums[N-3]*nums[N-2]*nums[N-1]
+
+3. 至少两个元素小于0：	X X | ... X X X  
+	尝试取绝对值最大的两个负数组合成一个较大的正数？（不可能取更多或者其他的负数）
+	max { nums[N-3]*nums[N-2]*nums[N-1], nums[0]*nums[1]*nums[N-1]}
+
+4. 	仅有一个元素大于0：	X X ... X X | X  	
+ 	仅能取最小的两个负数和一个正数。即 nums[0]*nums[1]*nums[N-1]
+
+5. 	所有元素小于0：	X X ... X X |
+	仅能取最小的两个负数和最大的一个负数。即 nums[0]*nums[1]*nums[N-1]
+  
+所以我们发现规律，答案总是从 nums[N-3]*nums[N-2]*nums[N-1], nums[0]*nums[1]*nums[N-1] 这两个值中间取。
+
+$0
+endsnippet
+
+# ==> ./Math/0628.Maximum-Product-of-Three-Numbers/628.Maximum-Product-of-Three-Numbers.cpp <==
+snippet 0628.Maximum-Product-of-Three-Numbers "0628.Maximum-Product-of-Three-Numbers" b
+class Solution {
+public:
+    int MaximumProduct(vector<int> &nums) {
+        sort(nums.begin(),nums.end());
+        int N=nums.size();
+        return max(nums[0]*nums[1]*nums[N-1], nums[N-3]*nums[N-2]*nums[N-1]);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0672.Bulb-Switcher-II/Readme.md <==
+snippet 0672.Bulb-Switcher-II "0672.Bulb-Switcher-II" b
+### 672.Bulb-Switcher-II
+
+此题对于分析题意有这非常高的要求。
+
+首先，我们考虑灯泡数量n的性质。我们假设m=k1+k2+k3+k4，k_i表示第i种操作的数目。我们观察一下规律：
+1. 灯泡1最终变化的次数是 k1+k2+k4，
+2. 灯泡2最终变化的次数是 k1+k3，
+3. 灯泡3最终变化的次数是 k1+k2. 
+4. 灯泡4最终变化的次数是 k1+k3+k4. 
+5. 灯泡5最终变化的次数是 k1+k3. 
+6. 灯泡6最终变化的次数是 k1+k2.
+
+从第7个灯泡开始，开始1-6的循环。所以我们可以知道，序号大于等于7的灯泡都没有自己独立的状态，完全取决于前6个灯泡的状态。当n>=6时，只要考察前6个灯泡里不同的状态数目就行了。
+
+但是如果再仔细观察，灯泡4的变化次数是 k1+k3+k4，恰好是灯泡1-灯泡2+灯泡3，所以灯泡4的状态完全是由灯泡1~3的状态决定的，本身并不是一个自由变化的量。同理可以分析灯泡5也完全跟随灯泡2，灯泡6也完全跟随灯泡3，也都不是自由量。所以，n的考察范围其实只要限制在n<=3即可。
+
+其次，我们考虑操作次数m的性质。在给出的四种操作里面，前三种操作有一个神奇的性质，任意两个操作的效果都等效于剩下的那个操作。另外，容易知道，两次相同的操作会相互对消。基于这两个原则，当m>=3时，任意给出m个操作的排列组合，最后都可以简化为这8种等效的操作组合：
+```
+0,1,2,3,4,1+4,2+4,3+4
+```
+
+顺便考虑一下m==2时，相当于有这几种操作的组合。
+```
+1+1,1+2,1+3,1+4,2+2,2+3,2+4,3+3,3+4,4+4
+```
+化简一下就是这7种等效的操作组合：
+```
+0,3,2,1+4,1,2+4,3+4
+```
+注意：没有等效于4的操作！
+
+
+综上，对于m<=3，n<=3，穷举都不是问题。
+
+当m==0时：没有操作，return 1.
+
+当n==1时：m次操作，无非就是让第一个灯泡亮也可以使得其不亮。所以return 2.
+
+当n==2时：m==1，return 3；m==2，对两个灯穷举前述（m==2）的操作组合，return 4.
+
+当n==3时：m==1，return 4；m==2，对三个灯穷举两次操作的组合，return 7； m==3，对三个灯穷举三次操作的组合，return 8.
+
+
+[Leetcode Link](https://leetcode.com/problems/bulb-switcher-ii)
+$0
+endsnippet
+
+# ==> ./Math/0672.Bulb-Switcher-II/672.Bulb-Switcher-II.cpp <==
+snippet 0672.Bulb-Switcher-II "0672.Bulb-Switcher-II" b
+class Solution {
+public:
+    int flipLights(int n, int m) 
+    {        
+        if (m==0) { return 1; }
+        
+        if (n==1)
+        {
+            if (m>=1) { return 2; }
+        }
+        if (n==2)
+        {
+            if (m==1) { return 3; }
+            if (m>=2) { return 4; }
+        }
+        if (n>=3)
+        {
+            if (m==1) { return 4; }
+            if (m==2) { return 7; }
+            if (m>=3) { return 8; }
+        }
+        
+        return 0; // invalid value for n or m        
+            
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0710.Random-Pick-with-Blacklist/Readme.md <==
+snippet 0710.Random-Pick-with-Blacklist "0710.Random-Pick-with-Blacklist" b
+### 710.Random-Pick-with-Blacklist
+
+#### 解法1：
+显然，N个元素，刨去黑名单中的元素，剩下M个元素。我们每次生成的随机数就是在0~M-1之间。问题就是，如果随机数是k，但是k在黑名单里，该怎么办？
+
+我们用映射的思想，将处于[0,M)但也是黑名单里的数，映射为[0,M)之外的合法数字。这个在预处理的时候就可以实现。只要从N-1里降序遍历，只要不在黑名单里的数字，都逐次用来填充黑名单。
+
+#### 解法2：
+有一个比较骚气的binary search的解法，虽然时间效率不是很高，但是角度很新颖。
+
+我们二分搜索一个位置pos，计算count等于[0,pos]的区间里面有多少个合法的数。然后不断缩小规模，直至找到最小的一个位置，使得count恰好等于k（k就是随机数，表示我们需要取第k个合法的数）。最终二分搜索收敛后的这个位置就是答案。
+
+然后我们考虑count怎么写。count其实就是pos+1-[0,pos]里面有多少个黑名单的数。那么对于给定的区间[0,pos]。如何计算有多少在黑名单里呢？同样我们先将黑名单排序，然后查看pos在黑名单的位置。更具体的，我们需要找到的是blacklist.upper_bound(pos)的迭代器iter（即第一个大于pos的位置），显然从blacklist.begin()到prev(iter,1)都是小于等于pos的黑名单成员，因此这个[0,pos]区间内黑名单的数目就是iter-blacklist.begin().
+
+
+[Leetcode Link](https://leetcode.com/problems/random-pick-with-blacklist)
+$0
+endsnippet
+
+# ==> ./Math/0710.Random-Pick-with-Blacklist/710.Random-Pick-with-Blacklist.cpp <==
+snippet 0710.Random-Pick-with-Blacklist "0710.Random-Pick-with-Blacklist" b
+class Solution {
+    unordered_map<int,int>Map;
+    int M;
+public:
+    Solution(int N, vector<int> blacklist) 
+    {
+        unordered_set<int>Set(blacklist.begin(),blacklist.end());
+        M = N-blacklist.size();
+        
+        int x = N-1;
+        for (int i=0; i<blacklist.size(); i++)
+        {
+            if (blacklist[i]>=M) continue;
+            while (Set.count(x))
+                x--;
+            Map[blacklist[i]] = x;
+            x--;
+        }
+        
+    }
+    
+    int pick() 
+    {
+        int k = rand()%M;
+        if (Map.find(k)!=Map.end())
+            return Map[k];
+        else
+            return k;
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(N, blacklist);
+ * int param_1 = obj.pick();
+ */
+
+$0
+endsnippet
+
+# ==> ./Math/0710.Random-Pick-with-Blacklist/710.Random-Pick-with-Blacklist_v2.cpp <==
+snippet 0710.Random-Pick-with-Blacklist "0710.Random-Pick-with-Blacklist" b
+class Solution {
+    int N;
+    vector<int>blacklist;
+public:
+    Solution(int N, vector<int>& blacklist) 
+    {        
+        sort(blacklist.begin(),blacklist.end());
+        this->N = N;
+        this->blacklist = blacklist;
+        
+    }
+    
+    int pick() 
+    {
+        int k = rand()%(N-blacklist.size())+1;
+        
+        int left = 0;
+        int right = N-1;
+        while (left<right)
+        {
+            int mid = left+(right-left)/2;
+            if (count(mid) >= k)
+                right = mid;
+            else
+                left = mid+1;            
+        }
+        return left;        
+    }
+    
+    int count(int t)
+    {
+        auto iter = upper_bound(blacklist.begin(),blacklist.end(),t);
+        return (t+1)-(iter-blacklist.begin());
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0754.Reach-a-Number/Readme.md <==
+snippet 0754.Reach-a-Number "0754.Reach-a-Number" b
+### 754.Reach-a-Number
+
+此题在数学方法上有巧妙的思路．
+
+假设目标是11，我们自然会尝试+1+2+3+4+5...这样尝试下去，发现这样操作了５次，之后得到的是15，超过了目标11，多了4，该怎么办呢？其实策略非常简单，我们将刚才的操作里面的+2变成-2，一正一反就降了４．也就是说+1-2+3+4+5，就能得到11．显然，这样的操作肯定是最简洁的了．所以我们的基本思路就是，+1+2+3...一路不停地加过去，一旦sum超过了target，那么我们就将之前＂加上＂的(sum-target)/2这个数，改为＂减去＂即可．
+
+那么我们自然会问，如果target是12，当我们将sum加到15的时候，相差是3，不是二的倍数怎么办呢？解决方法是：我们就继续累加+6+7，将sum积累到28．此时sum和target之间的差是16，看上去终于是偶数了。但是，我们又发现，28是从1累加到7的结果，似乎没有办法再减去一个-8，怎么办呢？事实上，遇到这种情况下，我们不需要最后一步加上7，而是减去7，此时得到的sum是14，与target之间的差是2，这就提示我们此时再将+2改动成-2即可。
+
+综上可以分析得到，我们从+1,+2,...开始不断地往上累加，当sum恰超过target时，最多再多加两次，一定能保证sum-target是偶数。只要这个差是偶数，就一定保证能有一个解决方案（类似第一段或者第二段的方法）来实现．
+
+
+[Leetcode Link](https://leetcode.com/problems/reach-a-number)
+$0
+endsnippet
+
+# ==> ./Math/0754.Reach-a-Number/754.Reach-a-Number.cpp <==
+snippet 0754.Reach-a-Number "0754.Reach-a-Number" b
+class Solution {
+public:
+    int reachNumber(int target)     
+    {
+        target=abs(target);
+        int sum=0;
+        int i=0;
+        while (!(target<=sum && (target%2==sum%2)))
+        {
+            i++;
+            sum+=i;            
+        }
+        
+        return i;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0829.Consecutive-Numbers-Sum/Readme.md <==
+snippet 0829.Consecutive-Numbers-Sum "0829.Consecutive-Numbers-Sum" b
+### 829.Consecutive-Numbers-Sum
+
+此题显然可以看出这就是求一个等差数列使得和为N。我们假设首项是x,项数是m,则有```(x+x+m-1)*m/2=N```
+
+我们转换一下，得到```x=(2N-m(m-1))/2m```。我们可以看到只需要```2N-m(m-1)```能被```2m```整除的话，x就有解。所以我们可以考虑遍历m，如果这个m对应有正整数解x，那么就是满足题意的一种方案。
+
+
+[Leetcode Link](https://leetcode.com/problems/consecutive-numbers-sum)
+$0
+endsnippet
+
+# ==> ./Math/0829.Consecutive-Numbers-Sum/829.Consecutive-Numbers-Sum.cpp <==
+snippet 0829.Consecutive-Numbers-Sum "0829.Consecutive-Numbers-Sum" b
+class Solution {
+public:
+    int consecutiveNumbersSum(int N) 
+    {
+        int count = 0;
+        for (int m = 1; 2*N-m*m+m>0; m++ )
+        {
+            if ((2*N-m*m+m)%(2*m)==0)
+                count++;
+        }
+        return count;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0858.Mirror-Reflection/Readme.md <==
+snippet 0858.Mirror-Reflection "0858.Mirror-Reflection" b
+### 858.Mirror-Reflection
+
+容易想象，光路射出后，会在左右边界上来回反弹数次，可能会到达接收器1，也可能会到达接收器2，但更有可能会打到上边界从而弹回，造成后续非常复杂的光路。这是本题的难点所在。
+
+解决方法是：当光线打到上边界```1-2```时，我们不考虑其弹回的路径，而是假设其直接穿越了上边界，进入了一个镜像世界```1-3'0'-2```。如下图：
+```
+3'----------0'
+|           |
+|  Virtual  |
+1-----------2
+|           |
+|   Real    |
+3-----------0
+```
+这样光路就可以继续在左右边界上来回反弹数次，如果有幸能被3'接收，就意味着在真实世界里光路能抵达3；同理，如果有幸能被0'接收，就意味着在真实世界里光路能抵达0；当然，同样也有可能会继续达到上边界```3'-0'```，那怎么办呢？那就沿着那条镜面再做一次镜像翻转，得到二次虚拟空间。如下图：
+```
+3'----------0'
+|           |
+|  Virtual2 |
+1'----------2'
+|           |
+|  Virtual2 |
+3'----------0'
+|           |
+|  Virtual  |
+1-----------2
+|           |
+|  Real     |
+3-----------0
+```
+可见二次虚拟空间进一步扩展了纵向的空间，使得光路可以继续来回折线向上走，一路上又有可能被1','2',3',0'接收，同理这意味着真实世界里的光路可以相应地被1,2,3,0接收...这样的虚拟空间可以进一步的扩展。
+
+因为本题中每次光路的“折向”都会上升q，而每层接收器之间的距离是p，两者都是正整数，因此，光路必定会在来回盘升了LCM(p,q)之后，抵达（虚拟）接收器的位置。
+
+那么如何确定抵达了哪一个接收器呢？我们可以找规律。从起点开始（真实世界的3），每上升q就会到达右边界，再上升q就会到达左边界，依次交替。同样，每上升p就会到达1-2水平层（或它们的镜像），再上升p就会到达3-0水平层（或它们的镜像），依次交替。所以我们令```LCM(p,q)=mq=np```，当m是奇数时就可能是2或者0，偶数时就可能是1或者3。当n是奇数，就可能是1或者2，偶数时就可能是3或者0.
+
+当我们明确了m和n的奇偶性，就可以唯一确定光路射入的是哪一个（虚拟）接收器。
+
+
+[Leetcode Link](https://leetcode.com/problems/mirror-reflection)
+$0
+endsnippet
+
+# ==> ./Math/0858.Mirror-Reflection/858.Mirror-Reflection.cpp <==
+snippet 0858.Mirror-Reflection "0858.Mirror-Reflection" b
+class Solution {
+public:
+    int mirrorReflection(int p, int q) 
+    {
+        int m=1;
+        while (q*m%p!=0)
+            m++;
+        
+        int n = q*m/p;
+        
+        if (m%2==1 && n%2==1)
+            return 1;
+        else if (m%2==0 && n%2==1)
+            return 2;
+        else if (m%2==1 && n%2==0)
+            return 0;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0878.Nth-Magical-Number/Readme.md <==
+snippet 0878.Nth-Magical-Number "0878.Nth-Magical-Number" b
+### 878.Nth-Magical-Number
+
+这道题和```1201. Ugly Number III```属于同一个类型，思想上还更简单。Binary Search可以是一个解法。但仍然有一个隐患，就是我们对于搜索的上限（区间的右端点）其实并没有一个合理的估计，可能需要设定为int64的最大值，甚至还可能更大。
+
+在比赛中，我没有使用二分，而是用了周期性的特征。假设A，B的最小公倍数是LCM，那么以LCM为周期，其中出现的magic number的个数都是一样的，即```k = LCM/A+LCM/B-LCB/gcd(A,B)```.因此我们可以计算出第N个魔法数，其实是经过了p=N/k个整数周期，此外再加上```t=N-p*k```个零头。显然这个零头t肯定是小于k的，而且第t个魔法数也一定是在LCM的范围内的。
+
+所以，本题转化为求[1,LCM)范围内的第t个魔法数r。而最终的答案就是 p*LCM+r.
+
+怎么求[1,LCM)范围内的第t个魔法数r？简单的枚举就行了，依次检查A和B各自的倍数（即A*i和B*j），选取较小的那个就是next magic number。直至找到第t个为止。
+
+
+[Leetcode Link](https://leetcode.com/problems/nth-magical-number)
+$0
+endsnippet
+
+# ==> ./Math/0878.Nth-Magical-Number/878.Nth-Magical-Number.cpp <==
+snippet 0878.Nth-Magical-Number "0878.Nth-Magical-Number" b
+class Solution {
+public:
+    int nthMagicalNumber(int N, int A, int B) 
+    {
+        long MOD = 1e9+7;
+        long lcm = A*B/gcd(A,B);
+        long p = (long)N/(lcm/A+lcm/B-1);
+        
+        long s = p*(lcm/A+lcm/B-1);
+        long t = (long)N - s;
+        
+        if (t==0) return lcm*p%MOD;
+        
+        int i = 1, j = 1;
+        long remainder;
+        while (count<t)
+        {
+            if (A*i < B*j)
+            {
+                remainder = A*i;
+                i++;
+            }
+            else
+            {
+                remainder = B*j;
+                j++;
+            }
+            count++;
+        }
+        
+        return (lcm*p%MOD + remainder)%MOD;
+        
+        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0883.Projection-Area-of-3D-Shapes/Readme.md <==
+snippet 0883.Projection-Area-of-3D-Shapes "0883.Projection-Area-of-3D-Shapes" b
+### 883.Projection-Area-of-3D-Shapes
+
+从题目给出的示意图就可以看出，从某一个方向看过去的投影高度，完全取决于这个方向上能看到的最高的那根柱子的高度。比如对于x=i方向上，投影到y-z平面上的高度其实就是```max{grid[i][j]} for j=0,1,2,...```。所以对于y-z平面上的总投影面积，就是把所有的```max{grid[i]}```加起来就行。
+
+对于x-z平面上的总投影也是如此处理。计算每个col[j]，表示第j列上的的最大值。再把所有col[j]相加。
+
+对于x-y平面上的总投影，处理起来更为简单，就是计算grid[i][j]有多少个非零元素即可。
+
+
+[Leetcode Link](https://leetcode.com/problems/projection-area-of-3d-shapes)
+$0
+endsnippet
+
+# ==> ./Math/0883.Projection-Area-of-3D-Shapes/883.Projection-Area-of-3D-Shapes.cpp <==
+snippet 0883.Projection-Area-of-3D-Shapes "0883.Projection-Area-of-3D-Shapes" b
+class Solution {
+public:
+    int projectionArea(vector<vector<int>>& grid) 
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        vector<int>row(m,0);
+        vector<int>col(n,0);
+        int ret=0;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+            {
+                row[i] = max(row[i],grid[i][j]);
+                col[j] = max(col[j],grid[i][j]);
+                ret+=(grid[i][j]>0);
+            }
+        
+        for (int i=0; i<m; i++)
+            ret+=row[i];
+        for (int j=0; j<n; j++)
+            ret+=col[j];
+
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0891.Sum-of-Subsequence-Widths/Readme.md <==
+snippet 0891.Sum-of-Subsequence-Widths "0891.Sum-of-Subsequence-Widths" b
+### 891.Sum-of-Subsequence-Widths
+
+对于任何A中的一个子序列，其实相当于在A中任取若干个数组成combination。所以总共有2^n种子序列。既然是组合，那么顺序其实无所谓。我们可以先将A排序一下。
+
+将A排序之后，我们立即可以发现，我们可以遍历任意的A[i]和A[j]做为最小值和最大值，那么这样的子序列马上就能知道有```2^(j-i-1)```种，因此可以用o(n^2)的时间复杂度来解决：```sum += (A[j]-A[i])*pow(2,j-i-1)```
+
+还有更优化的方法。求所有子序列的max-min的和，等价于求所有子序列的max的和，减去所有子序列的min的和。这样的话我们只需要遍历任意的A[i]：当它作为最小值时的子序列有2^(n-i-1)种；当它作为最大值时的子序列有2^i种。所以代码很简单，只要o(n)的复杂度：
+```cpp
+for (int i=0; i<n; i++)
+{
+  sum += A[i]*pow(2,i);
+  sum -= A[i]*pow(2,n-1-i);
+}
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/sum-of-subsequence-widths)
+$0
+endsnippet
+
+# ==> ./Math/0891.Sum-of-Subsequence-Widths/891.Sum-of-Subsequence-Widths.cpp <==
+snippet 0891.Sum-of-Subsequence-Widths "0891.Sum-of-Subsequence-Widths" b
+class Solution {
+public:
+    int sumSubseqWidths(vector<int>& A) 
+    {
+        long M = 1e9+7;
+        
+        vector<long>Pow2(20000,1);
+        for (int i=1; i<20000; i++)
+            Pow2[i] = Pow2[i-1]*2%M;
+        
+        sort(A.begin(),A.end());
+        long sum = 0;
+        int n = A.size();
+        for (int i=0; i<n; i++)
+        {
+            sum -= A[i]*Pow2[n-1-i]%M;
+            sum += A[i]*Pow2[i]%M;
+            sum %= M;
+        }
+        return sum;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0899.Orderly-Queue/Readme.md <==
+snippet 0899.Orderly-Queue "0899.Orderly-Queue" b
+### 899.Orderly-Queue
+
+本题是一道趣味数学题。事实上，当K>=2的时候，可以用题目规则构造任意组合的字符串。
+
+首先通过循环轮转（即持续地将字符串的第一个字母放到最后一个的位置），我们可以将某个需要的字符X轮转到出现在字符串的首位。然后固定X不动，然后再持续地将字符串的第二个字母放到最后一位，直至最后一位字母出现的是某个需要的字符Y。最后我们将第一位的X放在字符串末尾。于是，以上操作就实现了将任意字符X放在任意字符Y后面的操作！不断地重复这个方法，就可以构造出任意的想要的字符。
+
+当K==1的时候，没有特别巧的方法，我们只能遍历所有的循环轮转的可能，构造出N种字符串，选取字典序最小的一个。
+
+
+[Leetcode Link](https://leetcode.com/problems/orderly-queue)
+$0
+endsnippet
+
+# ==> ./Math/0899.Orderly-Queue/899.Orderly-Queue.cpp <==
+snippet 0899.Orderly-Queue "0899.Orderly-Queue" b
+class Solution {
+public:
+    string orderlyQueue(string S, int K) 
+    {
+        if (K>=2)
+        {
+            sort(S.begin(),S.end());
+            return S;
+        }
+        
+        string ret = S;
+        for (int i=0; i<S.size(); i++)
+        {
+            S = S.substr(1) + S.substr(0,1);
+            if (S<ret)
+                ret = S;
+        }
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0963.Minimum-Area-Rectangle-II/Readme.md <==
+snippet 0963.Minimum-Area-Rectangle-II "0963.Minimum-Area-Rectangle-II" b
+### 963.Minimum-Area-Rectangle-II
+
+我们穷举任意的一对点（记作点i和点j），那么ij所组成的一条线段，可以用```deltaX = xj-xi, deltaY = yj-ji```来表示它的方向和长度。我们将同属于```{deltaX,deltaY}```的point pair（或者说线段）放在一起，即
+```
+Map[{deltaX,deltaY}].push_back({i,j}); 
+```
+那么对于同一个```key = {deltaX,deltaY}```所代表的这些线段，两两之间都一定可以组成一个平行四边形！
+
+我们遍历这些平行四边形。对于每一个平行四边形，它们的四个点的坐标都是已知的（比如记作ijkt）。我们可以通过考察向量ij和向量jk是否垂直来判定这个四边形是否是矩形。数学上，具体的做法是考察两个二维向量的点积是否为零。即
+```
+v1(x1,y1)垂直于v2(x2,y2) <=> x1*x2+y1*y2 = 0
+```
+
+如果确认是矩形，那我们很容易计算它的面积，记录下来求最小值即可。
+
+这种做法的效率较高，原因是我们将所有的线段（N^2)条按照“长度+方向”进行了分类。每一类里的线段数目其实比较少，做两两组合（构建平行四边形）的开销不大。
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-area-rectangle-ii)
+$0
+endsnippet
+
+# ==> ./Math/0963.Minimum-Area-Rectangle-II/963.Minimum-Area-Rectangle-II.cpp <==
+snippet 0963.Minimum-Area-Rectangle-II "0963.Minimum-Area-Rectangle-II" b
+class Solution {
+public:
+    double minAreaFreeRect(vector<vector<int>>& points) 
+    {
+        map<pair<int,int>,vector<pair<int,int>>>Map;
+        int N = points.size();
+        for (int i=0; i<N; i++)
+            for (int j=0; j<N; j++)
+            {
+                if (i==j) continue;
+                int deltaX = points[i][0]-points[j][0];
+                int deltaY = points[i][1]-points[j][1];
+                Map[{deltaX,deltaY}].push_back({i,j});                
+            }
+        
+        double result = INT_MAX;
+        for (auto item : Map)
+        {
+            for (int m=0; m<item.second.size(); m++)
+                for (int n=m+1; n<item.second.size(); n++)
+                {
+                    int i = item.second[m].first;
+                    int j = item.second[m].second;
+                    int k = item.second[n].first;
+                    
+                    int dx1 = points[i][0]-points[j][0];
+                    int dy1 = points[i][1]-points[j][1];  //vector {dx1,dy1}
+                    int dx2 = points[i][0]-points[k][0];
+                    int dy2 = points[i][1]-points[k][1];  //vector {dx2,dy2}
+                    
+                    if (dx1*dx2+dy1*dy2!=0) continue;
+                    
+                    double side1 = (points[i][0]-points[j][0])*(points[i][0]-points[j][0]) + (points[i][1]-points[j][1])*(points[i][1]-points[j][1]);
+                    double side2 = (points[i][0]-points[k][0])*(points[i][0]-points[k][0]) + (points[i][1]-points[k][1])*(points[i][1]-points[k][1]);
+                    
+                    double area = sqrt(side1)*sqrt(side2);
+                    
+                    result = min(result, area);
+                }
+        }
+        
+        return result==INT_MAX?0:result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/0972.Equal-Rational-Numbers/Readme.md <==
+snippet 0972.Equal-Rational-Numbers "0972.Equal-Rational-Numbers" b
+### 972.Equal-Rational-Numbers
+
+比较容易想到的方法是：将循环节重复多写几遍加在后面，再比较两个字符串，就可以判断两个无限循环小数是形式上否相等。但是需要处理两个特殊的例子：
+
+1. 当循环节全部为0时，本质是有限小数，上述方法会失效。比如1.0和1.00(00)比较时，后者因为循环节的缘故被拉长，但这样比较字符串的话，无法与前者画上等号。
+
+2. 当循环节全部为9时，本质也是有限小数。比如0.1和0.0(99)，注意这两个数学意义上是相等的，但无法用字符串的比较来判断相等。
+
+我们的策略是：如果两者都是有限小数（非循环），那么就分别用stod转化为浮点数进行比较。如果两者都是无限循环小数，那么就用重复循环节的方法，将字符串拓展至相等的长度再比较。特别注意，循环节只包含0或者9的话，本质是有限小数，这两种情况下我们都需要把S转化为浮点数来比较（即前者的策略）。
+
+对于“循环节全部为0”的情况，直接忽略循环节，将循环节前面的部分当做有限小数转化为浮点数。
+
+对于“循环节全部为9”的情况，我们考察小数点后、循环节前有几个数字。比如：如果有两个数字，那么循环节部分等效于0.01；如果有一个数字，那么循环节部分等效于0.1；如果有零个数字，那么循环节部分等效于1。所以我们把这部分等效的数，直接加上循环节前面所代表的数，就是最终该字符串的数值。
+
+特别注意，比较两个浮点数，不要轻易使用```if (x==y)```，而是考察它们的绝对值之差是否足够小。
+
+
+[Leetcode Link](https://leetcode.com/problems/equal-rational-numbers)
+$0
+endsnippet
+
+# ==> ./Math/0972.Equal-Rational-Numbers/972.Equal-Rational-Numbers.cpp <==
+snippet 0972.Equal-Rational-Numbers "0972.Equal-Rational-Numbers" b
+class Solution {
+public:
+    bool isRationalEqual(string S, string T) 
+    {
+        double valS,valT;
+        string strS, strT;
+        bool isValS = parseVal(S, valS, strS);
+        bool isValT = parseVal(T, valT, strT);
+        
+        if (isValS!=isValT)
+            return false;
+        if (isValS)
+            return abs(valS-valT)<1e-12;
+        else
+            return strS==strT;
+        
+    }
+    
+    bool parseVal(string S, double &val, string &str)
+    {
+        int i = S.find("(");
+        if (i==-1)
+        {
+            val = stod(S);
+            return true;
+        }
+        
+        // "x.y(z)""
+        string a = S.substr(0,i);       // a => x.y
+        string b = S.substr(i+1, S.size()-i-2);     // b=> z
+        
+        bool flag0 = true;
+        for (auto ch: b)
+        {
+            if (ch!='0')
+            {
+                flag0 = false;
+                break;
+            }
+        }
+        if (flag0)
+        {
+            val = stod(a);
+            return true;
+        }
+        
+        bool flag9 = true;
+        for (auto ch: b)
+        {
+            if (ch!='9')
+            {
+                flag9 = false;
+                break;
+            }
+        }
+        if (flag9)
+        {
+            int i = a.find(".");
+            int k = a.size()-1-i;
+            val = stod(a) + 1.0/pow(10,k);
+            return true;
+        }
+        
+        while (a.size()<20)
+            a+=b;
+        str = a.substr(0,20);
+        return false;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1012.Numbers-With-Repeated-Digits/Readme.md <==
+snippet 1012.Numbers-With-Repeated-Digits "1012.Numbers-With-Repeated-Digits" b
+### 1012.Numbers-With-Repeated-Digits
+
+此题本质就是求不大于N的、没有重复数字的数。简单的想法，可以用无脑的DFS，结果会超时。
+
+超时的原因在于，比如N=782581676，如果第一位取了1，后面8位数字其实就是从[0，2-9]这些数字里面任取8个全排列。这就提示我们DFS的时候，不必在每一个分支都用递归来计算，适当的时候直接调用数学公式就行了。
+
+所以本题的解包括两部分：对于M位数的上限，我们先注意考察一位数，两位数，直到M-1位数的解。这些解注定不会大于N，所以直接调用数学公式，计算用10个不同的数字如何排列出k位数的方案数。但需要注意，任何k位数，其首位都不能是0.
+
+第二部分，就是考察M位数的解。主体框架就是DFS，每个位置逐一考察。第k个位置如果选择比num[k]小的数字，那么剩余的部分就可以用全排列来解。如果第k个位置选择了num[k]，那么就递归考察下一个位置。注意，一个必要条件是，第k个位置的选择不能在前k-1个位置上出现过，所以我们需要一个visited来记录使用过的数字，这是一个回溯的过程。
+
+
+[Leetcode Link](https://leetcode.com/problems/numbers-with-repeated-digits)
+$0
+endsnippet
+
+# ==> ./Math/1012.Numbers-With-Repeated-Digits/1012.Numbers-With-Repeated-Digits.cpp <==
+snippet 1012.Numbers-With-Repeated-Digits "1012.Numbers-With-Repeated-Digits" b
 class Solution {
     int count = 0;
 public:
@@ -378,23 +2301,29 @@ public:
     }
         
 };
-::::::::::::::
-Math/1012.Numbers-With-Repeated-Digits/Readme.md
-::::::::::::::
-### 1012.Numbers-With-Repeated-Digits
 
-此题本质就是求不大于N的、没有重复数字的数。简单的想法，可以用无脑的DFS，结果会超时。
+$0
+endsnippet
 
-超时的原因在于，比如N=782581676，如果第一位取了1，后面8位数字其实就是从[0，2-9]这些数字里面任取8个全排列。这就提示我们DFS的时候，不必在每一个分支都用递归来计算，适当的时候直接调用数学公式就行了。
+# ==> ./Math/1015.Smallest-Integer-Divisible-by-K/Readme.md <==
+snippet 1015.Smallest-Integer-Divisible-by-K "1015.Smallest-Integer-Divisible-by-K" b
+### 1015.Smallest-Integer-Divisible-by-K
 
-所以本题的解包括两部分：对于M位数的上限，我们先注意考察一位数，两位数，直到M-1位数的解。这些解注定不会大于N，所以直接调用数学公式，计算用10个不同的数字如何排列出k位数的方案数。但需要注意，任何k位数，其首位都不能是0.
+最直观的想法是分别考察x=1,11,111,...,111111等等，依次查看它们是否能被K整除。但是当x大于九位数的时候就会溢出。这种方法不行。
 
-第二部分，就是考察M位数的解。主体框架就是DFS，每个位置逐一考察。第k个位置如果选择比num[k]小的数字，那么剩余的部分就可以用全排列来解。如果第k个位置选择了num[k]，那么就递归考察下一个位置。注意，一个必要条件是，第k个位置的选择不能在前k-1个位置上出现过，所以我们需要一个visited来记录使用过的数字，这是一个回溯的过程。
+考虑当前的数是x1且不能被K除尽，那么我们就可以写成```x1=K*q+r```的形式，其中q是商，r是余数。然后我们会考虑下一个数x2，它可以写成```x2=10*x1+1```，因此我们可以知道```x2 = K*10q+10r+1 ≡ 10r+1 (mod K)```。所以我们只要考察10r+1能否被K整除就可以判断x2能否被K整除了。因为r永远是小于K的，这就避免了x1,x2...不断变长带来的溢出问题。
+
+所以此题有点像求小数除法判断是否能整除或者有循环节。不断地更新```r=(10r+1)%K```，查看结果是否会出现```r=0```.是的话就意味着对应的x能被K整除。因为根据除法定义r是小于K的，所以当这个过程至多重复K次之后，肯定会重复出现以前曾经有过的r（需要用一个集合记录下来），这就意味着循环节的出现，因此表明永远不可能被K整除，返回-1就可。
+
+当然，从数学上还可以证明，当```K%2==0||K%5==0```的时候，肯定会有循环节，即无法整除。这里就不给证明过程了。
 
 
-[Leetcode Link](https://leetcode.com/problems/numbers-with-repeated-digits)::::::::::::::
-Math/1015.Smallest-Integer-Divisible-by-K/1015.Smallest-Integer-Divisible-by-K.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/smallest-integer-divisible-by-k)
+$0
+endsnippet
+
+# ==> ./Math/1015.Smallest-Integer-Divisible-by-K/1015.Smallest-Integer-Divisible-by-K.cpp <==
+snippet 1015.Smallest-Integer-Divisible-by-K "1015.Smallest-Integer-Divisible-by-K" b
 class Solution {
 public:
     int smallestRepunitDivByK(int K) 
@@ -419,23 +2348,29 @@ public:
         return -1;        
     }
 };
-::::::::::::::
-Math/1015.Smallest-Integer-Divisible-by-K/Readme.md
-::::::::::::::
-### 1015.Smallest-Integer-Divisible-by-K
 
-最直观的想法是分别考察x=1,11,111,...,111111等等，依次查看它们是否能被K整除。但是当x大于九位数的时候就会溢出。这种方法不行。
+$0
+endsnippet
 
-考虑当前的数是x1且不能被K除尽，那么我们就可以写成```x1=K*q+r```的形式，其中q是商，r是余数。然后我们会考虑下一个数x2，它可以写成```x2=10*x1+1```，因此我们可以知道```x2 = K*10q+10r+1 ≡ 10r+1 (mod K)```。所以我们只要考察10r+1能否被K整除就可以判断x2能否被K整除了。因为r永远是小于K的，这就避免了x1,x2...不断变长带来的溢出问题。
+# ==> ./Math/1017.Convert-to-Base--2/Readme.md <==
+snippet 1017.Convert-to-Base--2 "1017.Convert-to-Base--2" b
+### 1017.Convert-to-Base--2
 
-所以此题有点像求小数除法判断是否能整除或者有循环节。不断地更新```r=(10r+1)%K```，查看结果是否会出现```r=0```.是的话就意味着对应的x能被K整除。因为根据除法定义r是小于K的，所以当这个过程至多重复K次之后，肯定会重复出现以前曾经有过的r（需要用一个集合记录下来），这就意味着循环节的出现，因此表明永远不可能被K整除，返回-1就可。
+本质上和求N的任何K进制的转化一样的做法。求得余数```r=N%K```作为当前最低位的数字，然后将```N=(N-r)/K```作为下一个循环的初始值直至为零。把所有的数字拼接起来倒序输出就是K进制的结果。
 
-当然，从数学上还可以证明，当```K%2==0||K%5==0```的时候，肯定会有循环节，即无法整除。这里就不给证明过程了。
+特别注意，余数r必须是正数，也就是说无法除尽的时候，采用的是向下取整。比如说5/(-3)，依据严格的数学定义，商是-2，余数是1.
+
+但是，当除数是负数的时候，不同语言的运算规则会不一样。在C++/Java里面，整数的除法都是向零取整。比如说5/(-3)，结果商是-1，余数是-2.这个余数因为是负数，是无法用来作为进制转换结果的。解决方案是：将商加上一，余数加上abs(K)。这样就转变成了向下取整的结果，余数也变成了正数。在这个例子中，结果商就是-1，余数是1.
+
+事实上，在wiki里面已经明确写明了negative base calculation的方法：https://en.wikipedia.org/wiki/Negative_base#Calculation
 
 
-[Leetcode Link](https://leetcode.com/problems/smallest-integer-divisible-by-k)::::::::::::::
-Math/1017.Convert-to-Base--2/1017.Convert-to-Base--2.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/convert-to-base--2)
+$0
+endsnippet
+
+# ==> ./Math/1017.Convert-to-Base--2/1017.Convert-to-Base--2.cpp <==
+snippet 1017.Convert-to-Base--2 "1017.Convert-to-Base--2" b
 class Solution {
 public:
     string baseNeg2(int N) 
@@ -461,23 +2396,29 @@ public:
     }
     
 };
-::::::::::::::
-Math/1017.Convert-to-Base--2/Readme.md
-::::::::::::::
-### 1017.Convert-to-Base--2
 
-本质上和求N的任何K进制的转化一样的做法。求得余数```r=N%K```作为当前最低位的数字，然后将```N=(N-r)/K```作为下一个循环的初始值直至为零。把所有的数字拼接起来倒序输出就是K进制的结果。
+$0
+endsnippet
 
-特别注意，余数r必须是正数，也就是说无法除尽的时候，采用的是向下取整。比如说5/(-3)，依据严格的数学定义，商是-2，余数是1.
+# ==> ./Math/1025.Divisor-Game/Readme.md <==
+snippet 1025.Divisor-Game "1025.Divisor-Game" b
+### 1025.Divisor-Game
 
-但是，当除数是负数的时候，不同语言的运算规则会不一样。在C++/Java里面，整数的除法都是向零取整。比如说5/(-3)，结果商是-1，余数是-2.这个余数因为是负数，是无法用来作为进制转换结果的。解决方案是：将商加上一，余数加上abs(K)。这样就转变成了向下取整的结果，余数也变成了正数。在这个例子中，结果商就是-1，余数是1.
+#### 解法1: 
+常规的策略问题，可以用DP或者递归处理。假设某人手中持有数字i，那么遍历所有i的因数j（不包括i本身），如果发现持有数字i-j必败的话，那么说明持有i就必胜。边界条件是持有1必败。
 
-事实上，在wiki里面已经明确写明了negative base calculation的方法：https://en.wikipedia.org/wiki/Negative_base#Calculation
+#### 解法2:
+数学思维。如果我当前持有偶数，那么就减去1，将一个奇数传给对手。对手在处理奇数的时候，只能找到同为奇数的因数，所以相减之后又回传递给我一个偶数。我再重复之前的操作。直至对手拿到的是1，对手负。所以只要先手拿到的是偶数，必胜。
+
+如果先手拿到的是奇数，那么传递给对手的就是偶数，对手同样回采用之前的策略。所以先手必败。
 
 
-[Leetcode Link](https://leetcode.com/problems/convert-to-base--2)::::::::::::::
-Math/1025.Divisor-Game/1025.Divisor-Game_v1.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/divisor-game)
+$0
+endsnippet
+
+# ==> ./Math/1025.Divisor-Game/1025.Divisor-Game_v1.cpp <==
+snippet 1025.Divisor-Game "1025.Divisor-Game" b
 class Solution {
 public:
     bool divisorGame(int N) 
@@ -500,9 +2441,12 @@ public:
         return dp[N];
     }
 };
-::::::::::::::
-Math/1025.Divisor-Game/1025.Divisor-Game_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1025.Divisor-Game/1025.Divisor-Game_v2.cpp <==
+snippet 1025.Divisor-Game "1025.Divisor-Game" b
 class Solution {
 public:
     bool divisorGame(int N) 
@@ -510,23 +2454,49 @@ public:
         return (N%2==0);
     }
 };
-::::::::::::::
-Math/1025.Divisor-Game/Readme.md
-::::::::::::::
-### 1025.Divisor-Game
 
-#### 解法1: 
-常规的策略问题，可以用DP或者递归处理。假设某人手中持有数字i，那么遍历所有i的因数j（不包括i本身），如果发现持有数字i-j必败的话，那么说明持有i就必胜。边界条件是持有1必败。
+$0
+endsnippet
 
-#### 解法2:
-数学思维。如果我当前持有偶数，那么就减去1，将一个奇数传给对手。对手在处理奇数的时候，只能找到同为奇数的因数，所以相减之后又回传递给我一个偶数。我再重复之前的操作。直至对手拿到的是1，对手负。所以只要先手拿到的是偶数，必胜。
+# ==> ./Math/1040.Moving-Stones-Until-Consecutive-II/Readme.md <==
+snippet 1040.Moving-Stones-Until-Consecutive-II "1040.Moving-Stones-Until-Consecutive-II" b
+### 1040.Moving-Stones-Until-Consecutive-II
 
-如果先手拿到的是奇数，那么传递给对手的就是偶数，对手同样回采用之前的策略。所以先手必败。
+#### 最大数目的移动方案
+
+我们考虑如何最低效率地填充这堆石头内的gap。对于```12____3_4___6```这种类型的分布，我们发现1和2号两个石头可以用来交替填充它们后面的gap。比如说先把1放在2后面（这样消除了一个空格），再把2放在1后面（这样又消除了一个空格），接着又可以把1放在2后面...依次类推，每一次move我们只消除了一个空格，最终直到所有的石头阵内部的gap都被消除（也就是所有的石头都相邻）。我们可以知道，这就是最低效的移动方案了（因为任意一次move都应该至少消除一个gap）。
+
+以上“二人转”策略的关键就是在end point要有两个相邻的石头。那么如果两个端点位置都不满足这个条件怎么办呢？形如```1__2_34__5_6_7```。对于第一步，我们必须移动1或者7，可以考虑两种策略：将1移动到2的后面，或者将7移动到6的前面。显然，将1移动到2之后，在端点处消灭了两个gap；而将7移动到6之前，在端点处消灭了一个gap。所以我们更倾向于第一步移动7，这样效率更低。那么然后呢？然后就有了“二人转”的条件了，就可以实现上一段里描述的策略。
+
+所以总结一下，除了第一步的策略我们需要二选一之外，剩下的移动次数，就是石头阵内部的gap数目。因此最多的移动次数，就是在[1,n-1]区间内的gap个数，以及[0,n-2]区间内的gap个数，取一个较大值即可。即：
+```
+max {stones[n-1]-stones[1]+1-(n-1), stones[n-1]-stones[1]+1-(n-1)}
+```
+
+#### 最小数目的移动方案
+一个比较朴素的想法就是，我们要尽量利用已有的、石头分布较密的区间，然后将其他石头往这个区间内搬运。这样一定是效率最高的。于是我们可以在石头阵里遍历一个滑窗[i,j]，滑窗的宽度是n（这个宽度是指的绝对宽度而不是index的宽度）。比如说```abc--d```里面的[a,d]就是宽度为6的滑窗。但是并不是所有宽度为n的滑窗末尾都恰好有石头，比如```abc---e```我们从a开始的宽度为6的滑窗末尾位于石头e之前。所以我们在stones里面搜索滑窗的时候，寻找的其实是一对石头i和j，使得恰好```stontes[j]-stones[i]+1>=n```。
+
+下面分情况讨论：
+
+1. ```stontes[j]-stones[i]+1==n```。 这是说，石头区间[i,j]恰好宽度是n。因为i和j处的石头可以作为端点，其他的石头直接往其区间内部的gap搬运即可。移动的次数其实就是内部的gap的数目。答案就是```n-(j-i+1)```。
+
+2. ```stontes[j]-stones[i]+1>n```。 这是说，石头区间[i,j]宽度大于n。这是因为第stones[i]+n-1处的位置上没有石头。那么我们首先要做的，就是在stones[i]+n-1这个位置（记录为k）先放一块最右边的石头，然后再把其他的石头搬运到[i,k]的区间内。于是操作就需要比上面的多出一步来。（上面的情况，端点处已经有石头了。）
+
+情况2里面有一个非常特殊的corner case，就是形如```OOOO___O```。你无法“在stones[i]+n-1这个位置先放一块石头”，因为你所取的石头是端点，放置的位置也是端点。你能做的就是把左边的石头先拿来做右边界，然后再把左右边的那个石头搬进区间内。这总共需要两步操作。
+
+最终的最小数目的移动方案，需要你遍历所有的滑窗，找到每种滑窗对应的移动次数，再取其中的最小值。
 
 
-[Leetcode Link](https://leetcode.com/problems/divisor-game)::::::::::::::
-Math/1040.Moving-Stones-Until-Consecutive-II/1040.Moving-Stones-Until-Consecutive-II.cpp
-::::::::::::::
+
+
+
+
+[Leetcode Link](https://leetcode.com/problems/moving-stones-until-consecutive-ii)
+$0
+endsnippet
+
+# ==> ./Math/1040.Moving-Stones-Until-Consecutive-II/1040.Moving-Stones-Until-Consecutive-II.cpp <==
+snippet 1040.Moving-Stones-Until-Consecutive-II "1040.Moving-Stones-Until-Consecutive-II" b
 class Solution {
 public:
     vector<int> numMovesStonesII(vector<int>& stones) 
@@ -566,43 +2536,43 @@ public:
         
     }
 };
-::::::::::::::
-Math/1040.Moving-Stones-Until-Consecutive-II/Readme.md
-::::::::::::::
-### 1040.Moving-Stones-Until-Consecutive-II
 
-#### 最大数目的移动方案
+$0
+endsnippet
 
-我们考虑如何最低效率地填充这堆石头内的gap。对于```12____3_4___6```这种类型的分布，我们发现1和2号两个石头可以用来交替填充它们后面的gap。比如说先把1放在2后面（这样消除了一个空格），再把2放在1后面（这样又消除了一个空格），接着又可以把1放在2后面...依次类推，每一次move我们只消除了一个空格，最终直到所有的石头阵内部的gap都被消除（也就是所有的石头都相邻）。我们可以知道，这就是最低效的移动方案了（因为任意一次move都应该至少消除一个gap）。
+# ==> ./Math/1073.Adding-Two-Negabinary-Numbers/Readme.md <==
+snippet 1073.Adding-Two-Negabinary-Numbers "1073.Adding-Two-Negabinary-Numbers" b
+### 1073.Adding-Two-Negabinary-Numbers
 
-以上“二人转”策略的关键就是在end point要有两个相邻的石头。那么如果两个端点位置都不满足这个条件怎么办呢？形如```1__2_34__5_6_7```。对于第一步，我们必须移动1或者7，可以考虑两种策略：将1移动到2的后面，或者将7移动到6的前面。显然，将1移动到2之后，在端点处消灭了两个gap；而将7移动到6之前，在端点处消灭了一个gap。所以我们更倾向于第一步移动7，这样效率更低。那么然后呢？然后就有了“二人转”的条件了，就可以实现上一段里描述的策略。
+本题可以认为是[1017.Convert-to-Base--2](https://github.com/wisdompeak/LeetCode/tree/master/Math/1017.Convert-to-Base--2)的follow up.
 
-所以总结一下，除了第一步的策略我们需要二选一之外，剩下的移动次数，就是石头阵内部的gap数目。因此最多的移动次数，就是在[1,n-1]区间内的gap个数，以及[0,n-2]区间内的gap个数，取一个较大值即可。即：
+此题的目的是希望实现类似于K进制的大数加法。“大数加法”是说，两个加数特别大、装不进内存的时候，就以数组的形式储存，我们需要逐位相加来实现最终的结果。
+
+本题的第一步可以先实现一个普通的K进制大数相加的算法。然后将其中的进制K，改成-2进制即可，即：
+```cpp
+int sum = a+b+carry;
+int r = sum%(-2);
+carry = sum/(-2);
 ```
-max {stones[n-1]-stones[1]+1-(n-1), stones[n-1]-stones[1]+1-(n-1)}
+注意到C++中的除法运算是rounding towards zero，所以为了保证余数是正数，需要做修补：
+```cpp
+if (r<0)
+{
+  r+=abs(2);
+  carrry+=1;
+}
 ```
+此外，我们需要注意，对于普通的K进制相加（K为正数），M位数和M位数相加的结果最多可能是M+1位。但是对于K为负数的情况则不一定。比如说1(-2)+1(-2)=110(-2)。当算完第一次的sum之后，我们得到的carry=-1，说明我们还需要将-1做进一步的转化（为-2进制），而不能简单的把这个carry附加到结果的最高位。我们的解决方案是，将需要逐位相加的计算次数定义为：```len=max(arr1.size(),arr2.size())+2```，其中+2就是为了应对上面的情况。显然，我们需要在arr1和arr2的最高位前都做补零处理。
 
-#### 最小数目的移动方案
-一个比较朴素的想法就是，我们要尽量利用已有的、石头分布较密的区间，然后将其他石头往这个区间内搬运。这样一定是效率最高的。于是我们可以在石头阵里遍历一个滑窗[i,j]，滑窗的宽度是n（这个宽度是指的绝对宽度而不是index的宽度）。比如说```abc--d```里面的[a,d]就是宽度为6的滑窗。但是并不是所有宽度为n的滑窗末尾都恰好有石头，比如```abc---e```我们从a开始的宽度为6的滑窗末尾位于石头e之前。所以我们在stones里面搜索滑窗的时候，寻找的其实是一对石头i和j，使得恰好```stontes[j]-stones[i]+1>=n```。
-
-下面分情况讨论：
-
-1. ```stontes[j]-stones[i]+1==n```。 这是说，石头区间[i,j]恰好宽度是n。因为i和j处的石头可以作为端点，其他的石头直接往其区间内部的gap搬运即可。移动的次数其实就是内部的gap的数目。答案就是```n-(j-i+1)```。
-
-2. ```stontes[j]-stones[i]+1>n```。 这是说，石头区间[i,j]宽度大于n。这是因为第stones[i]+n-1处的位置上没有石头。那么我们首先要做的，就是在stones[i]+n-1这个位置（记录为k）先放一块最右边的石头，然后再把其他的石头搬运到[i,k]的区间内。于是操作就需要比上面的多出一步来。（上面的情况，端点处已经有石头了。）
-
-情况2里面有一个非常特殊的corner case，就是形如```OOOO___O```。你无法“在stones[i]+n-1这个位置先放一块石头”，因为你所取的石头是端点，放置的位置也是端点。你能做的就是把左边的石头先拿来做右边界，然后再把左右边的那个石头搬进区间内。这总共需要两步操作。
-
-最终的最小数目的移动方案，需要你遍历所有的滑窗，找到每种滑窗对应的移动次数，再取其中的最小值。
+当然，上面的操作同样会引入不必要的leading zeros，所以最终结果还需要排除掉这些先导零（除非结果本身就是0）。
 
 
+[Leetcode Link](https://leetcode.com/problems/adding-two-negabinary-numbers)
+$0
+endsnippet
 
-
-
-
-[Leetcode Link](https://leetcode.com/problems/moving-stones-until-consecutive-ii)::::::::::::::
-Math/1073.Adding-Two-Negabinary-Numbers/1073.Adding-Two-Negabinary-Numbers.cpp
-::::::::::::::
+# ==> ./Math/1073.Adding-Two-Negabinary-Numbers/1073.Adding-Two-Negabinary-Numbers.cpp <==
+snippet 1073.Adding-Two-Negabinary-Numbers "1073.Adding-Two-Negabinary-Numbers" b
 class Solution {
 public:
     vector<int> addNegabinary(vector<int>& arr1, vector<int>& arr2) 
@@ -632,37 +2602,34 @@ public:
         else return ret;
     }
 };
-::::::::::::::
-Math/1073.Adding-Two-Negabinary-Numbers/Readme.md
-::::::::::::::
-### 1073.Adding-Two-Negabinary-Numbers
 
-本题可以认为是[1017.Convert-to-Base--2](https://github.com/wisdompeak/LeetCode/tree/master/Math/1017.Convert-to-Base--2)的follow up.
+$0
+endsnippet
 
-此题的目的是希望实现类似于K进制的大数加法。“大数加法”是说，两个加数特别大、装不进内存的时候，就以数组的形式储存，我们需要逐位相加来实现最终的结果。
+# ==> ./Math/1103.Distribute-Candies-to-People/Readme.md <==
+snippet 1103.Distribute-Candies-to-People "1103.Distribute-Candies-to-People" b
+### 1103.Distribute-Candies-to-People
 
-本题的第一步可以先实现一个普通的K进制大数相加的算法。然后将其中的进制K，改成-2进制即可，即：
-```cpp
-int sum = a+b+carry;
-int r = sum%(-2);
-carry = sum/(-2);
+这道题不难，用全程模拟的方法，代码可以很短，但是效率不是很高。一种提升效率的方法就是计算出这些糖能够发几轮（比如说k轮），那么前k轮中每个人可以得到的糖的数目就可以直接用数列求和算出来。
 ```
-注意到C++中的除法运算是rounding towards zero，所以为了保证余数是正数，需要做修补：
-```cpp
-if (r<0)
-{
-  r+=abs(2);
-  carrry+=1;
-}
+第一轮：1,2,3,..., N
+第二轮：1+N,2+N,3+N,..., 2N
+第三轮：1+2N,2+2N,3+2N,..., 3N
+...
 ```
-此外，我们需要注意，对于普通的K进制相加（K为正数），M位数和M位数相加的结果最多可能是M+1位。但是对于K为负数的情况则不一定。比如说1(-2)+1(-2)=110(-2)。当算完第一次的sum之后，我们得到的carry=-1，说明我们还需要将-1做进一步的转化（为-2进制），而不能简单的把这个carry附加到结果的最高位。我们的解决方案是，将需要逐位相加的计算次数定义为：```len=max(arr1.size(),arr2.size())+2```，其中+2就是为了应对上面的情况。显然，我们需要在arr1和arr2的最高位前都做补零处理。
+可见，完整的第k轮，总共需要发放糖果数目是```(1+N)*N/2+N*N*k```。将candies的数目逐轮减去这个数目，就可以知道k是几。
 
-当然，上面的操作同样会引入不必要的leading zeros，所以最终结果还需要排除掉这些先导零（除非结果本身就是0）。
+然后，对于前k轮，第i个人得到的糖果数目也就是个等差数里：```i+1, i+1+N, i+1+2N, ..., i+1+(k-1)*N```，求和之后就是```(i+1+i+1+(k-1)*N)*k/2```.
+
+至于剩下糖果的零头，就再走一遍即可。此时是第k+1轮，第0个人需要1+k*N个糖果，第1个人需要2+k*N个糖果,...。一路分发，直至看糖果最终在哪个人手里用完。
 
 
-[Leetcode Link](https://leetcode.com/problems/adding-two-negabinary-numbers)::::::::::::::
-Math/1103.Distribute-Candies-to-People/1103.Distribute-Candies-to-People.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/distribute-candies-to-people)
+$0
+endsnippet
+
+# ==> ./Math/1103.Distribute-Candies-to-People/1103.Distribute-Candies-to-People.cpp <==
+snippet 1103.Distribute-Candies-to-People "1103.Distribute-Candies-to-People" b
 class Solution {
 public:
     vector<int> distributeCandies(int candies, int num_people) 
@@ -701,66 +2668,12 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Math/1103.Distribute-Candies-to-People/Readme.md
-::::::::::::::
-### 1103.Distribute-Candies-to-People
 
-这道题不难，用全程模拟的方法，代码可以很短，但是效率不是很高。一种提升效率的方法就是计算出这些糖能够发几轮（比如说k轮），那么前k轮中每个人可以得到的糖的数目就可以直接用数列求和算出来。
-```
-第一轮：1,2,3,..., N
-第二轮：1+N,2+N,3+N,..., 2N
-第三轮：1+2N,2+2N,3+2N,..., 3N
-...
-```
-可见，完整的第k轮，总共需要发放糖果数目是```(1+N)*N/2+N*N*k```。将candies的数目逐轮减去这个数目，就可以知道k是几。
+$0
+endsnippet
 
-然后，对于前k轮，第i个人得到的糖果数目也就是个等差数里：```i+1, i+1+N, i+1+2N, ..., i+1+(k-1)*N```，求和之后就是```(i+1+i+1+(k-1)*N)*k/2```.
-
-至于剩下糖果的零头，就再走一遍即可。此时是第k+1轮，第0个人需要1+k*N个糖果，第1个人需要2+k*N个糖果,...。一路分发，直至看糖果最终在哪个人手里用完。
-
-
-[Leetcode Link](https://leetcode.com/problems/distribute-candies-to-people)::::::::::::::
-Math/1131.Maximum-of-Absolute-Value-Expression/1131.Maximum-of-Absolute-Value-Expression.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxAbsValExpr(vector<int>& arr1, vector<int>& arr2) 
-    {
-        int N = arr1.size();
-        int  a[N][3];
-        for (int i=0; i<N; i++)
-        {
-            a[i][0] = arr1[i];
-            a[i][1] = arr2[i];
-            a[i][2] = i;
-        }
-        
-        int ans = 0, mi, mx, t;
-        for (int s=0; s<(1<<3); s++) 
-        {
-            mi = INT_MAX, mx = INT_MIN;
-            for (int i=0; i<N; i++) 
-            {
-                t = 0;
-                for (int j=0; j<3; j++)
-                    if ((1<<j) & s) 
-                        t += a[i][j];
-                    else 
-                        t -= a[i][j];
-                mi = min(mi, t);
-                mx = max(mx, t);
-            }
-            ans = max(ans, mx-mi);
-        }
-        
-        return ans;
-
-    }
-};
-::::::::::::::
-Math/1131.Maximum-of-Absolute-Value-Expression/Readme.md
-::::::::::::::
+# ==> ./Math/1131.Maximum-of-Absolute-Value-Expression/Readme.md <==
+snippet 1131.Maximum-of-Absolute-Value-Expression "1131.Maximum-of-Absolute-Value-Expression" b
 ### 1131.Maximum-of-Absolute-Value-Expression
 
 本题的本质就是求一堆三维空间内的点，找出曼哈顿距离最大的一个。其中每个点的坐标就是(arr1[i],arr2[i],i). 这个问题如何求解呢？我们先来解决更简单点的问题，也就是在一堆二维空间中的点如何找到曼哈顿距离最远的两个。
@@ -818,19 +2731,53 @@ max over (i,j)  {(ai+bi)−(aj+bj)}
 于是，整个算法就是：k个维度的坐标(x1,...,xk)，就有2^k种状态。对于每一种状态(s1,..,sk)，（其中每种状态的分量都是+1或者-1）我们遍历所有元素i，计算 sum(xi\*si)里面的最大值mx和最小值mn，得到maxDiff = mx-mn。最终答案就是在所有状态对应的maxDiff中再取最大值。
 
 
-[Leetcode Link](https://leetcode.com/problems/maximum-of-absolute-value-expression)::::::::::::::
-Math/1227.Airplane-Seat-Assignment-Probability/1227.Airplane-Seat-Assignment-Probability.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/maximum-of-absolute-value-expression)
+$0
+endsnippet
+
+# ==> ./Math/1131.Maximum-of-Absolute-Value-Expression/1131.Maximum-of-Absolute-Value-Expression.cpp <==
+snippet 1131.Maximum-of-Absolute-Value-Expression "1131.Maximum-of-Absolute-Value-Expression" b
 class Solution {
 public:
-    double nthPersonGetsNthSeat(int n) {
-        if (n==1) return 1.0;
-        else return 0.5;
+    int maxAbsValExpr(vector<int>& arr1, vector<int>& arr2) 
+    {
+        int N = arr1.size();
+        int  a[N][3];
+        for (int i=0; i<N; i++)
+        {
+            a[i][0] = arr1[i];
+            a[i][1] = arr2[i];
+            a[i][2] = i;
+        }
+        
+        int ans = 0, mi, mx, t;
+        for (int s=0; s<(1<<3); s++) 
+        {
+            mi = INT_MAX, mx = INT_MIN;
+            for (int i=0; i<N; i++) 
+            {
+                t = 0;
+                for (int j=0; j<3; j++)
+                    if ((1<<j) & s) 
+                        t += a[i][j];
+                    else 
+                        t -= a[i][j];
+                mi = min(mi, t);
+                mx = max(mx, t);
+            }
+            ans = max(ans, mx-mi);
+        }
+        
+        return ans;
+
     }
 };
-::::::::::::::
-Math/1227.Airplane-Seat-Assignment-Probability/Readme.md
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1227.Airplane-Seat-Assignment-Probability/Readme.md <==
+snippet 1227.Airplane-Seat-Assignment-Probability "1227.Airplane-Seat-Assignment-Probability" b
 ### 1227.Airplane-Seat-Assignment-Probability
 
 第k个人登机的时候，第1到第k-1个人已经登机了。除了第一个人的位置未知，其他第2到第k-1个人的位置肯定是已经被占据了（either被本人占据，or被乱坐的人占据）。此时未占据的位置有n-(k-1)个，另外还有一个座位是不知道主人的（它的主人肯定不是编号2到k-1的乘客）。所以这n-k+2个位置，只有一份的概率是k号乘客的位置。所以第k个乘客能坐到自己的位置的概率就是```(n-k+1)/(n-k+2)```
@@ -838,25 +2785,25 @@ Math/1227.Airplane-Seat-Assignment-Probability/Readme.md
 当n=k时，上面的公式就是1/2.
 
 
-[Leetcode Link](https://leetcode.com/problems/airplane-seat-assignment-probability)::::::::::::::
-Math/1250.Check-If-It-Is-a-Good-Array/1250.Check-If-It-Is-a-Good-Array.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/airplane-seat-assignment-probability)
+$0
+endsnippet
+
+# ==> ./Math/1227.Airplane-Seat-Assignment-Probability/1227.Airplane-Seat-Assignment-Probability.cpp <==
+snippet 1227.Airplane-Seat-Assignment-Probability "1227.Airplane-Seat-Assignment-Probability" b
 class Solution {
 public:
-    bool isGoodArray(vector<int>& nums) 
-    {
-        int k = nums[0];
-        for (int i=1; i<nums.size(); i++)
-        {
-            k = gcd(k,nums[i]);
-            if (k==1) return true;
-        }
-        return k==1;
+    double nthPersonGetsNthSeat(int n) {
+        if (n==1) return 1.0;
+        else return 0.5;
     }
 };
-::::::::::::::
-Math/1250.Check-If-It-Is-a-Good-Array/Readme.md
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1250.Check-If-It-Is-a-Good-Array/Readme.md <==
+snippet 1250.Check-If-It-Is-a-Good-Array "1250.Check-If-It-Is-a-Good-Array" b
 ### 1250.Check-If-It-Is-a-Good-Array
 
 如果听说过中国剩余定理（或者叫孙子定理）的话，可以直接知道结论。
@@ -870,9 +2817,44 @@ Math/1250.Check-If-It-Is-a-Good-Array/Readme.md
 要判断一个数组里面是否有两个互质，只要顺序取最大公约数（gcd)，这个gcd肯定会越算越小，直至为1的话，那就说明经过的数字里面必然有两个是互质的。（这是因为取最大公约数的操作是有交换律性质的）
 
 
-[Leetcode Link](https://leetcode.com/problems/check-if-it-is-a-good-array)::::::::::::::
-Math/1286.Iterator-for-Combination/1286.Iterator-for-Combination.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/check-if-it-is-a-good-array)
+$0
+endsnippet
+
+# ==> ./Math/1250.Check-If-It-Is-a-Good-Array/1250.Check-If-It-Is-a-Good-Array.cpp <==
+snippet 1250.Check-If-It-Is-a-Good-Array "1250.Check-If-It-Is-a-Good-Array" b
+class Solution {
+public:
+    bool isGoodArray(vector<int>& nums) 
+    {
+        int k = nums[0];
+        for (int i=1; i<nums.size(); i++)
+        {
+            k = gcd(k,nums[i]);
+            if (k==1) return true;
+        }
+        return k==1;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1286.Iterator-for-Combination/Readme.md <==
+snippet 1286.Iterator-for-Combination "1286.Iterator-for-Combination" b
+### 1286.Iterator-for-Combination
+
+此题和```LC77.Combinations```的解法二一样，就是求next combination. 总体思想是从最低位（最后一位）开始考察，检查这个字符是否能替换为大一点的。如果不能的话，那么再往前找高一位的字符。从后往前一直找到某一位字符cur[i]，发现可以替换为稍大一点的字符，记为charcaters[j]。那么从cur[i:]就相应地填为charcaters[j:].
+
+"检查这个字符是否能替换为大一点的"的意思是：看cur[i]能否取一个比当前更大的字符，同时第i个之后的保持递增顺序的那些字符也是有解的（即不会没有字符可以选）。
+
+
+[Leetcode Link](https://leetcode.com/problems/iterator-for-combination)
+$0
+endsnippet
+
+# ==> ./Math/1286.Iterator-for-Combination/1286.Iterator-for-Combination.cpp <==
+snippet 1286.Iterator-for-Combination "1286.Iterator-for-Combination" b
 class CombinationIterator {
     string cur;
     string end;
@@ -915,19 +2897,29 @@ public:
         return cur!=end;
     }
 };
-::::::::::::::
-Math/1286.Iterator-for-Combination/Readme.md
-::::::::::::::
-### 1286.Iterator-for-Combination
 
-此题和```LC77.Combinations```的解法二一样，就是求next combination. 总体思想是从最低位（最后一位）开始考察，检查这个字符是否能替换为大一点的。如果不能的话，那么再往前找高一位的字符。从后往前一直找到某一位字符cur[i]，发现可以替换为稍大一点的字符，记为charcaters[j]。那么从cur[i:]就相应地填为charcaters[j:].
+$0
+endsnippet
 
-"检查这个字符是否能替换为大一点的"的意思是：看cur[i]能否取一个比当前更大的字符，同时第i个之后的保持递增顺序的那些字符也是有解的（即不会没有字符可以选）。
+# ==> ./Math/1359.Count-All-Valid-Pickup-and-Delivery-Options/Readme.md <==
+snippet 1359.Count-All-Valid-Pickup-and-Delivery-Options "1359.Count-All-Valid-Pickup-and-Delivery-Options" b
+### 1359.Count-All-Valid-Pickup-and-Delivery-Options
+
+此题乍看像卡特兰数，但其实没有那么复杂。我们首先将所有的订单排列一下，表示下单的顺序，这样就有A(n,n)种可能。
+
+然后对于给定的下单顺序，那么我们如果确定递送顺序和位置呢？我们这么考虑。第一单的下单只能在idx=0的地方；那么第一个单的递送可以在之后的任何一个idx，也就是2\*n-1种可能。然后在考虑第二单的下单位置，注意它只可能是在当前一个未被占据的idx，所以并没有选择的空间；然后第二单的递送安排在什么位置呢？只要安排在当前任意一个未被占据的位置即可，也就是有2\*n-3种可能。
+
+以此类推，最后一单的下单和递送位置其实都是没有选择余地的。
+
+所以综上，答案应该是```A(n,n)*(2n-1)*(2n-3)*...*1```
 
 
-[Leetcode Link](https://leetcode.com/problems/iterator-for-combination)::::::::::::::
-Math/1359.Count-All-Valid-Pickup-and-Delivery-Options/1359.Count-All-Valid-Pickup-and-Delivery-Options.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/count-all-valid-pickup-and-delivery-options)
+$0
+endsnippet
+
+# ==> ./Math/1359.Count-All-Valid-Pickup-and-Delivery-Options/1359.Count-All-Valid-Pickup-and-Delivery-Options.cpp <==
+snippet 1359.Count-All-Valid-Pickup-and-Delivery-Options "1359.Count-All-Valid-Pickup-and-Delivery-Options" b
 class Solution {
 public:
     int countOrders(int n) 
@@ -941,23 +2933,21 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Math/1359.Count-All-Valid-Pickup-and-Delivery-Options/Readme.md
-::::::::::::::
-### 1359.Count-All-Valid-Pickup-and-Delivery-Options
 
-此题乍看像卡特兰数，但其实没有那么复杂。我们首先将所有的订单排列一下，表示下单的顺序，这样就有A(n,n)种可能。
+$0
+endsnippet
 
-然后对于给定的下单顺序，那么我们如果确定递送顺序和位置呢？我们这么考虑。第一单的下单只能在idx=0的地方；那么第一个单的递送可以在之后的任何一个idx，也就是2\*n-1种可能。然后在考虑第二单的下单位置，注意它只可能是在当前一个未被占据的idx，所以并没有选择的空间；然后第二单的递送安排在什么位置呢？只要安排在当前任意一个未被占据的位置即可，也就是有2\*n-3种可能。
+# ==> ./Math/1401.Circle-and-Rectangle-Overlapping/Readme.md <==
+snippet 1401.Circle-and-Rectangle-Overlapping "1401.Circle-and-Rectangle-Overlapping" b
+### 1401.Circle-and-Rectangle-Overlapping
 
-以此类推，最后一单的下单和递送位置其实都是没有选择余地的。
+没什么可以说的，算法搬运自 [https://www.zhihu.com/question/24251545](https://www.zhihu.com/question/24251545)
 
-所以综上，答案应该是```A(n,n)*(2n-1)*(2n-3)*...*1```
+$0
+endsnippet
 
-
-[Leetcode Link](https://leetcode.com/problems/count-all-valid-pickup-and-delivery-options)::::::::::::::
-Math/1401.Circle-and-Rectangle-Overlapping/1401.Circle-and-Rectangle-Overlapping.cpp
-::::::::::::::
+# ==> ./Math/1401.Circle-and-Rectangle-Overlapping/1401.Circle-and-Rectangle-Overlapping.cpp <==
+snippet 1401.Circle-and-Rectangle-Overlapping "1401.Circle-and-Rectangle-Overlapping" b
 class Solution {
 public:
     bool checkOverlap(int radius, int x_center, int y_center, int x1, int y1, int x2, int y2) 
@@ -972,15 +2962,47 @@ public:
         return ux*ux+uy*uy <= radius*radius;      
     }
 };
-::::::::::::::
-Math/1401.Circle-and-Rectangle-Overlapping/Readme.md
-::::::::::::::
-### 1401.Circle-and-Rectangle-Overlapping
 
-没什么可以说的，算法搬运自 [https://www.zhihu.com/question/24251545](https://www.zhihu.com/question/24251545)
-::::::::::::::
-Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard_v1.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/Readme.md <==
+snippet 1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard "1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard" b
+### 1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard
+
+#### 解法1：
+看不懂，不解释。
+https://sumygg.com/2013/08/06/Radius-Circle-Cover/
+
+#### 解法2：
+对于任何一个符合要求（包含最多的点）的圆，我们都可以让其适度收缩，使得其圆周恰好经过两点。
+
+于是我们可以遍历任意两点的组合，再根据圆的半径最大为r的条件，可以确定一个圆，令其圆心位置(x,y)。再查看这个的圆能涵盖多少个点。最终答案就是取包含点最多的那个圆。注意，根据圆上两点和半径，这样的圆心位置有两个。
+
+具体算法涉及到一些向量几何的知识。我们假设两点是A和B，中点位置是C。令向量n=(x1-x2, y1-y2)表示向量AB，我们可以知道与AB垂直的单位法向量v。具体方法是：令v=(a,b),那么有如下的条件：
+```
+n*v = 0
+|v| = 1
+```
+即
+```
+(x1-x2)*a+(y1-y2)*b=0
+a^2++b^2 = 1
+```
+于是可以解出a和b的值。注意答案有两组。并且当x1==x2的时候，为了避免分母是零，向量v会有特解(1,0)和(-1,0)。
+
+我们可以知道C和圆心O之间的距离是d。那么圆心位置就可以确定是：
+```
+x = C_x + a * d
+y = C_y + b * d
+```
+这个方法的时间复杂度是o(N^3).
+
+$0
+endsnippet
+
+# ==> ./Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard_v1.cpp <==
+snippet 1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard "1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard" b
 const int MAXN = 100;
 const double pi = acos(-1);
 class Solution {
@@ -1056,9 +3078,12 @@ public:
         else return 1;
     }
 };
-::::::::::::::
-Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard_v2.cpp <==
+snippet 1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard "1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard" b
 class Solution {
 public:
     int numPoints(vector<vector<int>>& points, int r) 
@@ -1104,41 +3129,40 @@ public:
         return max(1,ret);
     }
 };
-::::::::::::::
-Math/1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard/Readme.md
-::::::::::::::
-### 1453.Maximum-Number-of-Darts-Inside-of-a-Circular-Dartboard
 
-#### 解法1：
-看不懂，不解释。
-https://sumygg.com/2013/08/06/Radius-Circle-Cover/
+$0
+endsnippet
 
-#### 解法2：
-对于任何一个符合要求（包含最多的点）的圆，我们都可以让其适度收缩，使得其圆周恰好经过两点。
+# ==> ./Math/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls/Readme.md <==
+snippet 1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls "1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls" b
+### 1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls
 
-于是我们可以遍历任意两点的组合，再根据圆的半径最大为r的条件，可以确定一个圆，令其圆心位置(x,y)。再查看这个的圆能涵盖多少个点。最终答案就是取包含点最多的那个圆。注意，根据圆上两点和半径，这样的圆心位置有两个。
+本题的第二个例子描述的并不好。我们将三个颜色的四个球标记为(1a, 1b, 2, 3)。分母应该是任意分成两等份的方案数，即C(4,2)=6，分子有四种合法方案：(1a,2)/(1b,3), (1a,3)/(1b,2), (1b,2)/(1a,3), (1b,3)/(1a,2). 答案就是4/6 = 0.67. 注意我们不关心同一组里球的具体顺序。
 
-具体算法涉及到一些向量几何的知识。我们假设两点是A和B，中点位置是C。令向量n=(x1-x2, y1-y2)表示向量AB，我们可以知道与AB垂直的单位法向量v。具体方法是：令v=(a,b),那么有如下的条件：
-```
-n*v = 0
-|v| = 1
-```
-即
-```
-(x1-x2)*a+(y1-y2)*b=0
-a^2++b^2 = 1
-```
-于是可以解出a和b的值。注意答案有两组。并且当x1==x2的时候，为了避免分母是零，向量v会有特解(1,0)和(-1,0)。
+此题的方法比较暴力。我们枚举每种颜色的球的拆分方案，即考虑如何拆分为两部分。将所有的颜色都处理完了，我们来看这两组球的情况：如果两组球的总数不相等，则连做分母的资格都没有。如果两组球的总数相等，方案数可以加入分母。如果两组球的颜色数目相等，方案数另外可以加入分子。于是，这道题本质就是一个递归。
 
-我们可以知道C和圆心O之间的距离是d。那么圆心位置就可以确定是：
+那么确定两组球的情况后，如何求对应的方案数呢？假设颜色i的球总数是xi，对于第一组而言分到了yi个球，那么总方案数就是```product { C(xi, yi) } for all i```. 其中C表示组合数。我们知道对于每种颜色，球的数目不超过8，也就是说组合数的上下标都不会超过8。我们通常的处理方案是把所有的组合数都算出来。
+
+如何高效地求所有组合数呢？我们不会直接按照定义去求，因为那会涉及到阶乘和除法。我们会用到递推公式：
 ```
-x = C_x + a * d
-y = C_y + b * d
+C(i,j) = C(i-1, j-1) + C(i-1, j)
 ```
-这个方法的时间复杂度是o(N^3).
-::::::::::::::
-Math/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls.cpp
-::::::::::::::
+可以这么理解。我们要在i个球里面取j个，我们有两种分支：前i-1个球里面取j-1个，第i个球必取。或者前i-1个球里面直接取j个。两种分支的方案总和就是C(i,j).这有一套模板代码可以套用：
+```cpp
+        int C[10][10];
+        for (int i = 0; i <= 8; ++i) {
+            C[i][i] = C[i][0] = 1;            
+            for (int j = 1; j < i; ++j) {
+                C[i][j] = C[i - 1][j - 1] + C[i - 1][j];
+            }
+        }   
+```
+
+$0
+endsnippet
+
+# ==> ./Math/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls.cpp <==
+snippet 1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls "1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls" b
 class Solution {
     int C[10][10];
     vector<int>balls;
@@ -1200,58 +3224,12 @@ public:
         }
     }
 };
-::::::::::::::
-Math/1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls/Readme.md
-::::::::::::::
-### 1467.Probability-of-a-Two-Boxes-Having-The-Same-Number-of-Distinct-Balls
 
-本题的第二个例子描述的并不好。我们将三个颜色的四个球标记为(1a, 1b, 2, 3)。分母应该是任意分成两等份的方案数，即C(4,2)=6，分子有四种合法方案：(1a,2)/(1b,3), (1a,3)/(1b,2), (1b,2)/(1a,3), (1b,3)/(1a,2). 答案就是4/6 = 0.67. 注意我们不关心同一组里球的具体顺序。
+$0
+endsnippet
 
-此题的方法比较暴力。我们枚举每种颜色的球的拆分方案，即考虑如何拆分为两部分。将所有的颜色都处理完了，我们来看这两组球的情况：如果两组球的总数不相等，则连做分母的资格都没有。如果两组球的总数相等，方案数可以加入分母。如果两组球的颜色数目相等，方案数另外可以加入分子。于是，这道题本质就是一个递归。
-
-那么确定两组球的情况后，如何求对应的方案数呢？假设颜色i的球总数是xi，对于第一组而言分到了yi个球，那么总方案数就是```product { C(xi, yi) } for all i```. 其中C表示组合数。我们知道对于每种颜色，球的数目不超过8，也就是说组合数的上下标都不会超过8。我们通常的处理方案是把所有的组合数都算出来。
-
-如何高效地求所有组合数呢？我们不会直接按照定义去求，因为那会涉及到阶乘和除法。我们会用到递推公式：
-```
-C(i,j) = C(i-1, j-1) + C(i-1, j)
-```
-可以这么理解。我们要在i个球里面取j个，我们有两种分支：前i-1个球里面取j-1个，第i个球必取。或者前i-1个球里面直接取j个。两种分支的方案总和就是C(i,j).这有一套模板代码可以套用：
-```cpp
-        int C[10][10];
-        for (int i = 0; i <= 8; ++i) {
-            C[i][i] = C[i][0] = 1;            
-            for (int j = 1; j < i; ++j) {
-                C[i][j] = C[i - 1][j - 1] + C[i - 1][j];
-            }
-        }   
-```
-::::::::::::::
-Math/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<vector<int>> restoreMatrix(vector<int>& rowSum, vector<int>& colSum) 
-    {
-        int m = rowSum.size();
-        int n = colSum.size();
-        auto ret = vector<vector<int>>(m, vector<int>(n));
-        
-        for (int i=0; i<m; i++)
-        {
-            for (int j=0; j<n; j++)
-            {
-                int v = min(rowSum[i], colSum[j]);
-                ret[i][j] = v;
-                rowSum[i] -= v;
-                colSum[j] -= v;                
-            }
-        }
-        return ret;        
-    }
-};
-::::::::::::::
-Math/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums/Readme.md
-::::::::::::::
+# ==> ./Math/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums/Readme.md <==
+snippet 1605.Find-Valid-Matrix-Given-Row-and-Column-Sums "1605.Find-Valid-Matrix-Given-Row-and-Column-Sums" b
 ### 1605.Find-Valid-Matrix-Given-Row-and-Column-Sums
 
 首先我们要知道，我们有n^2个元素要填，但是只有2n个约束（即行与列的和），所以这是一个欠定方程组，一定有无穷多个解。即使任意指定第一行的n个元素（再不违反约束的情况下），那么剩下的n^2-n个待定元素也一定会有相应合适的解。所以整体的策略是：可以任意填充第一个元素，然后更新约束，相应填充后面的元素。不断重复。
@@ -1293,9 +3271,65 @@ x*y*z*
 
 综上所述，按照上面的贪心法去填写每个元素，最终一定能得到满足题意的矩阵。
 
-::::::::::::::
-Math/1610.Maximum-Number-of-Visible-Points/1610.Maximum-Number-of-Visible-Points.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums/1605.Find-Valid-Matrix-Given-Row-and-Column-Sums.cpp <==
+snippet 1605.Find-Valid-Matrix-Given-Row-and-Column-Sums "1605.Find-Valid-Matrix-Given-Row-and-Column-Sums" b
+class Solution {
+public:
+    vector<vector<int>> restoreMatrix(vector<int>& rowSum, vector<int>& colSum) 
+    {
+        int m = rowSum.size();
+        int n = colSum.size();
+        auto ret = vector<vector<int>>(m, vector<int>(n));
+        
+        for (int i=0; i<m; i++)
+        {
+            for (int j=0; j<n; j++)
+            {
+                int v = min(rowSum[i], colSum[j]);
+                ret[i][j] = v;
+                rowSum[i] -= v;
+                colSum[j] -= v;                
+            }
+        }
+        return ret;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1610.Maximum-Number-of-Visible-Points/Readme.md <==
+snippet 1610.Maximum-Number-of-Visible-Points "1610.Maximum-Number-of-Visible-Points" b
+### 1610.Maximum-Number-of-Visible-Points
+
+本题的意思是说，以一个观测点为中心，视野可以360度旋转。你现在允许挑选一个视野范围angle，问最多能看到多少目标。
+
+此题的入手比较容易，就是把所有目标点相对于观测点的角度都计算出来，排序后组成一个数组。然后找一段最长的滑窗（指的是包含的元素数目最多），使得滑窗范围内目标点的角度范围之差不超过angle。
+
+本题的第一个考点是如何计算“目标点相对于观测点的角度”。我们希望这个相对于x正轴的角度分布是在[0,2*pi]上连续的。如果我们选择用atan(dy/dx)计算，得到的值域其实是[-pi/2,pi/2]，我们要根据(x,y)的具体的象限位置再做调整。具体的是：
+```
+第一象限：atan(dy/dx)得到的是正数，所以 alpha = atan(dy/dx)
+第二象限：atan(dy/dx)得到的是负数，所以 alpha = atan(dy/dx)+pi  
+第三象限：atan(dy/dx)得到的是正数，所以 alpha = atan(dy/dx)+pi  
+第三象限：atan(dy/dx)得到的是负数，所以 alpha = atan(dy/dx)+2*pi  
+```
+这样四个象限的目标点的视野角度相对于x正轴而言的分布就是在[0,2*pi]上连续的。
+
+另外一种方法是利用函数atan2(dy,dx)，得到是(x,y)这个点相对于x正轴的“辐角主值”，值域范围是[-pi,pi]. 因为圆周对称，我们可以将这个“视野角度”整体加上pi转换成[0,2*pi]，并不影响结果。
+
+本题的第二个考点是“首尾相接”。因为视野角度接近360度的目标点，与视野角度接近0度的目标点，其真实角度差范围并不大。那么我们如果寻找一个滑窗使得能够同时覆盖这两部分的点呢？处理的方法很常见，那就是将所有目标点的视野角度复制一遍、加上2pi、并拼接在angles数组后面。这样相当于angles数组里面有2n个目标点，视野范围是[0,4pi]。对于任何跨越过360角的滑窗，都可以覆盖到原先接近0度角的那些点。
+
+此题的第三个考点是：如果目标点与观测点完全重合，它可以算作任意的视野范围，所以我们需要把它们单独处理，不能放入angles数组内。我们要把这些点另外计入angles的最大滑窗里。
+
+$0
+endsnippet
+
+# ==> ./Math/1610.Maximum-Number-of-Visible-Points/1610.Maximum-Number-of-Visible-Points.cpp <==
+snippet 1610.Maximum-Number-of-Visible-Points "1610.Maximum-Number-of-Visible-Points" b
 class Solution {
 public:
     int visiblePoints(vector<vector<int>>& points, int angle, vector<int>& location) 
@@ -1353,77 +3387,12 @@ public:
         return ret+self;
     }
 };
-::::::::::::::
-Math/1610.Maximum-Number-of-Visible-Points/Readme.md
-::::::::::::::
-### 1610.Maximum-Number-of-Visible-Points
 
-本题的意思是说，以一个观测点为中心，视野可以360度旋转。你现在允许挑选一个视野范围angle，问最多能看到多少目标。
+$0
+endsnippet
 
-此题的入手比较容易，就是把所有目标点相对于观测点的角度都计算出来，排序后组成一个数组。然后找一段最长的滑窗（指的是包含的元素数目最多），使得滑窗范围内目标点的角度范围之差不超过angle。
-
-本题的第一个考点是如何计算“目标点相对于观测点的角度”。我们希望这个相对于x正轴的角度分布是在[0,2*pi]上连续的。如果我们选择用atan(dy/dx)计算，得到的值域其实是[-pi/2,pi/2]，我们要根据(x,y)的具体的象限位置再做调整。具体的是：
-```
-第一象限：atan(dy/dx)得到的是正数，所以 alpha = atan(dy/dx)
-第二象限：atan(dy/dx)得到的是负数，所以 alpha = atan(dy/dx)+pi  
-第三象限：atan(dy/dx)得到的是正数，所以 alpha = atan(dy/dx)+pi  
-第三象限：atan(dy/dx)得到的是负数，所以 alpha = atan(dy/dx)+2*pi  
-```
-这样四个象限的目标点的视野角度相对于x正轴而言的分布就是在[0,2*pi]上连续的。
-
-另外一种方法是利用函数atan2(dy,dx)，得到是(x,y)这个点相对于x正轴的“辐角主值”，值域范围是[-pi,pi]. 因为圆周对称，我们可以将这个“视野角度”整体加上pi转换成[0,2*pi]，并不影响结果。
-
-本题的第二个考点是“首尾相接”。因为视野角度接近360度的目标点，与视野角度接近0度的目标点，其真实角度差范围并不大。那么我们如果寻找一个滑窗使得能够同时覆盖这两部分的点呢？处理的方法很常见，那就是将所有目标点的视野角度复制一遍、加上2pi、并拼接在angles数组后面。这样相当于angles数组里面有2n个目标点，视野范围是[0,4pi]。对于任何跨越过360角的滑窗，都可以覆盖到原先接近0度角的那些点。
-
-此题的第三个考点是：如果目标点与观测点完全重合，它可以算作任意的视野范围，所以我们需要把它们单独处理，不能放入angles数组内。我们要把这些点另外计入angles的最大滑窗里。
-::::::::::::::
-Math/1641.Count-Sorted-Vowel-Strings/1641.Count-Sorted-Vowel-Strings_dp.cpp
-::::::::::::::
-class Solution {
-    int dp[51][5];
-public:
-    int countVowelStrings(int n) 
-    {
-        for (int k=0; k<5; k++)
-            dp[1][k] = 1;
-        
-        for (int i=2; i<=n; i++)
-            for (int j=0; j<5; j++)
-            {
-                for (int k=0; k<=j; k++)
-                    dp[i][j] += dp[i-1][k];
-            }
-            
-        int ret = 0;
-        for (int k=0; k<5; k++)
-            ret += dp[n][k];
-        return ret;        
-    }
-};
-::::::::::::::
-Math/1641.Count-Sorted-Vowel-Strings/1641.Count-Sorted-Vowel-Strings_math.cpp
-::::::::::::::
-class Solution {
-public:
-    int countVowelStrings(int n) 
-    {
-        return help(n+4,4);
-    }
-
-    int help(int n, int m)
-    {
-        long long cnt = 1;
-        for(int i = 0; i < m; i++)
-        {
-            cnt *= n - i;
-            cnt /= i + 1;
-        }
-        return cnt;
-    }
-};
-::::::::::::::
-Math/1641.Count-Sorted-Vowel-Strings/Readme.md
-::::::::::::::
+# ==> ./Math/1641.Count-Sorted-Vowel-Strings/Readme.md <==
+snippet 1641.Count-Sorted-Vowel-Strings "1641.Count-Sorted-Vowel-Strings" b
 ### 1641.Count-Sorted-Vowel-Strings
 
 #### 解法1： DP
@@ -1454,9 +3423,80 @@ for (int j=0; j<=k; j++)
 其他组合方式同理，无论从candiates里面如何抽取四个，都可以翻译为一种合理的插板方案，继而对应为一种合理的字母序列。
 
 所以答案就是C(n+4,4).
-::::::::::::::
-Math/1643.Kth-Smallest-Instructions/1643.Kth-Smallest-Instructions.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1641.Count-Sorted-Vowel-Strings/1641.Count-Sorted-Vowel-Strings_dp.cpp <==
+snippet 1641.Count-Sorted-Vowel-Strings "1641.Count-Sorted-Vowel-Strings" b
+class Solution {
+    int dp[51][5];
+public:
+    int countVowelStrings(int n) 
+    {
+        for (int k=0; k<5; k++)
+            dp[1][k] = 1;
+        
+        for (int i=2; i<=n; i++)
+            for (int j=0; j<5; j++)
+            {
+                for (int k=0; k<=j; k++)
+                    dp[i][j] += dp[i-1][k];
+            }
+            
+        int ret = 0;
+        for (int k=0; k<5; k++)
+            ret += dp[n][k];
+        return ret;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1641.Count-Sorted-Vowel-Strings/1641.Count-Sorted-Vowel-Strings_math.cpp <==
+snippet 1641.Count-Sorted-Vowel-Strings "1641.Count-Sorted-Vowel-Strings" b
+class Solution {
+public:
+    int countVowelStrings(int n) 
+    {
+        return help(n+4,4);
+    }
+
+    int help(int n, int m)
+    {
+        long long cnt = 1;
+        for(int i = 0; i < m; i++)
+        {
+            cnt *= n - i;
+            cnt /= i + 1;
+        }
+        return cnt;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1643.Kth-Smallest-Instructions/Readme.md <==
+snippet 1643.Kth-Smallest-Instructions "1643.Kth-Smallest-Instructions" b
+### 1643.Kth-Smallest-Instructions
+
+根据矩阵的行数和列数，我们就可以知道整个路径需要多少个H和多少个V。本题的本质就是求```HHH..VVV...```的k-th permutation，这和 060.Permutation-Sequence的解法相同。
+
+我们假设有h个H和v个V。那么K-th permuation的第一个字母该是H还是V呢？考虑如果第一位是H，那么后面的n-1位就由h-1个H和v个V组成，这样的不同的字符串总共有多少个呢？答案就是组合数```sum = C(h-1+v, h-1)```。
+
+如果k<=sum，那么必然第一位就是H，否则第一位以V开头的任何排列在字典序的次序必然大于sum。所以下一步求h-1个H和v个V组成的第k-th permutation。
+
+反之如果k>sum，必然第一位就是V，我们接下来求h个H和v-1个V组成的第(k-sum)-th permutation。
+
+递归的终止条件就是当h为零的时候，一定输出V；或者当v为零的时候，一定输出H。
+
+$0
+endsnippet
+
+# ==> ./Math/1643.Kth-Smallest-Instructions/1643.Kth-Smallest-Instructions.cpp <==
+snippet 1643.Kth-Smallest-Instructions "1643.Kth-Smallest-Instructions" b
 class Solution {
 public:
     string kthSmallestPath(vector<int>& destination, int k) 
@@ -1508,23 +3548,25 @@ public:
         return cnt;
     }
 };
-::::::::::::::
-Math/1643.Kth-Smallest-Instructions/Readme.md
-::::::::::::::
-### 1643.Kth-Smallest-Instructions
 
-根据矩阵的行数和列数，我们就可以知道整个路径需要多少个H和多少个V。本题的本质就是求```HHH..VVV...```的k-th permutation，这和 060.Permutation-Sequence的解法相同。
+$0
+endsnippet
 
-我们假设有h个H和v个V。那么K-th permuation的第一个字母该是H还是V呢？考虑如果第一位是H，那么后面的n-1位就由h-1个H和v个V组成，这样的不同的字符串总共有多少个呢？答案就是组合数```sum = C(h-1+v, h-1)```。
+# ==> ./Math/1680.Concatenation-of-Consecutive-Binary-Numbers/Readme.md <==
+snippet 1680.Concatenation-of-Consecutive-Binary-Numbers "1680.Concatenation-of-Consecutive-Binary-Numbers" b
+### 1680.Concatenation-of-Consecutive-Binary-Numbers
 
-如果k<=sum，那么必然第一位就是H，否则第一位以V开头的任何排列在字典序的次序必然大于sum。所以下一步求h-1个H和v个V组成的第k-th permutation。
+当n=2时，我们需要计算的是"1 10". 可见，这个结果是将1左移两位，然后加上2对应的二进制数10. 
 
-反之如果k>sum，必然第一位就是V，我们接下来求h个H和v-1个V组成的第(k-sum)-th permutation。
+当n=3时，我们需要计算的是"110 11". 可见，这个结果是将上一次的结果110左移两位，然后加上3对应的二进制数11. 
 
-递归的终止条件就是当h为零的时候，一定输出V；或者当v为零的时候，一定输出H。
-::::::::::::::
-Math/1680.Concatenation-of-Consecutive-Binary-Numbers/1680.Concatenation-of-Consecutive-Binary-Numbers.cpp
-::::::::::::::
+所以我们可以总结出规律：每处理一个新数i，我们将上一轮的结果左移len个位置，len就是i的二进制bit长度；然后再加上i本身。最终答案就是处理完i=1,2,...,n的结果。
+
+$0
+endsnippet
+
+# ==> ./Math/1680.Concatenation-of-Consecutive-Binary-Numbers/1680.Concatenation-of-Consecutive-Binary-Numbers.cpp <==
+snippet 1680.Concatenation-of-Consecutive-Binary-Numbers "1680.Concatenation-of-Consecutive-Binary-Numbers" b
 class Solution {
 public:
     int concatenatedBinary(int n) 
@@ -1540,19 +3582,41 @@ public:
         return ret % M;
     }
 };
-::::::::::::::
-Math/1680.Concatenation-of-Consecutive-Binary-Numbers/Readme.md
-::::::::::::::
-### 1680.Concatenation-of-Consecutive-Binary-Numbers
 
-当n=2时，我们需要计算的是"1 10". 可见，这个结果是将1左移两位，然后加上2对应的二进制数10. 
+$0
+endsnippet
 
-当n=3时，我们需要计算的是"110 11". 可见，这个结果是将上一次的结果110左移两位，然后加上3对应的二进制数11. 
+# ==> ./Math/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones/Readme.md <==
+snippet 1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones "1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones" b
+### 1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones
 
-所以我们可以总结出规律：每处理一个新数i，我们将上一轮的结果左移len个位置，len就是i的二进制bit长度；然后再加上i本身。最终答案就是处理完i=1,2,...,n的结果。
-::::::::::::::
-Math/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones.cpp
-::::::::::::::
+首先我们要有这样的意识：想要以最少的操作把k个1靠拢，显然这个k个1必然是在原数组中相邻的（刨除零元素）。所以我们先构造一个新数组p，里面的元素就是原数组中所有1的位置。接下来我们就在数组p中考察所有长度为k的滑窗。在每个滑窗里，我们有k个离散的位置点，我们的任务是研究如何用最少的操作，得到k个连续的位置。
+
+此时我们会想到一个类似的问题。我们有k个离散点的位置，如何确定一个中心位置x，使得所有k个点离x的距离之和最短？这个问题就是```296.Best-Meeting-Point```，答案是，“中心”应该选在这k个点的中位数处。此时的总距离```total = sum |pi-x|, i=0,1,..,k-1```能够最小。
+
+我们再切回之前所考虑的问题，我们不是把所有的点都移到“中心”位置x，而是把所有的点移到以x为中心的连续k个位置。因此我们最小化的是 ```sum |pi-x| (for i=0,1,..,k-1) - sum|i-k/2| (for i=0,1,..,k-1) ```. 我们发现第二项其实是一个常数。所以本题的最优解其实和LC296是一样：最佳的“中心”位置依然是所有点的中位数。
+
+因此，回到我们最初所考虑的第一个滑窗，对于p[0]~p[k-1]这k个位置的点，我们的目的应该把它们移动到```[p[k/2] - k/2, p[k/2]+k/2-1]```这个区间。为了计算方便，我们省略掉上一段里面的第二项，只考虑把它们都移动到p[k/2]所需要的操作总数。这个是很容易算的，记做是sum。
+
+接下来我们看从第一个滑窗到第二个滑窗的变化：原先的k个位置是p[0]~p[k-1]，中心是在p[mid]；滑动之后的k个位置是p[1]~p[k]，中心是在p[mid+1]。
+```
+0  1  2 mid .  . k-1 k
+X  X  X  O  X  X  X
+   X  X  X  O  X  X  X
+```
+相应地，操作总数sum的变化有四个部分：
+1. 原先p[0]在滑窗里，贡献了```p[mid]-p[0]```这么多操作。现在要减去他们。
+2. 原先p[k]不在滑窗里，现在加入了滑窗，需要加上它的贡献```p[k]-p[mid+1]```
+3. 原先p[1]~p[mid]到中心p[mid]的距离，现在都变成了p[1]~p[mid]到新中心p[mid+1]的距离，每个数到新中心都多出了p[mid+1]-p[mid]，所以我们需要把sum补上```(p[mid+1]-p[mid])*(k/2)```
+4. 原先p[mid+1]~p[k-1]到中心p[mid]的距离，现在都变成了p[mid+1]~p[k-1]到新中心p[mid+1]的距离，每个数到心中都减少了p[mid+1]-p[mid]，所以我们需要把sum扣除```(p[mid+1]-p[mid])*(k-k/2-1)```
+
+可见，我们将第一个滑窗的sum，通过四步o(1)的修正，就可以到第二个滑窗的sum。我们将滑窗走一遍，就可以得到最小的sum。注意，最后的答案是把最小的sum减去常数项 sum|i-k/2|.
+
+$0
+endsnippet
+
+# ==> ./Math/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones.cpp <==
+snippet 1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones "1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones" b
 class Solution {
 public:
     int minMoves(vector<int>& nums, int k) 
@@ -1588,35 +3652,42 @@ public:
 //    0  1 2  k/2       k
 // X  X X  O   X   X 
 //    X X  X   O   X X
-::::::::::::::
-Math/1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones/Readme.md
-::::::::::::::
-### 1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones
 
-首先我们要有这样的意识：想要以最少的操作把k个1靠拢，显然这个k个1必然是在原数组中相邻的（刨除零元素）。所以我们先构造一个新数组p，里面的元素就是原数组中所有1的位置。接下来我们就在数组p中考察所有长度为k的滑窗。在每个滑窗里，我们有k个离散的位置点，我们的任务是研究如何用最少的操作，得到k个连续的位置。
+$0
+endsnippet
 
-此时我们会想到一个类似的问题。我们有k个离散点的位置，如何确定一个中心位置x，使得所有k个点离x的距离之和最短？这个问题就是```296.Best-Meeting-Point```，答案是，“中心”应该选在这k个点的中位数处。此时的总距离```total = sum |pi-x|, i=0,1,..,k-1```能够最小。
+# ==> ./Math/1735.Count-Ways-to-Make-Array-With-Product/Readme.md <==
+snippet 1735.Count-Ways-to-Make-Array-With-Product "1735.Count-Ways-to-Make-Array-With-Product" b
+### 1735.Count-Ways-to-Make-Array-With-Product
 
-我们再切回之前所考虑的问题，我们不是把所有的点都移到“中心”位置x，而是把所有的点移到以x为中心的连续k个位置。因此我们最小化的是 ```sum |pi-x| (for i=0,1,..,k-1) - sum|i-k/2| (for i=0,1,..,k-1) ```. 我们发现第二项其实是一个常数。所以本题的最优解其实和LC296是一样：最佳的“中心”位置依然是所有点的中位数。
+一个比较粗暴的方法就是递归。对于k，我们遍历它的因数x1，然后遍历k/x1的因数x2，然后遍历k/x1/x2的因数x3，...，直至遍历完所有的n个因数。因为n很大可以达到1000，这个递归深度就太深了，一定会TLE。
 
-因此，回到我们最初所考虑的第一个滑窗，对于p[0]~p[k-1]这k个位置的点，我们的目的应该把它们移动到```[p[k/2] - k/2, p[k/2]+k/2-1]```这个区间。为了计算方便，我们省略掉上一段里面的第二项，只考虑把它们都移动到p[k/2]所需要的操作总数。这个是很容易算的，记做是sum。
+有什么高效的方法来把k分解成n组因数的乘积呢？我们自然会想到质因数。比如说12=2x2x3，想要将其分割为4组的话，就是把这三个质因数分成4组（允许某组为空，也就是该组所对应的因数是1）。对于把x个同质球分成y份的方法数，是一个经典的组合问题，答案就是组合数C(x+y-1, y-1)。我们可以这么理解：将x+y个“虚拟球”排成一列，中间就有x+y-1个间隔，我们在其中选择y-1个间隔插入板子，就可以得到y个区间，每一个区间至少有一个“虚拟球”。我们约定：插板后每段区间内“虚拟球”的数目减去一，就是该区间分组的真实球的数量。我们可以想象，每一个合法的插板方法，都恰好一一映射了一种合法的“将x个同质球分成y份（允许某份为零）”的方案。
 
-接下来我们看从第一个滑窗到第二个滑窗的变化：原先的k个位置是p[0]~p[k-1]，中心是在p[mid]；滑动之后的k个位置是p[1]~p[k]，中心是在p[mid+1]。
+比如说将2x2x3这3个质因数分为4份，插板方案有
 ```
-0  1  2 mid .  . k-1 k
-X  X  X  O  X  X  X
-   X  X  X  O  X  X  X
+    插板               每组元素个数  分解方案
+O | O O | O | O O O =>  0 1 0 2 => 1x2x1x6
+O | O O | O O | O O =>  0 1 1 1 => 1x2x2x3
+O | O O O | O O | O =>  0 2 1 0 => 1x4x3x1
+O O | O | O | O O O =>  1 0 0 2 => 2x1x1x6
+O O | O | O O | O O =>  1 0 1 1 => 2x1x2x3
+O O | O  O | O O |O =>  1 1 1 0 => 2x2x3x1
+...
 ```
-相应地，操作总数sum的变化有四个部分：
-1. 原先p[0]在滑窗里，贡献了```p[mid]-p[0]```这么多操作。现在要减去他们。
-2. 原先p[k]不在滑窗里，现在加入了滑窗，需要加上它的贡献```p[k]-p[mid+1]```
-3. 原先p[1]~p[mid]到中心p[mid]的距离，现在都变成了p[1]~p[mid]到新中心p[mid+1]的距离，每个数到新中心都多出了p[mid+1]-p[mid]，所以我们需要把sum补上```(p[mid+1]-p[mid])*(k/2)```
-4. 原先p[mid+1]~p[k-1]到中心p[mid]的距离，现在都变成了p[mid+1]~p[k-1]到新中心p[mid+1]的距离，每个数到心中都减少了p[mid+1]-p[mid]，所以我们需要把sum扣除```(p[mid+1]-p[mid])*(k-k/2-1)```
+总共有C(6,3)=6种方案。
 
-可见，我们将第一个滑窗的sum，通过四步o(1)的修正，就可以到第二个滑窗的sum。我们将滑窗走一遍，就可以得到最小的sum。注意，最后的答案是把最小的sum减去常数项 sum|i-k/2|.
-::::::::::::::
-Math/1735.Count-Ways-to-Make-Array-With-Product/1735.Count-Ways-to-Make-Array-With-Product.cpp
-::::::::::::::
+但是以上方案有个问题，就是没有考虑到这3个质因数(2,2,3)的permutation。我们似乎得找出所有unique permuation，然后对每种permutation都用上面的插板法来分组。
+
+那么如何解决呢？方法是对于每个质因数apply上述的分组方案。比如说12，它的质因数2出现了两次，那么我们就考虑如何把这两个2分成4组；它的质因数3出现了一次，我们就考虑如何把这一个3分成4组。这样，对于相同的质因数，它如果有x个，那么这x个元素就是“同质球”，彼此之间是没有区别的，我们就可以放心地应用插板法。
+
+最终的方案总数的计算法方法。分解质因数```k = x1^p1 + x2^p2 + x3^p3 + ...``` 总方案数 = 把p1个（相同质因数x1）分成n组方案 \* 把p2个（相同质因数x2）分n组方案 \* 把p3个（相同质因数x3）分成n组方案 ...
+
+$0
+endsnippet
+
+# ==> ./Math/1735.Count-Ways-to-Make-Array-With-Product/1735.Count-Ways-to-Make-Array-With-Product.cpp <==
+snippet 1735.Count-Ways-to-Make-Array-With-Product "1735.Count-Ways-to-Make-Array-With-Product" b
 typedef long long ll;
 
 class Solution {
@@ -1657,36 +3728,36 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Math/1735.Count-Ways-to-Make-Array-With-Product/Readme.md
-::::::::::::::
-### 1735.Count-Ways-to-Make-Array-With-Product
 
-一个比较粗暴的方法就是递归。对于k，我们遍历它的因数x1，然后遍历k/x1的因数x2，然后遍历k/x1/x2的因数x3，...，直至遍历完所有的n个因数。因为n很大可以达到1000，这个递归深度就太深了，一定会TLE。
+$0
+endsnippet
 
-有什么高效的方法来把k分解成n组因数的乘积呢？我们自然会想到质因数。比如说12=2x2x3，想要将其分割为4组的话，就是把这三个质因数分成4组（允许某组为空，也就是该组所对应的因数是1）。对于把x个同质球分成y份的方法数，是一个经典的组合问题，答案就是组合数C(x+y-1, y-1)。我们可以这么理解：将x+y个“虚拟球”排成一列，中间就有x+y-1个间隔，我们在其中选择y-1个间隔插入板子，就可以得到y个区间，每一个区间至少有一个“虚拟球”。我们约定：插板后每段区间内“虚拟球”的数目减去一，就是该区间分组的真实球的数量。我们可以想象，每一个合法的插板方法，都恰好一一映射了一种合法的“将x个同质球分成y份（允许某份为零）”的方案。
+# ==> ./Math/1739.Building-Boxes/Readme.md <==
+snippet 1739.Building-Boxes "1739.Building-Boxes" b
+### 1739.Building-Boxes
 
-比如说将2x2x3这3个质因数分为4份，插板方案有
+此题有点像找规律。我们从直观上可以得知，最高效的摆放方法一定就是如示例中的形状，底边围着一个墙角对称地摆放成“等腰三角形”，然后每一层都是边长减一的等腰三角形。这样的“饱和金字塔”可以利用最小的底边堆叠最多的单元。
+
+如果没有一个恰好饱和的“金字塔”能够堆叠n个单元，那么我们势必需要先增加底边。怎么增加呢？显然也是尽量围成等腰三角形。如果不能恰好构成等腰三角形，我们就在最接近的等腰三角形的基础上，每一行增加一个单元。比如说：我们有13个单元做底边，只能拼出长宽为4的等腰三角形，多出来的3个单元，就添加在每行的末尾。
 ```
-    插板               每组元素个数  分解方案
-O | O O | O | O O O =>  0 1 0 2 => 1x2x1x6
-O | O O | O O | O O =>  0 1 1 1 => 1x2x2x3
-O | O O O | O O | O =>  0 2 1 0 => 1x4x3x1
-O O | O | O | O O O =>  1 0 0 2 => 2x1x1x6
-O O | O | O O | O O =>  1 0 1 1 => 2x1x2x3
-O O | O  O | O O |O =>  1 1 1 0 => 2x2x3x1
-...
+4 3 3 2 1
+3 2 2 1
+2 1 1
+1
 ```
-总共有C(6,3)=6种方案。
+图中的数字表示该位置最高能堆叠到第几层。
 
-但是以上方案有个问题，就是没有考虑到这3个质因数(2,2,3)的permutation。我们似乎得找出所有unique permuation，然后对每种permutation都用上面的插板法来分组。
+我们可以发现，对于最底层，每行的个数是：5,4,3,1. 对于第二层，每行的个数是：4,3,1.  对于第三层，每行的个数是：3,1. 对于第四层，每行的个数是：1. 
 
-那么如何解决呢？方法是对于每个质因数apply上述的分组方案。比如说12，它的质因数2出现了两次，那么我们就考虑如何把这两个2分成4组；它的质因数3出现了一次，我们就考虑如何把这一个3分成4组。这样，对于相同的质因数，它如果有x个，那么这x个元素就是“同质球”，彼此之间是没有区别的，我们就可以放心地应用插板法。
+我们发现每层所能摆放的个数，恰好底层序列的后缀！于是我们可以根据底层序列求出每层摆放的数量和整个金字塔的摆放数量。
 
-最终的方案总数的计算法方法。分解质因数```k = x1^p1 + x2^p2 + x3^p3 + ...``` 总方案数 = 把p1个（相同质因数x1）分成n组方案 \* 把p2个（相同质因数x2）分n组方案 \* 把p3个（相同质因数x3）分成n组方案 ...
-::::::::::::::
-Math/1739.Building-Boxes/1739.Building-Boxes.cpp
-::::::::::::::
+整体地，我们用二分搜值法。先猜测底层的area，根据area判断出底层序列，继而求出整个金字塔的数量，然后与需求n进行比较，调整下一轮area的猜测范围。
+
+$0
+endsnippet
+
+# ==> ./Math/1739.Building-Boxes/1739.Building-Boxes.cpp <==
+snippet 1739.Building-Boxes "1739.Building-Boxes" b
 typedef long long ll;
 
 class Solution {
@@ -1731,100 +3802,12 @@ public:
         return total;        
     }
 };
-::::::::::::::
-Math/1739.Building-Boxes/Readme.md
-::::::::::::::
-### 1739.Building-Boxes
 
-此题有点像找规律。我们从直观上可以得知，最高效的摆放方法一定就是如示例中的形状，底边围着一个墙角对称地摆放成“等腰三角形”，然后每一层都是边长减一的等腰三角形。这样的“饱和金字塔”可以利用最小的底边堆叠最多的单元。
+$0
+endsnippet
 
-如果没有一个恰好饱和的“金字塔”能够堆叠n个单元，那么我们势必需要先增加底边。怎么增加呢？显然也是尽量围成等腰三角形。如果不能恰好构成等腰三角形，我们就在最接近的等腰三角形的基础上，每一行增加一个单元。比如说：我们有13个单元做底边，只能拼出长宽为4的等腰三角形，多出来的3个单元，就添加在每行的末尾。
-```
-4 3 3 2 1
-3 2 2 1
-2 1 1
-1
-```
-图中的数字表示该位置最高能堆叠到第几层。
-
-我们可以发现，对于最底层，每行的个数是：5,4,3,1. 对于第二层，每行的个数是：4,3,1.  对于第三层，每行的个数是：3,1. 对于第四层，每行的个数是：1. 
-
-我们发现每层所能摆放的个数，恰好底层序列的后缀！于是我们可以根据底层序列求出每层摆放的数量和整个金字塔的摆放数量。
-
-整体地，我们用二分搜值法。先猜测底层的area，根据area判断出底层序列，继而求出整个金字塔的数量，然后与需求n进行比较，调整下一轮area的猜测范围。
-::::::::::::::
-Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int reinitializePermutation(int n) 
-    {
-        vector<int>perm0(n);
-        for (int i=0; i<n; i++)
-            perm0[i] = i;
-        
-        auto perm = perm0;
-        
-        int count = 0;
-        while (1)
-        {
-            vector<int>arr = perm;
-            for (int i=0; i<n; i++)
-            {
-                if (i%2==0)
-                    arr[i] = perm[i / 2];
-                else
-                    arr[i] = perm[n / 2 + (i - 1) / 2];                    
-            }
-            count++;
-            if (arr == perm0) return count;
-            perm = arr;            
-        }
-        return -1;
-        
-    }
-};
-::::::::::::::
-Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int reinitializePermutation(int n) 
-    {        
-        int count = 0;
-        int i = 1;
-        while (count==0 || i!=1)
-        {
-            if (i < n/2)
-                i = i*2;
-            else
-                i = i*2 - (n-1);
-            count++;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v3.cpp
-::::::::::::::
-class Solution {
-public:
-    int reinitializePermutation(int n) 
-    {        
-        if (n==2) return 1;
-        int count = 1;        
-        int power = 2;
-        while (power % (n-1) !=1)
-        {
-            count++;
-            power = power * 2 % (n-1);
-        }
-        return count;
-    }
-};
-::::::::::::::
-Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/Readme.md
-::::::::::::::
+# ==> ./Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/Readme.md <==
+snippet 1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation "1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation" b
 ### 1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation
 
 本题的操作是：将数组的前半部分元素重新分配到偶数位（index=0,2,4,6...），将数组的后半部分元素重新分配到奇数位（index=1,3,5,7...）。
@@ -1856,9 +3839,104 @@ if N/2<=i<N, f(i) = i*2 - (N-1)
 假设连续操作k次，得到```f^k(i) = 2^k * i mod (N-1)```. 如果操作k次得到初始的状态，也就是```f^k(i)=i```，那么即有```2^k * i ≡ i (mod N-1)```。为了使这个式子对于任意的i恒成立，必须2^k能够被(N-1)整除余1. 所以我们只需要将k从1往上不断尝试即可。
 
 需要注意的是，当k大于32时，2^k就已经超出了整形范围。所以我们每次将power再乘以2时，需要对(N-1)取余降低数值的大小，同时也不影响最终的结果。这是因为 ```x ≡ x % m (mod m)```
-::::::::::::::
-Math/1808.Maximize-Number-of-Nice-Divisors/1808.Maximize-Number-of-Nice-Divisors.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v1.cpp <==
+snippet 1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation "1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation" b
+class Solution {
+public:
+    int reinitializePermutation(int n) 
+    {
+        vector<int>perm0(n);
+        for (int i=0; i<n; i++)
+            perm0[i] = i;
+        
+        auto perm = perm0;
+        
+        int count = 0;
+        while (1)
+        {
+            vector<int>arr = perm;
+            for (int i=0; i<n; i++)
+            {
+                if (i%2==0)
+                    arr[i] = perm[i / 2];
+                else
+                    arr[i] = perm[n / 2 + (i - 1) / 2];                    
+            }
+            count++;
+            if (arr == perm0) return count;
+            perm = arr;            
+        }
+        return -1;
+        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v2.cpp <==
+snippet 1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation "1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation" b
+class Solution {
+public:
+    int reinitializePermutation(int n) 
+    {        
+        int count = 0;
+        int i = 1;
+        while (count==0 || i!=1)
+        {
+            if (i < n/2)
+                i = i*2;
+            else
+                i = i*2 - (n-1);
+            count++;
+        }
+        return count;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation/1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation_v3.cpp <==
+snippet 1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation "1806.Minimum-Number-of-Operations-to-Reinitialize-a-Permutation" b
+class Solution {
+public:
+    int reinitializePermutation(int n) 
+    {        
+        if (n==2) return 1;
+        int count = 1;        
+        int power = 2;
+        while (power % (n-1) !=1)
+        {
+            count++;
+            power = power * 2 % (n-1);
+        }
+        return count;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1808.Maximize-Number-of-Nice-Divisors/Readme.md <==
+snippet 1808.Maximize-Number-of-Nice-Divisors "1808.Maximize-Number-of-Nice-Divisors" b
+### 1808.Maximize-Number-of-Nice-Divisors
+
+本题的意思是说，如果一个数的分解质因数是```a^k1*b^k2*c^k3*...```的形式，并且质因数总个数是```primefactors = k1+k2+k3+...```. 问有多少个它的因数能同时被```a,b,c...```整除。
+
+显然这种的因数的个数是 ```k1*k2*k3*...```，也就是说每种质因数最少取1个，最多取k个。那么总的组合数就是用乘法原理。于是本题就转化为，已知一堆数的和是固定值，求如何分配这堆数，使得这堆数的乘积的最大值。这道题本质就是```343.Integer Break```.我们断言当这堆数都相等的时候乘积能最大。那么这堆数究竟分成几份呢？我们想求```f = (a/n)^n```的最大值，令其导函数等于零，可以得到n等于自然对数e=2.718. 所以结论是，我们尽量将这些数切分出为3和2，其中3越多越好。
+
+假设primeFactor能切分为a个3与b个2的和，那么答案就是``pow(3,a)*pow(2,b)```。注意这个幂可能非常大并且会越界，所以我们需要手工加载快速幂的代码，并在其中嵌入对1e9+7的取模。
+
+$0
+endsnippet
+
+# ==> ./Math/1808.Maximize-Number-of-Nice-Divisors/1808.Maximize-Number-of-Nice-Divisors.cpp <==
+snippet 1808.Maximize-Number-of-Nice-Divisors "1808.Maximize-Number-of-Nice-Divisors" b
 class Solution {
 public:
     int maxNiceDivisors(int primeFactors) 
@@ -1900,19 +3978,27 @@ public:
         return N % 2 == 0 ? y * y % M: y * y * x % M;
     }
 };
-::::::::::::::
-Math/1808.Maximize-Number-of-Nice-Divisors/Readme.md
-::::::::::::::
-### 1808.Maximize-Number-of-Nice-Divisors
 
-本题的意思是说，如果一个数的分解质因数是```a^k1*b^k2*c^k3*...```的形式，并且质因数总个数是```primefactors = k1+k2+k3+...```. 问有多少个它的因数能同时被```a,b,c...```整除。
+$0
+endsnippet
 
-显然这种的因数的个数是 ```k1*k2*k3*...```，也就是说每种质因数最少取1个，最多取k个。那么总的组合数就是用乘法原理。于是本题就转化为，已知一堆数的和是固定值，求如何分配这堆数，使得这堆数的乘积的最大值。这道题本质就是```343.Integer Break```.我们断言当这堆数都相等的时候乘积能最大。那么这堆数究竟分成几份呢？我们想求```f = (a/n)^n```的最大值，令其导函数等于零，可以得到n等于自然对数e=2.718. 所以结论是，我们尽量将这些数切分出为3和2，其中3越多越好。
+# ==> ./Math/1819.Number-of-Different-Subsequences-GCDs/Readme.md <==
+snippet 1819.Number-of-Different-Subsequences-GCDs "1819.Number-of-Different-Subsequences-GCDs" b
+### 1819.Number-of-Different-Subsequences-GCDs
 
-假设primeFactor能切分为a个3与b个2的和，那么答案就是``pow(3,a)*pow(2,b)```。注意这个幂可能非常大并且会越界，所以我们需要手工加载快速幂的代码，并在其中嵌入对1e9+7的取模。
-::::::::::::::
-Math/1819.Number-of-Different-Subsequences-GCDs/1819.Number-of-Different-Subsequences-GCDs.cpp
-::::::::::::::
+nums有10^5个元素，那么subsequence的组合总共有2^(100000)种，列举每一种序列并求他们的GCD是不现实的。我们转换一个思路，nums的元素的上限是2e5，说明任何序列的GCD肯定也不会超过这个数字。那么是否我们是否可以列举所有小于2e5的数字，然后高效判断它是否属于某个序列的GCD呢？
+
+举个例子，对于数字4，它是否可能是某个序列的GCD呢？首先，我们需要这个序列都是4的倍数。例如，如果数组里出现了[4,8,12,16...]，那么4就是他们的GCD。那么是否只要有4的倍数出现，4就算作一个符合条件GCD呢？并不是，比如数字中只有[8,16,32...]，我们发现他们的最大公约数其实是8而不是4. 因此我们需要数组中有某些4的倍数组成的序列，他们的最大公约数只能是4，而不是4的其他倍数。考虑到序列元素越多，公约数越小。所以，以上就等价于数组中所有的4的倍数组成的序列，他们的最大公约数必须恰好是4，而不是4的其他倍数.
+
+OK，那么我们会固定考察4，然后遍历数组找出所有4的倍数再求GCD；再固定考察5，重复一遍这样的操作吗？这样的效率显然不高。我们可以直接处理每个数组元素a找出它的所有因数fi. 对于fi而言它的一个倍数就是a。我们可以设立一个hash表，记录每个因数fi在数组中出现的它的倍数所累积的GCD。比如说a分解出fi，fi第一次出现，那么记录```g(fi)=a```；另外b分解出fi，那么记录```g(fi)=gcd(a,b)=gcd(g(fi),b)```；再有c也分解出fi，那么记录```g(fi) = gcd(a,b,c) = gcd(g(fi),c)```. 最终g(fi)记录的就是所有fi的倍数的序列的GCD。如果```g(fi)=fi```，那么fi就是一个符合要求的GCD。
+
+假设单次求解一对数字gcd的时间是o(1)。令M表示每个元素的大小上限2e5，数组总元素个是N，那么分解因数的时间是```o(N*sqrt(M))```。每分出一个因数f，就对应一次gcd的计算。
+
+$0
+endsnippet
+
+# ==> ./Math/1819.Number-of-Different-Subsequences-GCDs/1819.Number-of-Different-Subsequences-GCDs.cpp <==
+snippet 1819.Number-of-Different-Subsequences-GCDs "1819.Number-of-Different-Subsequences-GCDs" b
 class Solution {
     int Map[200001];
 public:
@@ -1949,21 +4035,33 @@ public:
         return count;        
     }    
 };
-::::::::::::::
-Math/1819.Number-of-Different-Subsequences-GCDs/Readme.md
-::::::::::::::
-### 1819.Number-of-Different-Subsequences-GCDs
 
-nums有10^5个元素，那么subsequence的组合总共有2^(100000)种，列举每一种序列并求他们的GCD是不现实的。我们转换一个思路，nums的元素的上限是2e5，说明任何序列的GCD肯定也不会超过这个数字。那么是否我们是否可以列举所有小于2e5的数字，然后高效判断它是否属于某个序列的GCD呢？
+$0
+endsnippet
 
-举个例子，对于数字4，它是否可能是某个序列的GCD呢？首先，我们需要这个序列都是4的倍数。例如，如果数组里出现了[4,8,12,16...]，那么4就是他们的GCD。那么是否只要有4的倍数出现，4就算作一个符合条件GCD呢？并不是，比如数字中只有[8,16,32...]，我们发现他们的最大公约数其实是8而不是4. 因此我们需要数组中有某些4的倍数组成的序列，他们的最大公约数只能是4，而不是4的其他倍数。考虑到序列元素越多，公约数越小。所以，以上就等价于数组中所有的4的倍数组成的序列，他们的最大公约数必须恰好是4，而不是4的其他倍数.
+# ==> ./Math/1830.Minimum-Number-of-Operations-to-Make-String-Sorted/Readme.md <==
+snippet 1830.Minimum-Number-of-Operations-to-Make-String-Sorted "1830.Minimum-Number-of-Operations-to-Make-String-Sorted" b
+### 1830.Minimum-Number-of-Operations-to-Make-String-Sorted
 
-OK，那么我们会固定考察4，然后遍历数组找出所有4的倍数再求GCD；再固定考察5，重复一遍这样的操作吗？这样的效率显然不高。我们可以直接处理每个数组元素a找出它的所有因数fi. 对于fi而言它的一个倍数就是a。我们可以设立一个hash表，记录每个因数fi在数组中出现的它的倍数所累积的GCD。比如说a分解出fi，fi第一次出现，那么记录```g(fi)=a```；另外b分解出fi，那么记录```g(fi)=gcd(a,b)=gcd(g(fi),b)```；再有c也分解出fi，那么记录```g(fi) = gcd(a,b,c) = gcd(g(fi),c)```. 最终g(fi)记录的就是所有fi的倍数的序列的GCD。如果```g(fi)=fi```，那么fi就是一个符合要求的GCD。
+本题最大的突破口在于观察这些操作到底目的是啥。其实它做的是找这个序列的previous permutation。
 
-假设单次求解一对数字gcd的时间是o(1)。令M表示每个元素的大小上限2e5，数组总元素个是N，那么分解因数的时间是```o(N*sqrt(M))```。每分出一个因数f，就对应一次gcd的计算。
-::::::::::::::
-Math/1830.Minimum-Number-of-Operations-to-Make-String-Sorted/1830.Minimum-Number-of-Operations-to-Make-String-Sorted.cpp
-::::::::::::::
+我们想一下```LC31 next permutation```是怎么操作的。已知序列```12375421```，对于next permuation，我们想尽量保持高位的数字不变，将数字重新排列使其稍微增大一点点。但是我们发现后面五位75421已经是降序了，如果我们保持高3位不变、只变动低5位的话，无论如何不能使得序列变大。所以我们只能变动第3位，试图将其变高一点点，那么变成哪一个呢？显然就是将后5位里面挑一个比3大一点点的数字，那么就是4.当我们把第3位提升之后，剩下的5位自然要越小越好，那么就是将剩下没有使用的37521升序排列即可：12412357
+
+如果我们将上述的过程逆过来看，我们就会发现题目中的操作其实就是从12412357->12375421的过程。对于previous permuation，我们想尽量保持高位的数字不变，将数字重新排列使其稍微增小一点点。但是我们发现后面五位12357已经是降序了，如果我们保持高3位不变、只变动低5位的话，无论如何不能使得序列变小。所以我们只能变动第3位，试图将其变小一点点，那么变成哪一个呢？显然就是将后5位里面挑一个比4小一点点的数字，那么就是3.当我们把第3位确定之后，剩下的5位自然要越大越好，那么就是将剩下没有使用的37521降序排列即可：12375421。
+
+综上，我们每操作一次，就会将这个序列的排列按照字典序变小一点。所以本题其实就是求有多少种字典序比所给字符串小的排列。
+
+至此，我们又可以联想到```LC60. Permutation Sequence```，求字典序第k个的排列是多少。两者的方法是一样的，就是固定高位，计算低位的自由排列的个数。对于本题，假设我们处理3xxxxxx，如果最高位可以选取小于3的数字的话（即1和2），后面6位的数字可以任意排列。所以我们可以计算小于3xxxxxx的排列的数目是```a*6!```，其中a表示我们在所有元素中有多少个小于3的（包括重复的）可以放在最高位。但是这个阶乘算法有个问题，那就是我们认为每个元素都是distinct，如果有相同的元素出现在排列里，他们的全排列其实重复的。解决方法其实很简单，如果全排列里面有k个1，那么全排列的数目就除以k!。也就说，我们想象这k个1在内部进行的全排列其实都被总排列计算进去了，我们现在把它规约掉。同理，如果全排列里面有若干个相同的其他元素，也都相应除以元素数目的阶乘。
+
+上面计算的排列的数目，其实是固定最高位小于3. 我们接下来要计算固定最高位等于3. 那么其实相当于递归处理第二位。假设我们处理的是38xxxxx，那么此时我们统计最高位是3、第二位小于8的排列个数。注意此时因为我们固定了最高位是3，那么我们必须提前将一个3从pool里面删除。同理，我们依照前面的方法计算```b*5!```其中b表示我们在所有元素中有多少个小于8的（包括重复的）可以放在第二位，后面5!表示确定了第一位和第二位之后剩下的5个元素可以任意排列。然后记得再规约重复元素的阶乘。
+
+最后要说明的是，由于涉及到了除法，大数取余必须用乘法逆元。即```(a/b) mod M = (a mod B) * inv(b, M)```. 乘法逆元的计算方法见模板。
+
+$0
+endsnippet
+
+# ==> ./Math/1830.Minimum-Number-of-Operations-to-Make-String-Sorted/1830.Minimum-Number-of-Operations-to-Make-String-Sorted.cpp <==
+snippet 1830.Minimum-Number-of-Operations-to-Make-String-Sorted "1830.Minimum-Number-of-Operations-to-Make-String-Sorted" b
 typedef long long LL;
 class Solution {
     LL mod = 1e9+7;
@@ -2005,44 +4103,12 @@ public:
     }
     
 };
-::::::::::::::
-Math/1830.Minimum-Number-of-Operations-to-Make-String-Sorted/Readme.md
-::::::::::::::
-### 1830.Minimum-Number-of-Operations-to-Make-String-Sorted
 
-本题最大的突破口在于观察这些操作到底目的是啥。其实它做的是找这个序列的previous permutation。
+$0
+endsnippet
 
-我们想一下```LC31 next permutation```是怎么操作的。已知序列```12375421```，对于next permuation，我们想尽量保持高位的数字不变，将数字重新排列使其稍微增大一点点。但是我们发现后面五位75421已经是降序了，如果我们保持高3位不变、只变动低5位的话，无论如何不能使得序列变大。所以我们只能变动第3位，试图将其变高一点点，那么变成哪一个呢？显然就是将后5位里面挑一个比3大一点点的数字，那么就是4.当我们把第3位提升之后，剩下的5位自然要越小越好，那么就是将剩下没有使用的37521升序排列即可：12412357
-
-如果我们将上述的过程逆过来看，我们就会发现题目中的操作其实就是从12412357->12375421的过程。对于previous permuation，我们想尽量保持高位的数字不变，将数字重新排列使其稍微增小一点点。但是我们发现后面五位12357已经是降序了，如果我们保持高3位不变、只变动低5位的话，无论如何不能使得序列变小。所以我们只能变动第3位，试图将其变小一点点，那么变成哪一个呢？显然就是将后5位里面挑一个比4小一点点的数字，那么就是3.当我们把第3位确定之后，剩下的5位自然要越大越好，那么就是将剩下没有使用的37521降序排列即可：12375421。
-
-综上，我们每操作一次，就会将这个序列的排列按照字典序变小一点。所以本题其实就是求有多少种字典序比所给字符串小的排列。
-
-至此，我们又可以联想到```LC60. Permutation Sequence```，求字典序第k个的排列是多少。两者的方法是一样的，就是固定高位，计算低位的自由排列的个数。对于本题，假设我们处理3xxxxxx，如果最高位可以选取小于3的数字的话（即1和2），后面6位的数字可以任意排列。所以我们可以计算小于3xxxxxx的排列的数目是```a*6!```，其中a表示我们在所有元素中有多少个小于3的（包括重复的）可以放在最高位。但是这个阶乘算法有个问题，那就是我们认为每个元素都是distinct，如果有相同的元素出现在排列里，他们的全排列其实重复的。解决方法其实很简单，如果全排列里面有k个1，那么全排列的数目就除以k!。也就说，我们想象这k个1在内部进行的全排列其实都被总排列计算进去了，我们现在把它规约掉。同理，如果全排列里面有若干个相同的其他元素，也都相应除以元素数目的阶乘。
-
-上面计算的排列的数目，其实是固定最高位小于3. 我们接下来要计算固定最高位等于3. 那么其实相当于递归处理第二位。假设我们处理的是38xxxxx，那么此时我们统计最高位是3、第二位小于8的排列个数。注意此时因为我们固定了最高位是3，那么我们必须提前将一个3从pool里面删除。同理，我们依照前面的方法计算```b*5!```其中b表示我们在所有元素中有多少个小于8的（包括重复的）可以放在第二位，后面5!表示确定了第一位和第二位之后剩下的5个元素可以任意排列。然后记得再规约重复元素的阶乘。
-
-最后要说明的是，由于涉及到了除法，大数取余必须用乘法逆元。即```(a/b) mod M = (a mod B) * inv(b, M)```. 乘法逆元的计算方法见模板。
-::::::::::::::
-Math/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible.cpp
-::::::::::::::
-class Solution {
-    long dp[1005][1005];
-    long M = 1e9+7;
-public:
-    int rearrangeSticks(int n, int k) 
-    {
-        dp[0][0] = 1;
-        for (int i=1; i<=n; i++)
-            for (int j=1; j<=min(k, i); j++)
-                dp[i][j] = (dp[i-1][j-1] + dp[i-1][j]*(i-1) % M) %M;
-        
-        return dp[n][k];
-    }
-};
-::::::::::::::
-Math/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible/Readme.md
-::::::::::::::
+# ==> ./Math/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible/Readme.md <==
+snippet 1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible "1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible" b
 ### 1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible
 
 我们先来回顾和学习一些组合数学的知识。
@@ -2091,9 +4157,70 @@ Math/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible/Readme.md
 
 综上递推公式 ```dp[i][j] = dp[i-1][j-1] + dp[i-1][j]*(i-1)```
 
-::::::::::::::
-Math/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible/1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible.cpp <==
+snippet 1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible "1866.Number-of-Ways-to-Rearrange-Sticks-With-K-Sticks-Visible" b
+class Solution {
+    long dp[1005][1005];
+    long M = 1e9+7;
+public:
+    int rearrangeSticks(int n, int k) 
+    {
+        dp[0][0] = 1;
+        for (int i=1; i<=n; i++)
+            for (int j=1; j<=min(k, i); j++)
+                dp[i][j] = (dp[i-1][j-1] + dp[i-1][j]*(i-1) % M) %M;
+        
+        return dp[n][k];
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Math/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony/Readme.md <==
+snippet 1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony "1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony" b
+### 1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony
+
+本题的本质是求排列的数目。要求在排列里面，任何一个元素不能早于它的祖先节点。我们来考虑这样一个简单的情况
+```
+    A
+  /   \
+ B     D
+ |     |
+ C     E
+```
+对于A这棵子树而言，它的合法的permuation有6种，一定是A####的形式。在这四个####的全排列里面，我们要求B一定在C前面，D一定在E前面。但是B、C与D、E之间的关系是任意的。所以我们可以考虑将B、C抽象为X，将D、E抽象为Y，那么X和Y之间是没有任何约束关系的，所以我们可以将X和Y任意全排列。于是我们第一步考察两个X和两个Y的unique的全排列的数目是多少？答案是6个：
+```
+XXYY
+XYXY
+XYYX
+YYXX
+YXYX
+YXXY
+```
+这个排列数是怎么求出来的呢？我们先考虑一个总的全排列数目4!=24。但是因为X元素位置上的子排列我们不细分，即```..x1..x2..```与```..x2..x1..```，在我们眼中都是```..x..x..```，所以我们要除以x元素内部的排列数。同理，也要除以y元素内部的排列数。所以“两个X和两个Y的unique的全排列的数目”就是```4!/(2!*2!)=6```.
+
+上面的排列数忽略了X元素内部的任何不同排列，以及Y元素内部的任何不同排列。那么X元素内部有多少种不同的排列呢？这其实就是以B为根的子树的排列数（在这个例子中是1）. 假设以B为根的子树的排列数是a，以D为根的子树的排列数是b，那么以A为根的子树的排列数就是在6的基础上，再乘以```a*b```。
+
+综上我们令dp[node]表示以node为节点的子树的排列数，num[node]表示以node为节点的子树的节点数目，那么就有递推公式：
+```cpp
+dp[node] = num[node] ! / (num[child1]! * num[child2]! * ... * num[childk]!) * dp[child1] * dp[child2] * ... * dp[childk]
+```
+注意到上述的式子中含有除法，对大数取模的过程遇到除法需要用到逆元运算，即
+```cpp
+(a / b) % M = a * inv(b, M)
+```
+关于逆元计算的模板见[这里](https://github.com/wisdompeak/LeetCode/tree/master/Template/Inverse_Element)
+
+$0
+endsnippet
+
+# ==> ./Math/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony.cpp <==
+snippet 1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony "1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony" b
 typedef long long ll;
 class Solution {
     ll dp[100005];
@@ -2155,44 +4282,37 @@ public:
         return s;
     }
 };
-::::::::::::::
-Math/1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony/Readme.md
-::::::::::::::
-### 1916.Count-Ways-to-Build-Rooms-in-an-Ant-Colony
 
-本题的本质是求排列的数目。要求在排列里面，任何一个元素不能早于它的祖先节点。我们来考虑这样一个简单的情况
-```
-    A
-  /   \
- B     D
- |     |
- C     E
-```
-对于A这棵子树而言，它的合法的permuation有6种，一定是A####的形式。在这四个####的全排列里面，我们要求B一定在C前面，D一定在E前面。但是B、C与D、E之间的关系是任意的。所以我们可以考虑将B、C抽象为X，将D、E抽象为Y，那么X和Y之间是没有任何约束关系的，所以我们可以将X和Y任意全排列。于是我们第一步考察两个X和两个Y的unique的全排列的数目是多少？答案是6个：
-```
-XXYY
-XYXY
-XYYX
-YYXX
-YXYX
-YXXY
-```
-这个排列数是怎么求出来的呢？我们先考虑一个总的全排列数目4!=24。但是因为X元素位置上的子排列我们不细分，即```..x1..x2..```与```..x2..x1..```，在我们眼中都是```..x..x..```，所以我们要除以x元素内部的排列数。同理，也要除以y元素内部的排列数。所以“两个X和两个Y的unique的全排列的数目”就是```4!/(2!*2!)=6```.
+$0
+endsnippet
 
-上面的排列数忽略了X元素内部的任何不同排列，以及Y元素内部的任何不同排列。那么X元素内部有多少种不同的排列呢？这其实就是以B为根的子树的排列数（在这个例子中是1）. 假设以B为根的子树的排列数是a，以D为根的子树的排列数是b，那么以A为根的子树的排列数就是在6的基础上，再乘以```a*b```。
+# ==> ./Math/1956.Minimum-Time-For-K-Virus-Variants-to-Spread/Readme.md <==
+snippet 1956.Minimum-Time-For-K-Virus-Variants-to-Spread "1956.Minimum-Time-For-K-Virus-Variants-to-Spread" b
+### 1956.Minimum-Time-For-K-Virus-Variants-to-Spread
 
-综上我们令dp[node]表示以node为节点的子树的排列数，num[node]表示以node为节点的子树的节点数目，那么就有递推公式：
-```cpp
-dp[node] = num[node] ! / (num[child1]! * num[child2]! * ... * num[childk]!) * dp[child1] * dp[child2] * ... * dp[childk]
-```
-注意到上述的式子中含有除法，对大数取模的过程遇到除法需要用到逆元运算，即
-```cpp
-(a / b) % M = a * inv(b, M)
-```
-关于逆元计算的模板见[这里](https://github.com/wisdompeak/LeetCode/tree/master/Template/Inverse_Element)
-::::::::::::::
-Math/1956.Minimum-Time-For-K-Virus-Variants-to-Spread/1956.Minimum-Time-For-K-Virus-Variants-to-Spread.cpp
-::::::::::::::
+**引理1：** 给定K个点，存在某个位置M，能够最小化M到所有点的曼哈顿距离的最大值D。结论：这个M一定位于这K个点中距离最远的两个点（记为AB）的连接路径的中点，即```AM + MB = AB = L```，并且```D = (L+1)/2```。
+
+这个结论可以用反证说明：如果M不在所述的位置，那么要么AM会变得比(L+1)/2更大，要么BM会变得比(L+1)/2更大，这样都会使得D更大。有人会问，其他任意点C到M的距离，为什么不可能是曼哈顿距离里的最大值呢？因为对于任意三角形，AB>AC, AB>BC，那么对于AB的中点M，一定有 ```AM = BM > MC```.
+
+**引理2：** 给定K个点{xi,yi}，曼哈顿距离最远的两个点AB之间的距离L，可以计算如下：令 ```a = x + y, b = x - y```. 则 ```L = max(max{|ai-aj|}, max{|bi-bj|})  for all i,j```
+
+本题是希望找到某K个点组成的集合，记其中最大的曼哈顿距离L，如果```D = (L+1)/2 <= K```，那么说明D天后他们的“中心”肯定会被这K个病毒爆发点传染到。我们求所有D中最小的那个。
+
+我们首先将所有的点按照a值排序（前面提到了a=x+y）。我们用两个循环枚举全部的a值区间[i:j]，其中i和j是a值序列的index。对于这个固定的a值区间，前面公式里的“最大a值差”（即```max{|ai-aj|}```），已经是已知的了，就是```aj-ai```。我们此时需思考的是这个区间上的点集的b值范围（前面提到了b=x-y）。我们希望找到K个点，使得他们的最大b值差尽量小。
+
+显然我们只要将这些点再按照b值排个序后，找一段长度为K的滑窗，使得滑窗两端点的b值差最小即可。但是需要注意的是，我们需要保证所选的K个点集的“a值差”仍然是我们之前想要的固定的那个，这意味着我们需要找到i、j这两个点在新建的按照b值排序后的序列里的位置pLeft, pRight。我们用双指针遍历滑动窗口的时候，要求窗口必须包含[pLeft,pRight]这一段。综上，我们在这个b值序列里，遍历所有长度为k、包含[pLeft,pRight]的滑窗，记录最小的“最大b值差”（也就是窗口两端点的b值差）。
+
+总的时间复杂度是 ```o(N^2*NlogN)```
+
+=============================
+
+Update: 以上解法有bug，无法通过新的test case。最大曼哈顿距离是L的点集，并不意味着存在一个中点M，使得M到所有点的距离D不超过(L+1)/2。反例就是[(1,1),(1,2),(2,1),(2,2)].
+
+$0
+endsnippet
+
+# ==> ./Math/1956.Minimum-Time-For-K-Virus-Variants-to-Spread/1956.Minimum-Time-For-K-Virus-Variants-to-Spread.cpp <==
+snippet 1956.Minimum-Time-For-K-Virus-Variants-to-Spread "1956.Minimum-Time-For-K-Virus-Variants-to-Spread" b
 class Solution {
     static bool cmp(vector<int>&a, vector<int>&b)
     {
@@ -2243,31 +4363,27 @@ public:
         return (ret+1)/2;    
     }
 };
-::::::::::::::
-Math/1956.Minimum-Time-For-K-Virus-Variants-to-Spread/Readme.md
-::::::::::::::
-### 1956.Minimum-Time-For-K-Virus-Variants-to-Spread
 
-**引理1：** 给定K个点，存在某个位置M，能够最小化M到所有点的曼哈顿距离的最大值D。结论：这个M一定位于这K个点中距离最远的两个点（记为AB）的连接路径的中点，即```AM + MB = AB = L```，并且```D = (L+1)/2```。
+$0
+endsnippet
 
-这个结论可以用反证说明：如果M不在所述的位置，那么要么AM会变得比(L+1)/2更大，要么BM会变得比(L+1)/2更大，这样都会使得D更大。有人会问，其他任意点C到M的距离，为什么不可能是曼哈顿距离里的最大值呢？因为对于任意三角形，AB>AC, AB>BC，那么对于AB的中点M，一定有 ```AM = BM > MC```.
+# ==> ./Math/1969.Minimum-Non-Zero-Product-of-the-Array-Elements/Readme.md <==
+snippet 1969.Minimum-Non-Zero-Product-of-the-Array-Elements "1969.Minimum-Non-Zero-Product-of-the-Array-Elements" b
+### 1969.Minimum-Non-Zero-Product-of-the-Array-Elements
 
-**引理2：** 给定K个点{xi,yi}，曼哈顿距离最远的两个点AB之间的距离L，可以计算如下：令 ```a = x + y, b = x - y```. 则 ```L = max(max{|ai-aj|}, max{|bi-bj|})  for all i,j```
+我们首先发现，无论如何交换1的位置，这些数字的和是不变的，无非就是“某位上的bit 1从这个数字跑到了那个数字”而已，每个1代表的实际大小没有变化。根据“差大积小”的直觉，对于固定的元素总和，我们尽量采用极端分解出一大一小的分解策略，来使得乘积最小。比如说sum=6时，拆分为```0*6```的乘积要小于```1*5```的乘积，小于```2*4```的乘积，小于```3*3```的乘积。
 
-本题是希望找到某K个点组成的集合，记其中最大的曼哈顿距离L，如果```D = (L+1)/2 <= K```，那么说明D天后他们的“中心”肯定会被这K个病毒爆发点传染到。我们求所有D中最小的那个。
+在本题中，我们最先思考的就是将所有的bit 1都集中到一起得到尽量大的数，剩下的数自然就会极端的小。这样就可以将原先的数字重组为 2^(p-1)个```111...111```和 2^(p-1)-1个```000...000```。
 
-我们首先将所有的点按照a值排序（前面提到了a=x+y）。我们用两个循环枚举全部的a值区间[i:j]，其中i和j是a值序列的index。对于这个固定的a值区间，前面公式里的“最大a值差”（即```max{|ai-aj|}```），已经是已知的了，就是```aj-ai```。我们此时需思考的是这个区间上的点集的b值范围（前面提到了b=x-y）。我们希望找到K个点，使得他们的最大b值差尽量小。
+但是题目要求不能构造0，所以我们退而求次，构造尽量多的1. 很明显，我们将前者拿出 2^(p-1)-1个```1```出来给后者，这样我们就得到了这样一个组合：1个```111...111```，2^(p-1)-1个```111...110```，2^(p-1)个```000...001```。第一部分已经是最大了，第三部分已经是最小了，第二部分也无法再做任何“差大积小”的重组（高位的1都塞满了无法挪动），因此这套组合就是最优答案。
 
-显然我们只要将这些点再按照b值排个序后，找一段长度为K的滑窗，使得滑窗两端点的b值差最小即可。但是需要注意的是，我们需要保证所选的K个点集的“a值差”仍然是我们之前想要的固定的那个，这意味着我们需要找到i、j这两个点在新建的按照b值排序后的序列里的位置pLeft, pRight。我们用双指针遍历滑动窗口的时候，要求窗口必须包含[pLeft,pRight]这一段。综上，我们在这个b值序列里，遍历所有长度为k、包含[pLeft,pRight]的滑窗，记录最小的“最大b值差”（也就是窗口两端点的b值差）。
+本题的C++代码中需要用到快速幂。另外记得base需要取模（将数值范围降到INT32，否则两个Long Long的乘积会溢出），但是指数不能取模。
 
-总的时间复杂度是 ```o(N^2*NlogN)```
+$0
+endsnippet
 
-=============================
-
-Update: 以上解法有bug，无法通过新的test case。最大曼哈顿距离是L的点集，并不意味着存在一个中点M，使得M到所有点的距离D不超过(L+1)/2。反例就是[(1,1),(1,2),(2,1),(2,2)].
-::::::::::::::
-Math/1969.Minimum-Non-Zero-Product-of-the-Array-Elements/1969.Minimum-Non-Zero-Product-of-the-Array-Elements.cpp
-::::::::::::::
+# ==> ./Math/1969.Minimum-Non-Zero-Product-of-the-Array-Elements/1969.Minimum-Non-Zero-Product-of-the-Array-Elements.cpp <==
+snippet 1969.Minimum-Non-Zero-Product-of-the-Array-Elements "1969.Minimum-Non-Zero-Product-of-the-Array-Elements" b
 using LL = long long;
 class Solution {
     LL M = 1e9+7;
@@ -2288,21 +4404,25 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Math/1969.Minimum-Non-Zero-Product-of-the-Array-Elements/Readme.md
-::::::::::::::
-### 1969.Minimum-Non-Zero-Product-of-the-Array-Elements
 
-我们首先发现，无论如何交换1的位置，这些数字的和是不变的，无非就是“某位上的bit 1从这个数字跑到了那个数字”而已，每个1代表的实际大小没有变化。根据“差大积小”的直觉，对于固定的元素总和，我们尽量采用极端分解出一大一小的分解策略，来使得乘积最小。比如说sum=6时，拆分为```0*6```的乘积要小于```1*5```的乘积，小于```2*4```的乘积，小于```3*3```的乘积。
+$0
+endsnippet
 
-在本题中，我们最先思考的就是将所有的bit 1都集中到一起得到尽量大的数，剩下的数自然就会极端的小。这样就可以将原先的数字重组为 2^(p-1)个```111...111```和 2^(p-1)-1个```000...000```。
+# ==> ./Math/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid/Readme.md <==
+snippet 2033.Minimum-Operations-to-Make-a-Uni-Value-Grid "2033.Minimum-Operations-to-Make-a-Uni-Value-Grid" b
+### 2033.Minimum-Operations-to-Make-a-Uni-Value-Grid
 
-但是题目要求不能构造0，所以我们退而求次，构造尽量多的1. 很明显，我们将前者拿出 2^(p-1)-1个```1```出来给后者，这样我们就得到了这样一个组合：1个```111...111```，2^(p-1)-1个```111...110```，2^(p-1)个```000...001```。第一部分已经是最大了，第三部分已经是最小了，第二部分也无法再做任何“差大积小”的重组（高位的1都塞满了无法挪动），因此这套组合就是最优答案。
+首先，满足最终结果的前提条件是，所有矩阵元素与最小值之间的差值必须都是x的倍数。
 
-本题的C++代码中需要用到快速幂。另外记得base需要取模（将数值范围降到INT32，否则两个Long Long的乘积会溢出），但是指数不能取模。
-::::::::::::::
-Math/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid.cpp
-::::::::::::::
+其次，满足了上面的条件之后，那么这个uni-value是什么呢？我们希望所有元素变换成uni-value的操作总数最小，也就是希望这个uni-value能和大家都“接近”。将这个操作总数乘以x后不难发现，也就是希望这个uni-value到所有元素的距离之和最小。显然，和```296.Best-Meeting-Point```一样的数学结论，这个数一定是所有元素的中位数(median)。
+
+此题的进阶版有：```1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones```, ```1478.Allocate-Mailboxes```
+
+$0
+endsnippet
+
+# ==> ./Math/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid.cpp <==
+snippet 2033.Minimum-Operations-to-Make-a-Uni-Value-Grid "2033.Minimum-Operations-to-Make-a-Uni-Value-Grid" b
 class Solution {
 public:
     int minOperations(vector<vector<int>>& grid, int x) 
@@ -2333,19 +4453,27 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Math/2033.Minimum-Operations-to-Make-a-Uni-Value-Grid/Readme.md
-::::::::::::::
-### 2033.Minimum-Operations-to-Make-a-Uni-Value-Grid
 
-首先，满足最终结果的前提条件是，所有矩阵元素与最小值之间的差值必须都是x的倍数。
+$0
+endsnippet
 
-其次，满足了上面的条件之后，那么这个uni-value是什么呢？我们希望所有元素变换成uni-value的操作总数最小，也就是希望这个uni-value能和大家都“接近”。将这个操作总数乘以x后不难发现，也就是希望这个uni-value到所有元素的距离之和最小。显然，和```296.Best-Meeting-Point```一样的数学结论，这个数一定是所有元素的中位数(median)。
+# ==> ./Math/2128.Remove-All-Ones-With-Row-and-Column-Flips/Readme.md <==
+snippet 2128.Remove-All-Ones-With-Row-and-Column-Flips "2128.Remove-All-Ones-With-Row-and-Column-Flips" b
+### 2128.Remove-All-Ones-With-Row-and-Column-Flips
 
-此题的进阶版有：```1703.Minimum-Adjacent-Swaps-for-K-Consecutive-Ones```, ```1478.Allocate-Mailboxes```
-::::::::::::::
-Math/2128.Remove-All-Ones-With-Row-and-Column-Flips/2128.Remove-All-Ones-With-Row-and-Column-Flips.cpp
-::::::::::::::
+假设有一系列的操作能够实现全部翻转为0，那么这些操作的顺序任意打乱，应该不影响最终效果。所以我们不妨先只做列翻转，再做行翻转。
+
+可以想象，我想通过某些行的翻转最终实现全部为0，只可能是一种情况：这些行的元素之前已经通过若干次列翻转全部变成了1。考虑到列翻转的操作会影响到多行，这就意味着这些行的列元素必然相等。
+
+同理，如果某些行不需要通过行翻转就能实现全部为0，只有一种情况：这些行的元素之前已经通过若干次列翻转全部变成了0。考虑到列翻转的操作会影响到多行，这就意味着这些行的列元素必然相等。
+
+综上，原矩阵中，所有行的pattern只可能是有两种，并且这两种pattern恰好都是互斥的（即001101和110010的关系）。这样通过若干次列翻转后，就能得到若干个全部是1的行，以及若干个全部是0的行。
+
+$0
+endsnippet
+
+# ==> ./Math/2128.Remove-All-Ones-With-Row-and-Column-Flips/2128.Remove-All-Ones-With-Row-and-Column-Flips.cpp <==
+snippet 2128.Remove-All-Ones-With-Row-and-Column-Flips "2128.Remove-All-Ones-With-Row-and-Column-Flips" b
 class Solution {
 public:
     bool removeOnes(vector<vector<int>>& grid) 
@@ -2380,21 +4508,25 @@ public:
         return true;
     }
 };
-::::::::::::::
-Math/2128.Remove-All-Ones-With-Row-and-Column-Flips/Readme.md
-::::::::::::::
-### 2128.Remove-All-Ones-With-Row-and-Column-Flips
 
-假设有一系列的操作能够实现全部翻转为0，那么这些操作的顺序任意打乱，应该不影响最终效果。所以我们不妨先只做列翻转，再做行翻转。
+$0
+endsnippet
 
-可以想象，我想通过某些行的翻转最终实现全部为0，只可能是一种情况：这些行的元素之前已经通过若干次列翻转全部变成了1。考虑到列翻转的操作会影响到多行，这就意味着这些行的列元素必然相等。
+# ==> ./Math/2183.Count-Array-Pairs-Divisible-by-K/Readme.md <==
+snippet 2183.Count-Array-Pairs-Divisible-by-K "2183.Count-Array-Pairs-Divisible-by-K" b
+### 2183.Count-Array-Pairs-Divisible-by-K
 
-同理，如果某些行不需要通过行翻转就能实现全部为0，只有一种情况：这些行的元素之前已经通过若干次列翻转全部变成了0。考虑到列翻转的操作会影响到多行，这就意味着这些行的列元素必然相等。
+一个比较常见的思想就是遍历nums[i]，高效查找那些nums[j]可以与之相乘能被k整除。
 
-综上，原矩阵中，所有行的pattern只可能是有两种，并且这两种pattern恰好都是互斥的（即001101和110010的关系）。这样通过若干次列翻转后，就能得到若干个全部是1的行，以及若干个全部是0的行。
-::::::::::::::
-Math/2183.Count-Array-Pairs-Divisible-by-K/2183.Count-Array-Pairs-Divisible-by-K.cpp
-::::::::::::::
+要使得两数相乘能够被k整除，关键在于两个数字里包含了多少k的约数，其他的约数对于我们没有意义。所以对于nums[i]而言，我们只关注nums[i]与k的最大公约数，令```a = gcd(nums[i],k)```，则nums[j]只要（且必须）含有约数```b=k/a```，那么就可以与nums[i]配对乘积能被k整除。假设我们将nums里所有含有约数b的index都存下来，那么就可以通过二分查找，找到位置i之后有多少nums[j]满足条件。所以整个时间复杂度就是NlogN，第一个N是遍历i，第二个logN是在含有约数b的元素数组里做二分定位。
+
+在上述的主框架之外，我们需要如下预处理：首先计算k的所有约数，放入集合yueshu。然后遍历所有元素nums[i]和yueshu集合的元素x，查看nums[i]是否能被x整除，是的话就将i加入Map[x]。Map的key是k的所有约数，val是有哪些nums包含了对应的约数。这里需要注意的是，1e5以内含有约数最多的自然数是83160，只有128个因子。所以预处理的时间复杂度是o(128N).
+
+$0
+endsnippet
+
+# ==> ./Math/2183.Count-Array-Pairs-Divisible-by-K/2183.Count-Array-Pairs-Divisible-by-K.cpp <==
+snippet 2183.Count-Array-Pairs-Divisible-by-K "2183.Count-Array-Pairs-Divisible-by-K" b
 class Solution {
 public:
     long long countPairs(vector<int>& nums, int k) 
@@ -2429,9 +4561,12 @@ public:
         
     }
 };
-::::::::::::::
-Math/2183.Count-Array-Pairs-Divisible-by-K/2183.Count-Array-Pairs-Divisible-by-K_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Math/2183.Count-Array-Pairs-Divisible-by-K/2183.Count-Array-Pairs-Divisible-by-K_v2.cpp <==
+snippet 2183.Count-Array-Pairs-Divisible-by-K "2183.Count-Array-Pairs-Divisible-by-K" b
 class Solution {
 public:
     long long countPairs(vector<int>& nums, int k) 
@@ -2463,19 +4598,25 @@ public:
         return ret;        
     }
 };
-::::::::::::::
-Math/2183.Count-Array-Pairs-Divisible-by-K/Readme.md
-::::::::::::::
-### 2183.Count-Array-Pairs-Divisible-by-K
 
-一个比较常见的思想就是遍历nums[i]，高效查找那些nums[j]可以与之相乘能被k整除。
+$0
+endsnippet
 
-要使得两数相乘能够被k整除，关键在于两个数字里包含了多少k的约数，其他的约数对于我们没有意义。所以对于nums[i]而言，我们只关注nums[i]与k的最大公约数，令```a = gcd(nums[i],k)```，则nums[j]只要（且必须）含有约数```b=k/a```，那么就可以与nums[i]配对乘积能被k整除。假设我们将nums里所有含有约数b的index都存下来，那么就可以通过二分查找，找到位置i之后有多少nums[j]满足条件。所以整个时间复杂度就是NlogN，第一个N是遍历i，第二个logN是在含有约数b的元素数组里做二分定位。
+# ==> ./Math/2217.Find-Palindrome-With-Fixed-Length/Readme.md <==
+snippet 2217.Find-Palindrome-With-Fixed-Length "2217.Find-Palindrome-With-Fixed-Length" b
+### 2217.Find-Palindrome-With-Fixed-Length
 
-在上述的主框架之外，我们需要如下预处理：首先计算k的所有约数，放入集合yueshu。然后遍历所有元素nums[i]和yueshu集合的元素x，查看nums[i]是否能被x整除，是的话就将i加入Map[x]。Map的key是k的所有约数，val是有哪些nums包含了对应的约数。这里需要注意的是，1e5以内含有约数最多的自然数是83160，只有128个因子。所以预处理的时间复杂度是o(128N).
-::::::::::::::
-Math/2217.Find-Palindrome-With-Fixed-Length/2217.Find-Palindrome-With-Fixed-Length.cpp
-::::::::::::::
+因为回文数是镜像的。所以对于固定长度为L、第k大的回文数，其实只要求一半长度的第k个自然数即可。更具体地，我们要根据L的奇偶性分情况讨论。
+
+如果L是偶数，那么本题就转换成了求长度为L/2的第k大的自然数。因为长度为L/2的最小自然数是1000...，即1e(L/2-1)，所以回文数的左半边是```a = 1e(L/2-1) + (k-1)```。再将a镜像得到b，然后 ```a*1e(L/2)+b```就是最终的答案。
+
+如果L是奇数，那么待求的回文数就是acb的形式。其中b是a的镜像，长度都是L/2；c是一个single digit。于是第k大的回文数，就等价于长度是L/2+1的第k大的自然数，即```a = 1e(L/2) + (k-1)```. 然后我们得到```c = a % 10```。将a去掉最后一位后，得到其镜像数字为b。最终的答案是```a*1e(L/2+1) + c*1e(L/2) + b```。
+
+$0
+endsnippet
+
+# ==> ./Math/2217.Find-Palindrome-With-Fixed-Length/2217.Find-Palindrome-With-Fixed-Length.cpp <==
+snippet 2217.Find-Palindrome-With-Fixed-Length "2217.Find-Palindrome-With-Fixed-Length" b
 using LL = long long;
 class Solution {
 public:
@@ -2537,1683 +4678,6 @@ public:
     }
     
 };
-::::::::::::::
-Math/2217.Find-Palindrome-With-Fixed-Length/Readme.md
-::::::::::::::
-### 2217.Find-Palindrome-With-Fixed-Length
 
-因为回文数是镜像的。所以对于固定长度为L、第k大的回文数，其实只要求一半长度的第k个自然数即可。更具体地，我们要根据L的奇偶性分情况讨论。
-
-如果L是偶数，那么本题就转换成了求长度为L/2的第k大的自然数。因为长度为L/2的最小自然数是1000...，即1e(L/2-1)，所以回文数的左半边是```a = 1e(L/2-1) + (k-1)```。再将a镜像得到b，然后 ```a*1e(L/2)+b```就是最终的答案。
-
-如果L是奇数，那么待求的回文数就是acb的形式。其中b是a的镜像，长度都是L/2；c是一个single digit。于是第k大的回文数，就等价于长度是L/2+1的第k大的自然数，即```a = 1e(L/2) + (k-1)```. 然后我们得到```c = a % 10```。将a去掉最后一位后，得到其镜像数字为b。最终的答案是```a*1e(L/2+1) + c*1e(L/2) + b```。
-::::::::::::::
-Math/223.Rectangle-Area/223.Rectangle-Area.cpp
-::::::::::::::
-class Solution {
-public:
-    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) 
-    {
-        long x1 = max(A,E);
-        long y1 = max(B,F);
-        long x2 = min(C,G);
-        long y2 = min(D,H);
-        
-        long overlap;
-        if (x1>=x2 || y1>=y2)
-            overlap = 0;
-        else
-        
-        return (long)(C-A)*(D-B) + (long)(G-E)*(H-F) - overlap;
-    }
-};
-::::::::::::::
-Math/223.Rectangle-Area/Readme.md
-::::::::::::::
-### 223.Rectangle-Area
-
-整体而言这是一个容斥原理的应用。```A并B = A + B - A交B```
-
-其中“A交B”的面积计算，通过确定相交区域的左下角和右上角来得到。
-```
-x_left_bottom = max(x1_left_bottom, x2_left_bottom)
-y_left_bottom = max(y1_left_bottom, y2_left_bottom)
-x_right_top = min(x1_right_top, x2_right_top)
-y_right_top = min(y1_right_top, y2_right_top)
-```
-
-特别注意要检查 ```x_left_bottom < x_right_top```和 ```y_left_bottom < y_right_top```，才能说明有真正意义的相交矩形。
-
-
-[Leetcode Link](https://leetcode.com/problems/rectangle-area)::::::::::::::
-Math/233.Number-of-Digit-One/233.Number-of-Digit-One.cpp
-::::::::::::::
-class Solution {
-public:
-    int countDigitOne(int n) 
-    {
-        string N = to_string(n);
-        long len = N.size();
-        long count = 0;
-        
-        for (int i=1; i<=len; i++)
-        {   
-            long divisor = pow(10,i);
-            count += n/divisor*1*pow(10,i-1);
-
-            int digit = N[len-i]-'0';
-            
-            if (digit > 1)
-                count += pow(10,i-1);
-            else if (digit == 1)
-                count += n%(int)pow(10,i-1) + 1;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Math/233.Number-of-Digit-One/Readme.md
-::::::::::::::
-### 233.Number-of-Digit-One
-
-本题的想法有很多，其中比较清晰容易实现的思路是：逐位查看，看该位上为1的符合条件的整数有多少个，然后将该整数的个数累加进最后的答案。这样虽然看上去是在数整数的个数，但其实最终得到的就是digit为1的总个数。
-
-举个例子。考虑n=345Y78，（Y是任意的数，待定），我们想考察有多少个符合要求的整数，使得其百位上可以是1.
-
-(1) 如果前三位任取000-344之一（共345种可能），那么最低两位可以任意取00-99（共100种可能）都不会超过n。这样的数有345\*100=34500个。第一个乘数就是n的前三位，第二个乘数就是10的二次方。
-
-(2) 如果前三位取345 (不可能更大了)，我们就要考虑Y的影响。
-
-a.  如果Y>1，那么最低两位可以任意取00-99（共100种可能）都不会超过n。这样的数有100个。
-
-b.  如果Y==1，那么最低两位不可以随便取，只能取00-78（共79种可能）。这个数字就是n的末两位加上1.
-
-c.  如果Y<1，那么最低两位如论取什么，都会导致这个数大于n，不符合条件。
-
-综合整理上述的分类讨论方案，可以将它适用于任何一个数位（个位、十位、千位、万位...），将这些数的统计全部加起来就是答案。
-
-
-[Leetcode Link](https://leetcode.com/problems/number-of-digit-one)::::::::::::::
-Math/296.Best-Meeting-Point/296.Best-Meeting-Point.cpp
-::::::::::::::
-class Solution {
-public:
-    int minTotalDistance(vector<vector<int>>& grid) 
-    {
-        vector<vector<int>>persons;
-        int M = grid.size();
-        int N = grid[0].size();
-        
-        vector<int>rows;
-        vector<int>cols;
-        for (int i=0; i<M; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (grid[i][j]==0) continue;
-                rows.push_back(i);
-                cols.push_back(j);
-            }
-        sort(cols.begin(),cols.end());
-        int X = rows[rows.size()/2];
-        int Y = cols[cols.size()/2];
-                
-        int result=0;
-        for (int i=0; i<M; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (grid[i][j]==0) continue;
-                result+=abs(i-X)+abs(j-Y);
-            }
-        return result;
-    }
-};
-::::::::::::::
-Math/296.Best-Meeting-Point/Readme.md
-::::::::::::::
-### 296.Best-Meeting-Point
-
-本题的笨方法，就是存下所有persons的位置，然后遍历每个点，计算该点到所有person的曼哈顿距离之后。时间复杂度是o(M*N*K).
-
-比较聪明的办法就是利用数学的性质。对于任意的序列x1,x2,x3,...,xn,我们要找到其中的一个k，使得
-
-```min_{k} |xi-k| for i=1,2,..,n```
-
-利用求导（非连续函数的特殊求导定义）的方法，可以得到如下的结论，最优的k是这个数列的中位数，注意不是平均数。如果序列里面有偶数个，那么中位数就是中间两个数的平均值。
-
-在本题里，最优点坐标的X可以直接判定是所有persons横坐标的中位数，Y就是所有persons纵坐标的中位数。知道了（X，Y）就可以直接计算所有人到该点的曼哈顿距离。
-
-
-
-[Leetcode Link](https://leetcode.com/problems/best-meeting-point)::::::::::::::
-Math/335.Self-Crossing/335.Self-Crossing.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isSelfCrossing(vector<int>& x) 
-    {
-        x.insert(x.begin(), 4, 0);
-        
-        int i = 4;
-        while (i<x.size() && x[i]>x[i-2])
-            i++;
-        if (i==x.size()) return false;
-        
-        if (x[i] >= x[i-2]-x[i-4])
-            x[i-1] = x[i-1] - x[i-3];
-        i++;
-        
-        while (i<x.size() &&  x[i]<x[i-2])
-            i++;
-        
-        if (i==x.size()) return false;
-        else return true;
-    }
-};
-::::::::::::::
-Math/335.Self-Crossing/Readme2.md
-::::::::::::::
-### 335.Self-Crossing
-
-此题的解法非常精妙。
-
-试想一下，如果这样的操作能够无限进行下去而不相交，那必然是一个螺旋膨胀的图形，需要满足什么条件呢？很简单，只要永远比对面的那个线段更长即可
-```cpp
-while (x[i]>x[i-2])
-  i++;
-```
-
-一旦这种趋势无法保持，但仍想要不self-crossing的话，那么之后必然形成的是一个螺旋收缩的图形了（因为永远是逆时针地行进）。条件也很简单，只要永远比对面的那个线段更短即可：
-```cpp
-while (x[i]<x[i-2])
-  i++;
-```
-当然这种螺旋收缩的趋势不会是无限的。
-
-但是，对于从膨胀到收缩的临界线段x[i]，我们需要有一个额外的判断：
-```cpp
-if (x[i]>x[i-2]-x[i-4])
-   x[i-1]-=x[i-3];
-i++;
-```
-以上这步操作其实框定了螺旋收缩的范围。需要仔细体会。
-
-
-[Leetcode Link](https://leetcode.com/problems/self-crossing)::::::::::::::
-Math/335.Self-Crossing/Readme.md
-::::::::::::::
-### 335.Self-Crossing
-
-通过画图分析可以得知，要想不相交，就只有三种模式：
-
-1. 不断地螺旋形膨胀，时刻满足 x[i]>x[i-2]
-
-2. 不断地螺旋形收缩，时刻满足 x[i]<x[i-2]
-
-3. 先螺旋膨胀，再螺旋收缩。假设其中的转折点是x[i]，即第i步是第一次出现x[i]<x[i-2]的线段。根据之前的分析，从i+1开始，就进入了螺旋收缩模式，需要时刻满足 x[i]<x[i-2]。但通过作图可以发现，x[i]的长短，还会略微影响x[i+1]的取值：
-
-(a) 如果x[i]<x[i-2]-x[i-4]的话，接下来的x[i+1]只需要简单地满足小于x[i-1]即可（也就是它之前的对边），之后也是只要服从螺旋收缩的基本规则就行。
-
-(b) 但是如果x[i]>=x[i-2]-x[i-4]的话，为了避免相交，x[i+1]不能超过x[i-1]-x[i-3]。这个等价于我们将x[i-1]-=x[i-3]，之后从x[i+1]开始，只要仍服从螺旋收缩的基本规则即可。
-
-特别注意，为了保证x[i-4]之类的操作不会下标越界，一个巧妙的方法是在x序列的前面添加四个零，模拟一圈螺旋膨胀的路径，然后从i=4开始考察它接下来的模式。
-
-
-[Leetcode Link](https://leetcode.com/problems/self-crossing)::::::::::::::
-Math/343.Integer-Break/343.Integer-Break.cpp
-::::::::::::::
-class Solution {
-public:
-    int integerBreak(int n) 
-    {
-        if (n==2) return 1*1;
-        if (n==3) return 1*2;
-        if (n==4) return 2*2;
-        if (n%3==0) return pow(3,n/3);
-        else if (n%3==1) return pow(3,n/3-1)*4;
-        else return pow(3,n/3)*2;
-    }
-};
-::::::::::::::
-Math/343.Integer-Break/343.Integer-Break_dp.cpp
-::::::::::::::
-class Solution {
-public:
-    int integerBreak(int n) 
-    {
-        if (n==2) return 1;
-        if (n==3) return 2;
-        vector<int>dp(n+1,0);
-        dp[2] = 2;
-        dp[3] = 3;
-        for (int i=4; i<=n; i++)
-        {
-            int temp = 0;
-            for (int j=2; j<=i/2; j++)
-            {
-                if (dp[j]*dp[i-j]>temp)
-                    temp = dp[j]*dp[i-j];
-            }
-            dp[i] = temp;
-        }
-        return dp[n];
-    }
-};
-::::::::::::::
-Math/343.Integer-Break/Readme.md
-::::::::::::::
-### 343.Integer-Break
-
-此题最傻的方法是DFS，挨个尝试所有将n拆分为若干数之和的组合形式。
-
-稍微聪明点的可以想到递归。先将n拆分为两个数之和，找出它们乘积最大的一种拆分形式。而每个数又可以递归往下继续拆分为两个数，规模越来越小。所以记忆化搜索或者DP都是比较好写的算法。
-
-最好的想法是利用数学上的技巧。在限定和一定的条件下，我们尽量拆分成接近自然对数e的整数，也就是2或者3，就能使总乘积最大。考虑到以6为例子，3\*3>2\*2\*2，所以我们的目标还是尽量拆成3.所以我们只要计算n除以3的各种情况就行。
-
-1. n能被3整除，则结果就是pow(3,n/3)
-2. n被3除余2，则结果就是pow(3,n/3)\*2
-3. n被3除余1，稍微有些变化，因为pow(3,n/3)\*1并不合算，我们就退一步，写成pow(3,n/3-1)\*4会得到更大的结果。
-
-
-[Leetcode Link](https://leetcode.com/problems/integer-break)::::::::::::::
-Math/365.Water-and-Jug-Problem/365.Water-and-Jug-Problem.cpp
-::::::::::::::
-class Solution {
-public:
-    bool canMeasureWater(int x, int y, int z) 
-    {
-        if(x + y < z) return false;
-        if (z==x||z==y||z==x+y) return true;
-        return z% __gcd(x, y) ==0;
-    }
-};
-::::::::::::::
-Math/365.Water-and-Jug-Problem/Readme.md
-::::::::::::::
-### 365.Water-and-Jug-Problem
-
-一种比较容易理解的方法是，虚拟出一个第三方的水罐，容积就是x+y。对于这个第三方水罐，我们定义两个操作：1.成功地加入x升水或者y升水，保证不溢出。2.成功地取出x升水或者y升水，注意需要保证水箱中有对应足量的水能够满足这个操作。
-
-接下来我们将上面两个操作与本题的真实情景相对应。
-
-1.“成功地（往第三方水罐）加入x升水或者y升水”，对应的是在第一个水罐或者第二个水罐灌满水。如果那个水罐已经有部分水了，那就先将其移到另外一个水罐中。注意的是，我们保证“成功地（往第三方水罐）加入x升水或者y升水”，说明此操作之前留存的水不会导致这次操作有溢出，否则就不算是成功的操作，因此在本题的场景中，“将某个水罐存留的水移到另外一个水罐”这个操作肯定是合法的。
-
-2.“成功地（从第三方水罐）取出x升水或者y升水”，对应的是将第一个水罐或者第二个水罐在充满的情况下放空。如果那个水罐之前没有充满，那就先将另外一个水罐里存留的水转移至其充满。注意的是，我们保证“成功地（从第三方水罐）取出x升水或者y升水”，说明此操作之前留存的水足够这次操作，否则就不算是成功的操作，因此在本题的场景中，“先将另外一个水罐里存留的水转移至其充满”这个操作肯定是合法的。
-
-至此，我们做一个暂时的小结：如果在虚拟场景中，通过上述两个操作能够在第三方水罐中得到z升的水，那么同样我们也一定能够在本题的真实场景中，得到z升的水。只要将相应的操作对应起来即可。
-
-然后，我们需要反思一下，有什么操作是在真实场景中可以做到的，但是在虚拟场景中做不到的呢？也就是说，会不会有什么操作，使得在真实场景下得到z，但是在虚拟场景下得不到z呢？或许有可能。比如，在真实场景中，第一个水罐非满状态但存有a，我们此时将第一个水罐放空，就得到了“放空a升水”的操作，而这个操作似乎是在虚拟场景中无法实现的。但是，注意，“放空a升水”的前提是水罐里已经有了a升水，而这个恰恰又可以考虑成一个递归问题。所以，“放空a升水”并不是一个独立的操作，而也是基于之前两个基本操作得到的中间产物。
-
-所以，我们的一个结论是，真实场景下，并没有什么特别的操作是虚拟场景中两个基本操作所实现不了的。所以这个虚拟场景和真实场景是完全等价的。
-
-既然如此，我们就考虑最初的那个虚拟场景。这个非常好理解，就是判断是否有一系列的+x/-x/+y/-y的操作，使得最后的结果是z。也就是判断mx+ny=z是否有整数解。这个有解的条件显然就是z必须是gcd(x,y)的倍数。
-
-
-[Leetcode Link](https://leetcode.com/problems/water-and-jug-problem)::::::::::::::
-Math/382.Linked-List-Random-Node/382.Linked-List-Random-Node.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-class Solution {
-public:
-    ListNode* node;
-    /** @param head The linked list's head.
-        Note that the head is guaranteed to be not null, so it contains at least one node. */
-    Solution(ListNode* head) {
-        node = head;
-    }
-    
-    /** Returns a random node's value. */
-    int getRandom() 
-    {
-        ListNode* h = node;
-        int k = 0;
-        int x = 0;
-        
-        while (h!=NULL)
-        {
-            k++;
-            int r = rand()%k;
-            if (r==0)
-                x = h->val;
-            h = h->next;
-        }
-        
-        return x;
-    }
-};
-::::::::::::::
-Math/382.Linked-List-Random-Node/Readme.md
-::::::::::::::
-### 382.Linked-List-Random-Node
-
-这是一个非常实用的随机数生成方法，叫做 reservoire sampling。不需要事先遍历所有的元素，也不需要记录任何元素。
-
-假设只有一个元素a，输出结果就是result = a。
-
-假设读入第二个元素b，让result取一半的概率变为b：于是此时result相当于有一半概率是a，一半概率是b。
-
-假设读入第三个元素c，让result取1/3的概率变为c：于是此时result相当于1/3的概率是c，那么剩下非c的概率里a、b各是多少呢？根据前面的分析，各一半。所以result相当于1/3的概率是b，1/3的概率是c。
-
-假设读入第四个元素d，让result取1/4的概率变为c：于是此时，根据前面的分析不难推广，result各有1/4的概率等于a,b,c,d。
-
-于是算法就很容易归纳了。
-
-更常见的问题是，如何得到k个均匀分布的随机数？只要把result当做一个能容纳k个元素的reservoire。每次遇到的新元素以 k/i的概率保留，再在这个reservoir里以均匀概率选取一个替换成新元素就行。可以证明，当所有的元素遍历完之后，剩下的result里就是以均匀概率选取的k个数。
-
-类似的题是：398.Random Pick Index
-
-
-[Leetcode Link](https://leetcode.com/problems/linked-list-random-node)::::::::::::::
-Math/391.Perfect-Rectangle/391.Perfect-Rectangle.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(pair<int,int>a, pair<int,int>b)
-    {
-        if (a.first==b.first)
-            return a.second<b.second;
-        else
-            return a.first<b.first;
-    }
-public:
-    bool isRectangleCover(vector<vector<int>>& rectangles) 
-    {
-        long long area=0;
-        unordered_set<string>Set;
-        for (int i=0; i<rectangles.size(); i++)
-        {
-            string str;
-            str=to_string(rectangles[i][0]);
-            str+=",";
-            str+=to_string(rectangles[i][1]);
-            if (Set.find(str)==Set.end())
-                Set.insert(str);
-            else
-                Set.erase(str);
-            
-            str=to_string(rectangles[i][0]);
-            str+=",";
-            str+=to_string(rectangles[i][3]);
-            if (Set.find(str)==Set.end())
-                Set.insert(str);
-            else
-                Set.erase(str);
-            
-            str=to_string(rectangles[i][2]);
-            str+=",";
-            str+=to_string(rectangles[i][1]);
-            if (Set.find(str)==Set.end())
-                Set.insert(str);
-            else
-                Set.erase(str);
-            
-            str=to_string(rectangles[i][2]);
-            str+=",";
-            str+=to_string(rectangles[i][3]);
-            if (Set.find(str)==Set.end())
-                Set.insert(str);
-            else
-                Set.erase(str);         
-            
-            area+= (long long)(rectangles[i][3]-rectangles[i][1])*(long long)(rectangles[i][2]-rectangles[i][0]);
-        }
-        
-        if (Set.size()!=4) return false;
-        
-        vector<pair<int,int>>points;
-        for (auto a:Set)
-        {
-            int i=0;
-            while (a[i]!=',') i++;
-            int x = stoi(a.substr(0,i));
-            int y = stoi(a.substr(i+1));
-            points.push_back({x,y});
-        }
-        
-        sort(points.begin(),points.end(),cmp);
-        
-        long long A=(long long)(points[3].second-points[0].second)*(long long)(points[3].first-points[0].first);
-        
-        return (A==area);
-        
-    }
-};
-::::::::::::::
-Math/391.Perfect-Rectangle/Readme.md
-::::::::::::::
-### 391.Perfect-Rectangle
-
-将每个单位矩形的四个顶点坐标作为key放入一个HashMap里。最终符合要求的顶点集合，必然只有四个点的value是1（作为最终大矩形的顶点），其余点的value必须是偶数。或者把顶点坐标放入一个set里，已经存在话就删除，不存在的话就加入，那么最终符合要求的顶点集合，必然只剩下四个点作为最终大矩形的四个顶点。
-
-然后把这四个顶点按x，y方向排个序。第一个和最后一个顶点就应该是大矩形的左上和右下角。根据这两个角算出的面积，应该等于之前所有小矩形的总面积。
-
-满足以上两个条件的顶点集合，必然可以无缝拼接成一个完整的大矩形。
-
-
-[Leetcode Link](https://leetcode.com/problems/perfect-rectangle)::::::::::::::
-Math/400.n-th-digit/400.n-th-digit.cpp
-::::::::::::::
-class Solution {
-public:
-    int findNthDigit(int N) 
-    {
-        int k = 0;
-        long n = N;
-        long nums = 0;
-        while (n > 0)
-        {        
-            k++;    
-            nums = kDigitNums(k);
-            n -= nums;
-        }
-
-        if (n==0) return 9;
-
-        n += nums;
-        int m = n/k;
-        if (n%k==0) m--;
-        int r = n%k;
-        if (r==0) r=k;
-
-        int ret = pow(10,k-1) + m;
-        return to_string(ret)[r-1] - '0';
-    }
-
-    long kDigitNums(int k)
-    {
-        return  (pow(10, k) - pow(10, k-1)) * k;
-    }
-};
-::::::::::::::
-Math/400.n-th-digit/Readme.md
-::::::::::::::
-### 400.n-th-digit
-
-首先判断这个n-th digit所属的数字t总共有几个digit。我们将这个n不断减去"所有一位数的digit的总数"，再减去"所有两位数的digit的总数"，再减去"所有三位数的digit的总数"...最后一次n大于零的时候，就可以确定我们其实要求的，就是所有k位数中的第n个digit。
-
-我们将此时的n除以k，其实就可以确定是第几个k位数；然后将n对于k取余数，就可以确定是那个数的第几位。答案就出来了。
-
-
-[Leetcode Link](https://leetcode.com/problems/n-th-digit)::::::::::::::
-Math/441.Arranging-Coins/441.Arranging-Coins.cpp
-::::::::::::::
-class Solution {
-public:
-    int arrangeCoins(int n) 
-    {
-        if (n==0) return 0;
-        long m = n;
-        for (long k = sqrt(2*m)-1;  k < sqrt(2*m); k++)
-        {
-            if (k*(k+1) <= 2*m && 2*m < (k+1)*(k+2))
-                return k;
-        }
-        return -1;        
-    }
-};
-::::::::::::::
-Math/441.Arranging-Coins/Readme.md
-::::::::::::::
-### 441.Arranging-Coins
-
-假设答案是k，那么n一定是介于等差数列求和公式sum(k)与sum(k+1)之间，即
-```
-(1+k)*k/2 <=n < (1+k+1)*(k+1)/2     （*）
-```
-化简
-```
-k(k+1) <= 2n <= (k+1)(k+2)
-```
-缩放
-```
-k^2 < 2n < (k+2)^2
-```
-所以有k的范围是
-```
-sqrt(2n)-2 < k < sqrt(2n)
-```
-可以见只有两个整数解: k = sqrt(2n)-1 或者 sqrt(2n)。我们只要检查一下这两个是否满足原始的(*)式即可。
-::::::::::::::
-Math/458.Poor-Pigs/458.Poor-Pigs.cpp
-::::::::::::::
-class Solution {
-public:
-    int poorPigs(int buckets, int minutesToDie, int minutesToTest) 
-    {
-        return ceil(log(buckets)/log(minutesToTest/minutesToDie+1));
-    }
-};
-::::::::::::::
-Math/458.Poor-Pigs/Readme.md
-::::::::::::::
-### 458.Poor-Pigs
-
-#### 1.从信息论的角度考虑
-
-根据信息论，要从N个桶里面挑出有毒的那一个，需要的信息量是 log_2^(N).
-
-根据题意，对于一个猪，它在一个小时内可以进行t次尝试 t = 60min/15min = 4.
-
-对于一个猪的t次尝试，总共会有t+1种结果，即不中毒、第15min中毒、第30min中毒、... 第60min中毒。根据信息论，从中可以抽取的信息量是 log_2^(t+1)。
-
-所以总共需要猪的个数是: log_2^(N) / log_2^(t+1) = log_(t+1)^N.
-
-#### 2.从策略的角度考虑
-
-先思考一只猪，在题意的15min/60min的条件下，能鉴别出几桶水？答案是5. 因为这5瓶水对应了这只猪第15分钟死（第一桶有毒）、第30分钟死（第二桶有毒）、第45分钟死（第三桶有毒）、第60分钟死（第四桶有毒）、不死（前四桶都没毒，根据题意，必然是第五桶有毒）。
-
-既然一只猪能鉴别五桶，那么两只猪就是25桶，为什么？因为这25桶水可以按照五进制编码两个bit：比如01，表示这瓶水不给A猪喝，但给B猪第一批次喝；又比如34，表示这瓶水给A猪第三批次喝，给B猪第四批次喝。最后，根据AB两只猪死亡的状态（死或不死、在什么时候死）可以鉴别出有毒的那一桶的编码。
-
-同理引申，那么三只猪就是可以鉴别5^3=125桶。最后，想鉴别1000桶就话，需要log(5)(1000)=5只猪。
-
-
-[Leetcode Link](https://leetcode.com/problems/poor-pigs)::::::::::::::
-Math/470.Implement-Rand10--Using-Rand7/470.Implement-Rand10()-Using-Rand7().cpp
-::::::::::::::
-// The rand7() API is already defined for you.
-// int rand7();
-// @return a random integer in the range 1 to 7
-
-class Solution {
-public:
-    int rand10() 
-    {
-        int m = rand7();
-        while (m>5)
-            m = rand7();
-        int n = rand7();
-        while (n==7)
-            n = rand7();        
-        return (m-1)*2+n%2+1;
-    }
-};
-::::::::::::::
-Math/470.Implement-Rand10--Using-Rand7/470.Implement-Rand10--Using-Rand7_v2.cpp
-::::::::::::::
-// The rand7() API is already defined for you.
-// int rand7();
-// @return a random integer in the range 1 to 7
-
-class Solution {
-public:
-    int rand10() 
-    {
-        int a = rand7();
-        int b = rand7();
-        int x = (a-1)*7+(b-1);
-        if (x>=40) return rand10();
-        return x%10+1;
-    }
-};
-::::::::::::::
-Math/470.Implement-Rand10--Using-Rand7/470.Implement-Rand10--Using-Rand7_v3.cpp
-::::::::::::::
-// The rand7() API is already defined for you.
-// int rand7();
-// @return a random integer in the range 1 to 7
-
-class Solution {
-    stack<int>Stack;
-public:
-    int rand10() 
-    {
-        int n = 7;
-        int upper = pow(7,n)/10*10;
-        int digits = log(upper)/log(10);     
-        
-        while (Stack.empty())
-        {
-            int x = 0;
-            for (int i=0; i<n; i++)
-                x = x*7+rand7()-1;
-                   
-            if (x<upper)
-            {                
-                for (int j=0; j<digits; j++)
-                {
-                    Stack.push(x%10+1);
-                    x = x/10;
-                }                
-            }            
-        }
-        int ret = Stack.top();
-        Stack.pop();
-        return ret;
-    }    
-};
-::::::::::::::
-Math/470.Implement-Rand10--Using-Rand7/Readme.md
-::::::::::::::
-### 470.Implement-Rand10--Using-Rand7
-
-#### 解法１：
-所谓实现Rand10()，本质就是保证：(1) 输出是1-10， (2) 每个输出都是等概率的。
-
-感觉可以实现的方法有很多。我想到的是，Rand7()输出的是1-7,七种等概率的输出对Rand10()有帮助吗？好像差点什么。如果给我们的函数有五种等概率的输出，好歹还可将其映射到1-2,3-4,5-6,7-8,9-10这五类，每一类（两个数字）出现的概率还能够平均一点。怎么办呢？思路立马就有了，如果Rand7()给出七种可能，我们就取前五种呗，如果抽到了6或者7，那就不算，重新再来不就行了。这样，我们就能通过Rand7()得到五种等概率的输出。
-
-有了这个思路，接下来也好办了。刚才通过一次Rand7()，得到等概率的五种输出，但是每种输出可以包含两个数字。如何将这两个数字再等概率地分开呢？那就再摇一次Rand7()呗。如果是奇数就选这两个数字中的奇数，如果是偶数就选这两个数字中的偶数。当然Rand7()会得到四个奇数和三个偶数并不公平，那我们就采用相同的思路，抽到７就不算，重来就行了。这样，对于奇偶性的抽取总是均等概率的。
-
-综上，我们的Rand10()是分两步走，第一步利用Rand7()得到等概率的五种可能，然后再利用Rand7()得到等概率的两种可能。
-
-对于这道题，面试官肯定会问，抽出一个数，需要调用Rand7()的次数的期望是多少。之所以我们抽一个Rand10()可能不止需要两次Rand7()操作，是因为可能会遇到retry的情况。我们可以大致算一算：
-
-第一步：
-```1*5/7+2*(2/7)*5/7+3*(2/7)^2*5/7+...+k*(2/7)^(k-1)*5/7```
-
-第二步：
-```1*6/7+2*(1/7)*6/7+3*(1/7)^2*6/7+...+k*(1/7)^(k-1)*6/7```
-
-可以用等差等比数列的方法算一下，大概是2.6次左右。
-
-#### 解法２：
-我们先想一个简单的问题，如何通过rand10()实现rand7()？因为rand10()能够等概率地得到[0,1,2,3,4,5,6,7,8,9]，假如永远不会出现7,8,9的话那岂不就是rand7()了？因此一个简单的想法就是，如果rand10()得到了7,8,9就retry，直至rand10()出现的数在[0,6]范围内，然后把答案输出。
-
-OK，接下来我们思考如何通过rand7()实现rand10()？有人会想，通过两次rand7()再相加，得到均匀分布的[0,1,2,3,4,5,6,7,8,9,10,11,12,13]，再对出现大于10的结果时进行retry就可以了。这个思路很正确，但是可惜的是，对于两个独立同均匀分布的随机变量X,Y，它们的加和不是均匀分布，而是二项分布。我们无法通过两次rand7()得到[0,13]均匀分布的随机数。
-
-但是，我们可以用两次rand7()得到[0,48]均匀分布的随机数！我们考虑一个包含两位digit的七进制数ab，并且令a和b都是由rand7()得到的。那么ab代表了七进制的[00,66]之间连续、等概率的分布。转化为十进制的话，就是[0,48]之间连续、等概率的分布。利用之前的retry大法，对于X\~U[0,48]的随机变量，当大于等于40时就进行retry，可以得到Y\~U[0,39]。进一步，Y%10~U[0,9]，就得到了我们需要的答案!
-
-可以计算，得到一个rand10()所需要调用的rand7()的次数的期望是2.45。
-
-### 解法3：
-从信息论的角度来看，rand7()给出的信息量是log(7)，rand10()给出的信息量是log(10)，因此理论上的极限应该是log(10)/log(7)=1.183。如何接近这个答案呢？如果只是生成一个rand10()，这是如论如何也做不到的。但是这个标准答案的隐含意思是，如果想生成1000个rand10()，我们可能只需要调用1183次rand7().
-
-我们可以扩展解法2，考虑一个7位的七进制数abcdefg，其中每一位都是rand7()得到的随机数。那么我们就得到了X\~U[0,823542]。利用retry大法，对于大于等于800000的进行retry，就可以得到随机变量Y\~U[0,799999]。我们发现对于Y，除了最高位之外，其他所有位置的digit都是符合[0,9]的均匀随机分布的，因此我们就可以通过拆解Y得到五个在[0,9]的均匀随机数，也就是答案。
-
-所以，我们call了7次rand7()，得到了五个rand10()，近乎每7/5=1.2次调用就能实现结果（忽略了retry），效率是非常高的。
-
-
-[Leetcode Link](https://leetcode.com/problems/implement-rand10--using-rand7)::::::::::::::
-Math/478.Generate-Random-Point-in-a-Circle/478.Generate-Random-Point-in-a-Circle_v1.cpp
-::::::::::::::
-class Solution {
-    double R, x0, y0;
-public:
-    Solution(double radius, double x_center, double y_center) 
-    {
-        R = radius;
-        x0 = x_center;
-        y0 = y_center;
-    }
-    
-    vector<double> randPoint() 
-    {
-        double r1 = (double)rand()/RAND_MAX;  // [0,1) 
-        double x = r1*2*R-R+x0;
-        double r2 = (double)rand()/RAND_MAX; 
-        double y = r2*2*R-R+y0;
-        
-        if ((x-x0)*(x-x0)+(y-y0)*(y-y0)<=R*R)
-            return {x,y};
-        else
-            return randPoint();
-    }
-};
-::::::::::::::
-Math/478.Generate-Random-Point-in-a-Circle/478.Generate-Random-Point-in-a-Circle_v2.cpp
-::::::::::::::
-class Solution {
-    double R;
-    double x0;
-    double y0;
-public:
-    double PI = 3.1415926;
-    Solution(double radius, double x_center, double y_center) 
-    {
-        R = radius;
-        x0 = x_center;
-        y0 = y_center;
-    }
-    
-    vector<double> randPoint() 
-    {        
-        double r = (double)rand()/RAND_MAX;
-        r = sqrt(r)*R;
-        double theta = (double)rand()/RAND_MAX*PI*2;
-        double x = x0+r*sin(theta);
-        double y = y0+r*cos(theta);
-        return {x,y};        
-    }
-};
-
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(radius, x_center, y_center);
- * vector<double> param_1 = obj.randPoint();
- */
-::::::::::::::
-Math/478.Generate-Random-Point-in-a-Circle/Readme.md
-::::::::::::::
-### 478.Generate-Random-Point-in-a-Circle.cpp
-
-对于一个圆中的任意一点，如果用```(x,y)```表示的话，我们需要分别生成均匀分布的x和y，但要使得```x^2+y^2<R^2```.所以一种简单粗暴的方法就是随机生成在```[-R,R]```均匀分布的x和y，再考察```x^2+y^2```以reject那些超出范围的采样点。如果```(x,y)```超出范围那就重新再run一遍这个程序，直到所得的```(x,y)```符合要求。很显然，这个方法的缺点就是不够高效，每每跑一次不见得就能得到一个有效的点，运气不好可能会需要跑好几次。
-
-另一种很容易想到的思路，就是尝试用极坐标表示法```(r,theta)```，其中r表示到原点的距离，theta表示射线的角度。在这里定义域就是```r<1```，theta属于```[0,2*Pi)```.直观上，我们可以知道，想要这个点在圆内尽可能随机分布，那么它的角度theta应该是等概率出现的。所以毫无疑问theta应该是一个在```[0,2*Pi)```上均匀分布的。
-
-那么r应该怎么生成呢？r是不是也该在```[0,R)```上均匀分布呢？如果我们自己做一做实验，在一个圆内画几条等角度分布的直径作为“轮辐”，再在直径上等距离的画点，可以发现，我们得到的点的分布在圆内并不是均匀的，很明显这个时候里面的点更密集，外面的点更稀疏。所以这就提示我们，对r做采样的时候不应该在```[0,R)```上均匀分布，而是越靠外越密集些，以补偿刚才这种“内密外疏”的趋势。该怎么调整呢？
-
-一种直观的思路：我们可以这么想，假设当前的半径是r，圆的面积是r^2（忽略常系数），并且认为r^2是一个单位的面积。如果我们将半径扩大一倍变成2r，圆的面积就是4\*r^2，多出了三份单位面积，我们为了保持每份圆环面积的大小r^2不变，我们需要在直径扩大的部分区间```[r,2r]```上取三个采样点。再往外走一步，如果半径变成了3r，那么我们需要在```[2r,3r)```的区间上取9-4=5个点...可见规律是，半径越大的位置，我们沿半径采集的点就需要越密集（以保证每层圆环的面积是均匀一致的），这种取点的累积密集（就是概率分布函数，但注意不是概率密度函数）显然就是r的平方关系。
-
-所以，简单来说，现在有随机变量S的概率分布函数满足S = r^2，如果想要S是沿半径方向```[0,R)```区间呈现均匀分布（也就是一条直线），那么随机变量r（也就是在半径方向上进行取点的抽样）的概率分布函数也必然就是对一个均匀分布的随机变量进行开平方。
-
-Follow Up: 请问如何通过一个在[0,1]上均匀分布的随机变量t，来实现对s的采样，要求采样得到一个新的随机变量s，使得s满足某种概率密度函数分布PDF.（答案就是```CDF^(-1)(t)```，注意CDF是PDF的积分)
-
-
-[Leetcode Link](https://leetcode.com/problems/generate-random-point-in-a-circle)::::::::::::::
-Math/497.Random-Point-in-Non-overlapping-Rectangles/497.Random-Point-in-Non-overlapping-Rectangles.cpp
-::::::::::::::
-class Solution {
-    vector<int>q;
-    vector<vector<int>>rects;
-public:
-    Solution(vector<vector<int>>& rects) 
-    {
-        int sum = 0;
-        for (int i=0; i<rects.size(); i++)
-        {
-            sum += (rects[i][2]-rects[i][0]+1)*(rects[i][3]-rects[i][1]+1);
-            q.push_back(sum);
-        }
-        this->rects = rects;
-    }
-    
-    vector<int> pick() 
-    {
-        int idx = rand()%q.back()+1;
-        int i = lower_bound(q.begin(),q.end(), idx) - q.begin();
-        
-        int D1 = rects[i][2]-rects[i][0]+1;
-        int D2 = rects[i][3]-rects[i][1]+1;
-        int j = rand()%D1;
-        int k = rand()%D2;
-        return {rects[i][0]+j, rects[i][1]+k};
-    }
-};
-
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution* obj = new Solution(rects);
- * vector<int> param_1 = obj->pick();
- */
-::::::::::::::
-Math/497.Random-Point-in-Non-overlapping-Rectangles/Readme.md
-::::::::::::::
-### 497.Random-Point-in-Non-overlapping-Rectangles
-
-我们手头的随机数生成器```rand()%M```只能生成[0,M-1]范围内的均匀随机数。如何利用它来实现题目的要求呢？
-
-我们可以将所有的矩形的点都拉成一个序列，然后连续地拼接起来。假设所有矩形所覆盖的点有M个，那么我们通过```rand()%M+1```就能够得到一个均匀的随机数k，有着相等的概率来代表这M个点的序号（第一个是1号，最后一个是M号）。
-
-接下来我们需要判定k号点是在哪个矩形里。我们只需要利用前缀和的思想，提前准备好一个数组q，其中q[i]表示前i个矩形所覆盖的点的个数，例如[4,10,11]。于是我们在q里面找第一个大于等于k的元素位置，就是k号点所在的矩形的编号i。
-
-有了这个矩形编号i，我们就可以知道k号点在第i个矩形内的相对编号k'，继而通过矩形的宽/高得到其内部第k'个点的行/列位置。
-
-
-[Leetcode Link](https://leetcode.com/problems/random-point-in-non-overlapping-rectangles)::::::::::::::
-Math/519.Random-Flip-Matrix/519.Random-Flip-Matrix.cpp
-::::::::::::::
-class Solution {
-    int m,n;
-    int count;
-    unordered_map<int,int>Map;
-public:
-    Solution(int n_rows, int n_cols) {
-        m = n_rows;
-        n = n_cols;
-        count = 0;
-    }
-    
-    vector<int> flip() 
-    {
-        int k = rand()%(m*n-count);
-        int ret;
-        
-        count++;
-        
-        if (Map.find(k)!=Map.end())
-            ret = Map[k];
-        else
-            ret = k;
-        
-        if (Map.find(m*n-count)!=Map.end())
-            Map[k] = Map[m*n-count];
-        else
-            Map[k] = m*n-count;
-        
-        return {ret/n,ret%n};
-        
-    }
-    
-    void reset() 
-    {
-        Map.clear();
-        count = 0;
-    }
-};
-::::::::::::::
-Math/519.Random-Flip-Matrix/Readme.md
-::::::::::::::
-### 519.Random-Flip-Matrix
-
-此题和	710.Random Pick with Blacklist 有些类似。
-
-总共有M\*N个格子。我们每次随机取走一个，count++，那么下一轮可供选择的数目就是M\*N-count个。所以随机数的生成只要在0~M\*N-count-1里面取就行，假设是k，那么问题来了，如果这个随机数k对应的格子我们在之前已经取走了怎么办呢？
-
-为了保证我们每次生成的随机数都可以对应一个依然为0的格子，我们就需要保证，每次取走一个格子，都需要有另外一个合法的格子能够补上这个空缺。举个例子，在第一个回合，我们得到随机数是k，我们把第k个格子返回，但是为了保证以后再抽到k时依然能返回一个0格子，我们就把此时序号最高的0格子，标号是M\*N-1-count，将它指定给第k个位置。于是我们要建立一个Map，建立映射Map[k]=M\*N-1-count，这样下次抽到k时就返回Map[k]即可。
-
-但是，还有问题，如果序号为M\*N-1-count的格子已经在之前被取走过了，怎么办呢？没有关系，虽然序号为M\*N-1-count的格子不在了，但是它所在的位置必然有一个映射Map[M\*N-1-count]标记着一个有效的0格子。这个格子是在之前的某回合中，抽到随机数M\*N-1-count时，如前述所作的相同的映射操作。
-
-因为每个回合都会将count++，所以序号最高的0格子（确切的说是序号最高的key）也会不断下降。所以对于任意抽取的k，要么k是从来没有取走的格子，要么你总能找到Map[k]。
-
-
-
-
-[Leetcode Link](https://leetcode.com/problems/random-flip-matrix)::::::::::::::
-Math/528.Random-Pick-with-Weight/528.Random-Pick-with-Weight.cpp
-::::::::::::::
-class Solution {
-    vector<int>p;
-public:
-    Solution(vector<int>& w) 
-    {
-        int sum = -1;
-        for (auto ww: w)
-        {
-            sum+=ww;
-            p.push_back(sum);
-        }
-    }
-    
-    int pickIndex() 
-    {
-        int r = rand()%(p.back()+1);
-        auto iter = lower_bound(p.begin(),p.end(),r);
-        return iter-p.begin();
-    }
-};
-::::::::::::::
-Math/528.Random-Pick-with-Weight/Readme.md
-::::::::::::::
-### 528.Random-Pick-with-Weight
-
-计算权重函数的前缀和数组，这样得到了一个类似累积概率分布的数组```p=[w0,w0+w1,w0+w1+w2,...,W]```。这个新数组的最后一个元素代表这权重的总份数W。
-
-我们取一个[0,W]上的均匀分布随机变量t，然后查看t在p中的位置。因为t落在p的哪个位置，是和p里面各个元素之间的“区间大小”直接相关的，所以t被随机在哪里，直接反映了p中各个元素被采样的概率。比如，t落在p_k和p_k+1之间，就意味着这个t对应于采样了第k+1个元素。“区间间隔”越大的元素，t就越可能落在那里。
-
-这就是inverse probability distribution method. 思考：我们利用一个均匀随机变量t，如何实现采样一个新的随机变量s，使得s的概率密度函数是pdf？方法就是s = cdf_{-1}(t).
-
-
-[Leetcode Link](https://leetcode.com/problems/random-pick-with-weight)::::::::::::::
-Math/587.Erect-the-Fence/587.Erect-the-Fence.cpp
-::::::::::::::
-/**
- * Definition for a point.
- * struct Point {
- *     int x;
- *     int y;
- *     Point() : x(0), y(0) {}
- *     Point(int a, int b) : x(a), y(b) {}
- * };
- */
-class Solution {
-    static bool cmp(Point a, Point b)
-    {
-        if (a.x==b.x)
-            return a.y<b.y;
-        else
-            return a.x<b.x;
-    }
-    static bool eqn(Point a, Point b)
-    {
-        
-        return (a.x==b.x)&&(a.y==b.y);
-    }    
-        
-public:
-    vector<Point> outerTrees(vector<Point>& points) 
-    {
-        sort(points.begin(),points.end(),cmp);
-        
-        vector<Point>down;
-        down.push_back(points[0]);
-        for (int i=1; i<points.size(); i++)
-        {
-            while (down.size()>=2 && crossProduct(down[down.size()-2],down.back(),points[i])<0)
-                down.pop_back();
-            down.push_back(points[i]);
-        }
-        
-        vector<Point>up;
-        up.push_back(points.back());
-        for (int i=points.size()-1; i>=0; i--)
-        {
-            while (up.size()>=2 && crossProduct(up[up.size()-2],up.back(),points[i])<0)
-                up.pop_back();
-            up.push_back(points[i]);
-        }
-        
-        vector<Point>results(down.begin(),down.end());
-        for (int i=0; i<up.size();i++)
-            results.push_back(up[i]);
-        
-        sort(results.begin(),results.end(),cmp);
-        results.erase(unique(results.begin(),results.end(),eqn),results.end());
-        return results;        
-    }
-    
-    long long crossProduct(Point A, Point B, Point C)
-    {
-        return (long long)(B.x - A.x) * (long long)(C.y - B.y) - (long long)(B.y - A.y) * (long long)(C.x - B.x);
-    }
-};
-::::::::::::::
-Math/587.Erect-the-Fence/Readme.md
-::::::::::::::
-### 587.Erect-the-Fence
-
-此题的本质就是根据一群点，找出覆盖全部点的凸多边形。
-
-首先，将所有点按从左到右、从低到高排序。
-
-先考虑凸多边形的下边界。在hull_lower先入列points[0]。假设已经在hull_lower队列里有C,D两点，则考察points[i]作为候选点X，我们判断CD和DX两条矢量的夹角是否是凸的（即DX相对于CD是往上翘的）。如果是的话，则将X加入队列作为E；不是的话，则我们将D踢出队列，再查看此时队列末尾的B、C和X点的关系，以此类推，直至满足三点成凸，或者队列中只剩一个（最左下角的初始点），就不再踢了，直接将X加入。
-
-考虑凸多边形的上边界，用类似的方法。在hull_upper先入列points.back()。然后在points里倒序遍历所有点，依然要保证所有入列的点，满足三点成凸的关系。
-
-最后，将hull_lower和hull_upper归并至一处，去除掉重复的点，就是所求凸多边形的边界点。
-
-注：向量a=(x1,y1),b=(x2,y2)，则叉乘axb=(x1y2-y1x2)表示一个朝向z方向的向量。如果为正，则说明从a到b转过了一个逆时针的角度；如果为负，则说明从a到b转过了一个顺时针的角度。这可以用右手螺旋定则来记忆。
-
-
-[Leetcode Link](https://leetcode.com/problems/erect-the-fence)::::::::::::::
-Math/593.Valid-Square/593.Valid Square.cpp
-::::::::::::::
-class Solution {
-public:
-    bool validSquare(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) 
-    {
-        unordered_set<int>Set;
-        
-        Set.insert(distance(p1,p2));
-        Set.insert(distance(p1,p3));
-        Set.insert(distance(p1,p4));
-        Set.insert(distance(p2,p3));
-        Set.insert(distance(p2,p4));
-        Set.insert(distance(p3,p4));
-        
-        return (Set.count(0)==0 && Set.size()==2);
-    }
-    
-    int distance(vector<int>a, vector<int>b)
-    {
-        return (a[0]-b[0])*(a[0]-b[0])+(a[1]-b[1])*(a[1]-b[1]);
-    }
-};
-::::::::::::::
-Math/593.Valid-Square/Readme.md
-::::::::::::::
-### 593.Valid-Square
-
-计算这四个点两两之间的距离，共6条边。把这六条边放进一个set里，如果这个集合只有两个元素，且没有零元素，则说明这六条边构成的是正方形。
-
-
-[Leetcode Link](https://leetcode.com/problems/valid-square)::::::::::::::
-Math/628.Maximum-Product-of-Three-Numbers/628.Maximum-Product-of-Three-Numbers.cpp
-::::::::::::::
-class Solution {
-public:
-    int MaximumProduct(vector<int> &nums) {
-        sort(nums.begin(),nums.end());
-        int N=nums.size();
-        return max(nums[0]*nums[1]*nums[N-1], nums[N-3]*nums[N-2]*nums[N-1]);
-    }
-};
-::::::::::::::
-Math/628.Maximum-Product-of-Three-Numbers/Readme.md
-::::::::::::::
-### 628.Maximum-Product-of-Three-Numbers
-
-1. 所有元素大于0：	| X... X X X  	
-   	肯定取最大的三个正数。即 nums[N-3]*nums[N-2]*nums[N-1]
-
-2. 仅有一个元素小于0：	X | X... X X X  	
-	单个负数无法使用，依然只能取最大的三个正数。即 nums[N-3]*nums[N-2]*nums[N-1]
-
-3. 至少两个元素小于0：	X X | ... X X X  
-	尝试取绝对值最大的两个负数组合成一个较大的正数？（不可能取更多或者其他的负数）
-	max { nums[N-3]*nums[N-2]*nums[N-1], nums[0]*nums[1]*nums[N-1]}
-
-4. 	仅有一个元素大于0：	X X ... X X | X  	
- 	仅能取最小的两个负数和一个正数。即 nums[0]*nums[1]*nums[N-1]
-
-5. 	所有元素小于0：	X X ... X X |
-	仅能取最小的两个负数和最大的一个负数。即 nums[0]*nums[1]*nums[N-1]
-  
-所以我们发现规律，答案总是从 nums[N-3]*nums[N-2]*nums[N-1], nums[0]*nums[1]*nums[N-1] 这两个值中间取。
-::::::::::::::
-Math/672.Bulb-Switcher-II/672.Bulb-Switcher-II.cpp
-::::::::::::::
-class Solution {
-public:
-    int flipLights(int n, int m) 
-    {        
-        if (m==0) { return 1; }
-        
-        if (n==1)
-        {
-            if (m>=1) { return 2; }
-        }
-        if (n==2)
-        {
-            if (m==1) { return 3; }
-            if (m>=2) { return 4; }
-        }
-        if (n>=3)
-        {
-            if (m==1) { return 4; }
-            if (m==2) { return 7; }
-            if (m>=3) { return 8; }
-        }
-        
-        return 0; // invalid value for n or m        
-            
-    }
-};
-::::::::::::::
-Math/672.Bulb-Switcher-II/Readme.md
-::::::::::::::
-### 672.Bulb-Switcher-II
-
-此题对于分析题意有这非常高的要求。
-
-首先，我们考虑灯泡数量n的性质。我们假设m=k1+k2+k3+k4，k_i表示第i种操作的数目。我们观察一下规律：
-1. 灯泡1最终变化的次数是 k1+k2+k4，
-2. 灯泡2最终变化的次数是 k1+k3，
-3. 灯泡3最终变化的次数是 k1+k2. 
-4. 灯泡4最终变化的次数是 k1+k3+k4. 
-5. 灯泡5最终变化的次数是 k1+k3. 
-6. 灯泡6最终变化的次数是 k1+k2.
-
-从第7个灯泡开始，开始1-6的循环。所以我们可以知道，序号大于等于7的灯泡都没有自己独立的状态，完全取决于前6个灯泡的状态。当n>=6时，只要考察前6个灯泡里不同的状态数目就行了。
-
-但是如果再仔细观察，灯泡4的变化次数是 k1+k3+k4，恰好是灯泡1-灯泡2+灯泡3，所以灯泡4的状态完全是由灯泡1~3的状态决定的，本身并不是一个自由变化的量。同理可以分析灯泡5也完全跟随灯泡2，灯泡6也完全跟随灯泡3，也都不是自由量。所以，n的考察范围其实只要限制在n<=3即可。
-
-其次，我们考虑操作次数m的性质。在给出的四种操作里面，前三种操作有一个神奇的性质，任意两个操作的效果都等效于剩下的那个操作。另外，容易知道，两次相同的操作会相互对消。基于这两个原则，当m>=3时，任意给出m个操作的排列组合，最后都可以简化为这8种等效的操作组合：
-```
-0,1,2,3,4,1+4,2+4,3+4
-```
-
-顺便考虑一下m==2时，相当于有这几种操作的组合。
-```
-1+1,1+2,1+3,1+4,2+2,2+3,2+4,3+3,3+4,4+4
-```
-化简一下就是这7种等效的操作组合：
-```
-0,3,2,1+4,1,2+4,3+4
-```
-注意：没有等效于4的操作！
-
-
-综上，对于m<=3，n<=3，穷举都不是问题。
-
-当m==0时：没有操作，return 1.
-
-当n==1时：m次操作，无非就是让第一个灯泡亮也可以使得其不亮。所以return 2.
-
-当n==2时：m==1，return 3；m==2，对两个灯穷举前述（m==2）的操作组合，return 4.
-
-当n==3时：m==1，return 4；m==2，对三个灯穷举两次操作的组合，return 7； m==3，对三个灯穷举三次操作的组合，return 8.
-
-
-[Leetcode Link](https://leetcode.com/problems/bulb-switcher-ii)::::::::::::::
-Math/710.Random-Pick-with-Blacklist/710.Random-Pick-with-Blacklist.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>Map;
-    int M;
-public:
-    Solution(int N, vector<int> blacklist) 
-    {
-        unordered_set<int>Set(blacklist.begin(),blacklist.end());
-        M = N-blacklist.size();
-        
-        int x = N-1;
-        for (int i=0; i<blacklist.size(); i++)
-        {
-            if (blacklist[i]>=M) continue;
-            while (Set.count(x))
-                x--;
-            Map[blacklist[i]] = x;
-            x--;
-        }
-        
-    }
-    
-    int pick() 
-    {
-        int k = rand()%M;
-        if (Map.find(k)!=Map.end())
-            return Map[k];
-        else
-            return k;
-    }
-};
-
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(N, blacklist);
- * int param_1 = obj.pick();
- */
-::::::::::::::
-Math/710.Random-Pick-with-Blacklist/710.Random-Pick-with-Blacklist_v2.cpp
-::::::::::::::
-class Solution {
-    int N;
-    vector<int>blacklist;
-public:
-    Solution(int N, vector<int>& blacklist) 
-    {        
-        sort(blacklist.begin(),blacklist.end());
-        this->N = N;
-        this->blacklist = blacklist;
-        
-    }
-    
-    int pick() 
-    {
-        int k = rand()%(N-blacklist.size())+1;
-        
-        int left = 0;
-        int right = N-1;
-        while (left<right)
-        {
-            int mid = left+(right-left)/2;
-            if (count(mid) >= k)
-                right = mid;
-            else
-                left = mid+1;            
-        }
-        return left;        
-    }
-    
-    int count(int t)
-    {
-        auto iter = upper_bound(blacklist.begin(),blacklist.end(),t);
-        return (t+1)-(iter-blacklist.begin());
-    }
-};
-::::::::::::::
-Math/710.Random-Pick-with-Blacklist/Readme.md
-::::::::::::::
-### 710.Random-Pick-with-Blacklist
-
-#### 解法1：
-显然，N个元素，刨去黑名单中的元素，剩下M个元素。我们每次生成的随机数就是在0~M-1之间。问题就是，如果随机数是k，但是k在黑名单里，该怎么办？
-
-我们用映射的思想，将处于[0,M)但也是黑名单里的数，映射为[0,M)之外的合法数字。这个在预处理的时候就可以实现。只要从N-1里降序遍历，只要不在黑名单里的数字，都逐次用来填充黑名单。
-
-#### 解法2：
-有一个比较骚气的binary search的解法，虽然时间效率不是很高，但是角度很新颖。
-
-我们二分搜索一个位置pos，计算count等于[0,pos]的区间里面有多少个合法的数。然后不断缩小规模，直至找到最小的一个位置，使得count恰好等于k（k就是随机数，表示我们需要取第k个合法的数）。最终二分搜索收敛后的这个位置就是答案。
-
-然后我们考虑count怎么写。count其实就是pos+1-[0,pos]里面有多少个黑名单的数。那么对于给定的区间[0,pos]。如何计算有多少在黑名单里呢？同样我们先将黑名单排序，然后查看pos在黑名单的位置。更具体的，我们需要找到的是blacklist.upper_bound(pos)的迭代器iter（即第一个大于pos的位置），显然从blacklist.begin()到prev(iter,1)都是小于等于pos的黑名单成员，因此这个[0,pos]区间内黑名单的数目就是iter-blacklist.begin().
-
-
-[Leetcode Link](https://leetcode.com/problems/random-pick-with-blacklist)::::::::::::::
-Math/754.Reach-a-Number/754.Reach-a-Number.cpp
-::::::::::::::
-class Solution {
-public:
-    int reachNumber(int target)     
-    {
-        target=abs(target);
-        int sum=0;
-        int i=0;
-        while (!(target<=sum && (target%2==sum%2)))
-        {
-            i++;
-            sum+=i;            
-        }
-        
-        return i;
-    }
-};
-::::::::::::::
-Math/754.Reach-a-Number/Readme.md
-::::::::::::::
-### 754.Reach-a-Number
-
-此题在数学方法上有巧妙的思路．
-
-假设目标是11，我们自然会尝试+1+2+3+4+5...这样尝试下去，发现这样操作了５次，之后得到的是15，超过了目标11，多了4，该怎么办呢？其实策略非常简单，我们将刚才的操作里面的+2变成-2，一正一反就降了４．也就是说+1-2+3+4+5，就能得到11．显然，这样的操作肯定是最简洁的了．所以我们的基本思路就是，+1+2+3...一路不停地加过去，一旦sum超过了target，那么我们就将之前＂加上＂的(sum-target)/2这个数，改为＂减去＂即可．
-
-那么我们自然会问，如果target是12，当我们将sum加到15的时候，相差是3，不是二的倍数怎么办呢？解决方法是：我们就继续累加+6+7，将sum积累到28．此时sum和target之间的差是16，看上去终于是偶数了。但是，我们又发现，28是从1累加到7的结果，似乎没有办法再减去一个-8，怎么办呢？事实上，遇到这种情况下，我们不需要最后一步加上7，而是减去7，此时得到的sum是14，与target之间的差是2，这就提示我们此时再将+2改动成-2即可。
-
-综上可以分析得到，我们从+1,+2,...开始不断地往上累加，当sum恰超过target时，最多再多加两次，一定能保证sum-target是偶数。只要这个差是偶数，就一定保证能有一个解决方案（类似第一段或者第二段的方法）来实现．
-
-
-[Leetcode Link](https://leetcode.com/problems/reach-a-number)::::::::::::::
-Math/829.Consecutive-Numbers-Sum/829.Consecutive-Numbers-Sum.cpp
-::::::::::::::
-class Solution {
-public:
-    int consecutiveNumbersSum(int N) 
-    {
-        int count = 0;
-        for (int m = 1; 2*N-m*m+m>0; m++ )
-        {
-            if ((2*N-m*m+m)%(2*m)==0)
-                count++;
-        }
-        return count;
-    }
-};
-::::::::::::::
-Math/829.Consecutive-Numbers-Sum/Readme.md
-::::::::::::::
-### 829.Consecutive-Numbers-Sum
-
-此题显然可以看出这就是求一个等差数列使得和为N。我们假设首项是x,项数是m,则有```(x+x+m-1)*m/2=N```
-
-我们转换一下，得到```x=(2N-m(m-1))/2m```。我们可以看到只需要```2N-m(m-1)```能被```2m```整除的话，x就有解。所以我们可以考虑遍历m，如果这个m对应有正整数解x，那么就是满足题意的一种方案。
-
-
-[Leetcode Link](https://leetcode.com/problems/consecutive-numbers-sum)::::::::::::::
-Math/858.Mirror-Reflection/858.Mirror-Reflection.cpp
-::::::::::::::
-class Solution {
-public:
-    int mirrorReflection(int p, int q) 
-    {
-        int m=1;
-        while (q*m%p!=0)
-            m++;
-        
-        int n = q*m/p;
-        
-        if (m%2==1 && n%2==1)
-            return 1;
-        else if (m%2==0 && n%2==1)
-            return 2;
-        else if (m%2==1 && n%2==0)
-            return 0;
-    }
-};
-::::::::::::::
-Math/858.Mirror-Reflection/Readme.md
-::::::::::::::
-### 858.Mirror-Reflection
-
-容易想象，光路射出后，会在左右边界上来回反弹数次，可能会到达接收器1，也可能会到达接收器2，但更有可能会打到上边界从而弹回，造成后续非常复杂的光路。这是本题的难点所在。
-
-解决方法是：当光线打到上边界```1-2```时，我们不考虑其弹回的路径，而是假设其直接穿越了上边界，进入了一个镜像世界```1-3'0'-2```。如下图：
-```
-3'----------0'
-|           |
-|  Virtual  |
-1-----------2
-|           |
-|   Real    |
-3-----------0
-```
-这样光路就可以继续在左右边界上来回反弹数次，如果有幸能被3'接收，就意味着在真实世界里光路能抵达3；同理，如果有幸能被0'接收，就意味着在真实世界里光路能抵达0；当然，同样也有可能会继续达到上边界```3'-0'```，那怎么办呢？那就沿着那条镜面再做一次镜像翻转，得到二次虚拟空间。如下图：
-```
-3'----------0'
-|           |
-|  Virtual2 |
-1'----------2'
-|           |
-|  Virtual2 |
-3'----------0'
-|           |
-|  Virtual  |
-1-----------2
-|           |
-|  Real     |
-3-----------0
-```
-可见二次虚拟空间进一步扩展了纵向的空间，使得光路可以继续来回折线向上走，一路上又有可能被1','2',3',0'接收，同理这意味着真实世界里的光路可以相应地被1,2,3,0接收...这样的虚拟空间可以进一步的扩展。
-
-因为本题中每次光路的“折向”都会上升q，而每层接收器之间的距离是p，两者都是正整数，因此，光路必定会在来回盘升了LCM(p,q)之后，抵达（虚拟）接收器的位置。
-
-那么如何确定抵达了哪一个接收器呢？我们可以找规律。从起点开始（真实世界的3），每上升q就会到达右边界，再上升q就会到达左边界，依次交替。同样，每上升p就会到达1-2水平层（或它们的镜像），再上升p就会到达3-0水平层（或它们的镜像），依次交替。所以我们令```LCM(p,q)=mq=np```，当m是奇数时就可能是2或者0，偶数时就可能是1或者3。当n是奇数，就可能是1或者2，偶数时就可能是3或者0.
-
-当我们明确了m和n的奇偶性，就可以唯一确定光路射入的是哪一个（虚拟）接收器。
-
-
-[Leetcode Link](https://leetcode.com/problems/mirror-reflection)::::::::::::::
-Math/878.Nth-Magical-Number/878.Nth-Magical-Number.cpp
-::::::::::::::
-class Solution {
-public:
-    int nthMagicalNumber(int N, int A, int B) 
-    {
-        long MOD = 1e9+7;
-        long lcm = A*B/gcd(A,B);
-        long p = (long)N/(lcm/A+lcm/B-1);
-        
-        long s = p*(lcm/A+lcm/B-1);
-        long t = (long)N - s;
-        
-        if (t==0) return lcm*p%MOD;
-        
-        int i = 1, j = 1;
-        long remainder;
-        while (count<t)
-        {
-            if (A*i < B*j)
-            {
-                remainder = A*i;
-                i++;
-            }
-            else
-            {
-                remainder = B*j;
-                j++;
-            }
-            count++;
-        }
-        
-        return (lcm*p%MOD + remainder)%MOD;
-        
-        
-    }
-};
-::::::::::::::
-Math/878.Nth-Magical-Number/Readme.md
-::::::::::::::
-### 878.Nth-Magical-Number
-
-这道题和```1201. Ugly Number III```属于同一个类型，思想上还更简单。Binary Search可以是一个解法。但仍然有一个隐患，就是我们对于搜索的上限（区间的右端点）其实并没有一个合理的估计，可能需要设定为int64的最大值，甚至还可能更大。
-
-在比赛中，我没有使用二分，而是用了周期性的特征。假设A，B的最小公倍数是LCM，那么以LCM为周期，其中出现的magic number的个数都是一样的，即```k = LCM/A+LCM/B-LCB/gcd(A,B)```.因此我们可以计算出第N个魔法数，其实是经过了p=N/k个整数周期，此外再加上```t=N-p*k```个零头。显然这个零头t肯定是小于k的，而且第t个魔法数也一定是在LCM的范围内的。
-
-所以，本题转化为求[1,LCM)范围内的第t个魔法数r。而最终的答案就是 p*LCM+r.
-
-怎么求[1,LCM)范围内的第t个魔法数r？简单的枚举就行了，依次检查A和B各自的倍数（即A*i和B*j），选取较小的那个就是next magic number。直至找到第t个为止。
-
-
-[Leetcode Link](https://leetcode.com/problems/nth-magical-number)::::::::::::::
-Math/883.Projection-Area-of-3D-Shapes/883.Projection-Area-of-3D-Shapes.cpp
-::::::::::::::
-class Solution {
-public:
-    int projectionArea(vector<vector<int>>& grid) 
-    {
-        int m = grid.size();
-        int n = grid[0].size();
-        vector<int>row(m,0);
-        vector<int>col(n,0);
-        int ret=0;
-        for (int i=0; i<m; i++)
-            for (int j=0; j<n; j++)
-            {
-                row[i] = max(row[i],grid[i][j]);
-                col[j] = max(col[j],grid[i][j]);
-                ret+=(grid[i][j]>0);
-            }
-        
-        for (int i=0; i<m; i++)
-            ret+=row[i];
-        for (int j=0; j<n; j++)
-            ret+=col[j];
-
-        return ret;
-    }
-};
-::::::::::::::
-Math/883.Projection-Area-of-3D-Shapes/Readme.md
-::::::::::::::
-### 883.Projection-Area-of-3D-Shapes
-
-从题目给出的示意图就可以看出，从某一个方向看过去的投影高度，完全取决于这个方向上能看到的最高的那根柱子的高度。比如对于x=i方向上，投影到y-z平面上的高度其实就是```max{grid[i][j]} for j=0,1,2,...```。所以对于y-z平面上的总投影面积，就是把所有的```max{grid[i]}```加起来就行。
-
-对于x-z平面上的总投影也是如此处理。计算每个col[j]，表示第j列上的的最大值。再把所有col[j]相加。
-
-对于x-y平面上的总投影，处理起来更为简单，就是计算grid[i][j]有多少个非零元素即可。
-
-
-[Leetcode Link](https://leetcode.com/problems/projection-area-of-3d-shapes)::::::::::::::
-Math/891.Sum-of-Subsequence-Widths/891.Sum-of-Subsequence-Widths.cpp
-::::::::::::::
-class Solution {
-public:
-    int sumSubseqWidths(vector<int>& A) 
-    {
-        long M = 1e9+7;
-        
-        vector<long>Pow2(20000,1);
-        for (int i=1; i<20000; i++)
-            Pow2[i] = Pow2[i-1]*2%M;
-        
-        sort(A.begin(),A.end());
-        long sum = 0;
-        int n = A.size();
-        for (int i=0; i<n; i++)
-        {
-            sum -= A[i]*Pow2[n-1-i]%M;
-            sum += A[i]*Pow2[i]%M;
-            sum %= M;
-        }
-        return sum;
-    }
-};
-::::::::::::::
-Math/891.Sum-of-Subsequence-Widths/Readme.md
-::::::::::::::
-### 891.Sum-of-Subsequence-Widths
-
-对于任何A中的一个子序列，其实相当于在A中任取若干个数组成combination。所以总共有2^n种子序列。既然是组合，那么顺序其实无所谓。我们可以先将A排序一下。
-
-将A排序之后，我们立即可以发现，我们可以遍历任意的A[i]和A[j]做为最小值和最大值，那么这样的子序列马上就能知道有```2^(j-i-1)```种，因此可以用o(n^2)的时间复杂度来解决：```sum += (A[j]-A[i])*pow(2,j-i-1)```
-
-还有更优化的方法。求所有子序列的max-min的和，等价于求所有子序列的max的和，减去所有子序列的min的和。这样的话我们只需要遍历任意的A[i]：当它作为最小值时的子序列有2^(n-i-1)种；当它作为最大值时的子序列有2^i种。所以代码很简单，只要o(n)的复杂度：
-```cpp
-for (int i=0; i<n; i++)
-{
-  sum += A[i]*pow(2,i);
-  sum -= A[i]*pow(2,n-1-i);
-}
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/sum-of-subsequence-widths)::::::::::::::
-Math/899.Orderly-Queue/899.Orderly-Queue.cpp
-::::::::::::::
-class Solution {
-public:
-    string orderlyQueue(string S, int K) 
-    {
-        if (K>=2)
-        {
-            sort(S.begin(),S.end());
-            return S;
-        }
-        
-        string ret = S;
-        for (int i=0; i<S.size(); i++)
-        {
-            S = S.substr(1) + S.substr(0,1);
-            if (S<ret)
-                ret = S;
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Math/899.Orderly-Queue/Readme.md
-::::::::::::::
-### 899.Orderly-Queue
-
-本题是一道趣味数学题。事实上，当K>=2的时候，可以用题目规则构造任意组合的字符串。
-
-首先通过循环轮转（即持续地将字符串的第一个字母放到最后一个的位置），我们可以将某个需要的字符X轮转到出现在字符串的首位。然后固定X不动，然后再持续地将字符串的第二个字母放到最后一位，直至最后一位字母出现的是某个需要的字符Y。最后我们将第一位的X放在字符串末尾。于是，以上操作就实现了将任意字符X放在任意字符Y后面的操作！不断地重复这个方法，就可以构造出任意的想要的字符。
-
-当K==1的时候，没有特别巧的方法，我们只能遍历所有的循环轮转的可能，构造出N种字符串，选取字典序最小的一个。
-
-
-[Leetcode Link](https://leetcode.com/problems/orderly-queue)::::::::::::::
-Math/963.Minimum-Area-Rectangle-II/963.Minimum-Area-Rectangle-II.cpp
-::::::::::::::
-class Solution {
-public:
-    double minAreaFreeRect(vector<vector<int>>& points) 
-    {
-        map<pair<int,int>,vector<pair<int,int>>>Map;
-        int N = points.size();
-        for (int i=0; i<N; i++)
-            for (int j=0; j<N; j++)
-            {
-                if (i==j) continue;
-                int deltaX = points[i][0]-points[j][0];
-                int deltaY = points[i][1]-points[j][1];
-                Map[{deltaX,deltaY}].push_back({i,j});                
-            }
-        
-        double result = INT_MAX;
-        for (auto item : Map)
-        {
-            for (int m=0; m<item.second.size(); m++)
-                for (int n=m+1; n<item.second.size(); n++)
-                {
-                    int i = item.second[m].first;
-                    int j = item.second[m].second;
-                    int k = item.second[n].first;
-                    
-                    int dx1 = points[i][0]-points[j][0];
-                    int dy1 = points[i][1]-points[j][1];  //vector {dx1,dy1}
-                    int dx2 = points[i][0]-points[k][0];
-                    int dy2 = points[i][1]-points[k][1];  //vector {dx2,dy2}
-                    
-                    if (dx1*dx2+dy1*dy2!=0) continue;
-                    
-                    double side1 = (points[i][0]-points[j][0])*(points[i][0]-points[j][0]) + (points[i][1]-points[j][1])*(points[i][1]-points[j][1]);
-                    double side2 = (points[i][0]-points[k][0])*(points[i][0]-points[k][0]) + (points[i][1]-points[k][1])*(points[i][1]-points[k][1]);
-                    
-                    double area = sqrt(side1)*sqrt(side2);
-                    
-                    result = min(result, area);
-                }
-        }
-        
-        return result==INT_MAX?0:result;
-    }
-};
-::::::::::::::
-Math/963.Minimum-Area-Rectangle-II/Readme.md
-::::::::::::::
-### 963.Minimum-Area-Rectangle-II
-
-我们穷举任意的一对点（记作点i和点j），那么ij所组成的一条线段，可以用```deltaX = xj-xi, deltaY = yj-ji```来表示它的方向和长度。我们将同属于```{deltaX,deltaY}```的point pair（或者说线段）放在一起，即
-```
-Map[{deltaX,deltaY}].push_back({i,j}); 
-```
-那么对于同一个```key = {deltaX,deltaY}```所代表的这些线段，两两之间都一定可以组成一个平行四边形！
-
-我们遍历这些平行四边形。对于每一个平行四边形，它们的四个点的坐标都是已知的（比如记作ijkt）。我们可以通过考察向量ij和向量jk是否垂直来判定这个四边形是否是矩形。数学上，具体的做法是考察两个二维向量的点积是否为零。即
-```
-v1(x1,y1)垂直于v2(x2,y2) <=> x1*x2+y1*y2 = 0
-```
-
-如果确认是矩形，那我们很容易计算它的面积，记录下来求最小值即可。
-
-这种做法的效率较高，原因是我们将所有的线段（N^2)条按照“长度+方向”进行了分类。每一类里的线段数目其实比较少，做两两组合（构建平行四边形）的开销不大。
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-area-rectangle-ii)::::::::::::::
-Math/972.Equal-Rational-Numbers/972.Equal-Rational-Numbers.cpp
-::::::::::::::
-class Solution {
-public:
-    bool isRationalEqual(string S, string T) 
-    {
-        double valS,valT;
-        string strS, strT;
-        bool isValS = parseVal(S, valS, strS);
-        bool isValT = parseVal(T, valT, strT);
-        
-        if (isValS!=isValT)
-            return false;
-        if (isValS)
-            return abs(valS-valT)<1e-12;
-        else
-            return strS==strT;
-        
-    }
-    
-    bool parseVal(string S, double &val, string &str)
-    {
-        int i = S.find("(");
-        if (i==-1)
-        {
-            val = stod(S);
-            return true;
-        }
-        
-        // "x.y(z)""
-        string a = S.substr(0,i);       // a => x.y
-        string b = S.substr(i+1, S.size()-i-2);     // b=> z
-        
-        bool flag0 = true;
-        for (auto ch: b)
-        {
-            if (ch!='0')
-            {
-                flag0 = false;
-                break;
-            }
-        }
-        if (flag0)
-        {
-            val = stod(a);
-            return true;
-        }
-        
-        bool flag9 = true;
-        for (auto ch: b)
-        {
-            if (ch!='9')
-            {
-                flag9 = false;
-                break;
-            }
-        }
-        if (flag9)
-        {
-            int i = a.find(".");
-            int k = a.size()-1-i;
-            val = stod(a) + 1.0/pow(10,k);
-            return true;
-        }
-        
-        while (a.size()<20)
-            a+=b;
-        str = a.substr(0,20);
-        return false;        
-    }
-};
-::::::::::::::
-Math/972.Equal-Rational-Numbers/Readme.md
-::::::::::::::
-### 972.Equal-Rational-Numbers
-
-比较容易想到的方法是：将循环节重复多写几遍加在后面，再比较两个字符串，就可以判断两个无限循环小数是形式上否相等。但是需要处理两个特殊的例子：
-
-1. 当循环节全部为0时，本质是有限小数，上述方法会失效。比如1.0和1.00(00)比较时，后者因为循环节的缘故被拉长，但这样比较字符串的话，无法与前者画上等号。
-
-2. 当循环节全部为9时，本质也是有限小数。比如0.1和0.0(99)，注意这两个数学意义上是相等的，但无法用字符串的比较来判断相等。
-
-我们的策略是：如果两者都是有限小数（非循环），那么就分别用stod转化为浮点数进行比较。如果两者都是无限循环小数，那么就用重复循环节的方法，将字符串拓展至相等的长度再比较。特别注意，循环节只包含0或者9的话，本质是有限小数，这两种情况下我们都需要把S转化为浮点数来比较（即前者的策略）。
-
-对于“循环节全部为0”的情况，直接忽略循环节，将循环节前面的部分当做有限小数转化为浮点数。
-
-对于“循环节全部为9”的情况，我们考察小数点后、循环节前有几个数字。比如：如果有两个数字，那么循环节部分等效于0.01；如果有一个数字，那么循环节部分等效于0.1；如果有零个数字，那么循环节部分等效于1。所以我们把这部分等效的数，直接加上循环节前面所代表的数，就是最终该字符串的数值。
-
-特别注意，比较两个浮点数，不要轻易使用```if (x==y)```，而是考察它们的绝对值之差是否足够小。
-
-
-[Leetcode Link](https://leetcode.com/problems/equal-rational-numbers)
+$0
+endsnippet

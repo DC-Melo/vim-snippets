@@ -1,6 +1,34 @@
-::::::::::::::
-Priority_Queue/004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays.cpp
-::::::::::::::
+
+# ==> ./Priority_Queue/0004.Median-of-Two-Sorted-Arrays/Readme.md <==
+snippet 0004.Median-of-Two-Sorted-Arrays "0004.Median-of-Two-Sorted-Arrays" b
+### 4. Median of Two Sorted Arrays  
+### 1 二分法
+##### 基本思想：
+此题可以拓展为求两个排序数组的总第K个最小数问题 FindKthSmallest。此题还可以扩展到M个数组。 
+函数定义为:
+```
+FindKthSmallest(nums1,a,m,nums2,b,n,K) 
+```
+a定义了数组A的首元素位置，m定义了数组A的长度。类似数组B有定义b,n。K是求总体的第K个最小数。
+##### 关键算法：  
+考察每个数组分别第K/2个数。如果数组A的第K/2个数小于数组B的第K/2个数，则说明总体的第K个数不可能在数组A的前K/2个数中，因为假设这样的数存在于A的前K/2个中，它也不可能打过B的前K/2个，故总体上不可能大过K个数。同理，如果数组A的第K/2个数大于数组B的第K/2个数，则说明总体的第K个数不可能在数组B的前K/2个数中。
+##### 细节
+1. 每次都优先处理长度小的数组，希望它尽快到零。所以长度小的数组不在第一个的话，就将两个数组交换再调用。
+2. 两个边界条件：K=1 时取两个数组首元素的最小值. m=0时，直接在B数组里找第K个元素。
+
+### 2 Heap
+利用堆排序，维持一个只含有两个元素的priority_queue，每出列一个，就在相对应的数组里面再取一个放进去。  
+程序写起来更容易。
+
+Update: 因为priority_queue默认是大顶堆，优先出列大数，所以可以从两个顺序数组从后往前遍历，从高往低取第K个元素。
+
+
+[Leetcode Link](https://leetcode.com/problems/median-of-two-sorted-arrays)
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays.cpp <==
+snippet 0004.Median-of-Two-Sorted-Arrays "0004.Median-of-Two-Sorted-Arrays" b
 class Solution {
 public:
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
@@ -34,9 +62,12 @@ public:
             return FindKthSmallest(nums1,a,n,nums2,b+k2,n-k2,k-k2);
     }
 };
-::::::::::::::
-Priority_Queue/004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays_PQ.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0004.Median-of-Two-Sorted-Arrays/4-Median-of-Two-Sorted-Arrays_PQ.cpp <==
+snippet 0004.Median-of-Two-Sorted-Arrays "0004.Median-of-Two-Sorted-Arrays" b
 class Solution {
     struct cmp
     {
@@ -95,34 +126,484 @@ public:
 
     }
 };
-::::::::::::::
-Priority_Queue/004.Median-of-Two-Sorted-Arrays/Readme.md
-::::::::::::::
-### 4. Median of Two Sorted Arrays  
-### 1 二分法
-##### 基本思想：
-此题可以拓展为求两个排序数组的总第K个最小数问题 FindKthSmallest。此题还可以扩展到M个数组。 
-函数定义为:
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0358.Rearrange-String-k-Distance-Apart/Readme.md <==
+snippet 0358.Rearrange-String-k-Distance-Apart "0358.Rearrange-String-k-Distance-Apart" b
+### 358.Rearrange-String-k-Distance-Apart
+
+构建priority_queue<pair<int,char>>q; q的元素表示字符及其频次。注意到priority_queue默认大顶堆，自动按照频次从大到小排列。
+```cpp
+        unordered_map<char,int>Map;
+        for (int i=0; i<s.size(); i++)
+            Map[s[i]]++;
+        
+        priority_queue<pair<int,char>>q;
+        for (auto a:Map)
+            q.push({a.second,a.first});
+```            
+每次取q中的前K个元素（每个元素代表不同的字符）加入临时数组temp；取完后将这些temp里的元素的个数减一后再放回q中。直至某一回合，如果pq的字符种类个数小于K，但是该轮结束后temp非空，说明我们还需要往result里加字符，这样就会违法K个相邻字符不能有相同字符的规则，返回空。
+```cpp
+        while (!pq.empty())
+        {
+            int n = min(k, (int)pq.size());
+            vector<pair<int,char>>temp;
+            
+            for (int i=0; i<n; i++)
+            {
+                int num = pq.top().first;
+                int ch = pq.top().second;
+                pq.pop();
+                result+=ch;
+                num--;
+                if (num!=0) temp.push_back({num,ch});
+            }
+            if (n<k && temp.size()>0) return "";
+            for (auto a:temp) pq.push(a);
+        }
 ```
-FindKthSmallest(nums1,a,m,nums2,b,n,K) 
+
+
+[Leetcode Link](https://leetcode.com/problems/rearrange-string-k-distance-apart)
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0358.Rearrange-String-k-Distance-Apart/358.Rearrange-String-k-Distance-Apart.cpp <==
+snippet 0358.Rearrange-String-k-Distance-Apart "0358.Rearrange-String-k-Distance-Apart" b
+class Solution {
+public:
+    string rearrangeString(string s, int k) 
+    {
+        if (k==0) return s;
+        unordered_map<char, int>Map;
+        for (auto ch:s)
+            Map[ch]+=1;
+        priority_queue<pair<int,char>>pq; // freq, character
+        for (auto x: Map)
+            pq.push({x.second, x.first});
+        
+        string ret;
+        while (!pq.empty())
+        {
+            if (pq.size() < k && pq.top().first > 1)
+                return "";
+            
+            int n = min(k, (int)pq.size());
+            vector<pair<int,char>>temp;
+            
+            for (int i=0; i<n; i++)
+            {
+                ret.push_back(pq.top().second);
+                temp.push_back(pq.top());
+                pq.pop();                
+            }
+            
+            for (auto x: temp)
+            {
+                if (x.first > 1)
+                    pq.push({x.first-1, x.second});
+            }
+        }
+        return ret;
+        
+    }
+};
+
+
+
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0502.IPO/Readme.md <==
+snippet 0502.IPO "0502.IPO" b
+### 502.IPO
+
+我们首先想到的自然是在初始条件W下，我们有哪些项目可以选择？我们将所有项目按照captital排序，所有小于W的都可以作为候选。自然，我们肯定会选择其中利润最大的。
+
+我们在收取了第一个项目的利润之后，手头的资本W是变大了。这意味着我们有了更多的选择余地。于是我们可以顺着已经按照capital排序的项目来看，将小于新W的都收入候选。同样，我们会选择其中利润最大的。于是我们发现，按照利润排序的大顶堆优先队列是最理想的数据结构。
+
+每个回合，从PQ里面取利润最大的项目，更新W（使之变大）；之后再把capital小于当前W的项目入列。以此类推可以得到所需要的K个项目。
+
+需要注意的细节是：如果PQ为空，说明当前的W太小，无法启动任何项目，就需要break。
+
+
+[Leetcode Link](https://leetcode.com/problems/ipo)
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0502.IPO/502.IPO.cpp <==
+snippet 0502.IPO "0502.IPO" b
+class Solution {
+public:
+    int findMaximizedCapital(int k, int W, vector<int>& Profits, vector<int>& Capital) 
+    {
+        vector<pair<int,int>>proj;
+        for (int i=0; i<Profits.size(); i++)
+            proj.push_back({Capital[i],Profits[i]});
+        sort(proj.begin(),proj.end());
+        
+        priority_queue<int>pq;
+        
+        int count = 0;
+        int i=0;
+        while (count<k)
+        {
+            while (i<proj.size() && proj[i].first<=W)
+            {
+                pq.push(proj[i].second);
+                i++;
+            }
+            if (pq.size()!=0)
+            {
+                W+=pq.top();
+                count++;
+                pq.pop();
+            }
+            else
+                break;
+        }        
+        return W;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0621.Task-Scheduler/Readme.md <==
+snippet 0621.Task-Scheduler "0621.Task-Scheduler" b
+### 621.Task-Scheduler
+
+#### 解法１：模拟最优解的过程
+此题非常类似  358.Rearrange-String-k-Distance-Apart。我们令n自加１，这样题意要求每n个相邻的位置不能有重复的元素．
+
+设计一个大顶堆的priority_queue，PQ的元素是{freq,num}。每次取出权重最多的n种字符（除非PQ里面的元素个数少于n），将其freq减一后再放回队列中。
+
+需要注意的是，即使队列中的元素少于n，只要没有完成所有的任务，根据题意的idle设定，计数器仍需要count+=n. 只有最后一轮（弹出后队列为空）时，计数器才 count+= num，其中num是队列弹出前的元素个数。
+
+#### 解法２：贪心构造
+因为此题并不要求打印具体的实施方案，所以不需要像解法1那样完全地模拟这个流程。
+
+我们找出频次最高的字符A，假设它的频次是MaxFreq。那么我们就将全部的元素分成MaxFreq组，每组的第一个就是A。同时我们给每组预留至少N个位置。这样，我们就合法地处理完了所有的A。如果有其他字符的频次也是MaxFreq，那么我们类似处理。示意图如下，总共有maxFreq行，每行靠前的位置都填充频次为MaxFreq的元素。除最后一行外，每行有N个位置。
 ```
-a定义了数组A的首元素位置，m定义了数组A的长度。类似数组B有定义b,n。K是求总体的第K个最小数。
-##### 关键算法：  
-考察每个数组分别第K/2个数。如果数组A的第K/2个数小于数组B的第K/2个数，则说明总体的第K个数不可能在数组A的前K/2个数中，因为假设这样的数存在于A的前K/2个中，它也不可能打过B的前K/2个，故总体上不可能大过K个数。同理，如果数组A的第K/2个数大于数组B的第K/2个数，则说明总体的第K个数不可能在数组B的前K/2个数中。
-##### 细节
-1. 每次都优先处理长度小的数组，希望它尽快到零。所以长度小的数组不在第一个的话，就将两个数组交换再调用。
-2. 两个边界条件：K=1 时取两个数组首元素的最小值. m=0时，直接在B数组里找第K个元素。
+A B 。。。。。
+A B 。。。。。
+A B 。。。。。
+A B 。。。。。
+A B 
+```
+接下来我们按照从上到下、从左到右的顺序，依次在待定的位置上填充第二高频的字符、第三高频的字符... 因为其他字符的频次都不会超过maxFreq-1，而我们有MaxFreq-1行，说明同一行里不会出现两个相同的字符。最终填充的结果会有两种可能：一种是上述的格子没有被填满：第二种是上述的格子已经填满了，但是我们还有字符没有填充。
 
-### 2 Heap
-利用堆排序，维持一个只含有两个元素的priority_queue，每出列一个，就在相对应的数组里面再取一个放进去。  
-程序写起来更容易。
+对于第一种情况，如下图，我们将前MaxFreq-1行里没有被填充的位置都标记为idle，那么把这些行都拼接起来就是一个符合要求的方案。这个方案里，其实不管tasks具体的数目，总共的格子（也就是处理时间）是固定的，即```(MaxFreq-1) * N + 零头```，其中零头频次为MaxFreq的字符种数。
+```
+A B C D E H 。
+A B C D F 。。
+A B C D F 。。
+A B C E G 。。
+A B 
+```
 
-Update: 因为priority_queue默认是大顶堆，优先出列大数，所以可以从两个顺序数组从后往前遍历，从高往低取第K个元素。
+对于第二种情况，如下图，所有的idle位置都已经填满了，但是我们还有字符没填怎么办？这时候我们就可以打破每行只能填N个元素的限制，尽情地按照从上到下、从做到右的顺序继续填充在前MaxFreq-1行填充即可。这种方案的总格子数（即处理时间）其实就是tasks的大小。
+```
+A B C D E H L p t
+A B C D F I M q u
+A B C D F J N r
+A B C E G K O s
+A B 
+```
+显然，上述两种方案不可能共存。只要tasks的数目大于了规划的格子数```(MaxFreq-1) * N + 零头```，那么答案就是tasks.size()；否则答案就是第一种方案。
+
+[Leetcode Link](https://leetcode.com/problems/task-scheduler)
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0621.Task-Scheduler/621.Task-Scheduler_v1.cpp <==
+snippet 0621.Task-Scheduler "0621.Task-Scheduler" b
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) 
+    {
+        unordered_map<char,int>Map;
+        for (auto ch: tasks)
+            Map[ch]++;
+        priority_queue<int>pq;
+        for (auto a:Map) pq.push(a.second);
+        
+        n++;
+        int count = 0;
+        while (pq.size()>0)
+        {                            
+            int k = min(n, (int)pq.size());            
+            
+            vector<int>temp;
+            for (int i=0; i<k; i++)
+            {
+                int f = pq.top();
+                pq.pop();
+                f--;
+                if (f!=0) temp.push_back(f);
+            }
+            if (temp.size()>0)
+                count+=n;
+            else
+                count+=k;
+            
+            for (auto x: temp)
+                pq.push(x);
+        }
+        return count;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0621.Task-Scheduler/621.Task-Scheduler_v2.cpp <==
+snippet 0621.Task-Scheduler "0621.Task-Scheduler" b
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) 
+    {
+        unordered_map<char,int>Map;
+        for (auto ch: tasks)
+            Map[ch]++;
+        
+        int maxFreq = 0;
+        for (auto a:Map)
+            maxFreq = max(maxFreq, a.second);
+        
+        int result = (maxFreq-1)*(n+1);
+        int count = 0;
+        for (auto a:Map)
+        {
+            if (a.second == maxFreq)
+                count++;
+        }
+        return max(result+count, (int)tasks.size());
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0630.Course-Schedule-III/Readme.md <==
+snippet 0630.Course-Schedule-III "0630.Course-Schedule-III" b
+### 630.Course-Schedule-III
+
+本题本质是贪心法，需要人工设计出最优策略。应用层面上用到了数组排序+PQ的组合，很像502.IPO，但是本题的最优策略要独立思考出来更有难度。
+
+我们尝试按照时间先后顺序来看这些课程．毕竟哪个deadline在前我们就先处理谁，也是非常合情合理的．我们假设在某个课程的deadline之前，手头有一堆的备选课程，我们做其中哪些呢？显然我们做哪些时长要求最少的，从最短的做起，做一个扔掉一个，能做多少做多少，做不完的就扔了，这就是最优的方案了．注意，做不完的不用保留在pool里，因为过了当前的这个deadline之后这些未做的课程就失效了．
+
+假设我们当前已经修了Ｎ门．那么接下来又到了下一个deadline，也就是deadline放宽了，但我们又新添了一门课变成N+1门．如果能赶在新deadline之前搞定这门新课，我们自然就是能上就上（那样就是N+1门）．如果不能呢？我们自然怪罪当前N+1课程列表里最长的那门，我们只要把那门最长的踢掉就一定满足deadline的要求．(为什么？因为我们之前保证了Ｎ门可以满足上一个deadline，那么现在的Ｎ门一定也可以满足当前的deadline．)于是，如今虽然同样还是只能修Ｎ门，但是踢掉了一个最长的课程，也算是把已修课程列表在时间上给优化了．
+
+于是我们一个接一个的处理deadline,这样得到的就是总的最优方案．
 
 
-[Leetcode Link](https://leetcode.com/problems/median-of-two-sorted-arrays)::::::::::::::
-Priority_Queue/1057.Campus-Bikes/1057.Campus-Bikes.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/course-schedule-iii)
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0630.Course-Schedule-III/630.Course-Schedule-III.cpp <==
+snippet 0630.Course-Schedule-III "0630.Course-Schedule-III" b
+class Solution {
+    static bool cmp(vector<int>&a, vector<int>&b)
+    {
+        return a[1]<b[1];
+    }
+public:
+    int scheduleCourse(vector<vector<int>>& courses) 
+    {
+        sort(courses.begin(),courses.end(),cmp);
+        priority_queue<int>pq;
+        
+        int cur = 0;
+        for (int i=0; i<courses.size(); i++)
+        {
+            pq.push(courses[i][0]);
+            cur += courses[i][0];
+            
+            if (cur>courses[i][1])
+            {
+                cur -= pq.top();
+                pq.pop();
+            }            
+        }
+        return pq.size();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/Readme.md <==
+snippet 0774.Minimize-Max-Distance-to-Gas-Station "0774.Minimize-Max-Distance-to-Gas-Station" b
+### 774.Minimize-Max-Distance-to-Gas-Station
+
+#### 解法1：贪心法
+
+贪心法有非常巧妙的思想，这里用到了pq.
+
+首先我们将所有老加油站之间的间隔距离放入pq，默认是大顶堆，这些老加油站的间隔都没有新加油站插入。那么，对于队首的这个间距最大，说明我们要对其下手，先尝试将这个间距除以2，这里除以2表明原本是没有新加油站的，现在加入一个。然后将这个新间隔放入队列。
+
+每次我们取队首元素，总是得到的是（当前最大的）某两个老加油站之间的新间隔，以及这两个老加油站之间插入的新加油站数量m。我们需要做的，是重新规划这两个老加油站之间的间隔，改成插入的新加油站数量为m+1.
+
+重复上述过程，直至加入新加油站的总是达到了K。此时队首的老加油站之间的新间距，就是整体最大的间距。
+
+这个方法非常巧妙，只可惜仍然超时。
+
+#### 解法2：二分法
+
+可以得到的最大间距d，下限是0，上限是原本最大的老加油站之间的间距。
+
+不断二分尝试这个d，计算为了使得每个老加油站之间的新间距变为d，需要新加入多少新加油站。如果新加油站总数超过了K，说明这个d太小；否则可以继续尝试减小d，
+
+最后知道二分的搜索精度小于1e-6.
+
+
+[Leetcode Link](https://leetcode.com/problems/minimize-max-distance-to-gas-station)
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_binary.cpp <==
+snippet 0774.Minimize-Max-Distance-to-Gas-Station "0774.Minimize-Max-Distance-to-Gas-Station" b
+class Solution {
+public:
+    double minmaxGasDist(vector<int>& stations, int K) 
+    {
+        double left = 0;
+        double right = 0;
+        for (int i=1; i<stations.size(); i++)
+            right = fmax(right,stations[i]-stations[i-1]);
+        
+        double mid;
+        while (right-left>1e-6)
+        {
+            mid = (right+left)/2;
+            int count = 0;
+            for (int i=1; i<stations.size(); i++)
+            {
+                double k = (stations[i]-stations[i-1])/mid;
+                count+=  ceil(k)-1;               
+            }
+            if (count>K)
+                left = mid;
+            else
+                right = mid;            
+        }
+        return mid;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_pq.cpp <==
+snippet 0774.Minimize-Max-Distance-to-Gas-Station "0774.Minimize-Max-Distance-to-Gas-Station" b
+class Solution {
+public:
+    double minmaxGasDist(vector<int>& stations, int K) 
+    {
+        priority_queue<pair<double,int>>pq;
+        for (int i=1; i<stations.size(); i++)
+            pq.push({stations[i]-stations[i-1],1});
+        
+        for (int i=0; i<K; i++)
+        {
+            double space = pq.top().first;
+            int insertNum = pq.top().second;
+            pq.pop();
+            
+            pq.push({space*insertNum/(insertNum+1),insertNum+1});            
+        }
+        
+        return pq.top().first;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0857.Minimum-Cost-to-Hire-K-Workers/Readme.md <==
+snippet 0857.Minimum-Cost-to-Hire-K-Workers "0857.Minimum-Cost-to-Hire-K-Workers" b
+### 857.Minimum-Cost-to-Hire-K-Workers
+
+我们考虑如果将```wage[i]/quality[i]```作为评价指标来进行排序意味着什么？
+
+```wage[i]/quality[i]```最高的那位,意味着最不实惠的工人，它拉高了unitWage，使得其他工人都必须按照这个unitWage乘以各自的quality拿工资．但转念一想，如果我们必须雇佣这个最不实惠的工人的话，那么剩下的工人该如何选择呢？显然我们只要选K-1个quality最低的工人，他们可以拉高那个＂最不实惠工人＂的quality比重，从而减少其他工人的quality比重，从而降低总工资．
+
+我们再考虑，如果选择了```wage[i]/quality[i]```第二高的那位，那么我们就在接下来的N-2个人里面选择K-1个quality最底的工人即可．
+
+由此贪心法的最优策略就出来了．实际操作中，我们根据```wage[i]/quality[i]```从低到高进行处理．
+
+
+[Leetcode Link](https://leetcode.com/problems/minimum-cost-to-hire-k-workers)
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/0857.Minimum-Cost-to-Hire-K-Workers/857.Minimum-Cost-to-Hire-K-Workers.cpp <==
+snippet 0857.Minimum-Cost-to-Hire-K-Workers "0857.Minimum-Cost-to-Hire-K-Workers" b
+class Solution {
+    static bool cmp(pair<int,int>&a, pair<int,int>&b)
+    {
+        return a.second*1.0 / a.first < b.second*1.0 / b.first; 
+    }
+public:
+    double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) 
+    {
+        vector<pair<int,int>>persons;
+        for (int i=0; i<quality.size(); i++)
+            persons.push_back({quality[i], wage[i]});
+
+        sort(persons.begin(), persons.end(), cmp);
+
+        priority_queue<int>pq_quality;
+        int sum_quality = 0;
+        double ret = 1e20;
+
+        for (int i=0; i<persons.size(); i++)
+        {
+            sum_quality += persons[i].first;
+            pq_quality.push(persons[i].first);
+            if (pq_quality.size() > k)
+            {
+                sum_quality -= pq_quality.top();
+                pq_quality.pop();
+            }
+            if (pq_quality.size() == k)
+            {
+                double unitWage = persons[i].second * 1.0 / persons[i].first;
+                ret = min(ret, unitWage * sum_quality);
+            }                
+        }
+
+        return ret;
+
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1057.Campus-Bikes/Readme.md <==
+snippet 1057.Campus-Bikes "1057.Campus-Bikes" b
+### 1057.Campus-Bikes
+
+此题考查如何设计数据结构来方便解题。
+
+设计数组d，其中每个d[i]是一个队列，盛装第i个工人到每辆自行车的距离信息{dist, i, j}，并且是已经排序的。
+
+我们每个回合解决一个工人。在每个回合中，将所有d[i]的首元素（见上，是一个三元triplet）放入一个新的优先队列（或者有序集合），这样集合里的第一个元素自然就是一个当前成功的配对（因为优先队列按照距离、工人编号、自行车编号依次排序）。再下一个回合时，我们会跳过所有已经匹配过的工人，同时对于未匹配的工人i，如果d[i]的首元素是已经匹配过的自行车，我们也将其从d[i]弹出，直至首元素遇到的是未匹配的自行车，再将该tripet放入优先队列中。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1057.Campus-Bikes/1057.Campus-Bikes.cpp <==
+snippet 1057.Campus-Bikes "1057.Campus-Bikes" b
 class Solution {
 public:
     vector<int> assignBikes(vector<vector<int>>& workers, vector<vector<int>>& bikes) 
@@ -173,19 +654,23 @@ public:
         return rets;  
     }
 };
-::::::::::::::
-Priority_Queue/1057.Campus-Bikes/Readme.md
-::::::::::::::
-### 1057.Campus-Bikes
 
-此题考查如何设计数据结构来方便解题。
+$0
+endsnippet
 
-设计数组d，其中每个d[i]是一个队列，盛装第i个工人到每辆自行车的距离信息{dist, i, j}，并且是已经排序的。
+# ==> ./Priority_Queue/1167.Minimum-Cost-to-Connect-Sticks/Readme.md <==
+snippet 1167.Minimum-Cost-to-Connect-Sticks "1167.Minimum-Cost-to-Connect-Sticks" b
+### 1167.Minimum-Cost-to-Connect-Sticks
 
-我们每个回合解决一个工人。在每个回合中，将所有d[i]的首元素（见上，是一个三元triplet）放入一个新的优先队列（或者有序集合），这样集合里的第一个元素自然就是一个当前成功的配对（因为优先队列按照距离、工人编号、自行车编号依次排序）。再下一个回合时，我们会跳过所有已经匹配过的工人，同时对于未匹配的工人i，如果d[i]的首元素是已经匹配过的自行车，我们也将其从d[i]弹出，直至首元素遇到的是未匹配的自行车，再将该tripet放入优先队列中。
-::::::::::::::
-Priority_Queue/1167.Minimum-Cost-to-Connect-Sticks/1167.Minimum-Cost-to-Connect-Sticks.cpp
-::::::::::::::
+因为每根棍子的总cost取决于它参加了几次合并。很显然，我们会优先选择最轻的两根sticks进行合并，将重的stick放到最后再合并。
+
+每次将新生成的stick放入群体中，再继续挑选两根最轻的进行合并。直至最终把所有棍子合并完成。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1167.Minimum-Cost-to-Connect-Sticks/1167.Minimum-Cost-to-Connect-Sticks.cpp <==
+snippet 1167.Minimum-Cost-to-Connect-Sticks "1167.Minimum-Cost-to-Connect-Sticks" b
 class Solution {
 public:
     int connectSticks(vector<int>& sticks) 
@@ -207,17 +692,23 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Priority_Queue/1167.Minimum-Cost-to-Connect-Sticks/Readme.md
-::::::::::::::
-### 1167.Minimum-Cost-to-Connect-Sticks
 
-因为每根棍子的总cost取决于它参加了几次合并。很显然，我们会优先选择最轻的两根sticks进行合并，将重的stick放到最后再合并。
+$0
+endsnippet
 
-每次将新生成的stick放入群体中，再继续挑选两根最轻的进行合并。直至最终把所有棍子合并完成。
-::::::::::::::
-Priority_Queue/1353.Maximum-Number-of-Events-That-Can-Be-Attended/1353.Maximum-Number-of-Events-That-Can-Be-Attended.cpp
-::::::::::::::
+# ==> ./Priority_Queue/1353.Maximum-Number-of-Events-That-Can-Be-Attended/Readme.md <==
+snippet 1353.Maximum-Number-of-Events-That-Can-Be-Attended "1353.Maximum-Number-of-Events-That-Can-Be-Attended" b
+### 1353.Maximum-Number-of-Events-That-Can-Be-Attended
+
+我们将所有的events按照开始时间来排序。然后维护一个按照时间结束时间从早到晚顺序的PQ。
+
+我们遍历所有的日期day（从1到最大的100000）。对于每一天，我们将所有起始日期在day的事件加入PQ，同时将PQ里已经过期的时间排除掉。此时PQ里面的所有events就是当天可以参加的。我们选择今天参加哪一个呢？我们自然是“贪心地”选择结束时间最早的那个，把机会用在“刀刃”上；至于deadline晚的事件都可以“拖一拖”，说不定以后总有机会去参加的。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1353.Maximum-Number-of-Events-That-Can-Be-Attended/1353.Maximum-Number-of-Events-That-Can-Be-Attended.cpp <==
+snippet 1353.Maximum-Number-of-Events-That-Can-Be-Attended "1353.Maximum-Number-of-Events-That-Can-Be-Attended" b
   
 class Solution {
 public:
@@ -245,17 +736,25 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Priority_Queue/1353.Maximum-Number-of-Events-That-Can-Be-Attended/Readme.md
-::::::::::::::
-### 1353.Maximum-Number-of-Events-That-Can-Be-Attended
 
-我们将所有的events按照开始时间来排序。然后维护一个按照时间结束时间从早到晚顺序的PQ。
+$0
+endsnippet
 
-我们遍历所有的日期day（从1到最大的100000）。对于每一天，我们将所有起始日期在day的事件加入PQ，同时将PQ里已经过期的时间排除掉。此时PQ里面的所有events就是当天可以参加的。我们选择今天参加哪一个呢？我们自然是“贪心地”选择结束时间最早的那个，把机会用在“刀刃”上；至于deadline晚的事件都可以“拖一拖”，说不定以后总有机会去参加的。
-::::::::::::::
-Priority_Queue/1383.Maximum-Performance-of-a-Team/1383.Maximum-Performance-of-a-Team.cpp
-::::::::::::::
+# ==> ./Priority_Queue/1383.Maximum-Performance-of-a-Team/Readme.md <==
+snippet 1383.Maximum-Performance-of-a-Team "1383.Maximum-Performance-of-a-Team" b
+### 1383.Maximum-Performance-of-a-Team
+
+要使团队得分最大，既要团队的速度和尽量大，又要最低效率的人的效率尽量大。相比于思考一堆人的速度和，观察一个人的效率更方便。于是我们很容易想到突破点，那就是如果一个人是团队中效率最低的，那么这个团队该如何组建？很显然我们在所有效率比他高的人里面，取speed最大的k个人。
+
+所以我们按照把人按照效率从高到低排列。对于任何一个人而言，如果让它做团队里效率最低的，那么在他之前的那些人自然都能入选团队。我们只需要用一个优先队列，在当前所有人中保留速度最大的k个即可。
+
+注意，我们不会将PQ里面的k个元素直接相加来计算团队的速度和，因为这样当k很大的时候时间复杂度很高。我们维护一个小顶堆的优先队列，每加入一个人的速度之后，淘汰里面速度最低的一个，这样用o(1)的时间就可以来维护团队的速度和。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1383.Maximum-Performance-of-a-Team/1383.Maximum-Performance-of-a-Team.cpp <==
+snippet 1383.Maximum-Performance-of-a-Team "1383.Maximum-Performance-of-a-Team" b
 class Solution {
 public:
     int maxPerformance(int n, vector<int>& speed, vector<int>& efficiency, int k) 
@@ -287,19 +786,42 @@ public:
         return ret % M;        
     }
 };
-::::::::::::::
-Priority_Queue/1383.Maximum-Performance-of-a-Team/Readme.md
-::::::::::::::
-### 1383.Maximum-Performance-of-a-Team
 
-要使团队得分最大，既要团队的速度和尽量大，又要最低效率的人的效率尽量大。相比于思考一堆人的速度和，观察一个人的效率更方便。于是我们很容易想到突破点，那就是如果一个人是团队中效率最低的，那么这个团队该如何组建？很显然我们在所有效率比他高的人里面，取speed最大的k个人。
+$0
+endsnippet
 
-所以我们按照把人按照效率从高到低排列。对于任何一个人而言，如果让它做团队里效率最低的，那么在他之前的那些人自然都能入选团队。我们只需要用一个优先队列，在当前所有人中保留速度最大的k个即可。
+# ==> ./Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/Readme.md <==
+snippet 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows "1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows" b
+### 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows
 
-注意，我们不会将PQ里面的k个元素直接相加来计算团队的速度和，因为这样当k很大的时候时间复杂度很高。我们维护一个小顶堆的优先队列，每加入一个人的速度之后，淘汰里面速度最低的一个，这样用o(1)的时间就可以来维护团队的速度和。
-::::::::::::::
-Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v1.cpp
-::::::::::::::
+#### 方法1：暴力
+我们注意到，虽然array的组合有m^n个，但本题中的K不超过200.这说明我们是可以暴力找到第K小的sum！
+
+我们设立一个presum数组，记录的是从第一行到第i-1行的前k小的权重和路径（每一行选一个数）。在处理第i行的时候，我们将presum里面的元素与第i行的元素两两组合相加，这样做多有```200*40```个新元素，我们排个序取前k个，这样就得到了更新后的presum数组。
+
+逐行推进，处理完最后一行之后，presum就包含了前k个sum。
+
+#### 方法2：PQ
+我们从小到大搜索sum。初始状态（即最小的sum）必然对应着每行取第一个元素。然后基于这个idx array，可以扩展出m个idx array，即将每行的指针移向该行的下一个，...将所有拓展出的array sum放在一个PQ里，弹出当前最小的array sum继续拓展... 可见，此题本质上是就N sorted list的归并排序。
+
+注意的是，idx array可能会有重复，需要用一个集合来去重。比如[[1,2],[1,2]]，初始状态是{2, {0,0}}；第二轮会加入{3, {1,0}},{3, {0,1}}；在第三轮，第二轮的前者会导入{4, {1,1}}，后者也会导入{4,{1,1}}，这样就会将{1,1}这个组合重复计数两次。
+
+#### 方法3：二分搜值
+我们设计函数checkOK来判断 if the number of arrays whose sum <= target is at least k. 如果返回true，则target可能是个解（因为或许有若干个array sum都是target），但可以尝试更小的。如果返回false，那么target肯定不是答案，我们需要将taget变大。
+
+那么如何统计有多少个符合条件的array呢？如果是暴力搜索所有的可能再判断，那么会有n^m种组合。但本题的特点是每行都是递增的，我们可以设计算法只搜索sum<=target的从array，当count超过k的时候即可终止整个搜索，这样每次搜索只需要o(k)的时间复杂度。
+
+具体的做法是，我们设置初始sum就是各行首元素的和，即默认array的组成是各行的首元素。我们逐行深度搜索。对于第i行，我们从首元素往后尝试每一列，如果算上mat[i][j]满足sum<=target，那么计数器就可以加一(此时的array意味着下面每一行都选择首元素)，然后以此sum为基准递归处理下一行（也是从mat[i+1][0]开始）。反之，如果第mat[i][j]的元素使得sum>target，那么就终止这个递归。
+
+特别注意，因为初始sum对应了一个初始的array，计数器也要初始化为1. 以后只有在遇到j>0时才能更新计数器。
+
+此题的一维版本是```1918.Kth-Smallest-Subarray-Sum```
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v1.cpp <==
+snippet 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows "1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows" b
 class Solution {    
 public:
     int kthSmallest(vector<vector<int>>& mat, int k) 
@@ -322,9 +844,12 @@ public:
         return temp[k-1];      
     }        
 };
-::::::::::::::
-Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v2.cpp <==
+snippet 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows "1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows" b
 typedef pair<int,vector<int>> PIV;
 class Solution {    
 public:
@@ -364,9 +889,12 @@ public:
         return -1;
     }        
 };
-::::::::::::::
-Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v3.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows_v3.cpp <==
+snippet 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows "1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows" b
 class Solution {
 public:
     int kthSmallest(vector<vector<int>>& mat, int k) 
@@ -423,36 +951,25 @@ public:
     }    
 };
 
-::::::::::::::
-Priority_Queue/1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows/Readme.md
-::::::::::::::
-### 1439.Find-the-Kth-Smallest-Sum-of-a-Matrix-With-Sorted-Rows
 
-#### 方法1：暴力
-我们注意到，虽然array的组合有m^n个，但本题中的K不超过200.这说明我们是可以暴力找到第K小的sum！
+$0
+endsnippet
 
-我们设立一个presum数组，记录的是从第一行到第i-1行的前k小的权重和路径（每一行选一个数）。在处理第i行的时候，我们将presum里面的元素与第i行的元素两两组合相加，这样做多有```200*40```个新元素，我们排个序取前k个，这样就得到了更新后的presum数组。
+# ==> ./Priority_Queue/1642.Furthest-Building-You-Can-Reach/Readme.md <==
+snippet 1642.Furthest-Building-You-Can-Reach "1642.Furthest-Building-You-Can-Reach" b
+### 1642.Furthest-Building-You-Can-Reach
 
-逐行推进，处理完最后一行之后，presum就包含了前k个sum。
+我们会有一个大致的概念：就是遇到跨度大尽量用梯子，遇到跨度小的采用砖头更合算。
 
-#### 方法2：PQ
-我们从小到大搜索sum。初始状态（即最小的sum）必然对应着每行取第一个元素。然后基于这个idx array，可以扩展出m个idx array，即将每行的指针移向该行的下一个，...将所有拓展出的array sum放在一个PQ里，弹出当前最小的array sum继续拓展... 可见，此题本质上是就N sorted list的归并排序。
+我们现在只考虑需要爬升的楼（下降的楼可以忽略）。如果需要爬升的楼的数目<=ladders，那么是一定是可以到达的。如果我们需要爬升ladders+1座楼的时候，其中必然会有一次需要用到砖头。那么我们是在爬哪一幢楼的时候用砖头呢？显然，是跨度最小的那幢楼。并且一个很重要的结论是：无论未来会遇到什么样的楼（或高或低），这幢依靠砖头去爬的楼一定不会改变当初的决策。为什么呢？因为已经有ladders座楼的跨度比它大了，无论如何，这幢楼都不会有资格去使用梯子。
 
-注意的是，idx array可能会有重复，需要用一个集合来去重。比如[[1,2],[1,2]]，初始状态是{2, {0,0}}；第二轮会加入{3, {1,0}},{3, {0,1}}；在第三轮，第二轮的前者会导入{4, {1,1}}，后者也会导入{4,{1,1}}，这样就会将{1,1}这个组合重复计数两次。
+具体的算法是：我们逐个遍历楼层，将跨度依次放入一个优先队列中。如果队列的元素数目大于ladders，那么当前最小的元素必然需要用砖头来实现（隐含的意思就是其他元素可以用梯子来实现）。于是砖头的总数减去该跨度，并将该跨度从优先队列中弹出。前进的过程中不断重复这个过程，直至砖头不够用为止。
 
-#### 方法3：二分搜值
-我们设计函数checkOK来判断 if the number of arrays whose sum <= target is at least k. 如果返回true，则target可能是个解（因为或许有若干个array sum都是target），但可以尝试更小的。如果返回false，那么target肯定不是答案，我们需要将taget变大。
+$0
+endsnippet
 
-那么如何统计有多少个符合条件的array呢？如果是暴力搜索所有的可能再判断，那么会有n^m种组合。但本题的特点是每行都是递增的，我们可以设计算法只搜索sum<=target的从array，当count超过k的时候即可终止整个搜索，这样每次搜索只需要o(k)的时间复杂度。
-
-具体的做法是，我们设置初始sum就是各行首元素的和，即默认array的组成是各行的首元素。我们逐行深度搜索。对于第i行，我们从首元素往后尝试每一列，如果算上mat[i][j]满足sum<=target，那么计数器就可以加一(此时的array意味着下面每一行都选择首元素)，然后以此sum为基准递归处理下一行（也是从mat[i+1][0]开始）。反之，如果第mat[i][j]的元素使得sum>target，那么就终止这个递归。
-
-特别注意，因为初始sum对应了一个初始的array，计数器也要初始化为1. 以后只有在遇到j>0时才能更新计数器。
-
-此题的一维版本是```1918.Kth-Smallest-Subarray-Sum```
-::::::::::::::
-Priority_Queue/1642.Furthest-Building-You-Can-Reach/1642.Furthest-Building-You-Can-Reach.cpp
-::::::::::::::
+# ==> ./Priority_Queue/1642.Furthest-Building-You-Can-Reach/1642.Furthest-Building-You-Can-Reach.cpp <==
+snippet 1642.Furthest-Building-You-Can-Reach "1642.Furthest-Building-You-Can-Reach" b
 class Solution {
 public:
     int furthestBuilding(vector<int>& heights, int bricks, int ladders) 
@@ -481,19 +998,28 @@ public:
         return heights.size()-1;
     }
 };
-::::::::::::::
-Priority_Queue/1642.Furthest-Building-You-Can-Reach/Readme.md
-::::::::::::::
-### 1642.Furthest-Building-You-Can-Reach
 
-我们会有一个大致的概念：就是遇到跨度大尽量用梯子，遇到跨度小的采用砖头更合算。
+$0
+endsnippet
 
-我们现在只考虑需要爬升的楼（下降的楼可以忽略）。如果需要爬升的楼的数目<=ladders，那么是一定是可以到达的。如果我们需要爬升ladders+1座楼的时候，其中必然会有一次需要用到砖头。那么我们是在爬哪一幢楼的时候用砖头呢？显然，是跨度最小的那幢楼。并且一个很重要的结论是：无论未来会遇到什么样的楼（或高或低），这幢依靠砖头去爬的楼一定不会改变当初的决策。为什么呢？因为已经有ladders座楼的跨度比它大了，无论如何，这幢楼都不会有资格去使用梯子。
+# ==> ./Priority_Queue/1705.Maximum-Number-of-Eaten-Apples/Readme.md <==
+snippet 1705.Maximum-Number-of-Eaten-Apples "1705.Maximum-Number-of-Eaten-Apples" b
+### 1705.Maximum-Number-of-Eaten-Apples
 
-具体的算法是：我们逐个遍历楼层，将跨度依次放入一个优先队列中。如果队列的元素数目大于ladders，那么当前最小的元素必然需要用砖头来实现（隐含的意思就是其他元素可以用梯子来实现）。于是砖头的总数减去该跨度，并将该跨度从优先队列中弹出。前进的过程中不断重复这个过程，直至砖头不够用为止。
-::::::::::::::
-Priority_Queue/1705.Maximum-Number-of-Eaten-Apples/1705.Maximum-Number-of-Eaten-Apples.cpp
-::::::::::::::
+本题事实上没有“高级的”贪心法。所有o(N)时间的算法都是不正确。
+
+比较暴力的贪心其实很容易想到：优先吃离腐败日期最近的苹果，先解决燃眉之急。数据结构选用优先队列或者其他heap。我们每一天的流程是这样的：
+1. 如果队列里有今天过期的苹果，扔掉。
+2. 如果今天有新长出来的苹果，加入队列。
+3. 取队列最上方的一批苹果，吃掉其中的一个；剩下的再放回队列。
+
+时间复杂度是o(NlogN)，其中N是天数。最多我们会遍历多少天呢？极限情况是：最后一天遇上了保质期最长的苹果，N最大是2e4+2e4.所以o(NlogN)是可以接受的。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1705.Maximum-Number-of-Eaten-Apples/1705.Maximum-Number-of-Eaten-Apples.cpp <==
+snippet 1705.Maximum-Number-of-Eaten-Apples "1705.Maximum-Number-of-Eaten-Apples" b
 using PII = pair<int,int>;
 class Solution {    
 public:
@@ -521,22 +1047,24 @@ public:
         return count;
     }
 };
-::::::::::::::
-Priority_Queue/1705.Maximum-Number-of-Eaten-Apples/Readme.md
-::::::::::::::
-### 1705.Maximum-Number-of-Eaten-Apples
 
-本题事实上没有“高级的”贪心法。所有o(N)时间的算法都是不正确。
+$0
+endsnippet
 
-比较暴力的贪心其实很容易想到：优先吃离腐败日期最近的苹果，先解决燃眉之急。数据结构选用优先队列或者其他heap。我们每一天的流程是这样的：
-1. 如果队列里有今天过期的苹果，扔掉。
-2. 如果今天有新长出来的苹果，加入队列。
-3. 取队列最上方的一批苹果，吃掉其中的一个；剩下的再放回队列。
+# ==> ./Priority_Queue/1792.Maximum-Average-Pass-Ratio/Readme.md <==
+snippet 1792.Maximum-Average-Pass-Ratio "1792.Maximum-Average-Pass-Ratio" b
+### 1792.Maximum-Average-Pass-Ratio
 
-时间复杂度是o(NlogN)，其中N是天数。最多我们会遍历多少天呢？极限情况是：最后一天遇上了保质期最长的苹果，N最大是2e4+2e4.所以o(NlogN)是可以接受的。
-::::::::::::::
-Priority_Queue/1792.Maximum-Average-Pass-Ratio/1792.Maximum-Average-Pass-Ratio.cpp
-::::::::::::::
+最终的输出是```ret = max(r1+r2+...+rn)/n```。如果给你一个优秀学生的名额，你会怎么使用？你肯定会把ta加入到增长最多的那个r所对应的班级里去。因此，我们使用一个优先队列，按照```dr = (p+1)/(t+1)-p/t```排序，队首元素所对应的班级就是优先添加优秀学生的班级。
+
+那么有没有可能这样一个接着一个贪心的策略不是最优的呢？举个例子，假如最优解是先给A班加1人，再给B班加1人；那么我们直接给B班加两人，会不会效果更好呢？简单的推理可以知道这是不可能的。前者的效果等效于：先给B班加1人，再给A班加1人；后者的效果等效于：先给B班加一人，再给B班加一人。于是我们需要比较的是 ```(p1+1)/(t1+1) - p1/t1``` 和 ```(p2+2)/(t2+2) - (p2+1)/(t2+1)```哪个更大。注意到后者小于```(p2+1)/(t2+1) - p2/t2```，必然也小于前者。所以一次安排两个人或以上不会是最优解。
+
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1792.Maximum-Average-Pass-Ratio/1792.Maximum-Average-Pass-Ratio.cpp <==
+snippet 1792.Maximum-Average-Pass-Ratio "1792.Maximum-Average-Pass-Ratio" b
 typedef array<double,3> AD3;
 class Solution {
 public:
@@ -571,18 +1099,23 @@ public:
         
     }
 };
-::::::::::::::
-Priority_Queue/1792.Maximum-Average-Pass-Ratio/Readme.md
-::::::::::::::
-### 1792.Maximum-Average-Pass-Ratio
 
-最终的输出是```ret = max(r1+r2+...+rn)/n```。如果给你一个优秀学生的名额，你会怎么使用？你肯定会把ta加入到增长最多的那个r所对应的班级里去。因此，我们使用一个优先队列，按照```dr = (p+1)/(t+1)-p/t```排序，队首元素所对应的班级就是优先添加优秀学生的班级。
+$0
+endsnippet
 
-那么有没有可能这样一个接着一个贪心的策略不是最优的呢？举个例子，假如最优解是先给A班加1人，再给B班加1人；那么我们直接给B班加两人，会不会效果更好呢？简单的推理可以知道这是不可能的。前者的效果等效于：先给B班加1人，再给A班加1人；后者的效果等效于：先给B班加一人，再给B班加一人。于是我们需要比较的是 ```(p1+1)/(t1+1) - p1/t1``` 和 ```(p2+2)/(t2+2) - (p2+1)/(t2+1)```哪个更大。注意到后者小于```(p2+1)/(t2+1) - p2/t2```，必然也小于前者。所以一次安排两个人或以上不会是最优解。
+# ==> ./Priority_Queue/1801.Number-of-Orders-in-the-Backlog/Readme.md <==
+snippet 1801.Number-of-Orders-in-the-Backlog "1801.Number-of-Orders-in-the-Backlog" b
+### 1801.Number-of-Orders-in-the-Backlog
 
-::::::::::::::
-Priority_Queue/1801.Number-of-Orders-in-the-Backlog/1801.Number-of-Orders-in-the-Backlog.cpp
-::::::::::::::
+常规的模拟。设置两个PQ，分别放置待卖的订单和待买的订单，前者按价格从低到高排序，后者按价格从高到低排序。
+
+对于任何新订单，如果是买入，则取待卖队列的队首去匹配；如果是卖出，则取待买队列的队首去匹配。匹配之后如果新的买入订单有剩余，则加入待买队列；如果新的卖出订单有剩余，则加入待卖队列。反之，匹配之后如果原待卖订单有剩余，则更新amount之后放回待卖队列；匹配之后如果原待买订单有剩余，则更新amount之后放回待买队列。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1801.Number-of-Orders-in-the-Backlog/1801.Number-of-Orders-in-the-Backlog.cpp <==
+snippet 1801.Number-of-Orders-in-the-Backlog "1801.Number-of-Orders-in-the-Backlog" b
 typedef pair<long,long> PII;
 class Solution {
 public:
@@ -635,17 +1168,25 @@ public:
         
     }
 };
-::::::::::::::
-Priority_Queue/1801.Number-of-Orders-in-the-Backlog/Readme.md
-::::::::::::::
-### 1801.Number-of-Orders-in-the-Backlog
 
-常规的模拟。设置两个PQ，分别放置待卖的订单和待买的订单，前者按价格从低到高排序，后者按价格从高到低排序。
+$0
+endsnippet
 
-对于任何新订单，如果是买入，则取待卖队列的队首去匹配；如果是卖出，则取待买队列的队首去匹配。匹配之后如果新的买入订单有剩余，则加入待买队列；如果新的卖出订单有剩余，则加入待卖队列。反之，匹配之后如果原待卖订单有剩余，则更新amount之后放回待卖队列；匹配之后如果原待买订单有剩余，则更新amount之后放回待买队列。
-::::::::::::::
-Priority_Queue/1834.Single-Threaded-CPU/1834.Single-Threaded-CPU.cpp
-::::::::::::::
+# ==> ./Priority_Queue/1834.Single-Threaded-CPU/Readme.md <==
+snippet 1834.Single-Threaded-CPU "1834.Single-Threaded-CPU" b
+### 1834.Single-Threaded-CPU
+
+我们将所有的tasks按照入列时间从早到晚排序。同时维护一个curTime表示当前的时间，初始为0。
+
+如果curTime晚于目前最早待入列的任务，那么我们就将该任务放入任务池。如果curTime早于目前最早待入列的任务，就在已经任务池（一个优先队列）里面挑选可以启动的任务，挑选的原则按照题目的要求：先看处理时长，再看ID大小。所以显然，任务池的数据结构就是一个优先队列。
+
+每处理完一个任务，curTime就更新变得更大。直至curTime大于等于当前最早待入列的任务。然后重复之前的操作，直至所有任务入列，以及所有任务池里的任务完成。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1834.Single-Threaded-CPU/1834.Single-Threaded-CPU.cpp <==
+snippet 1834.Single-Threaded-CPU "1834.Single-Threaded-CPU" b
 typedef long long LL;
 typedef pair<LL, LL> PLL;
 
@@ -682,19 +1223,29 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Priority_Queue/1834.Single-Threaded-CPU/Readme.md
-::::::::::::::
-### 1834.Single-Threaded-CPU
 
-我们将所有的tasks按照入列时间从早到晚排序。同时维护一个curTime表示当前的时间，初始为0。
+$0
+endsnippet
 
-如果curTime晚于目前最早待入列的任务，那么我们就将该任务放入任务池。如果curTime早于目前最早待入列的任务，就在已经任务池（一个优先队列）里面挑选可以启动的任务，挑选的原则按照题目的要求：先看处理时长，再看ID大小。所以显然，任务池的数据结构就是一个优先队列。
+# ==> ./Priority_Queue/1851.Minimum-Interval-to-Include-Each-Query/Readme.md <==
+snippet 1851.Minimum-Interval-to-Include-Each-Query "1851.Minimum-Interval-to-Include-Each-Query" b
+### 1851.Minimum-Interval-to-Include-Each-Query
 
-每处理完一个任务，curTime就更新变得更大。直至curTime大于等于当前最早待入列的任务。然后重复之前的操作，直至所有任务入列，以及所有任务池里的任务完成。
-::::::::::::::
-Priority_Queue/1851.Minimum-Interval-to-Include-Each-Query/1851.Minimum-Interval-to-Include-Each-Query.cpp
-::::::::::::::
+对于offline querying的问题，我们首先想到是否可以调整query的顺序来使得问题简化。
+
+对于一个query的时刻q，我们要找到所有区间包括q的events。为了每一个q而筛选一遍所有的events是低效的，使得时间复杂度达到了O(QN). 我们的目标是随着q的遍历，只需对考察的events集合进行增补（引进新的、舍弃旧的），使得events的总遍历是线性时间。
+
+我们想象，对于时刻q，符合题意的events肯定要求startTime必须早于q。有一种想法是：将这些events放入一个以endTime排序的小顶堆里，这样可以弹出那些endTime小于q的时间。剩下PQ里的事件都是在时间上符合要求的。我们为此对于需要同步构造一个multiset，它的元素完全同步于优先队列的元素的进出，但是内部是按照duration排序。这样当PQ里的events都符合时间要求时，multiset里面的第一个元素就是针对这个query的、符合时间要求的最小duration。
+
+但是本题还有一个更巧妙的思想。我们将所有startTime早于q的events放入一个PQ，每个event包含两个属性：{duration, endTime}。我们贪心地看PQ顶端的events，它的duration一定是当前最小的，但是endTime不一定符合要求啊（即endTime<q）. 但是没有关系，不符合条件的就从PQ顶端弹出，直至PQ顶端的events的endTime符合要求，那么自然它的duration也是在符合条件的events里最小的。这其中隐含着一个考虑，那就是endTime不符合要求的events，对于更靠后的query肯定也不会符合要求，所以可以放心舍去。
+
+本题的时间复杂度是o(NlogN)，其中N是事件的个数。因为每个event只会进入pool一次，出pool一次，每次插入/弹出都是logN的时间。这与query的数量没有关系。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1851.Minimum-Interval-to-Include-Each-Query/1851.Minimum-Interval-to-Include-Each-Query.cpp <==
+snippet 1851.Minimum-Interval-to-Include-Each-Query "1851.Minimum-Interval-to-Include-Each-Query" b
 typedef pair<int,int> PII;
 class Solution {
 public:
@@ -729,23 +1280,25 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Priority_Queue/1851.Minimum-Interval-to-Include-Each-Query/Readme.md
-::::::::::::::
-### 1851.Minimum-Interval-to-Include-Each-Query
 
-对于offline querying的问题，我们首先想到是否可以调整query的顺序来使得问题简化。
+$0
+endsnippet
 
-对于一个query的时刻q，我们要找到所有区间包括q的events。为了每一个q而筛选一遍所有的events是低效的，使得时间复杂度达到了O(QN). 我们的目标是随着q的遍历，只需对考察的events集合进行增补（引进新的、舍弃旧的），使得events的总遍历是线性时间。
+# ==> ./Priority_Queue/1882.Process-Tasks-Using-Servers/Readme.md <==
+snippet 1882.Process-Tasks-Using-Servers "1882.Process-Tasks-Using-Servers" b
+### 1882.Process-Tasks-Using-Servers
 
-我们想象，对于时刻q，符合题意的events肯定要求startTime必须早于q。有一种想法是：将这些events放入一个以endTime排序的小顶堆里，这样可以弹出那些endTime小于q的时间。剩下PQ里的事件都是在时间上符合要求的。我们为此对于需要同步构造一个multiset，它的元素完全同步于优先队列的元素的进出，但是内部是按照duration排序。这样当PQ里的events都符合时间要求时，multiset里面的第一个元素就是针对这个query的、符合时间要求的最小duration。
+本题虽然是个模拟题，但是方法的设计很重要。关键点是在于要把空闲服务器和繁忙服务器分开来处理。如果将所有的服务器按照```{可开工时间，权重，编号}```来排序的话，会出现这么一个问题：如果有若干个空闲机器的可开工时间不同、且都早于当前时刻时，他们并不能重新按照权重排序（依然按照可开开工时间排序）。
 
-但是本题还有一个更巧妙的思想。我们将所有startTime早于q的events放入一个PQ，每个event包含两个属性：{duration, endTime}。我们贪心地看PQ顶端的events，它的duration一定是当前最小的，但是endTime不一定符合要求啊（即endTime<q）. 但是没有关系，不符合条件的就从PQ顶端弹出，直至PQ顶端的events的endTime符合要求，那么自然它的duration也是在符合条件的events里最小的。这其中隐含着一个考虑，那就是endTime不符合要求的events，对于更靠后的query肯定也不会符合要求，所以可以放心舍去。
+所以我们每次要处理一个新任务时，先要根据当前时刻，将可以开工服务器从繁忙服务器PQ转移到空闲服务器PQ里，然后将被指派该任务的服务器再重新放入繁忙服务器PQ（带着更新后的可开工时间）。
 
-本题的时间复杂度是o(NlogN)，其中N是事件的个数。因为每个event只会进入pool一次，出pool一次，每次插入/弹出都是logN的时间。这与query的数量没有关系。
-::::::::::::::
-Priority_Queue/1882.Process-Tasks-Using-Servers/1882.Process-Tasks-Using-Servers.cpp
-::::::::::::::
+另外，当所有的任务都加入任务列表（即当前时刻大于tasks.size()），此时的空闲服务器PQ一定是空的（否则就会被指派任务），并且空闲服务器PQ就没有作用了。因为此后将一直是任务在等服务器，繁忙服务器PQ的队首元素一定是优先被指派的。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1882.Process-Tasks-Using-Servers/1882.Process-Tasks-Using-Servers.cpp <==
+snippet 1882.Process-Tasks-Using-Servers "1882.Process-Tasks-Using-Servers" b
 typedef array<int,2> AI2;
 typedef array<int,3> AI3;
 class Solution {
@@ -793,19 +1346,24 @@ public:
         return rets;
     }
 };
-::::::::::::::
-Priority_Queue/1882.Process-Tasks-Using-Servers/Readme.md
-::::::::::::::
-### 1882.Process-Tasks-Using-Servers
 
-本题虽然是个模拟题，但是方法的设计很重要。关键点是在于要把空闲服务器和繁忙服务器分开来处理。如果将所有的服务器按照```{可开工时间，权重，编号}```来排序的话，会出现这么一个问题：如果有若干个空闲机器的可开工时间不同、且都早于当前时刻时，他们并不能重新按照权重排序（依然按照可开开工时间排序）。
+$0
+endsnippet
 
-所以我们每次要处理一个新任务时，先要根据当前时刻，将可以开工服务器从繁忙服务器PQ转移到空闲服务器PQ里，然后将被指派该任务的服务器再重新放入繁忙服务器PQ（带着更新后的可开工时间）。
+# ==> ./Priority_Queue/1942.The-Number-of-the-Smallest-Unoccupied-Chair/Readme.md <==
+snippet 1942.The-Number-of-the-Smallest-Unoccupied-Chair "1942.The-Number-of-the-Smallest-Unoccupied-Chair" b
+### 1942.The-Number-of-the-Smallest-Unoccupied-Chair
 
-另外，当所有的任务都加入任务列表（即当前时刻大于tasks.size()），此时的空闲服务器PQ一定是空的（否则就会被指派任务），并且空闲服务器PQ就没有作用了。因为此后将一直是任务在等服务器，繁忙服务器PQ的队首元素一定是优先被指派的。
-::::::::::::::
-Priority_Queue/1942.The-Number-of-the-Smallest-Unoccupied-Chair/1942.The-Number-of-the-Smallest-Unoccupied-Chair.cpp
-::::::::::::::
+times的数据规模不超过10000，说明椅子数量的上限就是10000. 我们可以将编号0到times.size()-1的椅子放进一个优先队列empty里面，按照ID从小到大依次弹出，按照使用人的先后顺序分配。
+
+被分配出去的椅子，又要按照使用完毕的时间放回empty里面。所以我们会将所有正在使用的椅子放入一个按照结束时间排序的优先队列used。每次在empty分发椅子之前，先要查看一下当前时刻，从used里面调出那些该时刻已经结束使用的椅子，将ID塞回empty里。然后再从used里弹出ID最小的ID给人使用。
+
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1942.The-Number-of-the-Smallest-Unoccupied-Chair/1942.The-Number-of-the-Smallest-Unoccupied-Chair.cpp <==
+snippet 1942.The-Number-of-the-Smallest-Unoccupied-Chair "1942.The-Number-of-the-Smallest-Unoccupied-Chair" b
 using PII = pair<int,int>;
 class Solution {
 public:
@@ -843,18 +1401,25 @@ public:
         return -1;
     }
 };
-::::::::::::::
-Priority_Queue/1942.The-Number-of-the-Smallest-Unoccupied-Chair/Readme.md
-::::::::::::::
-### 1942.The-Number-of-the-Smallest-Unoccupied-Chair
 
-times的数据规模不超过10000，说明椅子数量的上限就是10000. 我们可以将编号0到times.size()-1的椅子放进一个优先队列empty里面，按照ID从小到大依次弹出，按照使用人的先后顺序分配。
+$0
+endsnippet
 
-被分配出去的椅子，又要按照使用完毕的时间放回empty里面。所以我们会将所有正在使用的椅子放入一个按照结束时间排序的优先队列used。每次在empty分发椅子之前，先要查看一下当前时刻，从used里面调出那些该时刻已经结束使用的椅子，将ID塞回empty里。然后再从used里弹出ID最小的ID给人使用。
+# ==> ./Priority_Queue/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work/Readme.md <==
+snippet 1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work "1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work" b
+### 1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work
 
-::::::::::::::
-Priority_Queue/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work.cpp
-::::::::::::::
+这道题和其他用PQ来做解决“间隔约束”的任务规划问题很相似。但是本题的特点是，不需要输出具体的解决方案。为什么呢？因为本题给出的数据量很大，本质上会有```1e5*1e9```个milestone需要安排。按照```054.Distant-Barcodes```的PQ做法，那么跑```1e14/2```次PQ的弹出、加入操作，显然会TLE。
+
+其实本题有明显的贪心算法。我们可以想象，如果某个任务X的milestone特别多，超过了总体的半数（加1），那么根据抽屉原理，必然有两个相同的任务X会相邻。反之，我们必然可以让任务X彼此之间至少间隔一位，让其他任务填充其中，也就是能完成所有milestone的安排。
+
+对于前者，我们能安排的最多milestone数目的方案类似于```XOXOXOXOXOX XXXX....```，显然答案的长度取决于非X的任务的milestone有多少个。
+
+$0
+endsnippet
+
+# ==> ./Priority_Queue/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work.cpp <==
+snippet 1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work "1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work" b
 using LL = long long;
 class Solution {
 public:
@@ -866,430 +1431,6 @@ public:
         else return (sum-mx)*2+1;
     }
 };
-::::::::::::::
-Priority_Queue/1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work/Readme.md
-::::::::::::::
-### 1953.Maximum-Number-of-Weeks-for-Which-You-Can-Work
 
-这道题和其他用PQ来做解决“间隔约束”的任务规划问题很相似。但是本题的特点是，不需要输出具体的解决方案。为什么呢？因为本题给出的数据量很大，本质上会有```1e5*1e9```个milestone需要安排。按照```054.Distant-Barcodes```的PQ做法，那么跑```1e14/2```次PQ的弹出、加入操作，显然会TLE。
-
-其实本题有明显的贪心算法。我们可以想象，如果某个任务X的milestone特别多，超过了总体的半数（加1），那么根据抽屉原理，必然有两个相同的任务X会相邻。反之，我们必然可以让任务X彼此之间至少间隔一位，让其他任务填充其中，也就是能完成所有milestone的安排。
-
-对于前者，我们能安排的最多milestone数目的方案类似于```XOXOXOXOXOX XXXX....```，显然答案的长度取决于非X的任务的milestone有多少个。
-::::::::::::::
-Priority_Queue/358.Rearrange-String-k-Distance-Apart/358.Rearrange-String-k-Distance-Apart.cpp
-::::::::::::::
-class Solution {
-public:
-    string rearrangeString(string s, int k) 
-    {
-        if (k==0) return s;
-        unordered_map<char, int>Map;
-        for (auto ch:s)
-            Map[ch]+=1;
-        priority_queue<pair<int,char>>pq; // freq, character
-        for (auto x: Map)
-            pq.push({x.second, x.first});
-        
-        string ret;
-        while (!pq.empty())
-        {
-            if (pq.size() < k && pq.top().first > 1)
-                return "";
-            
-            int n = min(k, (int)pq.size());
-            vector<pair<int,char>>temp;
-            
-            for (int i=0; i<n; i++)
-            {
-                ret.push_back(pq.top().second);
-                temp.push_back(pq.top());
-                pq.pop();                
-            }
-            
-            for (auto x: temp)
-            {
-                if (x.first > 1)
-                    pq.push({x.first-1, x.second});
-            }
-        }
-        return ret;
-        
-    }
-};
-
-
-
-::::::::::::::
-Priority_Queue/358.Rearrange-String-k-Distance-Apart/Readme.md
-::::::::::::::
-### 358.Rearrange-String-k-Distance-Apart
-
-构建priority_queue<pair<int,char>>q; q的元素表示字符及其频次。注意到priority_queue默认大顶堆，自动按照频次从大到小排列。
-```cpp
-        unordered_map<char,int>Map;
-        for (int i=0; i<s.size(); i++)
-            Map[s[i]]++;
-        
-        priority_queue<pair<int,char>>q;
-        for (auto a:Map)
-            q.push({a.second,a.first});
-```            
-每次取q中的前K个元素（每个元素代表不同的字符）加入临时数组temp；取完后将这些temp里的元素的个数减一后再放回q中。直至某一回合，如果pq的字符种类个数小于K，但是该轮结束后temp非空，说明我们还需要往result里加字符，这样就会违法K个相邻字符不能有相同字符的规则，返回空。
-```cpp
-        while (!pq.empty())
-        {
-            int n = min(k, (int)pq.size());
-            vector<pair<int,char>>temp;
-            
-            for (int i=0; i<n; i++)
-            {
-                int num = pq.top().first;
-                int ch = pq.top().second;
-                pq.pop();
-                result+=ch;
-                num--;
-                if (num!=0) temp.push_back({num,ch});
-            }
-            if (n<k && temp.size()>0) return "";
-            for (auto a:temp) pq.push(a);
-        }
-```
-
-
-[Leetcode Link](https://leetcode.com/problems/rearrange-string-k-distance-apart)::::::::::::::
-Priority_Queue/502.IPO/502.IPO.cpp
-::::::::::::::
-class Solution {
-public:
-    int findMaximizedCapital(int k, int W, vector<int>& Profits, vector<int>& Capital) 
-    {
-        vector<pair<int,int>>proj;
-        for (int i=0; i<Profits.size(); i++)
-            proj.push_back({Capital[i],Profits[i]});
-        sort(proj.begin(),proj.end());
-        
-        priority_queue<int>pq;
-        
-        int count = 0;
-        int i=0;
-        while (count<k)
-        {
-            while (i<proj.size() && proj[i].first<=W)
-            {
-                pq.push(proj[i].second);
-                i++;
-            }
-            if (pq.size()!=0)
-            {
-                W+=pq.top();
-                count++;
-                pq.pop();
-            }
-            else
-                break;
-        }        
-        return W;
-    }
-};
-::::::::::::::
-Priority_Queue/502.IPO/Readme.md
-::::::::::::::
-### 502.IPO
-
-我们首先想到的自然是在初始条件W下，我们有哪些项目可以选择？我们将所有项目按照captital排序，所有小于W的都可以作为候选。自然，我们肯定会选择其中利润最大的。
-
-我们在收取了第一个项目的利润之后，手头的资本W是变大了。这意味着我们有了更多的选择余地。于是我们可以顺着已经按照capital排序的项目来看，将小于新W的都收入候选。同样，我们会选择其中利润最大的。于是我们发现，按照利润排序的大顶堆优先队列是最理想的数据结构。
-
-每个回合，从PQ里面取利润最大的项目，更新W（使之变大）；之后再把capital小于当前W的项目入列。以此类推可以得到所需要的K个项目。
-
-需要注意的细节是：如果PQ为空，说明当前的W太小，无法启动任何项目，就需要break。
-
-
-[Leetcode Link](https://leetcode.com/problems/ipo)
-::::::::::::::
-Priority_Queue/621.Task-Scheduler/621.Task-Scheduler_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int leastInterval(vector<char>& tasks, int n) 
-    {
-        unordered_map<char,int>Map;
-        for (auto ch: tasks)
-            Map[ch]++;
-        priority_queue<int>pq;
-        for (auto a:Map) pq.push(a.second);
-        
-        n++;
-        int count = 0;
-        while (pq.size()>0)
-        {                            
-            int k = min(n, (int)pq.size());            
-            
-            vector<int>temp;
-            for (int i=0; i<k; i++)
-            {
-                int f = pq.top();
-                pq.pop();
-                f--;
-                if (f!=0) temp.push_back(f);
-            }
-            if (temp.size()>0)
-                count+=n;
-            else
-                count+=k;
-            
-            for (auto x: temp)
-                pq.push(x);
-        }
-        return count;        
-    }
-};
-::::::::::::::
-Priority_Queue/621.Task-Scheduler/621.Task-Scheduler_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int leastInterval(vector<char>& tasks, int n) 
-    {
-        unordered_map<char,int>Map;
-        for (auto ch: tasks)
-            Map[ch]++;
-        
-        int maxFreq = 0;
-        for (auto a:Map)
-            maxFreq = max(maxFreq, a.second);
-        
-        int result = (maxFreq-1)*(n+1);
-        int count = 0;
-        for (auto a:Map)
-        {
-            if (a.second == maxFreq)
-                count++;
-        }
-        return max(result+count, (int)tasks.size());
-    }
-};
-::::::::::::::
-Priority_Queue/621.Task-Scheduler/Readme.md
-::::::::::::::
-### 621.Task-Scheduler
-
-#### 解法１：模拟最优解的过程
-此题非常类似  358.Rearrange-String-k-Distance-Apart。我们令n自加１，这样题意要求每n个相邻的位置不能有重复的元素．
-
-设计一个大顶堆的priority_queue，PQ的元素是{freq,num}。每次取出权重最多的n种字符（除非PQ里面的元素个数少于n），将其freq减一后再放回队列中。
-
-需要注意的是，即使队列中的元素少于n，只要没有完成所有的任务，根据题意的idle设定，计数器仍需要count+=n. 只有最后一轮（弹出后队列为空）时，计数器才 count+= num，其中num是队列弹出前的元素个数。
-
-#### 解法２：贪心构造
-因为此题并不要求打印具体的实施方案，所以不需要像解法1那样完全地模拟这个流程。
-
-我们找出频次最高的字符A，假设它的频次是MaxFreq。那么我们就将全部的元素分成MaxFreq组，每组的第一个就是A。同时我们给每组预留至少N个位置。这样，我们就合法地处理完了所有的A。如果有其他字符的频次也是MaxFreq，那么我们类似处理。示意图如下，总共有maxFreq行，每行靠前的位置都填充频次为MaxFreq的元素。除最后一行外，每行有N个位置。
-```
-A B 。。。。。
-A B 。。。。。
-A B 。。。。。
-A B 。。。。。
-A B 
-```
-接下来我们按照从上到下、从左到右的顺序，依次在待定的位置上填充第二高频的字符、第三高频的字符... 因为其他字符的频次都不会超过maxFreq-1，而我们有MaxFreq-1行，说明同一行里不会出现两个相同的字符。最终填充的结果会有两种可能：一种是上述的格子没有被填满：第二种是上述的格子已经填满了，但是我们还有字符没有填充。
-
-对于第一种情况，如下图，我们将前MaxFreq-1行里没有被填充的位置都标记为idle，那么把这些行都拼接起来就是一个符合要求的方案。这个方案里，其实不管tasks具体的数目，总共的格子（也就是处理时间）是固定的，即```(MaxFreq-1) * N + 零头```，其中零头频次为MaxFreq的字符种数。
-```
-A B C D E H 。
-A B C D F 。。
-A B C D F 。。
-A B C E G 。。
-A B 
-```
-
-对于第二种情况，如下图，所有的idle位置都已经填满了，但是我们还有字符没填怎么办？这时候我们就可以打破每行只能填N个元素的限制，尽情地按照从上到下、从做到右的顺序继续填充在前MaxFreq-1行填充即可。这种方案的总格子数（即处理时间）其实就是tasks的大小。
-```
-A B C D E H L p t
-A B C D F I M q u
-A B C D F J N r
-A B C E G K O s
-A B 
-```
-显然，上述两种方案不可能共存。只要tasks的数目大于了规划的格子数```(MaxFreq-1) * N + 零头```，那么答案就是tasks.size()；否则答案就是第一种方案。
-
-[Leetcode Link](https://leetcode.com/problems/task-scheduler)
-::::::::::::::
-Priority_Queue/630.Course-Schedule-III/630.Course-Schedule-III.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(vector<int>&a, vector<int>&b)
-    {
-        return a[1]<b[1];
-    }
-public:
-    int scheduleCourse(vector<vector<int>>& courses) 
-    {
-        sort(courses.begin(),courses.end(),cmp);
-        priority_queue<int>pq;
-        
-        int cur = 0;
-        for (int i=0; i<courses.size(); i++)
-        {
-            pq.push(courses[i][0]);
-            cur += courses[i][0];
-            
-            if (cur>courses[i][1])
-            {
-                cur -= pq.top();
-                pq.pop();
-            }            
-        }
-        return pq.size();
-    }
-};
-::::::::::::::
-Priority_Queue/630.Course-Schedule-III/Readme.md
-::::::::::::::
-### 630.Course-Schedule-III
-
-本题本质是贪心法，需要人工设计出最优策略。应用层面上用到了数组排序+PQ的组合，很像502.IPO，但是本题的最优策略要独立思考出来更有难度。
-
-我们尝试按照时间先后顺序来看这些课程．毕竟哪个deadline在前我们就先处理谁，也是非常合情合理的．我们假设在某个课程的deadline之前，手头有一堆的备选课程，我们做其中哪些呢？显然我们做哪些时长要求最少的，从最短的做起，做一个扔掉一个，能做多少做多少，做不完的就扔了，这就是最优的方案了．注意，做不完的不用保留在pool里，因为过了当前的这个deadline之后这些未做的课程就失效了．
-
-假设我们当前已经修了Ｎ门．那么接下来又到了下一个deadline，也就是deadline放宽了，但我们又新添了一门课变成N+1门．如果能赶在新deadline之前搞定这门新课，我们自然就是能上就上（那样就是N+1门）．如果不能呢？我们自然怪罪当前N+1课程列表里最长的那门，我们只要把那门最长的踢掉就一定满足deadline的要求．(为什么？因为我们之前保证了Ｎ门可以满足上一个deadline，那么现在的Ｎ门一定也可以满足当前的deadline．)于是，如今虽然同样还是只能修Ｎ门，但是踢掉了一个最长的课程，也算是把已修课程列表在时间上给优化了．
-
-于是我们一个接一个的处理deadline,这样得到的就是总的最优方案．
-
-
-[Leetcode Link](https://leetcode.com/problems/course-schedule-iii)::::::::::::::
-Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_binary.cpp
-::::::::::::::
-class Solution {
-public:
-    double minmaxGasDist(vector<int>& stations, int K) 
-    {
-        double left = 0;
-        double right = 0;
-        for (int i=1; i<stations.size(); i++)
-            right = fmax(right,stations[i]-stations[i-1]);
-        
-        double mid;
-        while (right-left>1e-6)
-        {
-            mid = (right+left)/2;
-            int count = 0;
-            for (int i=1; i<stations.size(); i++)
-            {
-                double k = (stations[i]-stations[i-1])/mid;
-                count+=  ceil(k)-1;               
-            }
-            if (count>K)
-                left = mid;
-            else
-                right = mid;            
-        }
-        return mid;
-    }
-};
-::::::::::::::
-Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/774.Minimize-Max-Distance-to-Gas-Station_pq.cpp
-::::::::::::::
-class Solution {
-public:
-    double minmaxGasDist(vector<int>& stations, int K) 
-    {
-        priority_queue<pair<double,int>>pq;
-        for (int i=1; i<stations.size(); i++)
-            pq.push({stations[i]-stations[i-1],1});
-        
-        for (int i=0; i<K; i++)
-        {
-            double space = pq.top().first;
-            int insertNum = pq.top().second;
-            pq.pop();
-            
-            pq.push({space*insertNum/(insertNum+1),insertNum+1});            
-        }
-        
-        return pq.top().first;
-    }
-};
-::::::::::::::
-Priority_Queue/774.Minimize-Max-Distance-to-Gas-Station/Readme.md
-::::::::::::::
-### 774.Minimize-Max-Distance-to-Gas-Station
-
-#### 解法1：贪心法
-
-贪心法有非常巧妙的思想，这里用到了pq.
-
-首先我们将所有老加油站之间的间隔距离放入pq，默认是大顶堆，这些老加油站的间隔都没有新加油站插入。那么，对于队首的这个间距最大，说明我们要对其下手，先尝试将这个间距除以2，这里除以2表明原本是没有新加油站的，现在加入一个。然后将这个新间隔放入队列。
-
-每次我们取队首元素，总是得到的是（当前最大的）某两个老加油站之间的新间隔，以及这两个老加油站之间插入的新加油站数量m。我们需要做的，是重新规划这两个老加油站之间的间隔，改成插入的新加油站数量为m+1.
-
-重复上述过程，直至加入新加油站的总是达到了K。此时队首的老加油站之间的新间距，就是整体最大的间距。
-
-这个方法非常巧妙，只可惜仍然超时。
-
-#### 解法2：二分法
-
-可以得到的最大间距d，下限是0，上限是原本最大的老加油站之间的间距。
-
-不断二分尝试这个d，计算为了使得每个老加油站之间的新间距变为d，需要新加入多少新加油站。如果新加油站总数超过了K，说明这个d太小；否则可以继续尝试减小d，
-
-最后知道二分的搜索精度小于1e-6.
-
-
-[Leetcode Link](https://leetcode.com/problems/minimize-max-distance-to-gas-station)::::::::::::::
-Priority_Queue/857.Minimum-Cost-to-Hire-K-Workers/857.Minimum-Cost-to-Hire-K-Workers.cpp
-::::::::::::::
-class Solution {
-    static bool cmp(pair<int,int>&a, pair<int,int>&b)
-    {
-        return a.second*1.0 / a.first < b.second*1.0 / b.first; 
-    }
-public:
-    double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) 
-    {
-        vector<pair<int,int>>persons;
-        for (int i=0; i<quality.size(); i++)
-            persons.push_back({quality[i], wage[i]});
-
-        sort(persons.begin(), persons.end(), cmp);
-
-        priority_queue<int>pq_quality;
-        int sum_quality = 0;
-        double ret = 1e20;
-
-        for (int i=0; i<persons.size(); i++)
-        {
-            sum_quality += persons[i].first;
-            pq_quality.push(persons[i].first);
-            if (pq_quality.size() > k)
-            {
-                sum_quality -= pq_quality.top();
-                pq_quality.pop();
-            }
-            if (pq_quality.size() == k)
-            {
-                double unitWage = persons[i].second * 1.0 / persons[i].first;
-                ret = min(ret, unitWage * sum_quality);
-            }                
-        }
-
-        return ret;
-
-    }
-};
-::::::::::::::
-Priority_Queue/857.Minimum-Cost-to-Hire-K-Workers/Readme.md
-::::::::::::::
-### 857.Minimum-Cost-to-Hire-K-Workers
-
-我们考虑如果将```wage[i]/quality[i]```作为评价指标来进行排序意味着什么？
-
-```wage[i]/quality[i]```最高的那位,意味着最不实惠的工人，它拉高了unitWage，使得其他工人都必须按照这个unitWage乘以各自的quality拿工资．但转念一想，如果我们必须雇佣这个最不实惠的工人的话，那么剩下的工人该如何选择呢？显然我们只要选K-1个quality最低的工人，他们可以拉高那个＂最不实惠工人＂的quality比重，从而减少其他工人的quality比重，从而降低总工资．
-
-我们再考虑，如果选择了```wage[i]/quality[i]```第二高的那位，那么我们就在接下来的N-2个人里面选择K-1个quality最底的工人即可．
-
-由此贪心法的最优策略就出来了．实际操作中，我们根据```wage[i]/quality[i]```从低到高进行处理．
-
-
-[Leetcode Link](https://leetcode.com/problems/minimum-cost-to-hire-k-workers)
+$0
+endsnippet

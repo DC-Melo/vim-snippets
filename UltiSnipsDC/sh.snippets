@@ -220,28 +220,12 @@ unrar e file.rar
 $0
 endsnippet
 
-snippet gitpush "git add ,commit, push" b
-git add .
-git commit -m "DC"
-git push gitee
-git push github
-$0
-endsnippet
 
 snippet goBuild "go build" b
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build demo.go
 $0
 endsnippet
 
-snippet gitDiff "git diff" b
-git difftool -- . ':!*.mp3' ':!*.mp4' ':!*.awv' ':!*.png' ':!*.jpg' --extcmd vimdiff HEAD~1 stash@{0} location/filename
-$0
-endsnippet
-
-snippet gitLog "git log" b
-git log --all --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative
-$0
-endsnippet
 
 snippet sourceAll "source all file" b
 source /etc/environment; source /etc/profile; source ~/.bashrc
@@ -273,6 +257,7 @@ endsnippet
 snippet convGif4Mp4 "convert mp4 to gif" b
 ffmpeg -ss 00:00:00 -t 20 -i input.mp4 -s 300x400 -r 15 output_video.gif
 convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
+convert $(for ((a=0; a<700; a++)); do printf -- "-delay 10 name%s.png " $a; done;) result.gif
 $0
 endsnippet
 
@@ -282,14 +267,6 @@ fc-list
 $0
 endsnippet
 
-snippet gimpBatch "gimp bach mode" b
-PATH=$PATH:/Applications/GIMP-2.10.app/Contents/MacOS/
-gimp -idf --batch-interpreter python-fu-eval -b "import sys;sys.path=['.']+sys.path;import batch;batch.run('./images')" -b "pdb.gimp_quit(1)
-gimp-console -i -b '(batch-unsharp-mask "*.png" 5.0 0.5 0)' -b '(gimp-quit 0)'
-
-
-$0
-endsnippet
 
 snippet imGif4Text "Generates gif from " b
 text1="高梧百尺夜苍苍，"
@@ -360,7 +337,7 @@ convert \
     outfile5.png
 convert -delay 200 outfile*.png -loop 0  outfile.gif
 
-strSize="`file outfile.gif`"
+strSize="\`file outfile.gif\`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
@@ -368,9 +345,9 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
-    convert  outfile.gif -resize x1000  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize x1000 -layers Optimize outfile.gif
 else
-    convert  outfile.gif -resize 1000x  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize 1000x -layers Optimize outfile.gif
 fi
 $0
 endsnippet
@@ -498,16 +475,16 @@ fi
     #5 outfile55.png
 #!@ convert \
     #!@ -font "${font}" \
-    #!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    #!@#a -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
-    #!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    #!@#b -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
-    #!@#B -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    #!@#c -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
-    #!@#C -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    #!@#d -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
-    #!@#D -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
-    #!@#e -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #1#!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #1#!@#a -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size1} label:"${text1}" \
+    #2#!@#A -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #2#!@#b -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size2} label:"${text2}" \
+    #3#!@#B -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #3#!@#c -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size3} label:"${text3}" \
+    #4#!@#C -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #4#!@#d -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size4} label:"${text4}" \
+    #5#!@#D -fill white -stroke white -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
+    #5#!@#e -fill black -stroke black -strokewidth 2 -gravity center -pointsize ${size5} label:"${text5}" \
     #!@ -append \
     #a#A outfile11.png
     #b#B outfile21.png
@@ -518,7 +495,7 @@ fi
 mogrify -alpha set -channel RGBA -fuzz 20% -fill "rgb(255,255,255)" -draw "color 1,1 replace" -transparent white *.png
 convert -delay 200 outfile*.png -loop 0 outfile.gif
 
-strSize="`file outfile.gif`"
+strSize="\`file outfile.gif\`"
 echo $strSize
 pat='([0-9]+) x ([0-9]+)'
 [[ $strSize =~ $pat ]] # $pat must be unquoted
@@ -526,10 +503,10 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
-    convert  outfile.gif -resize x1000  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize x1000 -layers Optimize outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize x1000  outfile.gif
 else
-    convert  outfile.gif -resize 1000x  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize 1000x -layers Optimize outfile.gif
     # convert -delay 200 outfile*.png -loop 0 -resize 1000x  outfile.gif
 fi
 
@@ -594,9 +571,9 @@ echo "${BASH_REMATCH[0]}"
 echo "${BASH_REMATCH[1]}"
 echo "${BASH_REMATCH[2]}"
 if  [[ ${BASH_REMATCH[2]} -gt ${BASH_REMATCH[1]} ]];then
-    convert  outfile.gif -resize x1000  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize x1000 -layers Optimize outfile.gif
 else
-    convert  outfile.gif -resize 1000x  outfile.gif
+    mogrify -coalesce -fuzz 1% -resize 1000x -layers Optimize outfile.gif
 fi
 
 $0
@@ -772,6 +749,417 @@ im_image_effects_halo.sh -r 60 -w 60 -m 25 -c 127,100 zelda1.jpg zelda1.gif
 $0
 endsnippet
 
+
+snippet iconvgbk2utf "iconv -f gbk -t utf-8 file" b
+iconv -f gbk -t utf-8 1.txt > 2.txt
+$0
+endsnippet
+
+snippet ffmpegVideo2Gif "video to gif convert" b
+ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif -y # 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
+convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
+$0
+endsnippet
+
+snippet convList "image to gif" b
+# USEFUL IMAGEMAGICK INFORMATION COMMANDS
+convert -list               # list all functions
+convert -list list          # list all -list options
+convert -list channel       # list of all image -channel options
+convert -list command       # list all commands
+convert -list color         # list of all color names and values
+convert -list colorspace    # list of all -colorspace options
+convert -list compose       # list of all -compose options
+convert -list configure     # list of your IM version information
+convert -list decoration    # list of all text decorations
+convert -list filter        # list of all -filter options
+convert -list font          # list of all supported fonts (on your system)
+convert -list format        # list of all image formats
+convert -list gravity       # list of all -gravity positioning options
+convert -list primitive     # list of all -draw primitive shapes
+convert -list style         # list of all text styles
+convert -list threshold     # list of all dither/halftone options
+convert -list type          # list of all image types
+convert -list virtual-pixel # list of all -virtual-pixel options
+$0
+endsnippet
+
+snippet convImg2Gif "image to gif" b
+convert -delay 100 *.png -loop 0  test.gif
+# -delay n 迟延n*10毫秒 -loop n 播放n轮, 0表示不断地重复播放
+convert -delay 400 -dispose background *.jpg -resize 668x476  -gravity Center -background white -extent 668x476 -loop 0  ani.gif
+$0
+endsnippet
+
+snippet convAppendImage "convert append image" b
+convert +append u0.png u1.png u.png
+
+convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
+
+convert -size 512x512 -strip -colors 8 -depth 8 xc:none dest1.png
+composite -geometry +0+0 u0.png dest1.png dest1.png
+composite -geometry +256+0 u1.png dest1.png dest1.png
+composite -geometry +0+256 d0.png dest1.png dest1.png
+composite -geometry +256+256 d1.png dest1.png dest1.png
+$0
+endsnippet
+
+snippet convdrawheart "convert draw heart" b
+convert +antialias -size 80x80 -gravity center \
+	-font WebDings label:Y   heart.gif
+$0
+endsnippet
+
+snippet convdrawrrect "convert draw rect" b
+convert -size 100x60 xc:skyblue -fill white -stroke black \
+	-draw "roundrectangle 20,10 80,50 20,15"  draw_rrect.gif
+$0
+endsnippet
+
+snippet convdWords2Gif "convert words to gif" b
+convert -size 100x60 xc:skyblue -fill white -stroke black \
+	-font Candice -pointsize 40 -gravity center \
+	-draw "text 0,0 'Hello'"   draw_text.gif
+$0
+endsnippet
+
+snippet convdWords2Gif "convert words to gif" b
+convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+100 "testing" lena_text1.jpg
+convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+75 "testing" lena_text2.jpg
+convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+50 "testing" lena_text3.jpg
+convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+25 "testing" lena_text4.jpg
+convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+0 "testing" lena_text5.jpg
+convert -delay 50 lena_text*.jpg -loop 0 -layers optimize lena_anim.gif
+convert -delay 50 lena_text*.jpg ( -clone 0--1 -reverse ) -loop 0 -layers optimize lena_anim2.gif
+$0
+endsnippet
+
+snippet convdrawtext "convert draw text" b
+convert -size 100x60 xc:skyblue -fill white -stroke black \
+	-font Candice -pointsize 40 -gravity center \
+	-draw "text 0,0 'Hello'"   draw_text.gif
+$0
+endsnippet
+
+snippet gimpBatch "gimp batch process" b
+http://gimpchat.com/viewtopic.php?f=9&t=15024
+Execute 1: ./save-xcf-to-png-01.sh sample.xcf
+#!/bin/bash
+declare -r xcfFile="${1:?Missing xcf Input File}"
+
+gimp -idf --batch-interpreter=python-fu-eval -b - << EOF
+import gimpfu
+
+def convert(filename):
+  img = pdb.gimp_file_load(filename, filename)
+  new_name = filename.rsplit(".",1)[0] + ".png"
+  layer = pdb.gimp_image_merge_visible_layers(img, 1)
+
+  pdb.gimp_file_save(img, layer, new_name, new_name)
+  pdb.gimp_image_delete(img)
+
+convert('${xcfFile}')
+
+pdb.gimp_quit(1)
+EOF
+Execute 2: gimp -idf --batch-interpreter=python-fu-eval -b - < save-xcf-to-png-02.py
+# Note required here, see: /usr/lib/gimp/2.0/plug-ins/python-eval.py
+# from gimpfu import *
+from glob import glob
+
+def convert(filename):
+  print "Filename: " + filename
+  img = pdb.gimp_file_load(filename, filename)
+  new_name = filename.rsplit(".",1)[0] + ".png"
+  layer = pdb.gimp_image_merge_visible_layers(img, 1)
+
+  pdb.gimp_file_save(img, layer, new_name, new_name)
+  pdb.gimp_image_delete(img)
+
+for filename in glob("*.xcf"):
+  convert(filename)
+
+pdb.gimp_quit(1)
+
+Execute 3: gimp -idf -b '(python-fu-save-xcf-files-to-png RUN-NONINTERACTIVE "sample.xcf")' -b '(gimp-quit 0)'
+from gimpfu import *
+# from glob import glob
+
+def convert_images(filename):
+  print "Filename: " + filename
+  img = pdb.gimp_file_load(filename, filename)
+  new_name = filename.rsplit(".",1)[0] + ".png"
+  layer = pdb.gimp_image_merge_visible_layers(img, 1)
+
+  pdb.gimp_file_save(img, layer, new_name, new_name)
+  pdb.gimp_image_delete(img)
+
+register(
+  "save_xcf_files_to_png",
+  "Save xcf files to png",
+  "Save xcf files to png",
+  "test",
+  "test",
+  "2016",
+  "<Toolbox>/MyScripts/Examples/Ex12: Save xcf files to png...",
+  "",
+  [
+    (PF_STRING, "filename", "_String:", None)
+  ],
+  [],
+  convert_images
+  )
+
+main()
+
+
+$0
+endsnippet
+
+snippet gimpBatch "gimp batch process" b
+GIMPPATH=/Applications/GIMP-2.10.app/Contents/MacOS/
+code=$(cat <<END
+import sys;
+sys.path=['/Users/dc/Library/Application Support/GIMP/2.10/plug-ins']+sys.path;
+
+import perspective_border;
+perspective_border.run('WechatIMG2158.jpeg', 
+    frame_percent=10, 
+    keep_aspect=1, 
+    mirror=1, 
+    drop_shadow=1, 
+    shadow_offset_x=2,
+    shadow_offset_y=2,
+    shadow_blur=15,
+    shadow_opacity=60);
+END
+);
+
+$GIMPPATH/gimp-console -idf --batch-interpreter python-fu-eval -b "${code}"
+# 请注意:
+# chmod a+x /Users/dc/Library/Application\ Support/GIMP/2.10/plug-ins/*.py
+# 使用 gimp-console-2.8.exe而不是 gimp-2.8.exe避免在执行结束时不必要的击键
+# 在函数名前加上 python-fu-
+# 使用 - 's 而不是 _的名字
+# 添加通用(和必要)RUN-NONINTERACTIVE论据
+# 在您的脚本中，不要使用调用显示的函数，例如 DISPLAY = gimp.Display( IMAGE ) ，这会使脚本失败并显示 gimp-console-2.8.exe
+
+
+$0
+endsnippet
+
+snippet findSed "find file and sed file" b
+find . -iname '*.java' -type f -exec sed -i 's/old/REPLACEMENT/g' {} +;
+$0
+endsnippet
+snippet findVim "find file and vim file" b
+find . -iname '*.py'   -type f -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
+$0
+endsnippet
+
+snippet findUnzip "find zip and unzip file" b
+find . -iname '*.zip'  -type f -exec bash -c 'cd \`dirname ${1}\`  && unzip -d dir \`basename ${1}\`' _ {} \;
+$0
+endsnippet
+
+snippet unzip "find zip and unzip file" b
+1、把文件解压到当前目录下
+unzip file.zip
+2、如果要把文件解压到指定的目录下，需要用到-d参数。
+unzip -d ./tmp/ file.zip
+3、解压的时候，有时候不想覆盖已经存在的文件，那么可以加上-n参数
+unzip -n file.zip
+unzip -n -d ./tmp/ file.zip
+4、只看一下zip压缩包中包含哪些文件，不进行解压缩
+unzip -l file.zip
+5、查看显示的文件列表还包含压缩比率
+unzip -v file.zip
+6、检查zip文件是否损坏
+unzip -t file.zip
+7、将压缩文件file.zip在指定目录tmp下解压缩，如果已有相同的文件存在，要求unzip命令覆盖原先的文件
+unzip -o file.zip -d ./tmp
+$0
+endsnippet
+
+snippet findGrepGrep "find file and grep and grep file" b
+find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
+$0
+endsnippet
+snippet findRenameByIndex "find file and rename by index" b
+find file and rename by index
+$0
+endsnippet
+snippet findRenameBySubs "find file and rename by substitute" b
+find file and rename by substitute
+$0
+endsnippet
+snippet findInumMv "find by inum file and rename file" b
+find . -maxdepth 1 -inum 000  -exec mv {} newname \;
+$0
+endsnippet
+snippet grepFormwork "grep formwork" b
+grep -irn --include="*.py" --include="*.java" --include="*.go" --exclude-dir={proc,boot,build} "" .
+$0
+endsnippet
+snippet grepSed "grep sed" b
+grep -irl '' . | xargs sed -i 's/old/new/g'
+$0
+endsnippet
+snippet grepVimSubstitute "grep vim substitute" b
+grep -irl 'pattern' -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
+$0
+endsnippet
+snippet findGrepGOBuild "find go main file and build it" b
+find .  -name '*.go' -type f -exec bash -c 'grep -iq "func main" "${1}" && cd `dirname ${1}` && go build' _ {} \;
+$0
+endsnippet
+snippet findCatCmd "find file and concatenate file" b
+find . -iname "*.md" -exec cat  {} + >> README.md
+find . -iname "*.md" -exec more {} + >> README.md
+find . -iname "*.md" -printf '\n:::::::\n%p\n::::::\n' -exec cat {} \\; > README.md
+find . -iname "*.md" -exec head {} + >> README.md
+find . -iname "*.md" -exec head {} + >> README.md
+$0
+endsnippet
+
+snippet findCat "find file and concatenate file" b
+cd BFS                  ; rename -e 's/^\d+/sprintf("%04d",$&)/e' -- */ ; cd ~/5W/README/LeetCode/
+echo "Start!"
+while IFS= read -r line; do
+  fieldName=`echo "${line}" |cut -d/ -f 2`
+  fileName="cpp_""${fieldName}"".snippets"
+  snipName=`echo "${line}" |cut -d/ -f 3`
+
+  echo "$line"
+  echo "${fileName}"
+  echo "${snipName}"
+
+  echo "" >> ${fileName}
+  echo "# ==> ${line} <==" >> ${fileName}
+  echo "snippet $snipName \"${snipName}\" b" >> ${fileName}
+  cat "${line}" >> ${fileName}
+
+  echo "" >> ${fileName}
+  echo "\$0" >> ${fileName}
+  echo "endsnippet" >> ${fileName}
+
+done < "$1"
+$0
+endsnippet
+snippet findSortCat "find file and concatenate file" b
+find . -type f -print0 | sort -z | xargs -r0 more > sha256SumOutput
+$0
+endsnippet
+snippet findMove "find file and move remove file" b
+find . -type f -iname '*.cpp' -exec mv {} ./test/ \;
+find . -type f -iname "*FILE-TO-FIND*" -exec rm -rf {} \;
+$0
+endsnippet
+snippet printf2file "print string to file" b
+printf '' | xsel -i -b
+printf '' > /tmp/registeri
+$0
+endsnippet
+
+snippet removeSecurely "Securely remove" b
+shred -zuv file	# Securely remove your file by overwritting then removing
+$0
+endsnippet
+snippet pasteColumn "paste column joins files column-wise fashion" b
+paste -d";" file1.txt file2.txt
+paste joins files together in a column-wise fashion. Another way to think about this is in contrast to cat, which joins files vertically. For example:
+$0
+endsnippet
+snippet aliasFormwork "alias Formwork" b
+alias cp="cp -R"
+$0
+endsnippet
+snippet viewColumn "view file space as column" b
+cat myfile.txt | column -t
+# Suppose you have a file with fields of variable length. Viewing it in the terminal can be messy because, if a field in one row is longer than one in another, it will upset the spacing of the columns. You can remedy this as follows:
+$0
+endsnippet
+snippet splitFile "split file by lines" b
+split -l 3 -d test.txt test_split_
+# If we want to split this file into sub-files with 3 lines each, we can use:
+$0
+endsnippet
+snippet securityFile "security File" b
+gpg --full-generate-key
+# Here are the basics about gpg. The first thing to do is to generate a public/private key pair for yourself:
+$0
+endsnippet
+
+snippet collapseRows "Rounded Rectangle" b
+cat file.txt | datamash -g 1 collapse 2 -s -W
+# Collapse rows in one column based on a common ID in another column:
+# GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
+$0
+endsnippet
+snippet listDir "list directorys" b
+# list directorys
+ls -dtalh */ 
+# list directorys first
+ls -dtah */ | head -1
+# list directorys last
+ls -dtah */ | tail -1
+# list file
+ls -ptalh . | grep -v /
+# list file first
+ls -ptah . | grep -v / | head -1
+# list file last
+ls -ptah . | grep -v / |tail -1
+# list .
+ls -d .*
+$0
+endsnippet
+
+snippet wgetUrl "wget url file" b
+wget -c "www.baidu.com" -O baidu.index.html -o wget.log
+$0
+endsnippet
+
+snippet xlsx2csv "excel convert to csv" b
+for file in *.xlsx; do
+    nombre=${file:0:${#file}-5};
+    name="$nombre-%n-%s.csv";
+    ssconvert --export-type=Gnumeric_stf:stf_csv --export-file-per-sheet ${file} ${name};
+done
+echo "Finish!"
+$0
+endsnippet
+
+snippet javaRunClass "java run class" b
+java -classpath app/build/classes/java/main/ code.App
+jdb  -sourcepath app/src/main/java/ -classpath app/build/classes/java/main/ code.App
+$0
+endsnippet
+
+snippet snipTestShell "snip test shell" b
+clear
+ls -al
+jobs -l
+$0
+endsnippet
+
+# vim:ft=snippets:
+
+snippet gitpush "git add ,commit, push" b
+git add .
+git commit -m "DC"
+git push gitee
+git push github
+$0
+endsnippet
+snippet gitDiff "git diff" b
+git difftool -- . ':!*.mp3' ':!*.mp4' ':!*.awv' ':!*.png' ':!*.jpg' --extcmd vimdiff HEAD~1 stash@{0} location/filename
+$0
+endsnippet
+
+snippet gitLog "git log" b
+git log --all --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative
+$0
+endsnippet
 snippet gitInit "git init repo " b
 git config --global user.name "DC-Melo"
 git config --global user.email "melo.dachor@gmail.com"
@@ -896,265 +1284,188 @@ curl -X PATCH --header 'Content-Type: application/json;charset=UTF-8' 'https://g
 $0
 endsnippet
 
-snippet iconvgbk2utf "iconv -f gbk -t utf-8 file" b
-iconv -f gbk -t utf-8 1.txt > 2.txt
-$0
-endsnippet
+snippet gitConmand "repo Info" b
+#gitConfigLocal=$(cat <<END
+#git config --local user.email "pdwjwang@tencent.com";
+#git config --local user.name "pdwjwang";
+#END
+#);
+#gitConfigGlobal=$(cat <<END
+#git config --global user.email "melo.dachor@gmail.com";
+#git config --global user.name "DC-Melo";
+## git config --system user.email "you@example.com";
+## git config --system user.name "Your Name";
+#END
+#);
+#gitConfigMergeTool=$(cat <<END
+#git config --global merge.tool vimdiff;
+#git config --global mergetool.keepBackup false;
+#git config --global mergetool.prompt false;
+#END
+#);
+#gitMergeAbort=$(cat <<END
+#git merge --abort;
+#git reset --merge;
+#END
+#);
+###repo command
+## git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+#gitLog=$(cat <<END
+#git log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+#END
+#);
+#gitDiff=$(cat <<END
+#git difftool -- . ':!*.mp3' ':!*.mp4' ':!*.awv' ':!*.png' ':!*.jpg' --extcmd vimdiff HEAD~1 stash@{0} location/filename
+#END
+#);
+#gitShow=$(cat <<END
+#git show REVISION:path/to/file
+#END
+#);
+#gitAddExcept=$(cat <<END
+#git add --all -- ":!file1" ":\!file2" 
+#END
+#);
+## git ls-files | while read f; do git blame -w -M -C -C --line-porcelain "\$f" | grep -I '^author '; done | sort -f | uniq -ic |awk '{lines[\$3]=\$1;sum=sum+\$1} END{for (i in lines) printf("%d\t%d%\t%s\n",lines[i],(lines[i]/sum)*100,i)}' | sort -n --reverse 
+#gitContribute=$(cat <<END
+#git ls-tree -z -r --name-only HEAD -- */*.py | xargs -0n1 git blame -w --show-email | perl -n -e '/^.*?\((.*?)\s+[\d]{4}/; print \$1,"\n"' | sort -f | uniq -c |awk '{lines[\$2]=\$1;sum=sum+\$1} END{for (i in lines) printf("%d\t%d%\t%s\n",lines[i],(lines[i]/sum)*100,i)}' | sort -n --reverse
+#END
+#);
+## name="name"; des="description"; curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' -d '{"access_token":"'\${GITEE_TOKEN}'","name":"'\${name}'","description":"'\${des}'","homepage":"https://dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","gitignore_template":"Gradle","license_template":"MIT","private":"false"}'; curl -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/user/repos -d '{ "name":"'\${name}'","description":"'\${des}'" }'; git clone git@gitee.com:dc-melo/\${name}.git
+#gitRepoCreate=$(cat <<END
+#name="name"; des="description"; \
+#curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' \
+#-d '{"access_token":"'"\${GITEE_TOKEN}"'","name":"'"\${name}"'","description":"'"\${des}"'","private":"false","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","license_template":"MIT"}'; \
+#curl -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/user/repos \
+#-d '{"name":"'"\${name}"'","description":"'"\${des}"'","private":"false"}'; git clone git@gitee.com:dc-melo/\${name}.git
+#END
+#);
+#gitAddDescriptionGithub=$(cat <<END
+#name=\$(git remote get-url origin |grep -Po '(?<=dc-melo/)\S*(?=.git)'); \
+#curl -X PATCH -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/repos/DC-Melo/\$name -d '{ "description":"new des" }'
+#END
+#);
+## name=\`git remote get-url origin |grep -Po '(?<=dc-melo/)\S*(?=.git)'\`;curl -X PATCH -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/repos/DC-Melo/$name -d '{ "description":"new des" }'
+#gitAddUrl=$(cat <<END
+#REPO=\$(git remote get-url origin |grep -Pio '(?<=dc-melo/)\S*(?=.git)');
+#git remote add github git@github.com:DC-Melo/\${REPO}.git;
+#git remote add gogs   ssh://git@10.1.21.240:11022/DC-Melo/\${REPO}.git;
+#git remote -v
+#END
+#);
+#gitAddUrlGithub=$(cat <<END
+#name=\$(git remote get-url origin |grep -Po '(?<=dc-melo/)\S*(?=.git)');git remote add github git@github.com:DC-Melo/\$name.git; git remote -v
+#END
+#);
+#gitAddUrlGogs=$(cat <<END
+#name=\$(git remote get-url origin |grep -Po '(?<=dc-melo/)\S*(?=.git)');git remote add gogs ssh://git@10.1.21.240:11022/DC-Melo/\$name.git; git remote -v
+#END
+#);
+#gitRepoCreateGitee=$(cat <<END
+#name="name"; des="description"; \
+#curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos' \
+#-d '{"access_token":"'\${GITEE_TOKEN}'","name":"'\${name}'","description":"'"\${des}"'","homepage":"http://www.dc-melo.com","has_issues":"true","has_wiki":"true","can_comment":"true","auto_init":"false","gitignore_template":"Gradle","license_template":"MIT","private":"false"}'
+#END
+#);
+## curl -X GET --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/user/repos?access_token='\${GITEE_TOKEN}'&sort=created&page=1&perpage=1000' |python3 -c 'import json, sys; sys.stdout.buffer.write(json.dumps(json.loads(sys.stdin.read()), indent=4,ensure_ascii=False).encode("utf8"))' |grep "ssh_url" |nl
+#gitRepoListGitee=$(cat <<END
+#curl -X GET --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/users/DC-Melo/repos?access_token='\${GITEE_TOKEN}'&type=all&sort=full_name&page=1&per_page=2000' | \
+#python3 -c 'import json, sys; sys.stdout.buffer.write(json.dumps(json.loads(sys.stdin.read()),indent=4,ensure_ascii=False).encode("utf8"))' |grep "ssh_url" |nl
+#END
+#);
+#gitRepoListGithub=$(cat <<END
+#curl -X GET --header 'Content-Type: application/json;charset=UTF-8' 'https://api.github.com/users/DC-Melo/repos?per_page=100&page=1' | \
+#python3 -c 'import json, sys; sys.stdout.buffer.write(json.dumps(json.loads(sys.stdin.read()),indent=4,ensure_ascii=False).encode("utf8"))' |grep "ssh_url" |nl
+#END
+#);
+#gitRepoTagGitee=$(cat <<END
+#curl -X GET --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/DC-Melo/repo/tags?access_token='\${GITEE_TOKEN}
+#END
+#);
+#gitRepoDelete=$(cat <<END
+#name="name"; \
+#curl -X DELETE -u \$GITEE_USER:\$GITEE_TOKEN   https://gitee.com/api/v5/repos/DC-Melo/"\${name}"; \
+#curl -X DELETE -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/repos/DC-Melo/"\${name}"
+#END
+#);
+## curl -X DELETE --header 'Content-Type: application/json;charset=UTF-8' "https://gitee.com/api/v5/repos/\${GITEE_USER}/reponame?access_token=\${GITEE_TOKEN}"
+#gitRepoDeleteGitee=$(cat <<END
+#name="name"; \
+#curl -X DELETE -u \$GITEE_USER:\$GITEE_TOKEN https://gitee.com/api/v5/repos/DC-Melo/"\${name}"
+#END
+#);
+#gitRepoDeleteGithub=$(cat <<END
+#name="name"; \
+#curl -X DELETE -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/repos/DC-Melo/"\${name}"
+#END
+#);
+#gitRepoCreateGithub=$(cat <<END
+#name="name"; des="description"; \
+#curl -X POST -u \$GITHUB_USER:\$GITHUB_TOKEN https://api.github.com/user/repos \
+#-d '{"homepage":"https://github.com", "private": false, "description":"'\${des}'","name":"'"\${name}"'" }'
+#END
+#);
+#gitRepoDescriptionGithub=$(cat <<END
+#curl -X GET -u \${GITHUB_USER}:\${GITHUB_TOKEN} "https://api.github.com/users/\$GITHUB_USER/repos?perpage=100" | python3 -c 'import json, sys; sys.stdout.buffer.write(json.dumps(json.loads(sys.stdin.read()), indent=4,ensure_ascii=False).encode("utf8"))' | grep -w "\(cloneurl\)\|\(description\)" |awk '{x = \$0; getline; printf "%s ",\$0; print x}'|nl
+#END
+#);
+#httpGet=$(cat <<END
+#curl -X GET -u \${GITHUB_USER}:\${GITHUB_TOKEN} "https://api.github.com/users/\$GITHUB_USER/repos?perpage=100" 
+#END
+#);
+## https://<your gogs domain>/api/v1
+## curl -X POST -u \${GOGS_USER}:\${GOGS_TOKEN} https://api.github.com/user/repos -d '{"homepage":"https://github.com", "private": false, "description":"description","name":"n" }'
+#gitRepoCreateGogs=$(cat <<END
+#REPO="repoName";
+#URL="http://10.1.21.240:10081/api/v1";
+#curl 
+#-H "Content-Type: application/json" 
+#-H "Authorization: token \${GOGS_TOKEN}" 
+#-X POST \${URL}/user/repos
+#-d '{"homepage":"https://github.com", "private": false, "description":"description","name":"reponame" }'
+#END
+#);
+#gitRepoDeleteGogs=$(cat <<END
+#REPO="repoName"
+#URL="http://10.1.21.240:10081/api/v1";
+#curl 
+#-H "Authorization: token \${GOGS_TOKEN}" 
+#-X DELETE ${URL}/repos/\${GOGS_USER}/${REPO}
+#END
+#);
 
-snippet ffmpegVideo2Gif "video to gif convert" b
-ffmpeg -ss 00:00:10 -t 3  -i test.mp4 -s  300x400 -r 15 test.gif -y # 从视频中第10秒开始，截取时长为3秒的片段,size 300*400 -r 视频提取15帧
-convert output_video.gif -fuzz 20% -layers Optimize output_video2.gif
+#gitBigFile=$(cat <<END
+#git rev-list --objects --all |   git cat-file --batch-check="%(objecttype) %(objectname) %(objectsize) %(rest)" |   sed -n "s/^blob //p" |   sort --numeric-sort --key=2 |   cut -c 1-12,41- |   \$(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+#END
+#);
+## git filter-branch  --tree-filter "rm -f something/really/large.iso"  -- --all
+#gitRemoveFile=$(cat <<END
+#git filter-branch --force --index-filter 'git rm -rf --cached --ignore-unmatch \$文件名字' --prune-empty --tag-name-filter cat -- --all
+#END
+#);
+#gitRemoveUpdate=$(cat <<END
+#rm -rf .git/refs/original/;
+#git reflog expire --expire=now --all;
+#git gc --prune=now;
+#git gc --aggressive --prune=now;
+## 如果这一步有权限不足的问题，需要手动到github上将master分支的保护去掉;
+#git push origin master --force;
+## 清理远程仓库;
+#git remote prune origin;
+#git remote prune github;
+#END
+#);
+#gitReadme=$(cat <<END
+#cp -i -r /usr/coderoot/opt/4T/templete/standard-readme/readme_files /usr/coderoot/opt/4T/templete/standard-readme/README.md  . ;name=\$(git remote -v |grep -Po "(?<=dc-melo/)\S*(?=.git\s*\(push\))");find . -type f -name "*.md" -exec sed -i "s/standard-readme/'\${name}'/g" {} +;
+#END
+#);
+#goBuild=$(cat <<END
+#CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build demo.go
+#END
+#);
+#trimSpace=$(cat <<END
+#for f in *; do mv "$f" `echo $f | tr ' ' '_'`; done
+#END
+#);
 $0
 endsnippet
-
-snippet convList "image to gif" b
-# USEFUL IMAGEMAGICK INFORMATION COMMANDS
-convert -list               # list all functions
-convert -list list          # list all -list options
-convert -list channel       # list of all image -channel options
-convert -list command       # list all commands
-convert -list color         # list of all color names and values
-convert -list colorspace    # list of all -colorspace options
-convert -list compose       # list of all -compose options
-convert -list configure     # list of your IM version information
-convert -list decoration    # list of all text decorations
-convert -list filter        # list of all -filter options
-convert -list font          # list of all supported fonts (on your system)
-convert -list format        # list of all image formats
-convert -list gravity       # list of all -gravity positioning options
-convert -list primitive     # list of all -draw primitive shapes
-convert -list style         # list of all text styles
-convert -list threshold     # list of all dither/halftone options
-convert -list type          # list of all image types
-convert -list virtual-pixel # list of all -virtual-pixel options
-$0
-endsnippet
-
-snippet convImg2Gif "image to gif" b
-convert -delay 100 *.png -loop 0  test.gif
-# -delay n 迟延n*10毫秒 -loop n 播放n轮, 0表示不断地重复播放
-convert -delay 400 -dispose background *.jpg -resize 668x476  -gravity Center -background white -extent 668x476 -loop 0  ani.gif
-$0
-endsnippet
-
-snippet convAppendImage "convert append image" b
-convert +append u0.png u1.png u.png
-
-convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
-
-convert -size 512x512 -strip -colors 8 -depth 8 xc:none dest1.png
-composite -geometry +0+0 u0.png dest1.png dest1.png
-composite -geometry +256+0 u1.png dest1.png dest1.png
-composite -geometry +0+256 d0.png dest1.png dest1.png
-composite -geometry +256+256 d1.png dest1.png dest1.png
-$0
-endsnippet
-
-snippet convdrawheart "convert draw heart" b
-convert +antialias -size 80x80 -gravity center \
-	-font WebDings label:Y   heart.gif
-$0
-endsnippet
-
-snippet convdrawrrect "convert draw rect" b
-convert -size 100x60 xc:skyblue -fill white -stroke black \
-	-draw "roundrectangle 20,10 80,50 20,15"  draw_rrect.gif
-$0
-endsnippet
-
-snippet convdWords2Gif "convert words to gif" b
-convert -size 100x60 xc:skyblue -fill white -stroke black \
-	-font Candice -pointsize 40 -gravity center \
-	-draw "text 0,0 'Hello'"   draw_text.gif
-$0
-endsnippet
-
-snippet convdWords2Gif "convert words to gif" b
-convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+100 "testing" lena_text1.jpg
-convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+75 "testing" lena_text2.jpg
-convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+50 "testing" lena_text3.jpg
-convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+25 "testing" lena_text4.jpg
-convert lena.jpg -fill white -font arial -pointsize 24 -gravity center -annotate +0+0 "testing" lena_text5.jpg
-convert -delay 50 lena_text*.jpg -loop 0 -layers optimize lena_anim.gif
-convert -delay 50 lena_text*.jpg ( -clone 0--1 -reverse ) -loop 0 -layers optimize lena_anim2.gif
-$0
-endsnippet
-
-snippet convdrawtext "convert draw text" b
-convert -size 100x60 xc:skyblue -fill white -stroke black \
-	-font Candice -pointsize 40 -gravity center \
-	-draw "text 0,0 'Hello'"   draw_text.gif
-$0
-endsnippet
-
-
-snippet findSed "find file and sed file" b
-find . -iname '*.java' -type f -exec sed -i 's/old/REPLACEMENT/g' {} +;
-$0
-endsnippet
-snippet findVim "find file and vim file" b
-find . -iname '*.py'   -type f -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
-$0
-endsnippet
-
-snippet findUnzip "find zip and unzip file" b
-find . -iname '*.zip'  -type f -exec bash -c 'cd \`dirname ${1}\`  && unzip -d dir \`basename ${1}\`' _ {} \;
-$0
-endsnippet
-
-snippet unzip "find zip and unzip file" b
-1、把文件解压到当前目录下
-unzip file.zip
-2、如果要把文件解压到指定的目录下，需要用到-d参数。
-unzip -d ./tmp/ file.zip
-3、解压的时候，有时候不想覆盖已经存在的文件，那么可以加上-n参数
-unzip -n file.zip
-unzip -n -d ./tmp/ file.zip
-4、只看一下zip压缩包中包含哪些文件，不进行解压缩
-unzip -l file.zip
-5、查看显示的文件列表还包含压缩比率
-unzip -v file.zip
-6、检查zip文件是否损坏
-unzip -t file.zip
-7、将压缩文件file.zip在指定目录tmp下解压缩，如果已有相同的文件存在，要求unzip命令覆盖原先的文件
-unzip -o file.zip -d ./tmp
-$0
-endsnippet
-
-snippet findGrepGrep "find file and grep and grep file" b
-find . -iname 'name' -type f -exec grep -q FIND {} \; -exec grep -l ME {} \;
-$0
-endsnippet
-snippet findRenameByIndex "find file and rename by index" b
-find file and rename by index
-$0
-endsnippet
-snippet findRenameBySubs "find file and rename by substitute" b
-find file and rename by substitute
-$0
-endsnippet
-snippet findInumMv "find by inum file and rename file" b
-find . -maxdepth 1 -inum 000  -exec mv {} newname \;
-$0
-endsnippet
-snippet grepFormwork "grep formwork" b
-grep -irn --include="*.py" --include="*.java" --include="*.go" --exclude-dir={proc,boot,build} "" .
-$0
-endsnippet
-snippet grepSed "grep sed" b
-grep -irl '' . | xargs sed -i 's/old/new/g'
-$0
-endsnippet
-snippet grepVimSubstitute "grep vim substitute" b
-grep -irl 'pattern' -exec vim -c '%s/PATTERN/REPLACEMENT/gc' -c 'wq' {} \;
-$0
-endsnippet
-snippet findGrepGOBuild "find go main file and build it" b
-find .  -name '*.go' -type f -exec bash -c 'grep -iq "func main" "${1}" && cd `dirname ${1}` && go build' _ {} \;
-$0
-endsnippet
-snippet findCat "find file and concatenate file" b
-find . -iname "*.md" -exec cat  {} + >> README.md
-find . -iname "*.md" -exec more {} + >> README.md
-find . -iname "*.md" -printf '\n:::::::\n%p\n::::::\n' -exec cat {} \\; > README.md
-find . -iname "*.md" -exec head {} + >> README.md
-find . -iname "*.md" -exec head {} + >> README.md
-$0
-endsnippet
-snippet findSortCat "find file and concatenate file" b
-find . -type f -print0 | sort -z | xargs -r0 more > sha256SumOutput
-$0
-endsnippet
-snippet findMove "find file and move remove file" b
-find . -type f -iname '*.cpp' -exec mv {} ./test/ \;
-find . -type f -iname "*FILE-TO-FIND*" -exec rm -rf {} \;
-$0
-endsnippet
-snippet printf2file "print string to file" b
-printf '' | xsel -i -b
-printf '' > /tmp/registeri
-$0
-endsnippet
-
-snippet removeSecurely "Securely remove" b
-shred -zuv file	# Securely remove your file by overwritting then removing
-$0
-endsnippet
-snippet pasteColumn "paste column joins files column-wise fashion" b
-paste -d";" file1.txt file2.txt
-paste joins files together in a column-wise fashion. Another way to think about this is in contrast to cat, which joins files vertically. For example:
-$0
-endsnippet
-snippet aliasFormwork "alias Formwork" b
-alias cp="cp -R"
-$0
-endsnippet
-snippet viewColumn "view file space as column" b
-cat myfile.txt | column -t
-# Suppose you have a file with fields of variable length. Viewing it in the terminal can be messy because, if a field in one row is longer than one in another, it will upset the spacing of the columns. You can remedy this as follows:
-$0
-endsnippet
-snippet splitFile "split file by lines" b
-split -l 3 -d test.txt test_split_
-# If we want to split this file into sub-files with 3 lines each, we can use:
-$0
-endsnippet
-snippet securityFile "security File" b
-gpg --full-generate-key
-# Here are the basics about gpg. The first thing to do is to generate a public/private key pair for yourself:
-$0
-endsnippet
-
-snippet collapseRows "Rounded Rectangle" b
-cat file.txt | datamash -g 1 collapse 2 -s -W
-# Collapse rows in one column based on a common ID in another column:
-# GNU datamash is a great program for crunching through text files and collapsing rows on a common ID or computing basic statistics. Here are some simple examples of what it can do.
-$0
-endsnippet
-snippet listDir "list directorys" b
-# list directorys
-ls -dtalh */ 
-# list directorys first
-ls -dtah */ | head -1
-# list directorys last
-ls -dtah */ | tail -1
-# list file
-ls -ptalh . | grep -v /
-# list file first
-ls -ptah . | grep -v / | head -1
-# list file last
-ls -ptah . | grep -v / |tail -1
-# list .
-ls -d .*
-$0
-endsnippet
-
-snippet wgetUrl "wget url file" b
-wget -c "www.baidu.com" -O baidu.index.html -o wget.log
-$0
-endsnippet
-
-snippet xlsx2csv "excel convert to csv" b
-for file in *.xlsx; do
-    nombre=${file:0:${#file}-5};
-    name="$nombre-%n-%s.csv";
-    ssconvert --export-type=Gnumeric_stf:stf_csv --export-file-per-sheet ${file} ${name};
-done
-echo "Finish!"
-$0
-endsnippet
-
-snippet javaRunClass "java run class" b
-java -classpath app/build/classes/java/main/ code.App
-jdb  -sourcepath app/src/main/java/ -classpath app/build/classes/java/main/ code.App
-$0
-endsnippet
-
-snippet snipTestShell "snip test shell" b
-clear
-ls -al
-jobs -l
-$0
-endsnippet
-
-# vim:ft=snippets:

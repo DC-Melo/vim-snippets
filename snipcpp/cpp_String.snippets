@@ -1,6 +1,42 @@
-::::::::::::::
-String/005.Longest-Palindromic-Substring/005.Longest-Palindromic-Substring.cpp
-::::::::::::::
+
+# ==> ./String/0005.Longest-Palindromic-Substring/Readme.md <==
+snippet 0005.Longest-Palindromic-Substring "0005.Longest-Palindromic-Substring" b
+### 005.Longest-Palindromic-Substring
+
+### 解法1：
+考虑以每个字符为对称中心（或者为对称中心线左边的字符），同时往左往右推广，看看将回文半径最长能推至哪里。这个解法比较好写，复杂度是o(N^2)
+
+### 解法2：KMP
+有个更好的线性时间的Manacher算法，可以参考 https://segmentfault.com/a/1190000003914228 这里简单的介绍一下算法。
+
+我们将s = aaaba，填充"#"得到 t = #a#a#a#b#a#，我们令数组P[i]表示以t[i]为对称中心的最大回文半径（不包括t[i]本身）。这样做就是为了解决回文长度奇偶性的问题。在字符串t中，最大的P[i]就代表了最长的回文半径。
+
+如今我们期望能以线性的速率得到P[i]，而不是按照解法1那样，对于每个i都要往两边扩展。所以我们思考，如果我们已知了P[0],..,P[i-1]，该如何得到P[i]呢？
+
+我们维护两个变量，maxRight表示在所有P[0],...,P[i-1]为中心的完整回文串中，能够到达的最右边的位置。对应这个回文串的中心，就是maxCenter. 故有```maxRight = maxCenter+P[maxCenter]```.
+
+我们在考虑i的时候，如果i>=maxRight，我们就按照解法1，老老实实地往两边扩展，从半径为0开始，探索P[i]。
+
+如果i<maxRight，我们其实对P[i]可以有一个初步的估计，不用从零开始。这个估计就是```min(P[maxCenter*2-i], maxRight-i)```。可以这么考虑：令 ```j = maxCenter*2-i```是与i关于maxCenter对称的点。见下图。
+```
+X  X  X  {X  X  X  X  X  X  X  X  X  X  X}  X  X  X  X  X
+      ---------------
+             j          ctr          i
+```
+因为maxCenter对应的回文串非常长，（至少部分）包裹了以j为中心的回文串，必然也会包裹了以i为中心的回文串。因为i和j完全关于maxCenter对称，所以以i为中心的回文串半径至少该与以j为中心的回文串半径相同（或者说这两个回文串整体都相同）。当然，这也是有个前提，就是这个回文串都被包裹在以maxCenter为中心的大回文串里面。所有我们需要取```min(P[maxCenter*2-i], maxRight-i)```。
+
+这样，我们就可以顺序地探索所有P[i]，并找到其中的最大值maxLen，和对应的i的索引maxCenter。注意P的构建是基于t的，那么如何返回基于s的那个回文串呢？其实很巧妙，输出的就是:
+```s.substr(maxCenter/2-maxLen/2,maxLen)```
+
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-palindromic-substring)
+
+$0
+endsnippet
+
+# ==> ./String/0005.Longest-Palindromic-Substring/005.Longest-Palindromic-Substring.cpp <==
+snippet 0005.Longest-Palindromic-Substring "0005.Longest-Palindromic-Substring" b
 
 class Solution {
 public:
@@ -51,69 +87,12 @@ public:
         return s.substr(center/2 - maxLen/2, maxLen);
     }
 };
-::::::::::::::
-String/005.Longest-Palindromic-Substring/Readme.md
-::::::::::::::
-### 005.Longest-Palindromic-Substring
 
-### 解法1：
-考虑以每个字符为对称中心（或者为对称中心线左边的字符），同时往左往右推广，看看将回文半径最长能推至哪里。这个解法比较好写，复杂度是o(N^2)
+$0
+endsnippet
 
-### 解法2：KMP
-有个更好的线性时间的Manacher算法，可以参考 https://segmentfault.com/a/1190000003914228 这里简单的介绍一下算法。
-
-我们将s = aaaba，填充"#"得到 t = #a#a#a#b#a#，我们令数组P[i]表示以t[i]为对称中心的最大回文半径（不包括t[i]本身）。这样做就是为了解决回文长度奇偶性的问题。在字符串t中，最大的P[i]就代表了最长的回文半径。
-
-如今我们期望能以线性的速率得到P[i]，而不是按照解法1那样，对于每个i都要往两边扩展。所以我们思考，如果我们已知了P[0],..,P[i-1]，该如何得到P[i]呢？
-
-我们维护两个变量，maxRight表示在所有P[0],...,P[i-1]为中心的完整回文串中，能够到达的最右边的位置。对应这个回文串的中心，就是maxCenter. 故有```maxRight = maxCenter+P[maxCenter]```.
-
-我们在考虑i的时候，如果i>=maxRight，我们就按照解法1，老老实实地往两边扩展，从半径为0开始，探索P[i]。
-
-如果i<maxRight，我们其实对P[i]可以有一个初步的估计，不用从零开始。这个估计就是```min(P[maxCenter*2-i], maxRight-i)```。可以这么考虑：令 ```j = maxCenter*2-i```是与i关于maxCenter对称的点。见下图。
-```
-X  X  X  {X  X  X  X  X  X  X  X  X  X  X}  X  X  X  X  X
-      ---------------
-             j          ctr          i
-```
-因为maxCenter对应的回文串非常长，（至少部分）包裹了以j为中心的回文串，必然也会包裹了以i为中心的回文串。因为i和j完全关于maxCenter对称，所以以i为中心的回文串半径至少该与以j为中心的回文串半径相同（或者说这两个回文串整体都相同）。当然，这也是有个前提，就是这个回文串都被包裹在以maxCenter为中心的大回文串里面。所有我们需要取```min(P[maxCenter*2-i], maxRight-i)```。
-
-这样，我们就可以顺序地探索所有P[i]，并找到其中的最大值maxLen，和对应的i的索引maxCenter。注意P的构建是基于t的，那么如何返回基于s的那个回文串呢？其实很巧妙，输出的就是:
-```s.substr(maxCenter/2-maxLen/2,maxLen)```
-
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-palindromic-substring)
-::::::::::::::
-String/006.ZigZag-Conversion/006.ZigZag-Conversion.cpp
-::::::::::::::
-class Solution {
-public:
-    string convert(string s, int numRows) 
-    {        
-        int T=numRows*2-2;
-        if (T==0) return s;
-        string result;
-        
-        for (int i=0; i<=T/2; i++)
-        {
-            int a=i;
-            int b=T-a;
-            while (a<s.size())
-            {
-                result+=s[a];
-                if (b<s.size() && b!=a && b!=a+T)
-                    result+=s[b];
-                a+=T;
-                b+=T;
-            }
-        }
-        return result;
-    }
-};
-::::::::::::::
-String/006.ZigZag-Conversion/Readme.md
-::::::::::::::
+# ==> ./String/0006.ZigZag-Conversion/Readme.md <==
+snippet 0006.ZigZag-Conversion "0006.ZigZag-Conversion" b
 ### 006.ZigZag-Conversion
 
 观察这个数列的周期性。一个周期的元素数目```M=numRows*2-2```，因此这个数列的周期数目是```N=(len(s)-1)/M+1```。注意这种根据M计算Ｎ的的技巧。在CUDA编程中，确定block数目的计算和此很相似。
@@ -140,93 +119,42 @@ for (int i=0; i<N; i++)
 
 
 [Leetcode Link](https://leetcode.com/problems/zigzag-conversion)
-::::::::::::::
-String/028.Implement-strStr/028.Implement-strStr-KMP.cpp
-::::::::::::::
-class Solution {
 
-public:
-    int strStr(string haystack, string needle) 
-    {
-        int n = haystack.size();
-        int m = needle.size();
-        if (m==0) return 0;
-        if (n==0) return -1;    
+$0
+endsnippet
 
-        vector<int> suf = preprocess(needle);
-        
-        vector<int>dp(n,0);
-        dp[0] = (needle[0]==haystack[0]);
-        if (m==1 && dp[0]==1)
-            return 0;
-
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];
-            while (j>0 && needle[j]!=haystack[i])
-                j = suf[j-1];
-            dp[i] = j + (needle[j]==haystack[i]);
-            if (dp[i]==needle.size())
-                return i-needle.size()+1;
-        }
-        return -1;
-    }
-
-    vector<int> preprocess(string s)
-    {
-        int n = s.size();
-        vector<int>dp(n,0);
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];                       
-            while (j>=1 && s[j]!=s[i])
-            {
-                j = dp[j-1];
-            }          
-            dp[i] = j + (s[j]==s[i]);
-        }
-        return dp;
-    }
-};
-::::::::::::::
-String/028.Implement-strStr/028.Implement-strStr-sunday.cpp
-::::::::::::::
+# ==> ./String/0006.ZigZag-Conversion/006.ZigZag-Conversion.cpp <==
+snippet 0006.ZigZag-Conversion "0006.ZigZag-Conversion" b
 class Solution {
 public:
-    int strStr(string haystack, string needle) 
-    {
-        int m = needle.size();
-        int n = haystack.size();
+    string convert(string s, int numRows) 
+    {        
+        int T=numRows*2-2;
+        if (T==0) return s;
+        string result;
         
-        if (m==0) return 0;
-        if (n==0) return -1;
-                    
-        vector<int>shift(512,0);
-        for (int i=0; i<512; i++)
-            shift[i]=m+1;
-        for (int i=0; i<m; i++)
-            shift[needle[i]]=m-i;
-        
-        int s=0;
-        int j;
-        while (s<=n-m)
+        for (int i=0; i<=T/2; i++)
         {
-            j=0;
-
-            while (haystack[s+j]==needle[j])
+            int a=i;
+            int b=T-a;
+            while (a<s.size())
             {
-                j++;
-                if (j==m) return s;
+                result+=s[a];
+                if (b<s.size() && b!=a && b!=a+T)
+                    result+=s[b];
+                a+=T;
+                b+=T;
             }
-            s+=shift[haystack[s+m]];
         }
-        
-        return -1;
+        return result;
     }
 };
-::::::::::::::
-String/028.Implement-strStr/Readme.md
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0028.Implement-strStr/Readme.md <==
+snippet 0028.Implement-strStr "0028.Implement-strStr" b
 ### 028.Implement-strStr
 
 #### KMP算法
@@ -283,9 +211,122 @@ for (int i=1; i<n; i++)
 
 
 [Leetcode Link](https://leetcode.com/problems/implement-strstr)
-::::::::::::::
-String/068.Text-Justification/068.Text-Justification.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0028.Implement-strStr/028.Implement-strStr-KMP.cpp <==
+snippet 0028.Implement-strStr "0028.Implement-strStr" b
+class Solution {
+
+public:
+    int strStr(string haystack, string needle) 
+    {
+        int n = haystack.size();
+        int m = needle.size();
+        if (m==0) return 0;
+        if (n==0) return -1;    
+
+        vector<int> suf = preprocess(needle);
+        
+        vector<int>dp(n,0);
+        dp[0] = (needle[0]==haystack[0]);
+        if (m==1 && dp[0]==1)
+            return 0;
+
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];
+            while (j>0 && needle[j]!=haystack[i])
+                j = suf[j-1];
+            dp[i] = j + (needle[j]==haystack[i]);
+            if (dp[i]==needle.size())
+                return i-needle.size()+1;
+        }
+        return -1;
+    }
+
+    vector<int> preprocess(string s)
+    {
+        int n = s.size();
+        vector<int>dp(n,0);
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];                       
+            while (j>=1 && s[j]!=s[i])
+            {
+                j = dp[j-1];
+            }          
+            dp[i] = j + (s[j]==s[i]);
+        }
+        return dp;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/0028.Implement-strStr/028.Implement-strStr-sunday.cpp <==
+snippet 0028.Implement-strStr "0028.Implement-strStr" b
+class Solution {
+public:
+    int strStr(string haystack, string needle) 
+    {
+        int m = needle.size();
+        int n = haystack.size();
+        
+        if (m==0) return 0;
+        if (n==0) return -1;
+                    
+        vector<int>shift(512,0);
+        for (int i=0; i<512; i++)
+            shift[i]=m+1;
+        for (int i=0; i<m; i++)
+            shift[needle[i]]=m-i;
+        
+        int s=0;
+        int j;
+        while (s<=n-m)
+        {
+            j=0;
+
+            while (haystack[s+j]==needle[j])
+            {
+                j++;
+                if (j==m) return s;
+            }
+            s+=shift[haystack[s+m]];
+        }
+        
+        return -1;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/0068.Text-Justification/Readme.md <==
+snippet 0068.Text-Justification "0068.Text-Justification" b
+### 068.Text-Justification
+
+这是一道比较复杂的模拟题，需要耐心地做。
+
+首先我们要做的是找出每一行需要打印多少单词。假设某行开始，我们需要从words[i]开始打印直到到words[j]为止，确定这个[i:j]的区间需要满足的条件是：words[i:j]的字符长度加上(j-i)个空格，必须恰好小于等于maxWidth。然后我们就可以调用一个自定义的```printLine```的函数来控制如何在maxWidth里面打印这么多单词。唯一例外的是，如果发现j是最后一个单词，那么需要特殊处理一下，空格不需要在单词之间平均分布。
+
+接下来我们写函数```string printLine(i,j)```. 我们需要先计算空格总数```m = maxWidth - words[i:j]的长度和```，试图均分给(j-i)个间隙，可以得到基础间隙大小是```s = m/(j-i)```. 此时我们可能存留有```k = m-s*(j-i)```个空格需要分配，根据规则这些空格会给前k个间隙的位置上每个加1. 代码大致是
+```cpp
+        for (int i=a; i<a+k; i++)    
+            ret += words[i] + addspace(s+1);        
+        for (int i=a+k; i<b; i++)        
+            ret += words[i] + addspace(s);        
+        ret+=words[b];              
+```        
+
+$0
+endsnippet
+
+# ==> ./String/0068.Text-Justification/068.Text-Justification.cpp <==
+snippet 0068.Text-Justification "0068.Text-Justification" b
 class Solution {
 public:
     vector<string> fullJustify(vector<string>& words, int maxWidth) 
@@ -360,1025 +401,40 @@ public:
         return ret;
     }
 };
-::::::::::::::
-String/068.Text-Justification/Readme.md
-::::::::::::::
-### 068.Text-Justification
 
-这是一道比较复杂的模拟题，需要耐心地做。
+$0
+endsnippet
 
-首先我们要做的是找出每一行需要打印多少单词。假设某行开始，我们需要从words[i]开始打印直到到words[j]为止，确定这个[i:j]的区间需要满足的条件是：words[i:j]的字符长度加上(j-i)个空格，必须恰好小于等于maxWidth。然后我们就可以调用一个自定义的```printLine```的函数来控制如何在maxWidth里面打印这么多单词。唯一例外的是，如果发现j是最后一个单词，那么需要特殊处理一下，空格不需要在单词之间平均分布。
+# ==> ./String/0214.Shortest-Palindrome/Readme.md <==
+snippet 0214.Shortest-Palindrome "0214.Shortest-Palindrome" b
+### 214.Shortest-Palindrome
 
-接下来我们写函数```string printLine(i,j)```. 我们需要先计算空格总数```m = maxWidth - words[i:j]的长度和```，试图均分给(j-i)个间隙，可以得到基础间隙大小是```s = m/(j-i)```. 此时我们可能存留有```k = m-s*(j-i)```个空格需要分配，根据规则这些空格会给前k个间隙的位置上每个加1. 代码大致是
+#### 解法1：KMP
+此题的解法非常巧妙.首先,题意是试图将s分解为```s=A'AB```的形式,其中A'是A的逆序,求使得A'A最长的分解方式.
+
+如果我们将s整体逆序写成r,那么```r=B'A'A```.可以发现s的前段和r的后端恰好都是```A'A```.此外,反过来考虑,已知r是s的逆序,并且r的尾端等于s的首端,那么这段相同的字符串一定是个palindrome,即A'A的形式.
+
+有了以上两点证明,那么我们就只要找到最大的```i```,使得```s[0:i]==r[len(r)-i:]```，即在r中找到最长的后缀，使得其等于s的前缀。实现这个可以有两种方法：1. 暴力尝试这个长度。2. 类似KMP中求后缀数组的方法，计算数组r的suf[i]，即r中截止位置i的最长后缀字符串使得恰好是s的前缀字符串。
+
+最终suf[n-1]就是A'A的最大长度。因此B = s.substr(len). 返回的答案就是ret = B'+s.
+
+### 解法2：Manacher
+本题的本质就是在s中找一个最长的、起点在左端点的回文串。然后将s除去回文串的后端复制、翻转并拼接在原s串的前端，就是最优的答案。
+
+所以此题的本质就是Manacher的模板题```005.Longest-Palindromic-Substring```，求出每个位置作为中心能够构造的最长回文串，查看这个回文串是否能抵达s的最左端，是的话就记录下这个回文串的长度L。输出的答案是：
 ```cpp
-        for (int i=a; i<a+k; i++)    
-            ret += words[i] + addspace(s+1);        
-        for (int i=a+k; i<b; i++)        
-            ret += words[i] + addspace(s);        
-        ret+=words[b];              
-```        
-::::::::::::::
-String/1044.Longest-Duplicate-Substring/1044.Longest-Duplicate-Substring.cpp
-::::::::::::::
-class Solution {
-    unordered_map<int,int>len2start;
-public:
-    string longestDupSubstring(string S) 
-    {
-        int left = 1, right = S.size()-1;
-        while (left<right)
-        {
-            int mid = right - (right-left)/2;
-            if (found(S,mid))
-                left = mid;
-            else
-                right = mid - 1;
-        }
-        if (found(S, left))
-            return S.substr(len2start[left],left);
-        else
-            return "";        
-    }
-
-    bool found(string&S, int len)
-    {
-        unordered_set<long long>Set;
-        long long base = 26;
-        long long mod = (1l<<32);
-        long long hash = 0;
-
-        long long pow_base_len = 1;
-        for (int i=0; i<len; i++)        
-            pow_base_len = (pow_base_len * base) % mod;                    
-            
-        for (int i=0; i<S.size(); i++)
-        {
-            hash = (hash * base + (S[i]-'a')) % mod;
-            if (i>=len)            
-                hash = (hash - pow_base_len*(S[i-len]-'a') ) % mod;                            
-
-            if (i>=len-1)
-            {                
-                if (Set.find(hash)!=Set.end())
-                {
-                    len2start[len] = i-len+1;
-                    return true;
-                }                
-                Set.insert(hash);
-            }          
-        }
-        return false;
-    }
-};
-::::::::::::::
-String/1044.Longest-Duplicate-Substring/1044.Longest-Duplicate-Substring_v2.cpp
-::::::::::::::
-typedef uint64_t ULL;
-class Solution {
-    unordered_map<int,int>len2start;
-public:
-    string longestDupSubstring(string S) 
-    {
-        int left = 1, right = S.size()-1;
-        while (left<right)
-        {
-            int mid = right - (right-left)/2;
-            if (found(S,mid))
-                left = mid;
-            else
-                right = mid - 1;
-        }
-        if (found(S, left))
-            return S.substr(len2start[left],left);
-        else
-            return "";        
-    }
-
-    bool found(string&S, int len)
-    {
-        unordered_set<ULL>Set;
-        ULL base = 31;
-        ULL hash = 0;
-
-        ULL pow_base_len = 1;
-        for (int i=0; i<len; i++)        
-            pow_base_len = pow_base_len * base;                    
-            
-        for (int i=0; i<S.size(); i++)
-        {
-            hash = hash * base + (S[i]-'a');                                     
-            
-            if (i>=len)            
-                hash = (hash - pow_base_len*(S[i-len]-'a') ) ;               
-
-            if (i>=len-1)
-            {                
-                if (Set.find(hash)!=Set.end())
-                {
-                    len2start[len] = i-len+1;
-                    return true;
-                }                
-                Set.insert(hash);
-            }          
-        }
-        return false;
-    }
-};
-::::::::::::::
-String/1044.Longest-Duplicate-Substring/Readme.md
-::::::::::::::
-### 1044.Longest-Duplicate-Substring
-
-本题就是```1062. Longest Repeating Substring```的follow up，不仅求repeating（也就是duplicate） substring的长度，并且要把这个substring打印出来。
-
-和1062完全一样，本题的high level的思想是二分搜索这样的substring长度。对于一个固定的len，如果能在S里找到两处相同的子串滑窗，那么我们就可以对len的值再往上调整；反之，我们就必须将len的估再往下调。
-
-于是本题转化为，如果快速在S里找到两处相同的、长度都是len的滑窗。比较直观的想法是对每一处滑窗组成的字符串都放入集合，如果看到集合中已经有一个相同的substring了，就意味着duplicate了。但是当len很大的时候，将字符串放入集合的内置hash化操作很耗时。于是rolling hash是比较常见的解决方案。
-
-Rolling hash的基本思想就是将abcd转化为26进制的0123.将一个数作为key放入集合很轻松。除此之外，对于abcdef这样的字符串，如果已经知道了[abcd]这个子串的hash key是0123，那么再求相邻的[bcde]的hash key 1234就非常高效，只需要将之前的key的最高位数字去掉(a对应的0)、左移一位、加上最低位数字(e对应的4）。用o(1)的时间就能完成。
-
-总结一下，rolling hash的思想，就是将两个字符串的比较，转化为hash化之后的两个26进制数的比较。但是当len很大时，这个数可能很大，我们通常不得不对一个大数取模再作为hash key。这样就会有两个不同的字符串，但是会对应同一个hash key（26进制数取模后的结果）。针对这种hash collision的情况，我们可以调整base和mod来规避。或者使用两套hash规则来生成两个key，那么不同字符串拥有两个相同key的概率就会大大降低。
-
-#### Update
-随着测试数据的增加，为了避免hash collision，base和mod的调参越来越困难。这里提供一个hack的方法。我们知道mod越大，就越能避免hash碰撞，所以可以试图将mod取到最大。最大是什么呢？就是```2^64```. 具体的做法是，将所有的数据结构改为uint64_t类型，并且取消所有的mod操作。uint64_t是无符号的数据类型，对于它的加减乘操作所造成的溢出，都自动等效为将结果```mod (2^64)```. 
-
-当然，OJ还是可以针对这个mod设计测试数据fail这个代码。
-::::::::::::::
-String/1062.Longest-Repeating-Substring/1062.Longest-Repeating-Substring_dp.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestRepeatingSubstring(string S) 
-    {
-        int n = S.size();
-        S = "#"+S;
-        auto dp = vector<vector<int>>(n+1,vector<int>(n+1,0));
-        int ret = 0;
-        
-        for (int i=1; i<=n; i++)
-            for (int j=1; j<=n; j++)
-                if (i!=j && S[i]==S[j])
-                {
-                    dp[i][j] = dp[i-1][j-1]+1;
-                    ret = max(ret, dp[i][j]);
-                }        
-        return ret;
-    }
-};
-::::::::::::::
-String/1062.Longest-Repeating-Substring/1062.Longest-Repeating-Substring_RollingHash.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestRepeatingSubstring(string S) 
-    {
-        int left = 1, right = S.size()-1;
-        while (left<right)
-        {
-            int mid = right-(right-left)/2;
-            if (found(S, mid))
-                left = mid;
-            else
-                right = mid-1;
-        }
-        if (found(S, left)) return left;
-        else return 0;
-    }
-    
-    bool found(string& S, int len)
-    {
-        long base = 26;
-        long mod = 1e9+7;
-        long hash = 0;
-        long pow_base_len = 1;
-        unordered_set<long>Set;
-        for (int i=0; i<len; i++)
-            pow_base_len = pow_base_len*base % mod;
-        
-        for (int i=0; i<S.size(); i++)
-        {
-            hash = (hash*base+S[i]-'a') % mod;
-            if (i>=len)
-                hash = (hash - pow_base_len*(S[i-len]-'a')%mod + mod)%mod;
-            
-            if (i>=len-1)
-            {
-                if (Set.find(hash)!=Set.end())
-                    return true;
-                Set.insert(hash);
-            }
-        }
-        return false;
-            
-    }
-};
-::::::::::::::
-String/1062.Longest-Repeating-Substring/Readme.md
-::::::::::::::
-### 1062.Longest-Repeating-Substring
-
-#### 解法1： DP
-此题和```1044.Longest-Duplicate-Substring```一模一样，唯一的区别是数据范围更小一些，因此可以用o(N^2)的DP算法。
-
-我们将S分别看做S1和S2，那么此题就变成求两个字符串的longest common substring. 我们令dp[i][j]表示以S1[i]结尾、S2[j]结尾的最长的字符串的长度。则有状态转移方程：
+string temp = s.substr(R);
+reverse(temp.begin(), temp.end());
+return temp+s;
 ```
-if (S[i]==S[j]) dp[i][j] = dp[i-1][j-1] + 1;
-```
-特别注意，还要加上限制条件```if (i!=j)```
 
-#### 解法2： Rolling Hash
-High Level是二分搜值，猜测这个longest repeating substring的长度是多少。如果我们找不到任何长度为len的substring在S中出现过多次，那么就往下猜len；否则就往上猜len。
+[Leetcode Link](https://leetcode.com/problems/shortest-palindrome)
 
-对于上述的子问题，我们会考虑一个固定长度len的滑窗，掠过整个S。在每个位置上的滑窗，我们都将里面的字符串映射成一个26进制的数，当做hash key放入集合中。如果发现这个key已经在集合中出现过，就意味着存在两个完全相同的子串。注意这个hash key会很大，所以需要取一个大数的模。当然，这肯定会有collision的风险。
-::::::::::::::
-String/1367.Linked-List-in-Binary-Tree/1367.Linked-List-in-Binary-Tree_KMP.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-    vector<int>suf;
-    vector<int>list;
-    int dp[2500];
-public:
-    bool isSubPath(ListNode* head, TreeNode* root) 
-    {
-        suf = preprocess(head);
-        return dfs(root, 0);
-    }
+$0
+endsnippet
 
-    bool dfs(TreeNode* node, int i)
-    {
-        if (node==NULL) return false;
-        
-        if (i==0)
-        {
-            dp[i] = (list[0] == node->val);            
-        }
-        else
-        {
-            int j = dp[i-1];
-            while (j>0 && list[j]!=node->val)
-                j = suf[j-1];
-            dp[i] = j + (list[j]==node->val);
-        }
-        
-        if (dp[i]==list.size()) 
-            return true;
-        else
-            return dfs(node->left, i+1) || dfs(node->right, i+1);
-    }
-
-
-    vector<int> preprocess(ListNode* head)
-    {
-        while (head!=NULL)
-        {
-            list.push_back(head->val);
-            head = head->next;
-        }
-        int n = list.size();
-        vector<int>dp(n);
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];
-            while (j>0 && list[j]!=list[i])
-                 j = dp[j-1];
-            dp[i] = j+(list[j]==list[i]);
-        }
-        return dp;
-    }
-};
-::::::::::::::
-String/1367.Linked-List-in-Binary-Tree/1367.Linked-List-in-Binary-Tree_recursion.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    bool isSubPath(ListNode* head, TreeNode* root) 
-    {
-        if (head==NULL) return true;
-        if (root==NULL) return false;
-
-        if (isSame(head, root))
-            return true;
-        else
-            return isSubPath(head,root->left)||isSubPath(head,root->right);
-    }
-
-    bool isSame(ListNode* head, TreeNode* root)
-    {
-        if (head==NULL) return true;
-        if (root==NULL) return false;
-
-        if (head->val != root->val)
-            return false;
-        return isSame(head->next, root->left)||isSame(head->next, root->right);
-    }
-};
-::::::::::::::
-String/1367.Linked-List-in-Binary-Tree/Readme.md
-::::::::::::::
-### 1367.Linked-List-in-Binary-Tree
-
-#### 解法1：递归
-此题的递归解法和```572.Subtree-of-Another-Tree```一样。对于当前的两个节点，考察```isSame(head,root)```，如果不成立的话就递归处理```isSubPath(head, root->left)||isSubPath(head, root->right)```
-
-#### 解法2：KMP
-对于任意一条从root到leaf的支链，我们都可以看做是一个序列，可以用KMP来高效地搜索head所代表的模式串。不同的支链之间，我们用DFS来切换。
-
-具体的做法是，定义全局变量dp[i]来表示从root开始的第i个（深度的）树节点、与linked list的“互相关后缀数组”，即dp[i]表示最大的长度k，使得截止第i个树节点（也就是某条路径的第i层）的后缀序列，恰好等于链表的前缀序列。我们注意到，对于树的不同的paths，如果它们共享一个深度为i的树节点，那么对它们而言，dp[i]都是一样的。而对于在不同分支的dp[i]，则彼此互不依赖。所以如果我们采用DFS，对于dp的更新不影响各条支路的搜索结果。
-
-我们设计```dfs(node, i)```来计算当前树节点是node、并且深度为i时的dp[i]。根据KMP的算法，我们知道dp[i]仅依赖于dp[i-1]和模式串的后缀数组。如果当前节点计算得到的dp[i]==linkedList.size()，那么返回true；否则探索```dfs(node->left, i+1) || dfs(node->right, i+1)```
-::::::::::::::
-String/1392.Longest-Happy-Prefix/1392.Longest-Happy-Prefix.cpp
-::::::::::::::
-class Solution {
-public:
-    string longestPrefix(string s) 
-    {
-        int n = s.size();
-        vector<int>dp(n);
-        dp[0] = 0;
-
-        for (int i=1; i<n; i++)
-        {
-            int j = dp[i-1];                       
-            while (j>=1 && s[j]!=s[i])
-            {
-                j = dp[j-1];
-            }          
-            dp[i] = j + (s[j]==s[i]);
-        }
-
-        int len = dp[n-1];
-        return s.substr(0, len);
-    }
-};
-::::::::::::::
-String/1392.Longest-Happy-Prefix/Readme.md
-::::::::::::::
-### 1392.Longest-Happy-Prefix
-
-这道题所求的东西其实就是KMP算法中的一个重要的预处理步骤，称为求后缀数组。
-
-我们令dp[i]表示该字符串最长的前缀字符串，使得其恰等于截止i位置的后缀字符串。即如果```dp[i]=j```,那么```s[0:j-1] = s[i-j+1:i]```.
-
-我们利用一下动态规划的思想，看看dp[i]能否从dp[i-1]的信息推演过来？我们令j=dp[i-1]，即查看截止i-1位置的最长后缀字符串，用星号表示（长度为j）：
-```
-* * * * * * * * * * * * * * * * *   X  ________________________________  * * * * * * * * * * * * * * * * *   Y
-                               j-1, j                                                                   i-1, i
-```
-如果在s[j]和s[j]这两处的字符相同（即X==Y），那么显然我们就说明dp[i]可以在之前长度j的后缀字符串上再延长一位，即dp[i] = j+1.
-
-如果在s[j]和s[j]这两处的字符相同不相同（即X!=Y），我们该如何寻找截止i位置的最长后缀字符串呢？我们把目光放到s[0:j-1]这段区间上来。我们类似的其实也有dp[j-1]，这段长度表示截止j-1位置时的最长后缀字符串，我们画出来看看：
-```
-+ + + + + Z ____________ + + + + +  X  ________________________________  _______________________ + + + + +   Y
-       j'-1                    j-1, j                                                                   i-1, i
-```                               
-我们令```j' = dp[j-1]```，那么有```s[0:j'-1] = s[j-j':j-1]```，同时我们这两段区间必然也和s[i-j':i-1]相同！此时我们就又有了希望，如果s[j']和s[i]这两处的字符相同（即Z==Y），那么我们就又有了一段截止i位置时的最长字符串（长度为j'）。
-
-当然，也有可能Z和Y匹配不成功，那么我们可以同理再考察截止j'-1位置的最长后缀字符串，它的长度应该是```j'' = dp[j'-1]```，然后再尝试考察s[j'']是否与s[i]相同...
-
-所以我们发现一个规律：对于dp[i]，我们先看长度为j=dp[i-1]的前缀字符串，是否能有s[j]==s[i]。不行，就再看长度为j'=dp[j'-1]的前缀字符串，是否能有s[j']==s[i]。不行就再看长度为j''=dp[j''-1]的前缀字符串，是否能有s[j'']==s[i]...直至最终停下来，得到一个最终可利用的前缀长度j，那么```dp[i] = j + (s[i]==s[j])```
-
-总结一下：
-```cpp
-for (int i=1; i<n; i++)
-{
-    // compute dp[i]
-    int j = dp[i-1];
-    while (j>0 && s[j]!=s[i])
-       j = dp[j-1];
-    dp[i] = j+(s[j]==s[i]);   
-}    
-```
-特别注意dp[0]=0（因为我们求的是最长“真前缀”），所以循环从index为1的元素开始。
-::::::::::::::
-String/1554.Strings-Differ-by-One-Character/1554.Strings-Differ-by-One-Character.cpp
-::::::::::::::
-typedef uint64_t ULL;
-class Solution {
-public:
-    bool differByOne(vector<string>& dict) 
-    {
-        ULL base = 26;
-        int n = dict.size();
-        int m = dict[0].size();
-        vector<ULL>hash(n);
-        for (int i=0; i<n; i++)
-        {
-            ULL h = 0;
-            for (auto ch: dict[i])            
-                h = h * base + (ch-'a');
-            hash[i] = h;
-        }
-        
-        ULL power = 1;
-        for (int j=m-1; j>=0; j--)
-        {                        
-            unordered_set<ULL>Set;
-            for (int i=0; i<n; i++)
-            {
-                ULL hash_new = hash[i] - (dict[i][j]-'a')*power;
-                if (Set.find(hash_new)!=Set.end())
-                    return true;
-                Set.insert(hash_new);
-            }            
-            
-            power *= base;
-        }
-        
-        return false;
-    }
-};
-::::::::::::::
-String/1554.Strings-Differ-by-One-Character/Readme.md
-::::::::::::::
-### 1554.Strings-Differ-by-One-Character
-
-考虑这个例子:{123,124,134,213}. 如何快速判断是否有两个数字只差别一个digit？
-
-比较简单的方法就是：抹去所有的个位数，查看剩下的数值{120,120,130,210}，将它们一次加入集合，就可以判断出是否有重复元素。如果没有发现，我们可以抹去十位数，得到的是{103,104,104,203}，同理可以判断是否有重复元素... 对于任何位置的digit，我们一旦发现抹去之后剩余的数值有重复，那么就意味着至少有一对数字只差别这一位digit。
-
-本题就是把上述思想扩展到字符串。用rolling hash的方法给每个字符串完整编码。然后逐位考察每一位的数字，将每个字符串的完整编码抹去那一位的编码，查看剩下的编码是否有重复即可。
-::::::::::::::
-String/1616.Split-Two-Strings-to-Make-Palindrome/1616.Split-Two-Strings-to-Make-Palindrome.cpp
-::::::::::::::
-class Solution {
-public:
-    bool checkPalindromeFormation(string a, string b) 
-    {
-        return check(a,b) || check(b,a);        
-    }
-    
-    bool check(string&a, string& b)
-    {
-        int i=0, j=b.size()-1;
-        while (i<j && a[i]==b[j])
-        {
-            i++;
-            j--;
-        }
-        if (i>=j) return true;
-        return isPalindrome(a.substr(i,j-i+1))||isPalindrome(b.substr(i,j-i+1));
-    }
-    
-    bool isPalindrome(string s)
-    {
-        int i=0, j = s.size()-1;
-        while (i<j && s[i]==s[j])
-        {
-            i++;
-            j--;
-        }
-        return i>=j;
-    }
-};
-::::::::::::::
-String/1616.Split-Two-Strings-to-Make-Palindrome/Readme.md
-::::::::::::::
-### 1616.Split-Two-Strings-to-Make-Palindrome
-
-本题的意思是，判断是否找到一个位置将两个字符串都截为两部分，使得A的前半部分和B的后半部分拼接起来能成为一个回文数。
-```
-A: XXX | XXXXX
-B: YYY | YYYYY
-```
-如果找不到的话，我们会把A和B对换，同样的目标我们再求一次。
-
-假设存在这样的一个位置，能够使得A的前半部分和B的后半部分拼接起来能成为一个回文数，那么意味着可以将这个截断位置对称翻转的话，
-```
-A: XXX | XX | XXX
-B: YYY | YY | YYY
-```
-A1和B3应该是回文对称的；A2或者B2本身就是一个回文串。如果A的第二部分是回文，那么A1+A2+B3就是一个回文串；如果B的第二部分是回文，那么A1+B2+B3就是一个回文串。
-
-反之，如果上面的条件都不成立，那么说明我们无法找到满足题意的“截断位置”。
-::::::::::::::
-String/1698.Number-of-Distinct-Substrings-in-a-String/1698.Number-of-Distinct-Substrings-in-a-String_v1.cpp
-::::::::::::::
-class Solution {
-    class TrieNode
-    {
-        public:
-        TrieNode* next[26];
-    };
-public:
-    int countDistinct(string s) 
-    {
-        TrieNode* root = new TrieNode();
-        int count = 0;
-        for (int i=0; i<s.size(); i++)
-        {
-            TrieNode* node = root;
-            for (int j=i; j<s.size(); j++)
-            {
-                if (node->next[s[j]-'a']==NULL)
-                {
-                    node->next[s[j]-'a'] = new TrieNode();
-                    count ++;
-                }
-                node = node->next[s[j]-'a'];
-            }            
-        }
-        return count;        
-    }
-};
-::::::::::::::
-String/1698.Number-of-Distinct-Substrings-in-a-String/1698.Number-of-Distinct-Substrings-in-a-String_v2.cpp
-::::::::::::::
-typedef uint64_t ULL;
-class Solution {
-public:
-    int countDistinct(string s) 
-    {
-        int n = s.size();
-        ULL base = 26;
-        int count = 0;
-        
-        for (int len = 1; len <=n; len++)
-        {            
-            ULL power = 1;
-            for (int i=0; i<len-1; i++)
-                power *= base;
-            
-            unordered_set<ULL>Set;
-            ULL hash = 0;            
-            for (int i=0; i<n; i++)
-            {                
-                if (i-len>=0)
-                    hash = hash - (s[i-len]-'a')*power;
-                hash = hash * base + (s[i]-'a');
-                if (i>=len-1)
-                    Set.insert(hash);
-            }
-            count += Set.size();
-        }
-        return count;        
-    }
-};
-::::::::::::::
-String/1698.Number-of-Distinct-Substrings-in-a-String/Readme.md
-::::::::::::::
-### 1698.Number-of-Distinct-Substrings-in-a-String
-
-这道题的暴力方法是枚举所有的substring，然后存储在集合里。虽然看上去时间复杂度是o(N^2)，但是对于长字符串的集合存储和查询的开销非常大，事实上不可以用o(1)时间来忽略。
-
-#### 解法1：Trie
-我们在考虑类似```axxxxaxxxxx```的字符串时，需要解决的一个问题是，以第二个a开头的子串```axxx```是否会和以第一个a开头的子串```axxx```重复。为了避免用字符串集合来暴力查询，我们可以用字典树。我们在处理第一个a时，就把以其为开头的substring存入一个trie（此时这个trie没有任何分支，应该是一条长链）。这样当我们处理以第二个a为开头的substring时，就从trie里顺着a这条分支往下走，如果有任何重合的部分，都不算distinct substring。直至当前的substring延伸到一定程度之后不再与Trie中的已有路径重合，我们就在Trie里继续往下开辟新的路径和节点。同时每开辟新的一层，就意味着多了一个distinct substring。
-
-这种做法的时间复杂度也是真o(N^2)，每个基本操作就是遍历或创建Trie节点。但是当大量开辟动态空间时，也会造成TLE。
-
-#### 解法2：Rolling Hash
-我们考虑固定长度len的滑窗，将滑窗范围内的字符串encode成一个数字放入集合里，就可以快速判断这个字符串是否之前出现过。编码的方法就是将这个字符串看成一个26进制的数，注意取模。窗口滑动的时候，针对老编码，用o(1)的时间加上新字符、减去老字符，就可以得到新的编码。
-
-#### 解法3：Suffix Tree
-后缀树（数组）可以得到o(N)的优秀解法，但是我不会。
-::::::::::::::
-String/1754.Largest-Merge-Of-Two-Strings/1754.Largest-Merge-Of-Two-Strings.cpp
-::::::::::::::
-class Solution {
-public:
-    string largestMerge(string word1, string word2) 
-    {
-        string ret;
-        int i=0, j=0;
-        while (i<word1.size() && j<word2.size())
-        {
-            if (word1.substr(i)>word2.substr(j))
-            {
-                ret.push_back(word1[i]);
-                i++;
-            }
-            else
-            {
-                ret.push_back(word2[j]);
-                j++;
-            }
-        }
-        while (i<word1.size())
-        {
-            ret.push_back(word1[i]);
-            i++;
-        }
-        while (j<word2.size())
-        {
-            ret.push_back(word2[j]);
-            j++;
-        }
-        return ret;
-    }
-};
-::::::::::::::
-String/1754.Largest-Merge-Of-Two-Strings/Readme.md
-::::::::::::::
-### 1754,Largest-Merge-Of-Two-Strings
-
-如果word1和Word2的首字母不同，那么我们显然会优先选择首字母更大的那个。那么如果word1和word2的首字母相同呢？这里有个巧妙的贪心策略，就是将两个字符串各自扔掉首字母，查看剩下的字符串谁大？对于剩下字符串字典序较大的那个字符串，我们在本轮优先选取它的首字母。这是因为这样做可以让它后面更大的字符优先暴露出来。
-
-以上的做法可以合并成一个策略：查看当前两个字符串谁的字典序更大，就优先取谁的首字母。
-
-这样的做法的时间复杂度是o(N^2)。也有更复杂的线性时间的做法，就不做要求了。
-::::::::::::::
-String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array_BruteForce.cpp
-::::::::::::::
-class Solution {
-public:
-    bool canChoose(vector<vector<int>>& groups, vector<int>& nums) 
-    {
-        int cur = 0;
-        for (int i=0; i<groups.size(); i++)
-        {
-            if (cur>=nums.size()) return false;
-            cur = find(nums, cur, groups[i]);
-            if (cur==-1) return false;
-            cur += groups[i].size();
-        }
-        return true;
-    }
-
-    int find(vector<int>&nums, int cur, vector<int>&g)
-    {
-        for (int i=cur; i<nums.size(); i++)
-        {
-            int flag = 1;
-            for (int j=0; j<g.size(); j++)
-                if (cur+j>=nums.size() || nums[i+j]!=g[j])
-                {
-                    flag = 0;
-                    break;
-                }
-            if (flag) return i;
-        }
-        return -1;
-    }
-};
-::::::::::::::
-String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array_KMP.cpp
-::::::::::::::
-class Solution {
-    int dp[1000];
-
-public:
-    bool canChoose(vector<vector<int>>& groups, vector<int>& nums) 
-    {
-        vector<vector<int>>lsps = preprocess(groups);
-        int cur = 0;
-        for (int i=0; i<groups.size(); i++)
-        {
-            if (cur>=nums.size()) return false;
-            cur = find(nums, cur, groups[i], lsps[i]);            
-            if (cur == -1) return false;
-            cur += groups[i].size();            
-        }
-        return true;
-    }
-
-    int find(vector<int>&nums, int cur, vector<int>&p, vector<int>&lsp)
-    {
-        int n = nums.size();
-        dp[cur] = (p[0]==nums[cur]);
-        if (lsp.size()==1 && dp[cur]==1)
-            return cur;
-        for (int i=cur+1; i<n; i++)
-        {
-            int j = dp[i-1];
-            while (j>0 && p[j]!=nums[i])
-                j = lsp[j-1];
-            dp[i] = j + (p[j]==nums[i]);
-            if (dp[i] == p.size())
-                return i-p.size()+1;
-        }
-        return -1;
-    }
-
-    vector<vector<int>> preprocess(vector<vector<int>>& groups)
-    {
-        vector<vector<int>> rets;
-        for (auto &g: groups)
-        {
-            int n = g.size();
-            vector<int>dp(n);
-            dp[0] = 0;
-            for (int i=1; i<n; i++)
-            {
-                int j = dp[i-1];
-                while (j>0 && g[j]!=g[i])
-                    j = dp[j-1];
-                dp[i] = j + (g[j]==g[i]);
-            }
-            rets.push_back(dp);
-        }
-        return rets;
-    }
-
-};
-::::::::::::::
-String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/Readme.md
-::::::::::::::
-### 1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array
-
-#### 解法1：暴力
-在长度为m的目标串里寻找长度为n的模式串，暴力法需要o(mn)的时间复杂度。如果要寻找k个模式串，总共需要o(mnk)的时间。本题中m<10^3，且有nk<10^3，所以暴力法是可以接受的。
-
-#### 解法2：KMP
-我们可以用KMP的方法，将单词寻找模式串的长度减少为o(m+n)，从而降低复杂度。
-
-与KMP的模板题类似，我们要对每一个模式串p预处理得到它的“自相关最长前后缀数组”lsp。略微不同的是，我们在每次进行s和p的匹配时，需要在目标串s中指定一个起始位置cur。这样每一个回合，s和p的互相关最长前后缀数组的计算只需要从cur开始。如果能够找到匹配的起始位置i，那么下一个回合的起始位置就从cur = i+p.size()开始寻找。
-::::::::::::::
-String/1849.Splitting-a-String-Into-Descending-Consecutive-Values/1849.Splitting-a-String-Into-Descending-Consecutive-Values.cpp
-::::::::::::::
-typedef long long ll;
-class Solution {
-public:
-    bool splitString(string s) 
-    {        
-        for (int len=1; len < s.size(); len++)
-        {
-            ll num = stoll(s.substr(0, len));
-            if (num >= 1e10) break;
-            if (dfs(s, len, num))
-                return true;
-        }
-        return false;
-    }
-    
-    bool dfs(string&s, int cur, ll num)
-    {
-        if (cur==s.size()) return true;
-        
-        for (int len = 1; len + cur <= s.size(); len++)                
-        {
-            ll num2 = stoll(s.substr(cur, len));
-            if (num2 >= 1e10) break;            
-            if (num-1 == num2 && dfs(s, cur+len, num2))
-                return true;                
-        }
-        return false;
-    }
-};
-::::::::::::::
-String/1849.Splitting-a-String-Into-Descending-Consecutive-Values/Readme.md
-::::::::::::::
-### 1849.Splitting-a-String-Into-Descending-Consecutive-Values
-
-我们只要确定了第一段区间，也就确定了第一个数字num。那么我们就要寻找第二个区间的范围能够表达数字num-1. 如果找到的话，就递归寻找下一个区间范围使得能够表达数字num-2 .... 直到最后一个区间结束时恰好是字符串的终点。
-
-注意可以探索的区间很长，比如你尝试第一个区间长度达到19时，极有可能长整形也会溢出，C++的stoll会报错。我们注意到，尝试的第一个数字不可能非常大，假设它的数值大于1e10，即有11位数字，那么第二个数字必然也至少有10位数字，总的长度就会超过原始字符串20的限制。所以我们用逐位累加的方法来计算num（而不是用stoll），当发现num>1e10时就可以终止更大的区间尝试了。
-::::::::::::::
-String/1923.Longest-Common-Subpath/1923.Longest-Common-Subpath.cpp
-::::::::::::::
-typedef uint64_t ULL;
-class Solution {
-    ULL base = 1e5+7;
-public:
-    int longestCommonSubpath(int n, vector<vector<int>>& paths) 
-    {       
-        int left = 0, right = 100000;
-        while (left < right)
-        {
-            int mid = right-(right-left)/2;
-            if (checkOK(paths, mid))
-                left = mid;
-            else
-                right = mid-1;
-        }
-        return left;
-    }
-
-    bool checkOK(vector<vector<int>>& paths, int len)
-    {
-
-        ULL head = 1;
-        for (int i = 0; i < len-1; i++)
-            head = head * base;
-        
-        ULL hash = 0;
-        unordered_set<ULL>HashSet;
-        unordered_map<ULL,int>HashCount;        
-
-        for (int k = 0; k < paths.size(); k++)
-        {
-            ULL hash = 0;
-            unordered_set<ULL>HashSet;
-            for (int i=0; i<paths[k].size(); i++)
-            {
-                if (i>=len)
-                    hash -= paths[k][i-len] * head;
-                hash = hash * base + paths[k][i];
-                if (i>=len-1 && HashSet.find(hash)==HashSet.end())
-                {
-                    HashSet.insert(hash);
-                    HashCount[hash] += 1;
-                }
-            }
-        }
-
-        for (auto x: HashCount)
-        {
-            if (x.second >= paths.size())
-                return true;
-        }
-        return false;
-    }
-};
-::::::::::::::
-String/1923.Longest-Common-Subpath/1923.Longest-Common-Subpath_v2.cpp
-::::::::::::::
-typedef uint64_t ULL;
-typedef pair<ULL,ULL> PULL;
-class Solution {
-    ULL base1 = 1e5;
-    ULL base2 = 1e5+7;
-public:
-    int longestCommonSubpath(int n, vector<vector<int>>& paths) 
-    {
-        int left = 0, right = 100000;
-        while (left < right)
-        {
-            int k = right-(right-left)/2;
-            if (checkOK(paths, k))   // if there is a common subarray of length k 
-                left = k;
-            else
-                right = k-1;                
-        }
-        return left;
-    }
-    
-    bool checkOK(vector<vector<int>>& paths, int len)
-    {        
-        map<PULL, int>HashCount;
-        
-        ULL head1 = 1;
-        ULL head2 = 1;
-        for (int i=0; i<len-1; i++)
-        {
-            head1 = head1 * base1;
-            head2 = head2 * base2;
-        }
-            
-        
-        for (int k=0; k<paths.size(); k++)
-        {
-            set<PULL>HashSet;
-            ULL hash1 = 0;
-            ULL hash2 = 0;
-            
-            for (int i=0; i<paths[k].size(); i++)
-            {
-                if (i>=len)
-                {
-                    hash1 -= paths[k][i-len] * head1;
-                    hash2 -= paths[k][i-len] * head2;
-                }
-                    
-                hash1 = hash1 * base1 + paths[k][i];
-                hash2 = hash2 * base2 + paths[k][i];
-                
-                if (i>=len-1 && HashSet.find({hash1,hash2})==HashSet.end())
-                {
-                    HashSet.insert({hash1,hash2});
-                    HashCount[{hash1,hash2}]++;
-                }                    
-            }            
-        }
-        
-        for (auto x: HashCount)
-        {
-            if (x.second == paths.size())
-                return true;
-        }
-        return false;        
-    }
-};
-::::::::::::::
-String/1923.Longest-Common-Subpath/Readme.md
-::::::::::::::
-### 1923.Longest-Common-Subpath
-
-本题的正解是用“后缀数组”的高级数据结构，但是过于复杂，这里只讲比较容易理解的rolling hash的解法。
-
-本题和```1062. Longest Repeating Substring```的做法很类似。High-level的思想是二分搜索这样的common subarray的长度len。对于一个固定的长度len，我们看所有的数组里是否存在完全相同、长度为len的subarray。如果存在，那么len还可以往大调整，这是因为len越大，所有数组存在一个相同的公共子串的概率就越低；否则len就需要往小调整。
-
-那么如何寻找长度为k的公共子串呢？可以将所有长度为k的子串都扔进一个hash map里，统计它们出现的频次。如果某个子串出现了m次（但是在每个数组里只能最多被统计一次），那么说明它就是所有数组的公共子串了。但是直接将子串（即subarray）直接作为key是不实际的，因为这个子串可能会很长，时间和空间的消耗都很大。可行的解法是将子串进行“编码”。因为每个数字不超过1e5，所以我们将这个长度为k的子串，看做是含有k个digit、每个digiit是1e5进制的“数”。可以想见，这样的“数”和原始的子串必然是一一对应的。相比于拿子串（子数组）作为key，用“数”作为key更高效。
-
-问题是这样的“数”会非常大，远远超过了数据结构能够支持的溢出范围。一般的处理方法是，在编码的过程中时刻对一个大质数mod取模，比如1e9+7. 但是这样就有hash碰撞的危险，即有若干个不同的子串对应同一个编码。显然，mod越大，冲突的概率越小。本题中一个数组的子串的数目可能有1e5个，一般要求mod大于(1e5)^2才能有效降低冲突的概率。这里介绍一个hack的技巧，那就是我们可以将mod取到C++的最大，也就是2^64. 具体的方法是将所有的数字都设置为uint64_t类型，并且取消所有取模的操作。无符号类型的一个特点就是，任何加减乘操作造成溢出的话，自动实现的是wrap-up，也就是相当于对2^64取模。因为2^64=1.8e19，这就显著减小了hash冲撞的概率，并且使得代码更简洁。
-
-#### Update
-新的测试数据又针对了上面的做法，现在无法AC了。我们只好采用双hash作为key（暂时还不需要改mod）。参见v2的代码。
-::::::::::::::
-String/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings.cpp
-::::::::::::::
-class Solution {
-public:
-    long long maxProduct(string s) 
-    {
-        int n = s.size();
-        int maxRight = -1;
-        int maxCenter = -1;
-        vector<int>P(n);
-        for (int i=0; i<n; i++)
-        {
-            int r;
-            int j = maxCenter*2-i;
-            if (i<=maxRight)
-                r = min(P[j], maxRight-i);
-            else
-                r = 0;
-            while (i-r>=0 && i+r<n && s[i-r]==s[i+r])
-                r++;
-            P[i] = r-1;
-            if (i+P[i] > maxRight)
-            {
-                maxRight = i+P[i];
-                maxCenter = i;
-            }
-        }
-                                
-        
-        vector<int>left(n, 0);        
-        left[0] = 1;
-        int j = 0;
-        for (int i=1; i<n; i++)
-        {
-            while (j<n && j+P[j] < i)
-                j++;
-            left[i] = max(left[i-1], (i-j)*2+1);
-        }
-        
-        vector<int>right(n, 0);        
-        right[n-1] = 1;
-        j = n-1;
-        for (int i=n-2; i>=0; i--)
-        {
-            while (j>=0 && j-P[j] > i)
-                j--;            
-            right[i] = max(right[i+1], (j-i)*2+1);
-        }
-            
-        long long ret = 0;
-        for (int i=0; i<n-1; i++)
-            ret = max(ret, (long long)left[i] * (long long)right[i+1]);
-            
-        return ret;        
-    }
-};
-::::::::::::::
-String/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings/Readme.md
-::::::::::::::
-### 1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings
-
-此题的第一部分是Manacher算法，用o(N)的时间计算所有回文串的长度（考虑每个字符作为回文串的中心）。具体的算法参见```LC 005.Longest-Palindromic-Substring```.
-
-Manacher算法的输出是数组P[i]，表示以i为中心，可以构造最长长度为```P[i]*2+1```的回文串。注意，这个回文串的长度必然是奇数。
-
-单本题接下来的部分也很关键。我们如何遍历两个互不相交的回文串。一个比较自然的想法就是用前缀、后缀数组。令left[i]表示s[0:i]里的最长回文串长度、right[i]表示s[i:n-1]里的最长回文串长度，那么最终答案就是遍历i寻找最大的```left[i]*right[i+1]```即可。
-
-现在来想left[i]怎么求。显然left[i]必然会继承于left[i-1]. 其次我们还要考虑那些包括了s[i]的回文串。所以我们其实要找的是最小的位置j，使得以j为中心的回文串能覆盖到i。这样以j为中心、长度为```(i-j)*2+1```的字符串是left[i]所没有覆盖到的、最长的一个回文串。这个j怎么找呢？我们其实只要从小到大顺着过一遍，当恰好```j+P[j]>=i```时停下来即可。此外我们还发现，当我们从小到大考察i时，j的考察方向也是单调递增的。所以意味着我们用o(N)的时间就可以把left[i]数组求出来。
-
-类似地我们可以求出right[i]和最终的答案。
-::::::::::::::
-String/214.Shortest-Palindrome/214.Shortest-Palindrome.cpp
-::::::::::::::
+# ==> ./String/0214.Shortest-Palindrome/214.Shortest-Palindrome.cpp <==
+snippet 0214.Shortest-Palindrome "0214.Shortest-Palindrome" b
 class Solution {
 public:
     string shortestPalindrome(string s) 
@@ -1398,9 +454,12 @@ public:
         
     }
 };
-::::::::::::::
-String/214.Shortest-Palindrome/214.Shortest-Palindrome_KMP.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0214.Shortest-Palindrome/214.Shortest-Palindrome_KMP.cpp <==
+snippet 0214.Shortest-Palindrome "0214.Shortest-Palindrome" b
 class Solution {
 public:
     string shortestPalindrome(string s) 
@@ -1448,9 +507,12 @@ public:
         return dp;
     }
 };
-::::::::::::::
-String/214.Shortest-Palindrome/214.Shortest-Palindrome_Manacher.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0214.Shortest-Palindrome/214.Shortest-Palindrome_Manacher.cpp <==
+snippet 0214.Shortest-Palindrome "0214.Shortest-Palindrome" b
 class Solution {
 public:
     string shortestPalindrome(string s) 
@@ -1497,135 +559,23 @@ public:
         
     }
 };
-::::::::::::::
-String/214.Shortest-Palindrome/Readme.md
-::::::::::::::
-### 214.Shortest-Palindrome
 
-#### 解法1：KMP
-此题的解法非常巧妙.首先,题意是试图将s分解为```s=A'AB```的形式,其中A'是A的逆序,求使得A'A最长的分解方式.
+$0
+endsnippet
 
-如果我们将s整体逆序写成r,那么```r=B'A'A```.可以发现s的前段和r的后端恰好都是```A'A```.此外,反过来考虑,已知r是s的逆序,并且r的尾端等于s的首端,那么这段相同的字符串一定是个palindrome,即A'A的形式.
+# ==> ./String/0320.Generalized-Abbreviation/Readme.md <==
+snippet 0320.Generalized-Abbreviation "0320.Generalized-Abbreviation" b
+### 320.Generalized-Abbreviation
 
-有了以上两点证明,那么我们就只要找到最大的```i```,使得```s[0:i]==r[len(r)-i:]```，即在r中找到最长的后缀，使得其等于s的前缀。实现这个可以有两种方法：1. 暴力尝试这个长度。2. 类似KMP中求后缀数组的方法，计算数组r的suf[i]，即r中截止位置i的最长后缀字符串使得恰好是s的前缀字符串。
+本题需要穷举所有的可能，可以考虑DFS用递归处理。但是因为本题不需要剪枝，并且每个位置上的字符都有且只有两种可能：要么被缩略，要么不被缩略。所以用bitmask来实现穷举写起来更方便。
 
-最终suf[n-1]就是A'A的最大长度。因此B = s.substr(len). 返回的答案就是ret = B'+s.
+我们遍历```00..0```到```11..1```的所有n位二进制状态。如果某位上是1，那么对应位置的字符就保留。如果某位上是0，那么对应位置上的字符就要被缩略：具体所谓的方法就是查看周围是否有连续的0，将这些连续0的数目改写成数字串即可。
 
-### 解法2：Manacher
-本题的本质就是在s中找一个最长的、起点在左端点的回文串。然后将s除去回文串的后端复制、翻转并拼接在原s串的前端，就是最优的答案。
+$0
+endsnippet
 
-所以此题的本质就是Manacher的模板题```005.Longest-Palindromic-Substring```，求出每个位置作为中心能够构造的最长回文串，查看这个回文串是否能抵达s的最左端，是的话就记录下这个回文串的长度L。输出的答案是：
-```cpp
-string temp = s.substr(R);
-reverse(temp.begin(), temp.end());
-return temp+s;
-```
-
-[Leetcode Link](https://leetcode.com/problems/shortest-palindrome)
-::::::::::::::
-String/2156.Find-Substring-With-Given-Hash-Value/2156.Find-Substring-With-Given-Hash-Value.cpp
-::::::::::::::
-using LL = long long;
-class Solution {
-public:
-    string subStrHash(string s, int power, int modulo, int k, int hashValue) 
-    {
-        int n = s.size();
-        LL sum = 0, M = modulo;
-        
-        LL pk = 1;
-        for (int i=0; i<k-1; i++)
-            pk = pk*power%M;                
-        
-        int ret = -1;
-        for (int i=n-1; i>=0; i--)
-        {            
-            if (i+k<n)
-            {
-                sum = sum - (s[i+k]-'a'+1) * pk % M;
-                sum = (sum + M) % M;
-            }
-            
-            sum = (sum * power % M + s[i]-'a'+1) % M;
-            sum = (sum + M) % M;
-            
-            if (i+k<=n && sum==hashValue)
-                ret = i;
-        }
-        
-        return s.substr(ret, k);
-    }
-};
-::::::::::::::
-String/2156.Find-Substring-With-Given-Hash-Value/Readme.md
-::::::::::::::
-### 2156.Find-Substring-With-Given-Hash-Value
-
-这是一道Rolling Hash的裸题，就是将一个字符串转化为26进制的整数。注意到Hash的高位在右边，所以我们需要从右往左进行滑窗滚定。
-
-每个回合里，先砍掉原先的最高位乘以26^(k-1)，然后整体乘上26，再加上新引入的最低位。
-
-由于涉及到减法，可能会产生负数，所以每次取模时采用```(x+M)%M```的方式更为稳妥。
-::::::::::::::
-String/2168.Unique-Substrings-With-Equal-Digit-Frequency/2168.Unique-Substrings-With-Equal-Digit-Frequency.cpp
-::::::::::::::
-using LL = long long;
-LL M = 1e9+7;
-class Solution {
-public:
-    int equalDigitFrequency(string s) 
-    {
-        vector<int>count(10);
-        unordered_set<LL>Set;
-        
-        int n = s.size();
-        for (int i=0; i<n; i++)
-        {
-            count.assign(10, -1);
-            LL hash = 0;
-            
-            for (int j=i; j<n; j++)
-            {
-                hash = hash*11+(s[j]-'0'+1);
-                hash = hash%M;
-                
-                count[s[j]-'0']++;
-                
-                int freq = -1;
-                int flag = 1;
-                for (int k=0; k<10; k++)
-                {
-                    if (count[k]==-1) continue;
-                    if (freq==-1)
-                        freq = count[k];
-                    else if (freq!=count[k])
-                    {
-                        flag = 0;
-                        break;                        
-                    }                        
-                }                
-                if (flag) Set.insert(hash);
-            }
-        }
-        
-        return Set.size();
-    }
-};
-::::::::::::::
-String/2168.Unique-Substrings-With-Equal-Digit-Frequency/Readme.md
-::::::::::::::
-### 2168.Unique-Substrings-With-Equal-Digit-Frequency
-
-从此题的数目局规模上来看，用N^2的时间来遍历所有的substring、并且判断是否符合要求是可行的。但比较难办的是如何判断这些子串是否是unique。因为N^2个字符串会占用N^3的空间，我们无法直接存下所有字符串再去重。
-
-对于判定字符串重复，我们有固定的套路，那就是rolling hash，可以将任意长度的字符串编码为一个整数来存储。本题中需要注意的是，为了避免将"012"和"12"都哈希成同一个编码，我们可以将十进制的编码规则改为十一进制，这样字符0也会被编码。即
-```cpp
-for (int j=i; j<n; j++)
-  hash = hash * 11 + (s[j]-'a'+1);
-```
-::::::::::::::
-String/320.Generalized-Abbreviation/320.Generalized-Abbreviation.cpp
-::::::::::::::
+# ==> ./String/0320.Generalized-Abbreviation/320.Generalized-Abbreviation.cpp <==
+snippet 0320.Generalized-Abbreviation "0320.Generalized-Abbreviation" b
 class Solution {
 public:
     vector<string> generateAbbreviations(string word) 
@@ -1655,17 +605,67 @@ public:
         return rets;
     }
 };
-::::::::::::::
-String/320.Generalized-Abbreviation/Readme.md
-::::::::::::::
-### 320.Generalized-Abbreviation
 
-本题需要穷举所有的可能，可以考虑DFS用递归处理。但是因为本题不需要剪枝，并且每个位置上的字符都有且只有两种可能：要么被缩略，要么不被缩略。所以用bitmask来实现穷举写起来更方便。
+$0
+endsnippet
 
-我们遍历```00..0```到```11..1```的所有n位二进制状态。如果某位上是1，那么对应位置的字符就保留。如果某位上是0，那么对应位置上的字符就要被缩略：具体所谓的方法就是查看周围是否有连续的0，将这些连续0的数目改写成数字串即可。
-::::::::::::::
-String/336.Palindrome-Pairs/336.Palindrome Pairs.cpp
-::::::::::::::
+# ==> ./String/0336.Palindrome-Pairs/Readme.md <==
+snippet 0336.Palindrome-Pairs "0336.Palindrome-Pairs" b
+### 336.Palindrome-Pairs
+
+最直观的想法是将数组里的字符串两两比较，o(n^2)的时间复杂度，每次比较需要遍历两个字符串拼接后的全部长度，所以会超时。
+
+AC的解法是构建一个集合，遍历字符串数组的过程中，将每个字符串与集合中已有的字符串进行考察，看是否有符合条件的配对。
+
+首先，将字符串数组按照字符串长度从小到大排列：
+```cpp
+    static bool cmp(string a, string b)
+    {
+        return (a.size()<b.size());
+    }
+
+    sort(words.begin(),words.end(),cmp);
+```
+在遍历的过程中，假设string t=words[i];    
+遍历t的长度，将t拆分为两部分s1和s2. 注意这样的拆分，可以使s1从空字符串一直变化到t。
+
+考虑两种情况是符合要求的：   
+1.s1的反序已经在集合中，并且s2本身就是回文，这样s1s2s1'构成回文；    
+2.s2的反序已经在集合中，并且s1本身就是回文，这样s2's1s2构成回文。
+
+然后就可以把t添加到集合中，考察下一个t。   
+```cpp
+        for (int i=0; i<words.size(); i++)
+        {
+            string t=words[i];
+
+            for (int k=0; k<=t.size(); k++)
+            {
+                string s1=t.substr(0,k);
+                reverse(s1.begin(),s1.end());
+                string s2=t.substr(k,t.size()-k);
+                if (Set.find(s1)!=Set.end() && palindrome(s2))
+                    result.push_back({Map[t],Map[s1]});
+                    
+                s1=t.substr(0,k);
+                s2=t.substr(k,t.size()-k);
+                reverse(s2.begin(),s2.end());                
+                if (Set.find(s2)!=Set.end() && palindrome(s1))
+                    result.push_back({Map[s2],Map[t]});
+                    
+            }
+            
+            Set.insert(t);
+        }
+```
+
+
+[Leetcode Link](https://leetcode.com/problems/palindrome-pairs)
+$0
+endsnippet
+
+# ==> ./String/0336.Palindrome-Pairs/336.Palindrome Pairs.cpp <==
+snippet 0336.Palindrome-Pairs "0336.Palindrome-Pairs" b
 class Solution {
 public:
     static bool cmp(string a, string b)
@@ -1724,9 +724,12 @@ public:
         return true;
     }
 };
-::::::::::::::
-String/336.Palindrome-Pairs/336.Palindrome-Pairs_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0336.Palindrome-Pairs/336.Palindrome-Pairs_v2.cpp <==
+snippet 0336.Palindrome-Pairs "0336.Palindrome-Pairs" b
 class Solution {
     static bool cmp(string a,string b)
     {
@@ -1780,61 +783,27 @@ public:
         return true;
     }    
 };
-::::::::::::::
-String/336.Palindrome-Pairs/Readme.md
-::::::::::::::
-### 336.Palindrome-Pairs
 
-最直观的想法是将数组里的字符串两两比较，o(n^2)的时间复杂度，每次比较需要遍历两个字符串拼接后的全部长度，所以会超时。
+$0
+endsnippet
 
-AC的解法是构建一个集合，遍历字符串数组的过程中，将每个字符串与集合中已有的字符串进行考察，看是否有符合条件的配对。
+# ==> ./String/0388.Longest-Absolute-File-Path/Readme.md <==
+snippet 0388.Longest-Absolute-File-Path "0388.Longest-Absolute-File-Path" b
+### 388.Longest-Absolute-File-Path
 
-首先，将字符串数组按照字符串长度从小到大排列：
-```cpp
-    static bool cmp(string a, string b)
-    {
-        return (a.size()<b.size());
-    }
+特别注意：'\n'，'\t' 这种转义字符被认为是一个字符！
 
-    sort(words.begin(),words.end(),cmp);
-```
-在遍历的过程中，假设string t=words[i];    
-遍历t的长度，将t拆分为两部分s1和s2. 注意这样的拆分，可以使s1从空字符串一直变化到t。
+首先，根据'\n'将字符串拆分。然后，根据每个子字串前的'\t'的数目来确定它是第几级的。设置一个vector<vector<string>>dirs，比如第三级的字串就加入dirs[3]里面。
 
-考虑两种情况是符合要求的：   
-1.s1的反序已经在集合中，并且s2本身就是回文，这样s1s2s1'构成回文；    
-2.s2的反序已经在集合中，并且s1本身就是回文，这样s2's1s2构成回文。
-
-然后就可以把t添加到集合中，考察下一个t。   
-```cpp
-        for (int i=0; i<words.size(); i++)
-        {
-            string t=words[i];
-
-            for (int k=0; k<=t.size(); k++)
-            {
-                string s1=t.substr(0,k);
-                reverse(s1.begin(),s1.end());
-                string s2=t.substr(k,t.size()-k);
-                if (Set.find(s1)!=Set.end() && palindrome(s2))
-                    result.push_back({Map[t],Map[s1]});
-                    
-                s1=t.substr(0,k);
-                s2=t.substr(k,t.size()-k);
-                reverse(s2.begin(),s2.end());                
-                if (Set.find(s2)!=Set.end() && palindrome(s1))
-                    result.push_back({Map[s2],Map[t]});
-                    
-            }
-            
-            Set.insert(t);
-        }
-```
+如果遇到一个字串表示的是文件名，则往前推其第i级的目录名，就对应了dirs[i]里面的最后一个字串。
 
 
-[Leetcode Link](https://leetcode.com/problems/palindrome-pairs)::::::::::::::
-String/388.Longest-Absolute-File-Path/388.Longest-Absolute-File-Path.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/longest-absolute-file-path)
+$0
+endsnippet
+
+# ==> ./String/0388.Longest-Absolute-File-Path/388.Longest-Absolute-File-Path.cpp <==
+snippet 0388.Longest-Absolute-File-Path "0388.Longest-Absolute-File-Path" b
 class Solution {
 public:
     int lengthLongestPath(string input) 
@@ -1875,21 +844,28 @@ public:
         
     }
 };
-::::::::::::::
-String/388.Longest-Absolute-File-Path/Readme.md
-::::::::::::::
-### 388.Longest-Absolute-File-Path
 
-特别注意：'\n'，'\t' 这种转义字符被认为是一个字符！
+$0
+endsnippet
 
-首先，根据'\n'将字符串拆分。然后，根据每个子字串前的'\t'的数目来确定它是第几级的。设置一个vector<vector<string>>dirs，比如第三级的字串就加入dirs[3]里面。
+# ==> ./String/0408.Valid-Word-Abbreviation/Readme.md <==
+snippet 0408.Valid-Word-Abbreviation "0408.Valid-Word-Abbreviation" b
+### 408.Valid-Word-Abbreviation
 
-如果遇到一个字串表示的是文件名，则往前推其第i级的目录名，就对应了dirs[i]里面的最后一个字串。
+典型的双指针。遍历一遍abbr，移动abbr的指针的同时，也相应地移动word的指针，看看每一步都是否对应。具体地说，就是abbr的字母和word字母对应，abbr的数字和word里相同数目的字母对应。
+
+需要注意的细节：
+1. 数字不能有前导0. 比如word=ab, abbr=02就应该输出false.
+2. abbr遍历完之后，word的遍历也应该恰好结束。即if (i!=word.size()) return false;
 
 
-[Leetcode Link](https://leetcode.com/problems/longest-absolute-file-path)::::::::::::::
-String/408.Valid-Word-Abbreviation/408.Valid Word Abbreviation.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/valid-word-abbreviation)
+
+$0
+endsnippet
+
+# ==> ./String/0408.Valid-Word-Abbreviation/408.Valid Word Abbreviation.cpp <==
+snippet 0408.Valid-Word-Abbreviation "0408.Valid-Word-Abbreviation" b
 class Solution {
 public:
     bool validWordAbbreviation(string word, string abbr) 
@@ -1932,22 +908,31 @@ public:
         
     }
 };
-::::::::::::::
-String/408.Valid-Word-Abbreviation/Readme.md
-::::::::::::::
-### 408.Valid-Word-Abbreviation
 
-典型的双指针。遍历一遍abbr，移动abbr的指针的同时，也相应地移动word的指针，看看每一步都是否对应。具体地说，就是abbr的字母和word字母对应，abbr的数字和word里相同数目的字母对应。
+$0
+endsnippet
 
-需要注意的细节：
-1. 数字不能有前导0. 比如word=ab, abbr=02就应该输出false.
-2. abbr遍历完之后，word的遍历也应该恰好结束。即if (i!=word.size()) return false;
+# ==> ./String/0411.Minimum-Unique-Word-Abbreviation/Readme.md <==
+snippet 0411.Minimum-Unique-Word-Abbreviation "0411.Minimum-Unique-Word-Abbreviation" b
+### 411.Minimum-Unique-Word-Abbreviation
 
+此题不需要遍历所有的字典里的单词的缩写形式．
 
-[Leetcode Link](https://leetcode.com/problems/valid-word-abbreviation)
-::::::::::::::
-String/411.Minimum-Unique-Word-Abbreviation/411.Minimum-Unique-Word-Abbreviation.cpp
-::::::::::::::
+首先，我们应该注意到，缩写不会改变长度，所以两个长度不同的单词，他们的任何形式的缩写都不可能相同。所以对于字典里的那些与target的长度不一致的单词，完全可以忽略。
+
+其次，targe的缩写方案有多少呢？不难判断，每一个字符只有两种选择：被缩写或者不被缩写。所以target的缩写形式只有2^m种可能。考虑到m是21，最多有2e6种缩写，是可以遍历过来的。对于无需剪枝的无脑遍历，使用bitmask来穷举所有缩写方式是最方便的，这与```LC 320.Generalized-Abbreviation```是一样的做法。当然，我们肯定先尝试长度短的缩写方法，再尝试长的缩写方法。所以需要将所有的缩写方法按照长度排序。
+
+最后，我们对于target的每一种缩写方式abbr，都要与字典里的每一个单词word进行匹配，看是否abbr是否也是word的一个缩写。这个算法和```LC 408.Valid-Word-Abbreviation```是一样的。
+
+所以总的时间复杂度是```o(2^m*n)```. 因为题目给出了m+log(n)<=21，所以```2^m*n<=2^21```，即时间复杂度是2e6级别，是可行的。
+
+[Leetcode Link](https://leetcode.com/problems/minimum-unique-word-abbreviation)
+
+$0
+endsnippet
+
+# ==> ./String/0411.Minimum-Unique-Word-Abbreviation/411.Minimum-Unique-Word-Abbreviation.cpp <==
+snippet 0411.Minimum-Unique-Word-Abbreviation "0411.Minimum-Unique-Word-Abbreviation" b
 class Solution {
     int m;
 public:
@@ -2029,25 +1014,39 @@ public:
         
     }
 };
-::::::::::::::
-String/411.Minimum-Unique-Word-Abbreviation/Readme.md
-::::::::::::::
-### 411.Minimum-Unique-Word-Abbreviation
 
-此题不需要遍历所有的字典里的单词的缩写形式．
+$0
+endsnippet
 
-首先，我们应该注意到，缩写不会改变长度，所以两个长度不同的单词，他们的任何形式的缩写都不可能相同。所以对于字典里的那些与target的长度不一致的单词，完全可以忽略。
+# ==> ./String/0418.Sentence-Screen-Fitting/Readme.md <==
+snippet 0418.Sentence-Screen-Fitting "0418.Sentence-Screen-Fitting" b
+### 418.Sentence-Screen-Fitting
 
-其次，targe的缩写方案有多少呢？不难判断，每一个字符只有两种选择：被缩写或者不被缩写。所以target的缩写形式只有2^m种可能。考虑到m是21，最多有2e6种缩写，是可以遍历过来的。对于无需剪枝的无脑遍历，使用bitmask来穷举所有缩写方式是最方便的，这与```LC 320.Generalized-Abbreviation```是一样的做法。当然，我们肯定先尝试长度短的缩写方法，再尝试长的缩写方法。所以需要将所有的缩写方法按照长度排序。
+此题如果按照逐个单词去填充，那么如果单词长度都特别短的话，想要填充完rows x cols这么多位置就会TLE．本题更合理的方式是以cols的长度去处理。首先将sentence的所有单词用空格串联起来记做str：
+```cpp
+    for (auto str:sentence)
+        {
+            if (str.size()>cols) return 0;
+            s+= str+" ";
+        }   
+```      
+注意，这里可以提前处理不合法的例子．
 
-最后，我们对于target的每一种缩写方式abbr，都要与字典里的每一个单词word进行匹配，看是否abbr是否也是word的一个缩写。这个算法和```LC 408.Valid-Word-Abbreviation```是一样的。
+我们接下来的任务就是在一段```xxx xxx xx xxxx xx x xxxx ```里面试图以每cols的宽度去插板，要求板子只能插在空格里，不能分割任何单词本身。特别注意，最后我们特地留有一个空格，这是为了将前一个str与下一个str之间区分开来。
 
-所以总的时间复杂度是```o(2^m*n)```. 因为题目给出了m+log(n)<=21，所以```2^m*n<=2^21```，即时间复杂度是2e6级别，是可行的。
+具体的做法是，初始的指针index指向0，每处理一行，我们就把index+=cols，此时如果index落到了空格上，说明至此的所有字符都可以放在一个row里面，然后index指向空格后的第一个字符。如果没有落到空格上，说明某个单词没有写完就触碰了边界，这时候我们将index慢慢回退直至遇到了一个空格为止。
 
-[Leetcode Link](https://leetcode.com/problems/minimum-unique-word-abbreviation)
-::::::::::::::
-String/418.Sentence-Screen-Fitting/418.Sentence-Screen-Fitting.cpp
-::::::::::::::
+注意到指针wrap的情况，所以我们对于index的处理永远都是考虑它对str长度的取余。
+
+重复以上过程，当处理完rows行之后，看看此刻的index是str长度的多少倍，就说明能重复多少个字符串．
+
+[Leetcode Link](https://leetcode.com/problems/sentence-screen-fitting)
+
+$0
+endsnippet
+
+# ==> ./String/0418.Sentence-Screen-Fitting/418.Sentence-Screen-Fitting.cpp <==
+snippet 0418.Sentence-Screen-Fitting "0418.Sentence-Screen-Fitting" b
 class Solution {
 public:
     int wordsTyping(vector<string>& sentence, int rows, int cols) 
@@ -2072,33 +1071,38 @@ public:
         return i/len;
     }
 };
-::::::::::::::
-String/418.Sentence-Screen-Fitting/Readme.md
-::::::::::::::
-### 418.Sentence-Screen-Fitting
 
-此题如果按照逐个单词去填充，那么如果单词长度都特别短的话，想要填充完rows x cols这么多位置就会TLE．本题更合理的方式是以cols的长度去处理。首先将sentence的所有单词用空格串联起来记做str：
-```cpp
-    for (auto str:sentence)
-        {
-            if (str.size()>cols) return 0;
-            s+= str+" ";
-        }   
-```      
-注意，这里可以提前处理不合法的例子．
+$0
+endsnippet
 
-我们接下来的任务就是在一段```xxx xxx xx xxxx xx x xxxx ```里面试图以每cols的宽度去插板，要求板子只能插在空格里，不能分割任何单词本身。特别注意，最后我们特地留有一个空格，这是为了将前一个str与下一个str之间区分开来。
+# ==> ./String/0459.Repeated-Substring-Pattern/Readme.md <==
+snippet 0459.Repeated-Substring-Pattern "0459.Repeated-Substring-Pattern" b
+### 459.Repeated-Substring-Pattern
 
-具体的做法是，初始的指针index指向0，每处理一行，我们就把index+=cols，此时如果index落到了空格上，说明至此的所有字符都可以放在一个row里面，然后index指向空格后的第一个字符。如果没有落到空格上，说明某个单词没有写完就触碰了边界，这时候我们将index慢慢回退直至遇到了一个空格为止。
+#### 解法1
+暴力尝试所有的循环节长度，查看是否是否每段循环节长度的区间都相等。
 
-注意到指针wrap的情况，所以我们对于index的处理永远都是考虑它对str长度的取余。
+#### 解法2
+我们计算字符串s的后缀数组suf[i]，得到长度len = suf[n-1]，这是s最长的前缀字符串使得期恰好也等于s的后缀字符串。
 
-重复以上过程，当处理完rows行之后，看看此刻的index是str长度的多少倍，就说明能重复多少个字符串．
+如果我们得到了这样的len，会有什么性质呢？如下图，我们画出最长前缀/后缀字符串的范围（星号）
+```
+s: [* * *] [* * *] [* * *] [_____]
+      A           B           C
+      
+s: [_____] [* * *] [* * *] [* * *]
+      D           E           F
 
-[Leetcode Link](https://leetcode.com/problems/sentence-screen-fitting)
-::::::::::::::
-String/459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v1.cpp
-::::::::::::::
+```
+由最长前缀/后缀字符串的关系，我们知道B的后缀等于F.同时由于B的后缀就是E的后缀，所以得到E的后缀等于F。我们可以类似地一路向前推进。所以只要A+B的长度是F的长度（也就是n-len）的整数倍，那么A+B（或者D+E）就有F作为循环节。因此判断存在循环节的充要条件是```len>0 && （n-len）%len==0```.
+
+另外，n-len也一定是最小循环节长度。
+
+$0
+endsnippet
+
+# ==> ./String/0459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v1.cpp <==
+snippet 0459.Repeated-Substring-Pattern "0459.Repeated-Substring-Pattern" b
 class Solution {
 public:
     bool repeatedSubstringPattern(string s) 
@@ -2127,9 +1131,12 @@ public:
         
     }
 };
-::::::::::::::
-String/459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0459.Repeated-Substring-Pattern/459.Repeated-Substring-Pattern_v2.cpp <==
+snippet 0459.Repeated-Substring-Pattern "0459.Repeated-Substring-Pattern" b
 class Solution {
 public:
     bool repeatedSubstringPattern(string s) 
@@ -2147,32 +1154,27 @@ public:
         return (len>0 && n%(n-len)==0);       
     }
 };
-::::::::::::::
-String/459.Repeated-Substring-Pattern/Readme.md
-::::::::::::::
-### 459.Repeated-Substring-Pattern
 
-#### 解法1
-暴力尝试所有的循环节长度，查看是否是否每段循环节长度的区间都相等。
+$0
+endsnippet
 
-#### 解法2
-我们计算字符串s的后缀数组suf[i]，得到长度len = suf[n-1]，这是s最长的前缀字符串使得期恰好也等于s的后缀字符串。
+# ==> ./String/0467.Unique-Substrings-in-Wraparound-String/Readme.md <==
+snippet 0467.Unique-Substrings-in-Wraparound-String "0467.Unique-Substrings-in-Wraparound-String" b
+### 467.Unique-Substrings-in-Wraparound-String
 
-如果我们得到了这样的len，会有什么性质呢？如下图，我们画出最长前缀/后缀字符串的范围（星号）
-```
-s: [* * *] [* * *] [* * *] [_____]
-      A           B           C
-      
-s: [_____] [* * *] [* * *] [* * *]
-      D           E           F
+注意s串的性质，其子串必然是递增的。发现这一点后，只要是在p中的所有递增子串，都是s的字串。
 
-```
-由最长前缀/后缀字符串的关系，我们知道B的后缀等于F.同时由于B的后缀就是E的后缀，所以得到E的后缀等于F。我们可以类似地一路向前推进。所以只要A+B的长度是F的长度（也就是n-len）的整数倍，那么A+B（或者D+E）就有F作为循环节。因此判断存在循环节的充要条件是```len>0 && （n-len）%len==0```.
+那么p中有多少不同的递增子串呢？任何不同的递增字串，只需要两个参数就能确定其独特性。一个是起始字符，另一个是字串的长度。于是只要遍历p的每一个字符，找出以其为开头的最长递增字串即可。比如说p中以'a'开头的递增字串的最大长度是n，那么就有n种不同的以'a'开头的递增字串。
 
-另外，n-len也一定是最小循环节长度。
-::::::::::::::
-String/467.Unique-Substrings-in-Wraparound-String/467.Unique-Substrings-in-Wraparound-String.cpp
-::::::::::::::
+创建一个Hash表，遍历p[i]。以遍历的字符p[i]作为key，记录以p[i]开头的递增字串的最大长度（这个value会随着p的遍历而不断被更新）。最终结果就是把所有key的value都加起来。
+
+
+[Leetcode Link](https://leetcode.com/problems/unique-substrings-in-wraparound-string)
+$0
+endsnippet
+
+# ==> ./String/0467.Unique-Substrings-in-Wraparound-String/467.Unique-Substrings-in-Wraparound-String.cpp <==
+snippet 0467.Unique-Substrings-in-Wraparound-String "0467.Unique-Substrings-in-Wraparound-String" b
 class Solution {
 public:
     int findSubstringInWraproundString(string p) 
@@ -2193,21 +1195,27 @@ public:
         return result;
     }
 };
-::::::::::::::
-String/467.Unique-Substrings-in-Wraparound-String/Readme.md
-::::::::::::::
-### 467.Unique-Substrings-in-Wraparound-String
 
-注意s串的性质，其子串必然是递增的。发现这一点后，只要是在p中的所有递增子串，都是s的字串。
+$0
+endsnippet
 
-那么p中有多少不同的递增子串呢？任何不同的递增字串，只需要两个参数就能确定其独特性。一个是起始字符，另一个是字串的长度。于是只要遍历p的每一个字符，找出以其为开头的最长递增字串即可。比如说p中以'a'开头的递增字串的最大长度是n，那么就有n种不同的以'a'开头的递增字串。
+# ==> ./String/0527.Word-Abbreviation/Readme.md <==
+snippet 0527.Word-Abbreviation "0527.Word-Abbreviation" b
+### 527.Word-Abbreviation
 
-创建一个Hash表，遍历p[i]。以遍历的字符p[i]作为key，记录以p[i]开头的递增字串的最大长度（这个value会随着p的遍历而不断被更新）。最终结果就是把所有key的value都加起来。
+设置一个Map和一个Set。Map是从缩写到原单词(数组)的映射。Set盛装所有仍需要进一步求缩写的原单词，初始化的时候则装所有的原单词。
+
+在每次循环中，把Set里所有的单词都求其缩写加入Map，清空Set。然后查看Map的所有元素，对于那些仍然对应多个原单词的缩写，就把这些原单词加入Set。清空Map。
+
+重复这样的循环直至Set不再有元素。
 
 
-[Leetcode Link](https://leetcode.com/problems/unique-substrings-in-wraparound-string)::::::::::::::
-String/527.Word-Abbreviation/527.Word Abbreviation.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/word-abbreviation)
+$0
+endsnippet
+
+# ==> ./String/0527.Word-Abbreviation/527.Word Abbreviation.cpp <==
+snippet 0527.Word-Abbreviation "0527.Word-Abbreviation" b
 class Solution {
 public:
     vector<string> wordsAbbreviation(vector<string>& dict) 
@@ -2271,21 +1279,25 @@ public:
         return t;
     }
 };
-::::::::::::::
-String/527.Word-Abbreviation/Readme.md
-::::::::::::::
-### 527.Word-Abbreviation
 
-设置一个Map和一个Set。Map是从缩写到原单词(数组)的映射。Set盛装所有仍需要进一步求缩写的原单词，初始化的时候则装所有的原单词。
+$0
+endsnippet
 
-在每次循环中，把Set里所有的单词都求其缩写加入Map，清空Set。然后查看Map的所有元素，对于那些仍然对应多个原单词的缩写，就把这些原单词加入Set。清空Map。
+# ==> ./String/0556.Next-Greater-Element-III/Readme.md <==
+snippet 0556.Next-Greater-Element-III "0556.Next-Greater-Element-III" b
+### 556.Next-Greater-Element-III
 
-重复这样的循环直至Set不再有元素。
+首先，从低位到高位找到第一个不满足升序的数字。显然，如果从低位到高位都是升序的话，那么找不到任何可以比这个数字更大的变换了。
+
+假设找到这样的数字在第n+1位（记做k），那么在1\~n这个n个低位数字中找到恰比k大的数字（记做m），交换k和m。于是变换后的第n+1位就这么定下来了（可以分析出这就是最小的改动）。剩下来的第1~n位（记得其中有一个是之前调换过来的k），我们让它们按照降序排列即可。
 
 
-[Leetcode Link](https://leetcode.com/problems/word-abbreviation)::::::::::::::
-String/556.Next-Greater-Element-III/556.Next-Greater-Element-III.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/next-greater-element-iii)
+$0
+endsnippet
+
+# ==> ./String/0556.Next-Greater-Element-III/556.Next-Greater-Element-III.cpp <==
+snippet 0556.Next-Greater-Element-III "0556.Next-Greater-Element-III" b
 class Solution {
 public:
     int nextGreaterElement(int n) 
@@ -2329,19 +1341,33 @@ public:
             return result;                
     }
 };
-::::::::::::::
-String/556.Next-Greater-Element-III/Readme.md
-::::::::::::::
-### 556.Next-Greater-Element-III
 
-首先，从低位到高位找到第一个不满足升序的数字。显然，如果从低位到高位都是升序的话，那么找不到任何可以比这个数字更大的变换了。
+$0
+endsnippet
 
-假设找到这样的数字在第n+1位（记做k），那么在1\~n这个n个低位数字中找到恰比k大的数字（记做m），交换k和m。于是变换后的第n+1位就这么定下来了（可以分析出这就是最小的改动）。剩下来的第1~n位（记得其中有一个是之前调换过来的k），我们让它们按照降序排列即可。
+# ==> ./String/0564.Find-the-Closest-Palindrome/Readme.md <==
+snippet 0564.Find-the-Closest-Palindrome "0564.Find-the-Closest-Palindrome" b
+### 564.Find-the-Closest-Palindrome
+
+这是一道比较难的题目。
+
+看到题目最直观的想法是，将数字的前半部分翻转后拼接到后半部分，比如说12345，那么我们就找12321.
+
+但是这样的策略不是万能的，因为找到不一定是离原数最接近的。比如12399，如果我们选择直接翻转，12321就不是最优解，最优解应该是12421. 再比如19200,直接翻转的19291不是最优解，最优解是19191. 那么我们就可以见端倪了，对于形如ABCXX的形式，我们应该在ABCBA，AB(C+1)BA，AB(C-1)BA之间选择一个最接近原数的就可以了。同理，对于ABXX的形式，我们采用类似的加一减一再复制翻转的方式，于是就应该在ABBA，A(B+1)(B+1)A，A(B-1)(B-1)A之间选择一个最接近原数的。
+
+但这样的话，又会有个问题，例如12088，中间的0如果减去１的话就变成9了，翻转复制就成了12921和，这与原数相差也太大了．所以我们改进上面的方法，不再只对中间的数字加减，而是对前三位120整体做加减，然后复制翻转拼接（合并掉中间一位以保证仍然是奇数位），得到11911,12021,12121．那么我们对于偶数位也采取相同的方法，例如2088,我们对20整体进行加减操作，然后复制翻转拼接（不用合并掉中间一位，因为期望仍然是偶数位），得到1991,2002,2112.
+
+但是，如果遇到加减之后位数变化的情况怎么办呢？比如10001,我们对前三位100减１之后得到的99，复制翻转拼接之后得到的999，位数一下子就少了两位．类似的对于999，我们如果对于前两位99加一变成100,复制翻转拼接后变成10001,位数一下子就多了两位．类似的情况对于偶数位的数字也会出现．怎么办呢？方案是，我们照做不误，反正最后筛查所有候选答案的时候，这些偏差太大的候选人一定会被去掉的．但是，我们需要同时考虑到这种位数变化的情况，所以干脆也加入到候选者来．比如给出的某个n位数，那么我们就把n+1位数的100...0001直接放入候选，n-1位数的99...99也直接放入候选．
+
+综上，我们有了得到五个候选人的方案,最后筛查一下．去除不是回文数的（注意有可能候选人不是回文数），选取和原数最接近的就是答案了．
 
 
-[Leetcode Link](https://leetcode.com/problems/next-greater-element-iii)::::::::::::::
-String/564.Find-the-Closest-Palindrome/564.Find-the-Closest-Palindrome.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/find-the-closest-palindrome)
+$0
+endsnippet
+
+# ==> ./String/0564.Find-the-Closest-Palindrome/564.Find-the-Closest-Palindrome.cpp <==
+snippet 0564.Find-the-Closest-Palindrome "0564.Find-the-Closest-Palindrome" b
 class Solution {
 public:
     string nearestPalindromic(string n) 
@@ -2458,27 +1484,12 @@ public:
         return result;
     }    
 };
-::::::::::::::
-String/564.Find-the-Closest-Palindrome/Readme.md
-::::::::::::::
-### 564.Find-the-Closest-Palindrome
 
-这是一道比较难的题目。
+$0
+endsnippet
 
-看到题目最直观的想法是，将数字的前半部分翻转后拼接到后半部分，比如说12345，那么我们就找12321.
-
-但是这样的策略不是万能的，因为找到不一定是离原数最接近的。比如12399，如果我们选择直接翻转，12321就不是最优解，最优解应该是12421. 再比如19200,直接翻转的19291不是最优解，最优解是19191. 那么我们就可以见端倪了，对于形如ABCXX的形式，我们应该在ABCBA，AB(C+1)BA，AB(C-1)BA之间选择一个最接近原数的就可以了。同理，对于ABXX的形式，我们采用类似的加一减一再复制翻转的方式，于是就应该在ABBA，A(B+1)(B+1)A，A(B-1)(B-1)A之间选择一个最接近原数的。
-
-但这样的话，又会有个问题，例如12088，中间的0如果减去１的话就变成9了，翻转复制就成了12921和，这与原数相差也太大了．所以我们改进上面的方法，不再只对中间的数字加减，而是对前三位120整体做加减，然后复制翻转拼接（合并掉中间一位以保证仍然是奇数位），得到11911,12021,12121．那么我们对于偶数位也采取相同的方法，例如2088,我们对20整体进行加减操作，然后复制翻转拼接（不用合并掉中间一位，因为期望仍然是偶数位），得到1991,2002,2112.
-
-但是，如果遇到加减之后位数变化的情况怎么办呢？比如10001,我们对前三位100减１之后得到的99，复制翻转拼接之后得到的999，位数一下子就少了两位．类似的对于999，我们如果对于前两位99加一变成100,复制翻转拼接后变成10001,位数一下子就多了两位．类似的情况对于偶数位的数字也会出现．怎么办呢？方案是，我们照做不误，反正最后筛查所有候选答案的时候，这些偏差太大的候选人一定会被去掉的．但是，我们需要同时考虑到这种位数变化的情况，所以干脆也加入到候选者来．比如给出的某个n位数，那么我们就把n+1位数的100...0001直接放入候选，n-1位数的99...99也直接放入候选．
-
-综上，我们有了得到五个候选人的方案,最后筛查一下．去除不是回文数的（注意有可能候选人不是回文数），选取和原数最接近的就是答案了．
-
-
-[Leetcode Link](https://leetcode.com/problems/find-the-closest-palindrome)::::::::::::::
-String/616.Add-Bold-Tag-in-String/616.Add-Bold-Tag-in-String.cpp
-::::::::::::::
+# ==> ./String/0616.Add-Bold-Tag-in-String/616.Add-Bold-Tag-in-String.cpp <==
+snippet 0616.Add-Bold-Tag-in-String "0616.Add-Bold-Tag-in-String" b
 class Solution {
 public:
     string addBoldTag(string s, vector<string>& dict) 
@@ -2531,9 +1542,29 @@ public:
         return result;
     }
 };
-::::::::::::::
-String/647.Palindromic-Substrings/647.Palindromic-Substrings.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0647.Palindromic-Substrings/Readme.md <==
+snippet 0647.Palindromic-Substrings "0647.Palindromic-Substrings" b
+### 647.Palindromic-Substrings
+
+#### 解法1：暴力
+遍历 for (i=0; i<n; i++)，考察以i为中心的回文串个数（回文串长度为奇数）、i和i+1为中心的回文串个数（回文串长度为偶数），分别加入总的结果中。
+
+考察方法是以中心i往两边扩散。一旦发现无法实现中心对称，则可以跳过这个i。整体的时间复杂度是 o(n^2)
+
+#### 解法2：Manacher
+此题是Manacher的模板题。注意，求出T串的P[i]之后，每一个中心点的最长回文串半径（去除了#字符）其实是```(P[i]+1)/2```
+
+[Leetcode Link](https://leetcode.com/problems/palindromic-substrings)
+
+$0
+endsnippet
+
+# ==> ./String/0647.Palindromic-Substrings/647.Palindromic-Substrings.cpp <==
+snippet 0647.Palindromic-Substrings "0647.Palindromic-Substrings" b
 class Solution {
 public:
     int countSubstrings(string s) 
@@ -2557,9 +1588,12 @@ public:
 
     }
 };
-::::::::::::::
-String/647.Palindromic-Substrings/647.Palindromic-Substrings_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./String/0647.Palindromic-Substrings/647.Palindromic-Substrings_v2.cpp <==
+snippet 0647.Palindromic-Substrings "0647.Palindromic-Substrings" b
 class Solution {
 public:
     int countSubstrings(string s) 
@@ -2607,23 +1641,39 @@ public:
         return ret;
     }
 };
-::::::::::::::
-String/647.Palindromic-Substrings/Readme.md
-::::::::::::::
-### 647.Palindromic-Substrings
 
-#### 解法1：暴力
-遍历 for (i=0; i<n; i++)，考察以i为中心的回文串个数（回文串长度为奇数）、i和i+1为中心的回文串个数（回文串长度为偶数），分别加入总的结果中。
+$0
+endsnippet
 
-考察方法是以中心i往两边扩散。一旦发现无法实现中心对称，则可以跳过这个i。整体的时间复杂度是 o(n^2)
+# ==> ./String/0722.Remove-Comments/Readme.md <==
+snippet 0722.Remove-Comments "0722.Remove-Comments" b
+### 722.Remove-Comments
 
-#### 解法2：Manacher
-此题是Manacher的模板题。注意，求出T串的P[i]之后，每一个中心点的最长回文串半径（去除了#字符）其实是```(P[i]+1)/2```
+令s代表待输出的一行。此题考虑这么几个问题：
 
-[Leetcode Link](https://leetcode.com/problems/palindromic-substrings)
-::::::::::::::
-String/722.Remove-Comments/722.Remove-Comments.cpp
-::::::::::::::
+1. 遇到"//"怎么办？ 这一行的字符就直接跳过，直接将s加入result（注意，此时必须是非comment模式）
+2. 遇到"/*"怎么办？ 进入了comment模式
+3. 遇到"*/"怎么办？ comment模式结束，可以将s加入result
+4. 普通字符？将字符加入s
+5. 始终在comment模式里？ 那么继续遍历字符
+6. 如果到了行结束，且不是comment模式，那么就可以将s加入result
+
+要能够和谐地处理以上这几种情况，我们可以设置一个bool变量comment。
+
+1. comment off && "//"怎么办？ 直接挑出该行
+2. comment off && "/*"怎么办？ 进入了comment模式
+3. comment on && "*/"怎么办？ 退出comment模式
+4. comment off && 普通字符？将字符加入s
+5. comment on && 普通字符？忽略该字符
+6. 到了行结束，&& comment off：那么就可以将s加入result，清空s
+
+
+[Leetcode Link](https://leetcode.com/problems/remove-comments)
+$0
+endsnippet
+
+# ==> ./String/0722.Remove-Comments/722.Remove-Comments.cpp <==
+snippet 0722.Remove-Comments "0722.Remove-Comments" b
 class Solution {
 public:
     vector<string> removeComments(vector<string>& source) 
@@ -2666,33 +1716,25 @@ public:
         return result;
     }
 };
-::::::::::::::
-String/722.Remove-Comments/Readme.md
-::::::::::::::
-### 722.Remove-Comments
 
-令s代表待输出的一行。此题考虑这么几个问题：
+$0
+endsnippet
 
-1. 遇到"//"怎么办？ 这一行的字符就直接跳过，直接将s加入result（注意，此时必须是非comment模式）
-2. 遇到"/*"怎么办？ 进入了comment模式
-3. 遇到"*/"怎么办？ comment模式结束，可以将s加入result
-4. 普通字符？将字符加入s
-5. 始终在comment模式里？ 那么继续遍历字符
-6. 如果到了行结束，且不是comment模式，那么就可以将s加入result
+# ==> ./String/0736.Parse-Lisp-Expression/Readme.md <==
+snippet 0736.Parse-Lisp-Expression "0736.Parse-Lisp-Expression" b
+### 736.Parse-Lisp-Expression
 
-要能够和谐地处理以上这几种情况，我们可以设置一个bool变量comment。
+本题不难，有足够的耐心就能做出来。对于比较复杂的规则，我们用递归应该比用栈更容易。因为“括号”天然就提示了递归的层次，而且这种expression parse的题型，括号内外的规则都是完全一样的，非常适合用递归。
 
-1. comment off && "//"怎么办？ 直接挑出该行
-2. comment off && "/*"怎么办？ 进入了comment模式
-3. comment on && "*/"怎么办？ 退出comment模式
-4. comment off && 普通字符？将字符加入s
-5. comment on && 普通字符？忽略该字符
-6. 到了行结束，&& comment off：那么就可以将s加入result，清空s
+注意一下对于let语句，后面会跟着总数为奇数个的参数。除了最后一个参数，第2k个参数一定是一个变量，第2k+1个参数则可以是变量/数值/递归式，这两种类型交替出现。而对于最后一个参数（注意它也是属于2k），则同样可能是变量/数值/递归式，这就需要额外进行判断。也就是说，在处理第2k个参数时，如果遇到了数值或者递归式，就意味着这个参数一定最后一个；如果遇到了变量但变量的结尾就是字符串的结尾，也意味着这个参数是最后一个。
 
 
-[Leetcode Link](https://leetcode.com/problems/remove-comments)::::::::::::::
-String/736.Parse-Lisp-Expression/736.Parse-Lisp-Expression.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/parse-lisp-expression)
+$0
+endsnippet
+
+# ==> ./String/0736.Parse-Lisp-Expression/736.Parse-Lisp-Expression.cpp <==
+snippet 0736.Parse-Lisp-Expression "0736.Parse-Lisp-Expression" b
 class Solution {
 public:
     int evaluate(string expression) 
@@ -2854,19 +1896,25 @@ public:
         return i;
     }
 };
-::::::::::::::
-String/736.Parse-Lisp-Expression/Readme.md
-::::::::::::::
-### 736.Parse-Lisp-Expression
 
-本题不难，有足够的耐心就能做出来。对于比较复杂的规则，我们用递归应该比用栈更容易。因为“括号”天然就提示了递归的层次，而且这种expression parse的题型，括号内外的规则都是完全一样的，非常适合用递归。
+$0
+endsnippet
 
-注意一下对于let语句，后面会跟着总数为奇数个的参数。除了最后一个参数，第2k个参数一定是一个变量，第2k+1个参数则可以是变量/数值/递归式，这两种类型交替出现。而对于最后一个参数（注意它也是属于2k），则同样可能是变量/数值/递归式，这就需要额外进行判断。也就是说，在处理第2k个参数时，如果遇到了数值或者递归式，就意味着这个参数一定最后一个；如果遇到了变量但变量的结尾就是字符串的结尾，也意味着这个参数是最后一个。
+# ==> ./String/0816.Ambiguous-Coordinates/Readme.md <==
+snippet 0816.Ambiguous-Coordinates "0816.Ambiguous-Coordinates" b
+### 816.Ambiguous-Coordinates
 
+本题考查如何将问题拆分。
 
-[Leetcode Link](https://leetcode.com/problems/parse-lisp-expression)::::::::::::::
-String/816.Ambiguous-Coordinates/816.Ambiguous-Coordinates.cpp
-::::::::::::::
+首先，遍历分割点，将字符串拆分成两个数字a与b。然后调用helper函数分别对a和b尝试加小数点。对于a可能有若干方案{x}，对于b也可能有若干方案{y}，那么x与y的两两组合（中间插入逗号）就是答案。
+
+其次，对于helpe函数而言，同样遍历分割点，将字符串拆分成整数部分a和小数部分b。对于a而言，要么只有一位，要么不能以零开头。对于b而言，结尾不能是零。如果a与b都合格，那么a与b的组合（中间插入小数点）就是答案。
+
+$0
+endsnippet
+
+# ==> ./String/0816.Ambiguous-Coordinates/816.Ambiguous-Coordinates.cpp <==
+snippet 0816.Ambiguous-Coordinates "0816.Ambiguous-Coordinates" b
 class Solution {
 public:
     vector<string> ambiguousCoordinates(string s) 
@@ -2905,19 +1953,26 @@ public:
         return rets;
     }
 };
-::::::::::::::
-String/816.Ambiguous-Coordinates/Readme.md
-::::::::::::::
-### 816.Ambiguous-Coordinates
 
-本题考查如何将问题拆分。
+$0
+endsnippet
 
-首先，遍历分割点，将字符串拆分成两个数字a与b。然后调用helper函数分别对a和b尝试加小数点。对于a可能有若干方案{x}，对于b也可能有若干方案{y}，那么x与y的两两组合（中间插入逗号）就是答案。
+# ==> ./String/0844.Backspace-String-Compare/Readme.md <==
+snippet 0844.Backspace-String-Compare "0844.Backspace-String-Compare" b
+### 844.Backspace-String-Compare
 
-其次，对于helpe函数而言，同样遍历分割点，将字符串拆分成整数部分a和小数部分b。对于a而言，要么只有一位，要么不能以零开头。对于b而言，结尾不能是零。如果a与b都合格，那么a与b的组合（中间插入小数点）就是答案。
-::::::::::::::
-String/844.Backspace-String-Compare/844.Backspace-String-Compare.cpp
-::::::::::::::
+此题的考点是用o(n)时间和o(1)空间．这就提示我们做in-place的修改．
+
+我们可以尝试用双指针的方法，将有效的字符都移动到字符串的前面去。具体的做法是快指针j扫每个元素，如果遇到了正常的字符，则str[i]=str[j]，同时慢指针i自增1。如果遇到了退格键，那么将慢指针i退一个即可。最终i指针的位置就代表了这个字符串最终有多长。
+
+
+[Leetcode Link](https://leetcode.com/problems/backspace-string-compare)
+
+$0
+endsnippet
+
+# ==> ./String/0844.Backspace-String-Compare/844.Backspace-String-Compare.cpp <==
+snippet 0844.Backspace-String-Compare "0844.Backspace-String-Compare" b
 class Solution {
 public:
     bool backspaceCompare(string S, string T) 
@@ -2946,14 +2001,1277 @@ public:
         
     }
 };
-::::::::::::::
-String/844.Backspace-String-Compare/Readme.md
-::::::::::::::
-### 844.Backspace-String-Compare
 
-此题的考点是用o(n)时间和o(1)空间．这就提示我们做in-place的修改．
+$0
+endsnippet
 
-我们可以尝试用双指针的方法，将有效的字符都移动到字符串的前面去。具体的做法是快指针j扫每个元素，如果遇到了正常的字符，则str[i]=str[j]，同时慢指针i自增1。如果遇到了退格键，那么将慢指针i退一个即可。最终i指针的位置就代表了这个字符串最终有多长。
+# ==> ./String/1044.Longest-Duplicate-Substring/Readme.md <==
+snippet 1044.Longest-Duplicate-Substring "1044.Longest-Duplicate-Substring" b
+### 1044.Longest-Duplicate-Substring
+
+本题就是```1062. Longest Repeating Substring```的follow up，不仅求repeating（也就是duplicate） substring的长度，并且要把这个substring打印出来。
+
+和1062完全一样，本题的high level的思想是二分搜索这样的substring长度。对于一个固定的len，如果能在S里找到两处相同的子串滑窗，那么我们就可以对len的值再往上调整；反之，我们就必须将len的估再往下调。
+
+于是本题转化为，如果快速在S里找到两处相同的、长度都是len的滑窗。比较直观的想法是对每一处滑窗组成的字符串都放入集合，如果看到集合中已经有一个相同的substring了，就意味着duplicate了。但是当len很大的时候，将字符串放入集合的内置hash化操作很耗时。于是rolling hash是比较常见的解决方案。
+
+Rolling hash的基本思想就是将abcd转化为26进制的0123.将一个数作为key放入集合很轻松。除此之外，对于abcdef这样的字符串，如果已经知道了[abcd]这个子串的hash key是0123，那么再求相邻的[bcde]的hash key 1234就非常高效，只需要将之前的key的最高位数字去掉(a对应的0)、左移一位、加上最低位数字(e对应的4）。用o(1)的时间就能完成。
+
+总结一下，rolling hash的思想，就是将两个字符串的比较，转化为hash化之后的两个26进制数的比较。但是当len很大时，这个数可能很大，我们通常不得不对一个大数取模再作为hash key。这样就会有两个不同的字符串，但是会对应同一个hash key（26进制数取模后的结果）。针对这种hash collision的情况，我们可以调整base和mod来规避。或者使用两套hash规则来生成两个key，那么不同字符串拥有两个相同key的概率就会大大降低。
+
+#### Update
+随着测试数据的增加，为了避免hash collision，base和mod的调参越来越困难。这里提供一个hack的方法。我们知道mod越大，就越能避免hash碰撞，所以可以试图将mod取到最大。最大是什么呢？就是```2^64```. 具体的做法是，将所有的数据结构改为uint64_t类型，并且取消所有的mod操作。uint64_t是无符号的数据类型，对于它的加减乘操作所造成的溢出，都自动等效为将结果```mod (2^64)```. 
+
+当然，OJ还是可以针对这个mod设计测试数据fail这个代码。
+
+$0
+endsnippet
+
+# ==> ./String/1044.Longest-Duplicate-Substring/1044.Longest-Duplicate-Substring.cpp <==
+snippet 1044.Longest-Duplicate-Substring "1044.Longest-Duplicate-Substring" b
+class Solution {
+    unordered_map<int,int>len2start;
+public:
+    string longestDupSubstring(string S) 
+    {
+        int left = 1, right = S.size()-1;
+        while (left<right)
+        {
+            int mid = right - (right-left)/2;
+            if (found(S,mid))
+                left = mid;
+            else
+                right = mid - 1;
+        }
+        if (found(S, left))
+            return S.substr(len2start[left],left);
+        else
+            return "";        
+    }
+
+    bool found(string&S, int len)
+    {
+        unordered_set<long long>Set;
+        long long base = 26;
+        long long mod = (1l<<32);
+        long long hash = 0;
+
+        long long pow_base_len = 1;
+        for (int i=0; i<len; i++)        
+            pow_base_len = (pow_base_len * base) % mod;                    
+            
+        for (int i=0; i<S.size(); i++)
+        {
+            hash = (hash * base + (S[i]-'a')) % mod;
+            if (i>=len)            
+                hash = (hash - pow_base_len*(S[i-len]-'a') ) % mod;                            
+
+            if (i>=len-1)
+            {                
+                if (Set.find(hash)!=Set.end())
+                {
+                    len2start[len] = i-len+1;
+                    return true;
+                }                
+                Set.insert(hash);
+            }          
+        }
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1044.Longest-Duplicate-Substring/1044.Longest-Duplicate-Substring_v2.cpp <==
+snippet 1044.Longest-Duplicate-Substring "1044.Longest-Duplicate-Substring" b
+typedef uint64_t ULL;
+class Solution {
+    unordered_map<int,int>len2start;
+public:
+    string longestDupSubstring(string S) 
+    {
+        int left = 1, right = S.size()-1;
+        while (left<right)
+        {
+            int mid = right - (right-left)/2;
+            if (found(S,mid))
+                left = mid;
+            else
+                right = mid - 1;
+        }
+        if (found(S, left))
+            return S.substr(len2start[left],left);
+        else
+            return "";        
+    }
+
+    bool found(string&S, int len)
+    {
+        unordered_set<ULL>Set;
+        ULL base = 31;
+        ULL hash = 0;
+
+        ULL pow_base_len = 1;
+        for (int i=0; i<len; i++)        
+            pow_base_len = pow_base_len * base;                    
+            
+        for (int i=0; i<S.size(); i++)
+        {
+            hash = hash * base + (S[i]-'a');                                     
+            
+            if (i>=len)            
+                hash = (hash - pow_base_len*(S[i-len]-'a') ) ;               
+
+            if (i>=len-1)
+            {                
+                if (Set.find(hash)!=Set.end())
+                {
+                    len2start[len] = i-len+1;
+                    return true;
+                }                
+                Set.insert(hash);
+            }          
+        }
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1062.Longest-Repeating-Substring/Readme.md <==
+snippet 1062.Longest-Repeating-Substring "1062.Longest-Repeating-Substring" b
+### 1062.Longest-Repeating-Substring
+
+#### 解法1： DP
+此题和```1044.Longest-Duplicate-Substring```一模一样，唯一的区别是数据范围更小一些，因此可以用o(N^2)的DP算法。
+
+我们将S分别看做S1和S2，那么此题就变成求两个字符串的longest common substring. 我们令dp[i][j]表示以S1[i]结尾、S2[j]结尾的最长的字符串的长度。则有状态转移方程：
+```
+if (S[i]==S[j]) dp[i][j] = dp[i-1][j-1] + 1;
+```
+特别注意，还要加上限制条件```if (i!=j)```
+
+#### 解法2： Rolling Hash
+High Level是二分搜值，猜测这个longest repeating substring的长度是多少。如果我们找不到任何长度为len的substring在S中出现过多次，那么就往下猜len；否则就往上猜len。
+
+对于上述的子问题，我们会考虑一个固定长度len的滑窗，掠过整个S。在每个位置上的滑窗，我们都将里面的字符串映射成一个26进制的数，当做hash key放入集合中。如果发现这个key已经在集合中出现过，就意味着存在两个完全相同的子串。注意这个hash key会很大，所以需要取一个大数的模。当然，这肯定会有collision的风险。
+
+$0
+endsnippet
+
+# ==> ./String/1062.Longest-Repeating-Substring/1062.Longest-Repeating-Substring_RollingHash.cpp <==
+snippet 1062.Longest-Repeating-Substring "1062.Longest-Repeating-Substring" b
+class Solution {
+public:
+    int longestRepeatingSubstring(string S) 
+    {
+        int left = 1, right = S.size()-1;
+        while (left<right)
+        {
+            int mid = right-(right-left)/2;
+            if (found(S, mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        if (found(S, left)) return left;
+        else return 0;
+    }
+    
+    bool found(string& S, int len)
+    {
+        long base = 26;
+        long mod = 1e9+7;
+        long hash = 0;
+        long pow_base_len = 1;
+        unordered_set<long>Set;
+        for (int i=0; i<len; i++)
+            pow_base_len = pow_base_len*base % mod;
+        
+        for (int i=0; i<S.size(); i++)
+        {
+            hash = (hash*base+S[i]-'a') % mod;
+            if (i>=len)
+                hash = (hash - pow_base_len*(S[i-len]-'a')%mod + mod)%mod;
+            
+            if (i>=len-1)
+            {
+                if (Set.find(hash)!=Set.end())
+                    return true;
+                Set.insert(hash);
+            }
+        }
+        return false;
+            
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1062.Longest-Repeating-Substring/1062.Longest-Repeating-Substring_dp.cpp <==
+snippet 1062.Longest-Repeating-Substring "1062.Longest-Repeating-Substring" b
+class Solution {
+public:
+    int longestRepeatingSubstring(string S) 
+    {
+        int n = S.size();
+        S = "#"+S;
+        auto dp = vector<vector<int>>(n+1,vector<int>(n+1,0));
+        int ret = 0;
+        
+        for (int i=1; i<=n; i++)
+            for (int j=1; j<=n; j++)
+                if (i!=j && S[i]==S[j])
+                {
+                    dp[i][j] = dp[i-1][j-1]+1;
+                    ret = max(ret, dp[i][j]);
+                }        
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1367.Linked-List-in-Binary-Tree/Readme.md <==
+snippet 1367.Linked-List-in-Binary-Tree "1367.Linked-List-in-Binary-Tree" b
+### 1367.Linked-List-in-Binary-Tree
+
+#### 解法1：递归
+此题的递归解法和```572.Subtree-of-Another-Tree```一样。对于当前的两个节点，考察```isSame(head,root)```，如果不成立的话就递归处理```isSubPath(head, root->left)||isSubPath(head, root->right)```
+
+#### 解法2：KMP
+对于任意一条从root到leaf的支链，我们都可以看做是一个序列，可以用KMP来高效地搜索head所代表的模式串。不同的支链之间，我们用DFS来切换。
+
+具体的做法是，定义全局变量dp[i]来表示从root开始的第i个（深度的）树节点、与linked list的“互相关后缀数组”，即dp[i]表示最大的长度k，使得截止第i个树节点（也就是某条路径的第i层）的后缀序列，恰好等于链表的前缀序列。我们注意到，对于树的不同的paths，如果它们共享一个深度为i的树节点，那么对它们而言，dp[i]都是一样的。而对于在不同分支的dp[i]，则彼此互不依赖。所以如果我们采用DFS，对于dp的更新不影响各条支路的搜索结果。
+
+我们设计```dfs(node, i)```来计算当前树节点是node、并且深度为i时的dp[i]。根据KMP的算法，我们知道dp[i]仅依赖于dp[i-1]和模式串的后缀数组。如果当前节点计算得到的dp[i]==linkedList.size()，那么返回true；否则探索```dfs(node->left, i+1) || dfs(node->right, i+1)```
+
+$0
+endsnippet
+
+# ==> ./String/1367.Linked-List-in-Binary-Tree/1367.Linked-List-in-Binary-Tree_KMP.cpp <==
+snippet 1367.Linked-List-in-Binary-Tree "1367.Linked-List-in-Binary-Tree" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+    vector<int>suf;
+    vector<int>list;
+    int dp[2500];
+public:
+    bool isSubPath(ListNode* head, TreeNode* root) 
+    {
+        suf = preprocess(head);
+        return dfs(root, 0);
+    }
+
+    bool dfs(TreeNode* node, int i)
+    {
+        if (node==NULL) return false;
+        
+        if (i==0)
+        {
+            dp[i] = (list[0] == node->val);            
+        }
+        else
+        {
+            int j = dp[i-1];
+            while (j>0 && list[j]!=node->val)
+                j = suf[j-1];
+            dp[i] = j + (list[j]==node->val);
+        }
+        
+        if (dp[i]==list.size()) 
+            return true;
+        else
+            return dfs(node->left, i+1) || dfs(node->right, i+1);
+    }
 
 
-[Leetcode Link](https://leetcode.com/problems/backspace-string-compare)
+    vector<int> preprocess(ListNode* head)
+    {
+        while (head!=NULL)
+        {
+            list.push_back(head->val);
+            head = head->next;
+        }
+        int n = list.size();
+        vector<int>dp(n);
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];
+            while (j>0 && list[j]!=list[i])
+                 j = dp[j-1];
+            dp[i] = j+(list[j]==list[i]);
+        }
+        return dp;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1367.Linked-List-in-Binary-Tree/1367.Linked-List-in-Binary-Tree_recursion.cpp <==
+snippet 1367.Linked-List-in-Binary-Tree "1367.Linked-List-in-Binary-Tree" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSubPath(ListNode* head, TreeNode* root) 
+    {
+        if (head==NULL) return true;
+        if (root==NULL) return false;
+
+        if (isSame(head, root))
+            return true;
+        else
+            return isSubPath(head,root->left)||isSubPath(head,root->right);
+    }
+
+    bool isSame(ListNode* head, TreeNode* root)
+    {
+        if (head==NULL) return true;
+        if (root==NULL) return false;
+
+        if (head->val != root->val)
+            return false;
+        return isSame(head->next, root->left)||isSame(head->next, root->right);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1392.Longest-Happy-Prefix/Readme.md <==
+snippet 1392.Longest-Happy-Prefix "1392.Longest-Happy-Prefix" b
+### 1392.Longest-Happy-Prefix
+
+这道题所求的东西其实就是KMP算法中的一个重要的预处理步骤，称为求后缀数组。
+
+我们令dp[i]表示该字符串最长的前缀字符串，使得其恰等于截止i位置的后缀字符串。即如果```dp[i]=j```,那么```s[0:j-1] = s[i-j+1:i]```.
+
+我们利用一下动态规划的思想，看看dp[i]能否从dp[i-1]的信息推演过来？我们令j=dp[i-1]，即查看截止i-1位置的最长后缀字符串，用星号表示（长度为j）：
+```
+* * * * * * * * * * * * * * * * *   X  ________________________________  * * * * * * * * * * * * * * * * *   Y
+                               j-1, j                                                                   i-1, i
+```
+如果在s[j]和s[j]这两处的字符相同（即X==Y），那么显然我们就说明dp[i]可以在之前长度j的后缀字符串上再延长一位，即dp[i] = j+1.
+
+如果在s[j]和s[j]这两处的字符相同不相同（即X!=Y），我们该如何寻找截止i位置的最长后缀字符串呢？我们把目光放到s[0:j-1]这段区间上来。我们类似的其实也有dp[j-1]，这段长度表示截止j-1位置时的最长后缀字符串，我们画出来看看：
+```
++ + + + + Z ____________ + + + + +  X  ________________________________  _______________________ + + + + +   Y
+       j'-1                    j-1, j                                                                   i-1, i
+```                               
+我们令```j' = dp[j-1]```，那么有```s[0:j'-1] = s[j-j':j-1]```，同时我们这两段区间必然也和s[i-j':i-1]相同！此时我们就又有了希望，如果s[j']和s[i]这两处的字符相同（即Z==Y），那么我们就又有了一段截止i位置时的最长字符串（长度为j'）。
+
+当然，也有可能Z和Y匹配不成功，那么我们可以同理再考察截止j'-1位置的最长后缀字符串，它的长度应该是```j'' = dp[j'-1]```，然后再尝试考察s[j'']是否与s[i]相同...
+
+所以我们发现一个规律：对于dp[i]，我们先看长度为j=dp[i-1]的前缀字符串，是否能有s[j]==s[i]。不行，就再看长度为j'=dp[j'-1]的前缀字符串，是否能有s[j']==s[i]。不行就再看长度为j''=dp[j''-1]的前缀字符串，是否能有s[j'']==s[i]...直至最终停下来，得到一个最终可利用的前缀长度j，那么```dp[i] = j + (s[i]==s[j])```
+
+总结一下：
+```cpp
+for (int i=1; i<n; i++)
+{
+    // compute dp[i]
+    int j = dp[i-1];
+    while (j>0 && s[j]!=s[i])
+       j = dp[j-1];
+    dp[i] = j+(s[j]==s[i]);   
+}    
+```
+特别注意dp[0]=0（因为我们求的是最长“真前缀”），所以循环从index为1的元素开始。
+
+$0
+endsnippet
+
+# ==> ./String/1392.Longest-Happy-Prefix/1392.Longest-Happy-Prefix.cpp <==
+snippet 1392.Longest-Happy-Prefix "1392.Longest-Happy-Prefix" b
+class Solution {
+public:
+    string longestPrefix(string s) 
+    {
+        int n = s.size();
+        vector<int>dp(n);
+        dp[0] = 0;
+
+        for (int i=1; i<n; i++)
+        {
+            int j = dp[i-1];                       
+            while (j>=1 && s[j]!=s[i])
+            {
+                j = dp[j-1];
+            }          
+            dp[i] = j + (s[j]==s[i]);
+        }
+
+        int len = dp[n-1];
+        return s.substr(0, len);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1554.Strings-Differ-by-One-Character/Readme.md <==
+snippet 1554.Strings-Differ-by-One-Character "1554.Strings-Differ-by-One-Character" b
+### 1554.Strings-Differ-by-One-Character
+
+考虑这个例子:{123,124,134,213}. 如何快速判断是否有两个数字只差别一个digit？
+
+比较简单的方法就是：抹去所有的个位数，查看剩下的数值{120,120,130,210}，将它们一次加入集合，就可以判断出是否有重复元素。如果没有发现，我们可以抹去十位数，得到的是{103,104,104,203}，同理可以判断是否有重复元素... 对于任何位置的digit，我们一旦发现抹去之后剩余的数值有重复，那么就意味着至少有一对数字只差别这一位digit。
+
+本题就是把上述思想扩展到字符串。用rolling hash的方法给每个字符串完整编码。然后逐位考察每一位的数字，将每个字符串的完整编码抹去那一位的编码，查看剩下的编码是否有重复即可。
+
+$0
+endsnippet
+
+# ==> ./String/1554.Strings-Differ-by-One-Character/1554.Strings-Differ-by-One-Character.cpp <==
+snippet 1554.Strings-Differ-by-One-Character "1554.Strings-Differ-by-One-Character" b
+typedef uint64_t ULL;
+class Solution {
+public:
+    bool differByOne(vector<string>& dict) 
+    {
+        ULL base = 26;
+        int n = dict.size();
+        int m = dict[0].size();
+        vector<ULL>hash(n);
+        for (int i=0; i<n; i++)
+        {
+            ULL h = 0;
+            for (auto ch: dict[i])            
+                h = h * base + (ch-'a');
+            hash[i] = h;
+        }
+        
+        ULL power = 1;
+        for (int j=m-1; j>=0; j--)
+        {                        
+            unordered_set<ULL>Set;
+            for (int i=0; i<n; i++)
+            {
+                ULL hash_new = hash[i] - (dict[i][j]-'a')*power;
+                if (Set.find(hash_new)!=Set.end())
+                    return true;
+                Set.insert(hash_new);
+            }            
+            
+            power *= base;
+        }
+        
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1616.Split-Two-Strings-to-Make-Palindrome/Readme.md <==
+snippet 1616.Split-Two-Strings-to-Make-Palindrome "1616.Split-Two-Strings-to-Make-Palindrome" b
+### 1616.Split-Two-Strings-to-Make-Palindrome
+
+本题的意思是，判断是否找到一个位置将两个字符串都截为两部分，使得A的前半部分和B的后半部分拼接起来能成为一个回文数。
+```
+A: XXX | XXXXX
+B: YYY | YYYYY
+```
+如果找不到的话，我们会把A和B对换，同样的目标我们再求一次。
+
+假设存在这样的一个位置，能够使得A的前半部分和B的后半部分拼接起来能成为一个回文数，那么意味着可以将这个截断位置对称翻转的话，
+```
+A: XXX | XX | XXX
+B: YYY | YY | YYY
+```
+A1和B3应该是回文对称的；A2或者B2本身就是一个回文串。如果A的第二部分是回文，那么A1+A2+B3就是一个回文串；如果B的第二部分是回文，那么A1+B2+B3就是一个回文串。
+
+反之，如果上面的条件都不成立，那么说明我们无法找到满足题意的“截断位置”。
+
+$0
+endsnippet
+
+# ==> ./String/1616.Split-Two-Strings-to-Make-Palindrome/1616.Split-Two-Strings-to-Make-Palindrome.cpp <==
+snippet 1616.Split-Two-Strings-to-Make-Palindrome "1616.Split-Two-Strings-to-Make-Palindrome" b
+class Solution {
+public:
+    bool checkPalindromeFormation(string a, string b) 
+    {
+        return check(a,b) || check(b,a);        
+    }
+    
+    bool check(string&a, string& b)
+    {
+        int i=0, j=b.size()-1;
+        while (i<j && a[i]==b[j])
+        {
+            i++;
+            j--;
+        }
+        if (i>=j) return true;
+        return isPalindrome(a.substr(i,j-i+1))||isPalindrome(b.substr(i,j-i+1));
+    }
+    
+    bool isPalindrome(string s)
+    {
+        int i=0, j = s.size()-1;
+        while (i<j && s[i]==s[j])
+        {
+            i++;
+            j--;
+        }
+        return i>=j;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1698.Number-of-Distinct-Substrings-in-a-String/Readme.md <==
+snippet 1698.Number-of-Distinct-Substrings-in-a-String "1698.Number-of-Distinct-Substrings-in-a-String" b
+### 1698.Number-of-Distinct-Substrings-in-a-String
+
+这道题的暴力方法是枚举所有的substring，然后存储在集合里。虽然看上去时间复杂度是o(N^2)，但是对于长字符串的集合存储和查询的开销非常大，事实上不可以用o(1)时间来忽略。
+
+#### 解法1：Trie
+我们在考虑类似```axxxxaxxxxx```的字符串时，需要解决的一个问题是，以第二个a开头的子串```axxx```是否会和以第一个a开头的子串```axxx```重复。为了避免用字符串集合来暴力查询，我们可以用字典树。我们在处理第一个a时，就把以其为开头的substring存入一个trie（此时这个trie没有任何分支，应该是一条长链）。这样当我们处理以第二个a为开头的substring时，就从trie里顺着a这条分支往下走，如果有任何重合的部分，都不算distinct substring。直至当前的substring延伸到一定程度之后不再与Trie中的已有路径重合，我们就在Trie里继续往下开辟新的路径和节点。同时每开辟新的一层，就意味着多了一个distinct substring。
+
+这种做法的时间复杂度也是真o(N^2)，每个基本操作就是遍历或创建Trie节点。但是当大量开辟动态空间时，也会造成TLE。
+
+#### 解法2：Rolling Hash
+我们考虑固定长度len的滑窗，将滑窗范围内的字符串encode成一个数字放入集合里，就可以快速判断这个字符串是否之前出现过。编码的方法就是将这个字符串看成一个26进制的数，注意取模。窗口滑动的时候，针对老编码，用o(1)的时间加上新字符、减去老字符，就可以得到新的编码。
+
+#### 解法3：Suffix Tree
+后缀树（数组）可以得到o(N)的优秀解法，但是我不会。
+
+$0
+endsnippet
+
+# ==> ./String/1698.Number-of-Distinct-Substrings-in-a-String/1698.Number-of-Distinct-Substrings-in-a-String_v1.cpp <==
+snippet 1698.Number-of-Distinct-Substrings-in-a-String "1698.Number-of-Distinct-Substrings-in-a-String" b
+class Solution {
+    class TrieNode
+    {
+        public:
+        TrieNode* next[26];
+    };
+public:
+    int countDistinct(string s) 
+    {
+        TrieNode* root = new TrieNode();
+        int count = 0;
+        for (int i=0; i<s.size(); i++)
+        {
+            TrieNode* node = root;
+            for (int j=i; j<s.size(); j++)
+            {
+                if (node->next[s[j]-'a']==NULL)
+                {
+                    node->next[s[j]-'a'] = new TrieNode();
+                    count ++;
+                }
+                node = node->next[s[j]-'a'];
+            }            
+        }
+        return count;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1698.Number-of-Distinct-Substrings-in-a-String/1698.Number-of-Distinct-Substrings-in-a-String_v2.cpp <==
+snippet 1698.Number-of-Distinct-Substrings-in-a-String "1698.Number-of-Distinct-Substrings-in-a-String" b
+typedef uint64_t ULL;
+class Solution {
+public:
+    int countDistinct(string s) 
+    {
+        int n = s.size();
+        ULL base = 26;
+        int count = 0;
+        
+        for (int len = 1; len <=n; len++)
+        {            
+            ULL power = 1;
+            for (int i=0; i<len-1; i++)
+                power *= base;
+            
+            unordered_set<ULL>Set;
+            ULL hash = 0;            
+            for (int i=0; i<n; i++)
+            {                
+                if (i-len>=0)
+                    hash = hash - (s[i-len]-'a')*power;
+                hash = hash * base + (s[i]-'a');
+                if (i>=len-1)
+                    Set.insert(hash);
+            }
+            count += Set.size();
+        }
+        return count;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1754.Largest-Merge-Of-Two-Strings/Readme.md <==
+snippet 1754.Largest-Merge-Of-Two-Strings "1754.Largest-Merge-Of-Two-Strings" b
+### 1754,Largest-Merge-Of-Two-Strings
+
+如果word1和Word2的首字母不同，那么我们显然会优先选择首字母更大的那个。那么如果word1和word2的首字母相同呢？这里有个巧妙的贪心策略，就是将两个字符串各自扔掉首字母，查看剩下的字符串谁大？对于剩下字符串字典序较大的那个字符串，我们在本轮优先选取它的首字母。这是因为这样做可以让它后面更大的字符优先暴露出来。
+
+以上的做法可以合并成一个策略：查看当前两个字符串谁的字典序更大，就优先取谁的首字母。
+
+这样的做法的时间复杂度是o(N^2)。也有更复杂的线性时间的做法，就不做要求了。
+
+$0
+endsnippet
+
+# ==> ./String/1754.Largest-Merge-Of-Two-Strings/1754.Largest-Merge-Of-Two-Strings.cpp <==
+snippet 1754.Largest-Merge-Of-Two-Strings "1754.Largest-Merge-Of-Two-Strings" b
+class Solution {
+public:
+    string largestMerge(string word1, string word2) 
+    {
+        string ret;
+        int i=0, j=0;
+        while (i<word1.size() && j<word2.size())
+        {
+            if (word1.substr(i)>word2.substr(j))
+            {
+                ret.push_back(word1[i]);
+                i++;
+            }
+            else
+            {
+                ret.push_back(word2[j]);
+                j++;
+            }
+        }
+        while (i<word1.size())
+        {
+            ret.push_back(word1[i]);
+            i++;
+        }
+        while (j<word2.size())
+        {
+            ret.push_back(word2[j]);
+            j++;
+        }
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/Readme.md <==
+snippet 1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array "1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array" b
+### 1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array
+
+#### 解法1：暴力
+在长度为m的目标串里寻找长度为n的模式串，暴力法需要o(mn)的时间复杂度。如果要寻找k个模式串，总共需要o(mnk)的时间。本题中m<10^3，且有nk<10^3，所以暴力法是可以接受的。
+
+#### 解法2：KMP
+我们可以用KMP的方法，将单词寻找模式串的长度减少为o(m+n)，从而降低复杂度。
+
+与KMP的模板题类似，我们要对每一个模式串p预处理得到它的“自相关最长前后缀数组”lsp。略微不同的是，我们在每次进行s和p的匹配时，需要在目标串s中指定一个起始位置cur。这样每一个回合，s和p的互相关最长前后缀数组的计算只需要从cur开始。如果能够找到匹配的起始位置i，那么下一个回合的起始位置就从cur = i+p.size()开始寻找。
+
+$0
+endsnippet
+
+# ==> ./String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array_BruteForce.cpp <==
+snippet 1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array "1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array" b
+class Solution {
+public:
+    bool canChoose(vector<vector<int>>& groups, vector<int>& nums) 
+    {
+        int cur = 0;
+        for (int i=0; i<groups.size(); i++)
+        {
+            if (cur>=nums.size()) return false;
+            cur = find(nums, cur, groups[i]);
+            if (cur==-1) return false;
+            cur += groups[i].size();
+        }
+        return true;
+    }
+
+    int find(vector<int>&nums, int cur, vector<int>&g)
+    {
+        for (int i=cur; i<nums.size(); i++)
+        {
+            int flag = 1;
+            for (int j=0; j<g.size(); j++)
+                if (cur+j>=nums.size() || nums[i+j]!=g[j])
+                {
+                    flag = 0;
+                    break;
+                }
+            if (flag) return i;
+        }
+        return -1;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array/1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array_KMP.cpp <==
+snippet 1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array "1764.Form-Array-by-Concatenating-Subarrays-of-Another-Array" b
+class Solution {
+    int dp[1000];
+
+public:
+    bool canChoose(vector<vector<int>>& groups, vector<int>& nums) 
+    {
+        vector<vector<int>>lsps = preprocess(groups);
+        int cur = 0;
+        for (int i=0; i<groups.size(); i++)
+        {
+            if (cur>=nums.size()) return false;
+            cur = find(nums, cur, groups[i], lsps[i]);            
+            if (cur == -1) return false;
+            cur += groups[i].size();            
+        }
+        return true;
+    }
+
+    int find(vector<int>&nums, int cur, vector<int>&p, vector<int>&lsp)
+    {
+        int n = nums.size();
+        dp[cur] = (p[0]==nums[cur]);
+        if (lsp.size()==1 && dp[cur]==1)
+            return cur;
+        for (int i=cur+1; i<n; i++)
+        {
+            int j = dp[i-1];
+            while (j>0 && p[j]!=nums[i])
+                j = lsp[j-1];
+            dp[i] = j + (p[j]==nums[i]);
+            if (dp[i] == p.size())
+                return i-p.size()+1;
+        }
+        return -1;
+    }
+
+    vector<vector<int>> preprocess(vector<vector<int>>& groups)
+    {
+        vector<vector<int>> rets;
+        for (auto &g: groups)
+        {
+            int n = g.size();
+            vector<int>dp(n);
+            dp[0] = 0;
+            for (int i=1; i<n; i++)
+            {
+                int j = dp[i-1];
+                while (j>0 && g[j]!=g[i])
+                    j = dp[j-1];
+                dp[i] = j + (g[j]==g[i]);
+            }
+            rets.push_back(dp);
+        }
+        return rets;
+    }
+
+};
+
+$0
+endsnippet
+
+# ==> ./String/1849.Splitting-a-String-Into-Descending-Consecutive-Values/Readme.md <==
+snippet 1849.Splitting-a-String-Into-Descending-Consecutive-Values "1849.Splitting-a-String-Into-Descending-Consecutive-Values" b
+### 1849.Splitting-a-String-Into-Descending-Consecutive-Values
+
+我们只要确定了第一段区间，也就确定了第一个数字num。那么我们就要寻找第二个区间的范围能够表达数字num-1. 如果找到的话，就递归寻找下一个区间范围使得能够表达数字num-2 .... 直到最后一个区间结束时恰好是字符串的终点。
+
+注意可以探索的区间很长，比如你尝试第一个区间长度达到19时，极有可能长整形也会溢出，C++的stoll会报错。我们注意到，尝试的第一个数字不可能非常大，假设它的数值大于1e10，即有11位数字，那么第二个数字必然也至少有10位数字，总的长度就会超过原始字符串20的限制。所以我们用逐位累加的方法来计算num（而不是用stoll），当发现num>1e10时就可以终止更大的区间尝试了。
+
+$0
+endsnippet
+
+# ==> ./String/1849.Splitting-a-String-Into-Descending-Consecutive-Values/1849.Splitting-a-String-Into-Descending-Consecutive-Values.cpp <==
+snippet 1849.Splitting-a-String-Into-Descending-Consecutive-Values "1849.Splitting-a-String-Into-Descending-Consecutive-Values" b
+typedef long long ll;
+class Solution {
+public:
+    bool splitString(string s) 
+    {        
+        for (int len=1; len < s.size(); len++)
+        {
+            ll num = stoll(s.substr(0, len));
+            if (num >= 1e10) break;
+            if (dfs(s, len, num))
+                return true;
+        }
+        return false;
+    }
+    
+    bool dfs(string&s, int cur, ll num)
+    {
+        if (cur==s.size()) return true;
+        
+        for (int len = 1; len + cur <= s.size(); len++)                
+        {
+            ll num2 = stoll(s.substr(cur, len));
+            if (num2 >= 1e10) break;            
+            if (num-1 == num2 && dfs(s, cur+len, num2))
+                return true;                
+        }
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1923.Longest-Common-Subpath/Readme.md <==
+snippet 1923.Longest-Common-Subpath "1923.Longest-Common-Subpath" b
+### 1923.Longest-Common-Subpath
+
+本题的正解是用“后缀数组”的高级数据结构，但是过于复杂，这里只讲比较容易理解的rolling hash的解法。
+
+本题和```1062. Longest Repeating Substring```的做法很类似。High-level的思想是二分搜索这样的common subarray的长度len。对于一个固定的长度len，我们看所有的数组里是否存在完全相同、长度为len的subarray。如果存在，那么len还可以往大调整，这是因为len越大，所有数组存在一个相同的公共子串的概率就越低；否则len就需要往小调整。
+
+那么如何寻找长度为k的公共子串呢？可以将所有长度为k的子串都扔进一个hash map里，统计它们出现的频次。如果某个子串出现了m次（但是在每个数组里只能最多被统计一次），那么说明它就是所有数组的公共子串了。但是直接将子串（即subarray）直接作为key是不实际的，因为这个子串可能会很长，时间和空间的消耗都很大。可行的解法是将子串进行“编码”。因为每个数字不超过1e5，所以我们将这个长度为k的子串，看做是含有k个digit、每个digiit是1e5进制的“数”。可以想见，这样的“数”和原始的子串必然是一一对应的。相比于拿子串（子数组）作为key，用“数”作为key更高效。
+
+问题是这样的“数”会非常大，远远超过了数据结构能够支持的溢出范围。一般的处理方法是，在编码的过程中时刻对一个大质数mod取模，比如1e9+7. 但是这样就有hash碰撞的危险，即有若干个不同的子串对应同一个编码。显然，mod越大，冲突的概率越小。本题中一个数组的子串的数目可能有1e5个，一般要求mod大于(1e5)^2才能有效降低冲突的概率。这里介绍一个hack的技巧，那就是我们可以将mod取到C++的最大，也就是2^64. 具体的方法是将所有的数字都设置为uint64_t类型，并且取消所有取模的操作。无符号类型的一个特点就是，任何加减乘操作造成溢出的话，自动实现的是wrap-up，也就是相当于对2^64取模。因为2^64=1.8e19，这就显著减小了hash冲撞的概率，并且使得代码更简洁。
+
+#### Update
+新的测试数据又针对了上面的做法，现在无法AC了。我们只好采用双hash作为key（暂时还不需要改mod）。参见v2的代码。
+
+$0
+endsnippet
+
+# ==> ./String/1923.Longest-Common-Subpath/1923.Longest-Common-Subpath.cpp <==
+snippet 1923.Longest-Common-Subpath "1923.Longest-Common-Subpath" b
+typedef uint64_t ULL;
+class Solution {
+    ULL base = 1e5+7;
+public:
+    int longestCommonSubpath(int n, vector<vector<int>>& paths) 
+    {       
+        int left = 0, right = 100000;
+        while (left < right)
+        {
+            int mid = right-(right-left)/2;
+            if (checkOK(paths, mid))
+                left = mid;
+            else
+                right = mid-1;
+        }
+        return left;
+    }
+
+    bool checkOK(vector<vector<int>>& paths, int len)
+    {
+
+        ULL head = 1;
+        for (int i = 0; i < len-1; i++)
+            head = head * base;
+        
+        ULL hash = 0;
+        unordered_set<ULL>HashSet;
+        unordered_map<ULL,int>HashCount;        
+
+        for (int k = 0; k < paths.size(); k++)
+        {
+            ULL hash = 0;
+            unordered_set<ULL>HashSet;
+            for (int i=0; i<paths[k].size(); i++)
+            {
+                if (i>=len)
+                    hash -= paths[k][i-len] * head;
+                hash = hash * base + paths[k][i];
+                if (i>=len-1 && HashSet.find(hash)==HashSet.end())
+                {
+                    HashSet.insert(hash);
+                    HashCount[hash] += 1;
+                }
+            }
+        }
+
+        for (auto x: HashCount)
+        {
+            if (x.second >= paths.size())
+                return true;
+        }
+        return false;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1923.Longest-Common-Subpath/1923.Longest-Common-Subpath_v2.cpp <==
+snippet 1923.Longest-Common-Subpath "1923.Longest-Common-Subpath" b
+typedef uint64_t ULL;
+typedef pair<ULL,ULL> PULL;
+class Solution {
+    ULL base1 = 1e5;
+    ULL base2 = 1e5+7;
+public:
+    int longestCommonSubpath(int n, vector<vector<int>>& paths) 
+    {
+        int left = 0, right = 100000;
+        while (left < right)
+        {
+            int k = right-(right-left)/2;
+            if (checkOK(paths, k))   // if there is a common subarray of length k 
+                left = k;
+            else
+                right = k-1;                
+        }
+        return left;
+    }
+    
+    bool checkOK(vector<vector<int>>& paths, int len)
+    {        
+        map<PULL, int>HashCount;
+        
+        ULL head1 = 1;
+        ULL head2 = 1;
+        for (int i=0; i<len-1; i++)
+        {
+            head1 = head1 * base1;
+            head2 = head2 * base2;
+        }
+            
+        
+        for (int k=0; k<paths.size(); k++)
+        {
+            set<PULL>HashSet;
+            ULL hash1 = 0;
+            ULL hash2 = 0;
+            
+            for (int i=0; i<paths[k].size(); i++)
+            {
+                if (i>=len)
+                {
+                    hash1 -= paths[k][i-len] * head1;
+                    hash2 -= paths[k][i-len] * head2;
+                }
+                    
+                hash1 = hash1 * base1 + paths[k][i];
+                hash2 = hash2 * base2 + paths[k][i];
+                
+                if (i>=len-1 && HashSet.find({hash1,hash2})==HashSet.end())
+                {
+                    HashSet.insert({hash1,hash2});
+                    HashCount[{hash1,hash2}]++;
+                }                    
+            }            
+        }
+        
+        for (auto x: HashCount)
+        {
+            if (x.second == paths.size())
+                return true;
+        }
+        return false;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings/Readme.md <==
+snippet 1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings "1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings" b
+### 1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings
+
+此题的第一部分是Manacher算法，用o(N)的时间计算所有回文串的长度（考虑每个字符作为回文串的中心）。具体的算法参见```LC 005.Longest-Palindromic-Substring```.
+
+Manacher算法的输出是数组P[i]，表示以i为中心，可以构造最长长度为```P[i]*2+1```的回文串。注意，这个回文串的长度必然是奇数。
+
+单本题接下来的部分也很关键。我们如何遍历两个互不相交的回文串。一个比较自然的想法就是用前缀、后缀数组。令left[i]表示s[0:i]里的最长回文串长度、right[i]表示s[i:n-1]里的最长回文串长度，那么最终答案就是遍历i寻找最大的```left[i]*right[i+1]```即可。
+
+现在来想left[i]怎么求。显然left[i]必然会继承于left[i-1]. 其次我们还要考虑那些包括了s[i]的回文串。所以我们其实要找的是最小的位置j，使得以j为中心的回文串能覆盖到i。这样以j为中心、长度为```(i-j)*2+1```的字符串是left[i]所没有覆盖到的、最长的一个回文串。这个j怎么找呢？我们其实只要从小到大顺着过一遍，当恰好```j+P[j]>=i```时停下来即可。此外我们还发现，当我们从小到大考察i时，j的考察方向也是单调递增的。所以意味着我们用o(N)的时间就可以把left[i]数组求出来。
+
+类似地我们可以求出right[i]和最终的答案。
+
+$0
+endsnippet
+
+# ==> ./String/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings/1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings.cpp <==
+snippet 1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings "1960.Maximum-Product-of-the-Length-of-Two-Palindromic-Substrings" b
+class Solution {
+public:
+    long long maxProduct(string s) 
+    {
+        int n = s.size();
+        int maxRight = -1;
+        int maxCenter = -1;
+        vector<int>P(n);
+        for (int i=0; i<n; i++)
+        {
+            int r;
+            int j = maxCenter*2-i;
+            if (i<=maxRight)
+                r = min(P[j], maxRight-i);
+            else
+                r = 0;
+            while (i-r>=0 && i+r<n && s[i-r]==s[i+r])
+                r++;
+            P[i] = r-1;
+            if (i+P[i] > maxRight)
+            {
+                maxRight = i+P[i];
+                maxCenter = i;
+            }
+        }
+                                
+        
+        vector<int>left(n, 0);        
+        left[0] = 1;
+        int j = 0;
+        for (int i=1; i<n; i++)
+        {
+            while (j<n && j+P[j] < i)
+                j++;
+            left[i] = max(left[i-1], (i-j)*2+1);
+        }
+        
+        vector<int>right(n, 0);        
+        right[n-1] = 1;
+        j = n-1;
+        for (int i=n-2; i>=0; i--)
+        {
+            while (j>=0 && j-P[j] > i)
+                j--;            
+            right[i] = max(right[i+1], (j-i)*2+1);
+        }
+            
+        long long ret = 0;
+        for (int i=0; i<n-1; i++)
+            ret = max(ret, (long long)left[i] * (long long)right[i+1]);
+            
+        return ret;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/2156.Find-Substring-With-Given-Hash-Value/Readme.md <==
+snippet 2156.Find-Substring-With-Given-Hash-Value "2156.Find-Substring-With-Given-Hash-Value" b
+### 2156.Find-Substring-With-Given-Hash-Value
+
+这是一道Rolling Hash的裸题，就是将一个字符串转化为26进制的整数。注意到Hash的高位在右边，所以我们需要从右往左进行滑窗滚定。
+
+每个回合里，先砍掉原先的最高位乘以26^(k-1)，然后整体乘上26，再加上新引入的最低位。
+
+由于涉及到减法，可能会产生负数，所以每次取模时采用```(x+M)%M```的方式更为稳妥。
+
+$0
+endsnippet
+
+# ==> ./String/2156.Find-Substring-With-Given-Hash-Value/2156.Find-Substring-With-Given-Hash-Value.cpp <==
+snippet 2156.Find-Substring-With-Given-Hash-Value "2156.Find-Substring-With-Given-Hash-Value" b
+using LL = long long;
+class Solution {
+public:
+    string subStrHash(string s, int power, int modulo, int k, int hashValue) 
+    {
+        int n = s.size();
+        LL sum = 0, M = modulo;
+        
+        LL pk = 1;
+        for (int i=0; i<k-1; i++)
+            pk = pk*power%M;                
+        
+        int ret = -1;
+        for (int i=n-1; i>=0; i--)
+        {            
+            if (i+k<n)
+            {
+                sum = sum - (s[i+k]-'a'+1) * pk % M;
+                sum = (sum + M) % M;
+            }
+            
+            sum = (sum * power % M + s[i]-'a'+1) % M;
+            sum = (sum + M) % M;
+            
+            if (i+k<=n && sum==hashValue)
+                ret = i;
+        }
+        
+        return s.substr(ret, k);
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/2168.Unique-Substrings-With-Equal-Digit-Frequency/Readme.md <==
+snippet 2168.Unique-Substrings-With-Equal-Digit-Frequency "2168.Unique-Substrings-With-Equal-Digit-Frequency" b
+### 2168.Unique-Substrings-With-Equal-Digit-Frequency
+
+从此题的数目局规模上来看，用N^2的时间来遍历所有的substring、并且判断是否符合要求是可行的。但比较难办的是如何判断这些子串是否是unique。因为N^2个字符串会占用N^3的空间，我们无法直接存下所有字符串再去重。
+
+对于判定字符串重复，我们有固定的套路，那就是rolling hash，可以将任意长度的字符串编码为一个整数来存储。本题中需要注意的是，为了避免将"012"和"12"都哈希成同一个编码，我们可以将十进制的编码规则改为十一进制，这样字符0也会被编码。即
+```cpp
+for (int j=i; j<n; j++)
+  hash = hash * 11 + (s[j]-'0'+1);
+```
+
+$0
+endsnippet
+
+# ==> ./String/2168.Unique-Substrings-With-Equal-Digit-Frequency/2168.Unique-Substrings-With-Equal-Digit-Frequency.cpp <==
+snippet 2168.Unique-Substrings-With-Equal-Digit-Frequency "2168.Unique-Substrings-With-Equal-Digit-Frequency" b
+using LL = long long;
+LL M = 1e9+7;
+class Solution {
+public:
+    int equalDigitFrequency(string s) 
+    {
+        vector<int>count(10);
+        unordered_set<LL>Set;
+        
+        int n = s.size();
+        for (int i=0; i<n; i++)
+        {
+            count.assign(10, -1);
+            LL hash = 0;
+            
+            for (int j=i; j<n; j++)
+            {
+                hash = hash*11+(s[j]-'0'+1);
+                hash = hash%M;
+                
+                count[s[j]-'0']++;
+                
+                int freq = -1;
+                int flag = 1;
+                for (int k=0; k<10; k++)
+                {
+                    if (count[k]==-1) continue;
+                    if (freq==-1)
+                        freq = count[k];
+                    else if (freq!=count[k])
+                    {
+                        flag = 0;
+                        break;                        
+                    }                        
+                }                
+                if (flag) Set.insert(hash);
+            }
+        }
+        
+        return Set.size();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./String/2223.Sum-of-Scores-of-Built-Strings/Readme.md <==
+snippet 2223.Sum-of-Scores-of-Built-Strings "2223.Sum-of-Scores-of-Built-Strings" b
+### 2223.Sum-of-Scores-of-Built-Strings
+
+#### 解法1：扩展KMP
+本题乍看像KMP，但其实不是。KMP给出的dp[i]表示以s[i]结尾的最长后缀，使得其等于s的前缀。而本题需要求的是，以s[i]开头的最长前缀，使得其等于s的前缀。这其实叫做扩展KMP。相关的资料见[OI Wiki](https://oi-wiki.org/string/z-func/)
+
+#### 解法2：Rolling Hash + Binary Search
+另一种更接地气的做法是Rolling Hash。对于任意的位置i，我们想查看子串s[i:n-1]与s相同的最长前缀，不妨暴力地二分尝试。即猜测一个长度len，查看s[i:i+len-1]是否与s[0,len-1]相同。但是此处显然不会无脑地逐个字符去对比，我们只需要用o(1)时间比较这两段区间的Hash值。
+
+那么怎么得到任意一段区间的Hash值呢？这就类似于前缀和的思想。我们用hashes[i]表示将字符串前缀s[0:i]哈希为一个26进制数的结果。显然我们可以用o(n)提前预处理，得到所有的hashes[i]。于是对于任意一个区间[i:j]，他们对应的hash值就是```hashes[j] - hashes[i-1]*26^(j-i)```.
+
+Hash的过程中显然会有数值溢出的问题，通常情况下我们要设计MOD在计算的过程中不停地取余。一个取巧的方法就是用无符号长整形unsigned long long，利用自然溢出的特性来省去手工取余。用ULL的另一个好处就是区间的hash值计算里永远不会出现负数，保持了一致性。
+
+$0
+endsnippet
+
+# ==> ./String/2223.Sum-of-Scores-of-Built-Strings/2223.Sum-of-Scores-of-Built-Strings.cpp <==
+snippet 2223.Sum-of-Scores-of-Built-Strings "2223.Sum-of-Scores-of-Built-Strings" b
+using LL = long long;
+using ULL = unsigned long long;
+class Solution {
+    ULL hashes[100001];
+    ULL power[100001];
+public:
+    ULL getHash(string&s, int i, int len)
+    {
+        return hashes[i+len-1] - (i==0 ? 0 : hashes[i-1]*power[len]);
+    }
+
+    long long sumScores(string s) 
+    {
+        int n = s.size();        
+        ULL hash = 0;
+        for (int i=0; i<n; i++)
+        {
+            hash = hash*26 + (s[i]-'a');
+            hashes[i] = hash;
+        }
+
+        power[0] = 1;
+        for (int i=1; i<n; i++)
+        {
+            power[i] = power[i-1]*26;
+        }
+
+        LL ret = 0;
+        for (int i=n-1; i>=0; i--)
+        {
+            if (s[i]!=s[0]) continue;
+            int left = 1, right = n-i;
+            while (left < right)
+            {
+                int mid = right - (right-left)/2;
+                if (getHash(s, i, mid) != hashes[mid-1])
+                    right = mid-1;
+                else
+                    left = mid;
+            }
+            ret += left;
+        }
+
+        return ret;        
+    }
+};
+
+$0
+endsnippet

@@ -1,6 +1,25 @@
-::::::::::::::
-Stack/032.Longest-Valid-Parentheses/032.Longest-Valid-Parentheses.cpp
-::::::::::::::
+
+# ==> ./Stack/0032.Longest-Valid-Parentheses/Readme.md <==
+snippet 0032.Longest-Valid-Parentheses "0032.Longest-Valid-Parentheses" b
+### 032.Longest-Valid-Parentheses
+
+此题用stack来做非常巧妙.
+
+我们考虑用一个stack来做常规的符号匹配，即
+1. 遇到左括号入栈；
+2. 遇到右括号，尝试用它对消栈顶的左括号，使其退栈（如果有的话）。否则的话我们就将右括号入栈。
+
+由此，if possible，我们可以为每一个右括号i，寻找与之匹配的左括号j的位置（即离它左边最近的、可以匹配的左括号）。并且我们可以确定，[j:i]这对括号内的字符肯定也是已经正确匹配了的。
+
+但是[j:i]就一定是以j结尾的最长的合法字串了吗？不一定。此时观察，将栈顶元素j退栈“对消”之后，此时新的栈顶元素对应的位置并不一定是与j相邻的。中间这段“空隙”意味着什么呢？对，这段“空隙”是之前已经退栈了的其他合法字符串。所以我们可以在区间[j:i]的左边再加上这段长度。因此，真正的“以j结尾的最长的合法字串”的长度是```i - Stack.top()```。注意stack存放的是所有字符的index。
+
+[Leetcode Link](https://leetcode.com/problems/longest-valid-parentheses)
+
+$0
+endsnippet
+
+# ==> ./Stack/0032.Longest-Valid-Parentheses/032.Longest-Valid-Parentheses.cpp <==
+snippet 0032.Longest-Valid-Parentheses "0032.Longest-Valid-Parentheses" b
   
 class Solution {
 public:
@@ -26,25 +45,21 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Stack/032.Longest-Valid-Parentheses/Readme.md
-::::::::::::::
-### 032.Longest-Valid-Parentheses
 
-此题用stack来做非常巧妙.
+$0
+endsnippet
 
-我们考虑用一个stack来做常规的符号匹配，即
-1. 遇到左括号入栈；
-2. 遇到右括号，尝试用它对消栈顶的左括号，使其退栈（如果有的话）。否则的话我们就将右括号入栈。
+# ==> ./Stack/0071.Simplify-Path/Readme.md <==
+snippet 0071.Simplify-Path "0071.Simplify-Path" b
+### 071.Simplify-Path
 
-由此，if possible，我们可以为每一个右括号i，寻找与之匹配的左括号j的位置（即离它左边最近的、可以匹配的左括号）。并且我们可以确定，[j:i]这对括号内的字符肯定也是已经正确匹配了的。
+先预处理字符串，将所有用"/"分割的字符串放置于一个字符串数组里。再根据每个字符串的具体含义，模拟一个栈的操作：遇到".."就退栈，遇到"."就不入栈，其他的时候都入栈。最后把栈里面的所有字符串用"/"再连接起来。
 
-但是[j:i]就一定是以j结尾的最长的合法字串了吗？不一定。此时观察，将栈顶元素j退栈“对消”之后，此时新的栈顶元素对应的位置并不一定是与j相邻的。中间这段“空隙”意味着什么呢？对，这段“空隙”是之前已经退栈了的其他合法字符串。所以我们可以在区间[j:i]的左边再加上这段长度。因此，真正的“以j结尾的最长的合法字串”的长度是```i - Stack.top()```。注意stack存放的是所有字符的index。
+$0
+endsnippet
 
-[Leetcode Link](https://leetcode.com/problems/longest-valid-parentheses)
-::::::::::::::
-Stack/071.Simplify-Path/071.Simplify-Path.cpp
-::::::::::::::
+# ==> ./Stack/0071.Simplify-Path/071.Simplify-Path.cpp <==
+snippet 0071.Simplify-Path "0071.Simplify-Path" b
 class Solution {
 public:
     string simplifyPath(string path) 
@@ -84,15 +99,49 @@ public:
         
     }
 };
-::::::::::::::
-Stack/071.Simplify-Path/Readme.md
-::::::::::::::
-### 071.Simplify-Path
 
-先预处理字符串，将所有用"/"分割的字符串放置于一个字符串数组里。再根据每个字符串的具体含义，模拟一个栈的操作：遇到".."就退栈，遇到"."就不入栈，其他的时候都入栈。最后把栈里面的所有字符串用"/"再连接起来。
-::::::::::::::
-Stack/084.Largest-Rectangle-in-Histogram/84-Largest-Rectangle-in-Histogram.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Stack/0084.Largest-Rectangle-in-Histogram/Readme.md <==
+snippet 0084.Largest-Rectangle-in-Histogram "0084.Largest-Rectangle-in-Histogram" b
+### leetcode-84-Largest-Rectangle-in-Histogram
+
+#### 此类是贪心法的典型题。
+----------
+贪心法的原则是维护一个递增（严格的说是非递减）的栈序列s，s里面是所给数组元素的index（注意不是数组元素本身）。当下一个元素满足递增的要求时，入栈：
+```c
+if (height[i]>height[s.top()]) 
+  s.push(height[i]);  
+```
+当下一个元素不满足递增的要求时，就退栈处理栈顶的一些元素，使得即将入列的元素依然满足递增关系。退栈处理的过程中可以方便地考察那些退栈元素所围成的最大面积。其高度易知是height[s.top()]，但宽度是什么呢？注意是和次顶元素的位置有关：  
+```cpp
+while (height[s.back()]>height[i])
+{
+  Height = height[s.top()];  
+  s.pop(); // 提取次顶元素的位置  
+  result = max(result, Height * (i-s.top()-1);  
+}
+```
+注意如果写成以下就是错误的:  
+```c
+result = max(result, height[s.top()] * (i-s.top());  
+```
+
+
+原因是次顶元素和栈顶元素可能在index上并不是相邻的，中间可能隔着一些已经被处理掉的大数。因此在考虑当前的栈顶元素围成的面积，应该包括这些位置，所以其宽度不仅是i-s.top()，而要更大。  
+
+其他的技巧：  
+----------
+在height数组末添加元素0，是为了保证最后强制回溯。在height数组首端添加元素0，是为了便于处理s.pop()之后栈为空的特殊情况；这样处理后永远不会栈空。
+
+
+[Leetcode Link](https://leetcode.com/problems/largest-rectangle-in-histogram)
+$0
+endsnippet
+
+# ==> ./Stack/0084.Largest-Rectangle-in-Histogram/84-Largest-Rectangle-in-Histogram.cpp <==
+snippet 0084.Largest-Rectangle-in-Histogram "0084.Largest-Rectangle-in-Histogram" b
 class Solution {
 public:
     /**
@@ -136,43 +185,38 @@ public:
         return result;
     }
 };
-::::::::::::::
-Stack/084.Largest-Rectangle-in-Histogram/Readme.md
-::::::::::::::
-### leetcode-84-Largest-Rectangle-in-Histogram
 
-#### 此类是贪心法的典型题。
-----------
-贪心法的原则是维护一个递增（严格的说是非递减）的栈序列s，s里面是所给数组元素的index（注意不是数组元素本身）。当下一个元素满足递增的要求时，入栈：
-```c
-if (height[i]>height[s.top()]) 
-  s.push(height[i]);  
-```
-当下一个元素不满足递增的要求时，就退栈处理栈顶的一些元素，使得即将入列的元素依然满足递增关系。退栈处理的过程中可以方便地考察那些退栈元素所围成的最大面积。其高度易知是height[s.top()]，但宽度是什么呢？注意是和次顶元素的位置有关：  
+$0
+endsnippet
+
+# ==> ./Stack/0085.Maximal-Rectangle/Readme.md <==
+snippet 0085.Maximal-Rectangle "0085.Maximal-Rectangle" b
+# leetcode-85-Maximal-Rectangle  
+
+此题是leetcode第84题的二维扩展，转化为求maximal histgram.  
 ```cpp
-while (height[s.back()]>height[i])
+for (int i=0; i<M; i++)  //遍历histgram的底行位置。注意：不需要遍历histgram的顶行位置！
 {
-  Height = height[s.top()];  
-  s.pop(); // 提取次顶元素的位置  
-  result = max(result, Height * (i-s.top()-1);  
+   for (int j=0; j<N; j++)
+   {
+      if (matrix[i][j]==0)
+        q[j]=0;
+      else
+        q[j]=q[j]+1;
+   }
 }
 ```
-注意如果写成以下就是错误的:  
-```c
-result = max(result, height[s.top()] * (i-s.top());  
-```
+注意：      
+1. 不要试图用预处理的DP算法（计算sum[i][j]），这样仍需要四重循环，时间复杂度太大。
+2. MaxHistgram时的小技巧：在数组首尾都加零。前者避免 i-s.top()-1 时遇到栈空，后者保证总会进行一次退栈。
 
 
-原因是次顶元素和栈顶元素可能在index上并不是相邻的，中间可能隔着一些已经被处理掉的大数。因此在考虑当前的栈顶元素围成的面积，应该包括这些位置，所以其宽度不仅是i-s.top()，而要更大。  
+[Leetcode Link](https://leetcode.com/problems/maximal-rectangle)
+$0
+endsnippet
 
-其他的技巧：  
-----------
-在height数组末添加元素0，是为了保证最后强制回溯。在height数组首端添加元素0，是为了便于处理s.pop()之后栈为空的特殊情况；这样处理后永远不会栈空。
-
-
-[Leetcode Link](https://leetcode.com/problems/largest-rectangle-in-histogram)::::::::::::::
-Stack/085.Maximal-Rectangle/85-Maximal-Rectangle.cpp
-::::::::::::::
+# ==> ./Stack/0085.Maximal-Rectangle/85-Maximal-Rectangle.cpp <==
+snippet 0085.Maximal-Rectangle "0085.Maximal-Rectangle" b
 class Solution {
 public:
     /**
@@ -239,818 +283,44 @@ public:
         return result;
     }
 };
-::::::::::::::
-Stack/085.Maximal-Rectangle/Readme.md
-::::::::::::::
-# leetcode-85-Maximal-Rectangle  
 
-此题是leetcode第84题的二维扩展，转化为求maximal histgram.  
+$0
+endsnippet
+
+# ==> ./Stack/0155.Min-Stack/Readme.md <==
+snippet 0155.Min-Stack "0155.Min-Stack" b
+### 155.Min-Stack
+
+#### 解法1： 
+要做到实时得到getMin()，不妨就对栈内的每一个元素都记录下对应的当前栈内元素最小值。于是我们可以构建另一个栈StackMin，跟随数据本身的Stack同步进退。
 ```cpp
-for (int i=0; i<M; i++)  //遍历histgram的底行位置。注意：不需要遍历histgram的顶行位置！
-{
-   for (int j=0; j<N; j++)
-   {
-      if (matrix[i][j]==0)
-        q[j]=0;
-      else
-        q[j]=q[j]+1;
-   }
-}
-```
-注意：      
-1. 不要试图用预处理的DP算法（计算sum[i][j]），这样仍需要四重循环，时间复杂度太大。
-2. MaxHistgram时的小技巧：在数组首尾都加零。前者避免 i-s.top()-1 时遇到栈空，后者保证总会进行一次退栈。
-
-
-[Leetcode Link](https://leetcode.com/problems/maximal-rectangle)::::::::::::::
-Stack/1019.Next-Greater-Node-In-Linked-List/1019.Next-Greater-Node-In-Linked-List.cpp
-::::::::::::::
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-class Solution {
-public:
-    vector<int> nextLargerNodes(ListNode* head) 
+    void push(int x) 
     {
-        vector<int>ret;
-        stack<pair<int,int>>Stack;
-        ListNode* p = head;
-        int i = 0;
-
-        while (p!=NULL)
-        {
-            while (!Stack.empty() && Stack.top().first < p->val)
-            {
-                ret[Stack.top().second] = p->val;
-                Stack.pop();
-            }
-            ret.push_back({0});
-            Stack.push({p->val, i});
-            i++;
-            p = p->next;
-        }
-
-        return ret;
+        Stack.push(x);
+        if (StackMin.empty())
+            StackMin.push(x);
+        else
+            StackMin.push(min(x,StackMin.top()));
     }
-};
-::::::::::::::
-Stack/1019.Next-Greater-Node-In-Linked-List/Readme.md
-::::::::::::::
-### 1019.Next-Greater-Node-In-Linked-List
+```    
 
-本题和```Next Greater Element```并没有本质的区别。我们维护一个单调递减的栈，当如果新元素大于栈顶元素时，栈顶元素退栈，并且可以知道栈顶元素的next greater element就是新元素。
+#### 解法2：
+有一种更省空间的解法。就是压入栈内的元素不直接是x，而是```delta = x-Min_old```。
 
-需要注意的是，ret的结果并不是顺次更新的。所以栈的类型应该设计成pair，需要包括元素的数值和索引，这样方便将结果存入对应的ret[i]中。
-::::::::::::::
-Stack/1063.Number-of-Valid-Subarrays/1063.Number-of-Valid-Subarrays.cpp
-::::::::::::::
-class Solution {
-public:
-    int validSubarrays(vector<int>& nums) 
-    {
-        nums.push_back(INT_MIN);
-        stack<int>Stack;
-        int count = 0;
-        for (int i=0; i<nums.size(); i++)
-        {
-            while (!Stack.empty() && nums[i]<nums[Stack.top()])
-            {
-                count += i-Stack.top();
-                Stack.pop();
-            }            
-            Stack.push(i);
-        }
-        return count;        
-    }
-};
-::::::::::::::
-Stack/1063.Number-of-Valid-Subarrays/Readme.md
-::::::::::::::
-### 1063.Number-of-Valid-Subarrays
+入栈的时候，如果delta为正数，那么说明Min变量需要更新为```Min_new = Min_old```，否则就是```Min_new = x```
 
-对于任意一个nums[i]作为subarray的左端点的话，右端点最远可以是哪里呢？显然是the next smaller element，假设位置是在j。那么显然从[i,j-1]区间内的任意一个元素都可以是组成合法subarray的右端点，因此```count+=j-i```.
+出栈的时候，我们看到的是栈顶元素delta，以及Min_new。我们需要复原的是x和Min_old：
 
-求数组内每个元素的next smaller element就是常规的单调栈的操作。
-
-特别注意的是，遍历结束的时候，栈里面可能还存有递增的元素，这些元素作为左端点的subarray都还未被计数。为了强制清空栈，我们可以nums的末尾添加一个INT_MIN，这样所有的nums的元素最终都会被退栈（退栈的时候会计算对应的subarray的数目）。
-::::::::::::::
-Stack/1081.Smallest-Subsequence-of-Distinct-Characters/1081.Smallest-Subsequence-of-Distinct-Characters.cpp
-::::::::::::::
-class Solution {
-public:
-    string smallestSubsequence(string text) 
-    {
-        string str;        
-        vector<int>count(26);
-        for (auto ch: text)
-            count[ch-'a']++;
-        unordered_set<char>visited;
-        
-        for (auto ch: text)
-        {
-            if (visited.find(ch)!=visited.end())
-            {
-                count[ch-'a']--;
-            }
-            else
-            {
-                while (str.size()>0  && str.back()>ch && count[str.back()-'a']>0)
-                {
-                    visited.erase(str.back());
-                    str.pop_back();
-                }
-                str.push_back(ch);
-                count[ch-'a']--;
-                visited.insert(ch);
-            }
-        }
-        
-        return str;
-    }
-};
-::::::::::::::
-Stack/1081.Smallest-Subsequence-of-Distinct-Characters/Readme.md
-::::::::::::::
-### 1081.Smallest-Subsequence-of-Distinct-Characters
-
-这道题和```316.Remove-Duplicate-Letters```一模一样。
-::::::::::::::
-Stack/1087.Brace-Expansion/1087.Brace-Expansion.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> expand(string S) 
-    {
-        string s;
-        for (auto ch: S)
-        {
-            if (isalpha(ch))
-            {
-                s.push_back('{');
-                s.push_back(ch);
-                s.push_back('}');
-            }
-            else
-                s.push_back(ch);
-        }
-        S = s;
-        
-        stack<int>stackOp;
-        stack<vector<string>>stackStr;
-        vector<string>cur;
-            
-        for (int i=0; i<S.size(); i++)
-        {
-            if (S[i]=='{')
-            {
-                stackStr.push(cur);
-                stackOp.push(0);
-                cur.clear();
-            }
-            else if (S[i]==',')
-            {
-                stackStr.push(cur);
-                stackOp.push(1);
-                cur.clear();
-            }
-            else if (isalpha(S[i]))
-            {
-                string temp;
-                temp.push_back(S[i]);
-                cur.push_back(temp);
-            }
-            else if (S[i]=='}')
-            {
-                while (stackOp.top()==1)
-                {
-                    cur = combine(stackStr.top(), cur);
-                    stackStr.pop();
-                    stackOp.pop();
-                }
-                if (stackOp.top()==0)
-                {
-                    cur = crossProduct(stackStr.top(), cur);
-                    stackStr.pop();
-                    stackOp.pop();
-                }
-            }
-        }
-        
-        sort(cur.begin(), cur.end());
-        return cur;        
-    }
-    
-    vector<string>combine(vector<string>&s, vector<string>&t)
-    {
-        vector<string>ret;
-        for (int i=0; i<s.size(); i++)
-            ret.push_back(s[i]);
-        for (int i=0; i<t.size(); i++)
-            ret.push_back(t[i]);
-        return ret;
-    }
-    
-    vector<string>crossProduct(vector<string>&s, vector<string>&t)
-    {
-        if (s.size()==0) s.push_back("");
-        if (t.size()==0) t.push_back("");
-        vector<string>ret;
-        for (int i=0; i<s.size(); i++)
-            for (int j=0; j<t.size(); j++)
-            {
-                ret.push_back(s[i]+t[j]);
-            }
-        return ret;
-    }
-};
+1. 如果delta是正号，说明```Min_old = Min_new```，然后推出```x = delta+Min_old```.
+2. 如果delta是负号，说明```x = Min_new```，然后推出```Min_old = x-delta```.
 
 
+[Leetcode Link](https://leetcode.com/problems/min-stack)
+$0
+endsnippet
 
-
-::::::::::::::
-Stack/1087.Brace-Expansion/Readme.md
-::::::::::::::
-### 1087.Brace-Expansion
-
-因为此题明确没有nested的括号，所以简单的字符串处理就能AC。但是为了能扩展解决```1096.Brace Expansion II```，这里介绍一下更通用的栈的操作。
-
-首先，为了保证每个字母都能触发入栈操作，我们将所有的字母都用括号包起来，注意到这样做并不改变原义。比如：```{a,b}c{d,e}f```变成```{{a},{b}}{c}{{d},{e}}{f}```
-
-我们什么时候入栈？当遇到左括号和逗号的时候都需要。当然，为了区分这两个操作，我们需要两个栈stackOp和stackStr，分别来存放操作符（标记0或者1）和操作数（字符串数组）。当退栈的时候，如果对应的stackOp栈顶是0，说明手头的元素curStr要与stackStr的栈顶元素做叉乘操作；如果stackOp栈顶标记是1，说明手头的元素curStr要与stackStr的栈顶元素做并集操作。
-
-有一个特别注意的地方：一旦启动退栈进程，如果stackOp栈顶有连续若干个1，那么这些并集操作要连续地进行。原因是：连续被压入栈的这些逗号，本质肯定都是平级的，需要一并处理。如果stackOp栈顶是0，那么只需要再进行一次叉乘操作，这是因为叉乘的优先级较高，相邻之间能合并的早就已经合并完了。
-::::::::::::::
-Stack/1096.Brace-Expansion-II/1096.Brace-Expansion-II_recursion.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> braceExpansionII(string expression) 
-    {
-        string S = expression;
-                
-        auto resultSet =  dfs(S,0,S.size()-1);
-        
-        vector<string>results;
-        for (auto x:resultSet)
-            results.push_back(x);
-        sort(results.begin(),results.end());
-        return results;        
-    }
-    
-    unordered_set<string>dfs(string&S, int a, int b)
-    {
-        stack<unordered_set<string>>Stack;
-        unordered_set<string>cur={};       
-                       
-        for (int i=a; i<=b; i++)            
-        {            
-            if (S[i]=='{')
-            {
-                int level = 1;
-                int j = i+1;
-                while (j<=b && level>0)
-                {
-                    level += (S[j]=='{');
-                    level -= (S[j]=='}');
-                    if (level==0)
-                        break;
-                    else
-                        j++;
-                }
-                auto next = dfs(S,i+1,j-1);                
-                cur = product(cur,next);
-                i = j;                
-            }
-            else if (S[i]==',')
-            {
-                Stack.push(cur);
-                cur = {};
-            }
-            else
-            {                                
-                int j = i+1;
-                while (j<=b && isalpha(S[j]))
-                    j++;
-                unordered_set<string>next({S.substr(i,j-i)});
-                cur = product(cur, next);                
-                i = j-1;
-            }
-        }
-        
-        while (!Stack.empty())
-        {
-            for (auto x: Stack.top())
-                cur.insert(x);
-            Stack.pop();
-        }
-        return cur;
-    }
-    
-    unordered_set<string>product(unordered_set<string>&A, unordered_set<string>&B)
-    {
-        if (A.size()==0)
-            A.insert("");
-        unordered_set<string>results;
-        for (auto x:A)
-            for (auto y:B)
-                results.insert(x+y);
-        return results;
-    }    
-};
-::::::::::::::
-Stack/1096.Brace-Expansion-II/1096.Brace-Expansion-II_stack.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<string> braceExpansionII(string S) 
-    {
-        string expression;
-        for (int i=0; i<S.size(); i++)
-        {
-            if (isalpha(S[i]))
-            {
-                expression.push_back('{');
-                expression.push_back(S[i]);
-                expression.push_back('}');
-            }
-            else
-                expression.push_back(S[i]);                
-        }
-        
-        stack<unordered_set<string>>stackStr;
-        stack<int>stackOp;        
-        unordered_set<string>cur;
-        
-        for (int i=0; i<expression.size(); i++)
-        {
-            if (expression[i]=='{')
-            {
-                stackStr.push(cur);                
-                stackOp.push(0);
-                cur = {};
-            }
-            else if (expression[i]==',')
-            {
-                stackStr.push(cur);                
-                stackOp.push(1);
-                cur = {};
-            }
-            else if (expression[i]=='}')
-            {
-                while (stackOp.top()==1)
-                {                                        
-                    cur = combine(stackStr.top(), cur);
-                    stackStr.pop();
-                    stackOp.pop();                    
-                }                
-                if (stackOp.top()==0)
-                {
-                    cur = crossProduct(stackStr.top(), cur);
-                    stackStr.pop();
-                    stackOp.pop();
-                }                              
-            }
-            else
-            {
-                int j=i+1;
-                while (j<expression.size() && isalpha(expression[j]))
-                    j++;
-                cur={expression.substr(i,j-i)};
-                i = j-1;
-            }
-        }               
-        
-        vector<string>rets(cur.begin(), cur.end());
-        sort(rets.begin(),rets.end());
-        
-        return rets;
-    }
-
-    unordered_set<string>combine(unordered_set<string>&s, unordered_set<string>&t)
-    {
-        unordered_set<string>ret;
-        for (auto x:s)
-            ret.insert(x);
-        for (auto y:t)
-            ret.insert(y);
-        return ret;
-    }
-    
-    unordered_set<string>crossProduct(unordered_set<string>&s, unordered_set<string>&t)
-    {
-        if (s.size()==0) s.insert("");
-        if (t.size()==0) t.insert("");
-        unordered_set<string>ret;
-        for (auto x:s)
-            for (auto y:t)
-                ret.insert(x+y);
-        return ret;
-    }
-};
-::::::::::::::
-Stack/1096.Brace-Expansion-II/Readme.md
-::::::::::::::
-### 1096.Brace-Expansion-II
-
-#### 解法1：递归
-
-我们先考虑一个乘法和加法的组合问题。例如计算```a+b*c+b*d*e+f+g+h*u```。
-
-这是一个比较典型的用栈可以解决的问题。遇到所有的单项式（也就是发现被加号所分割），就把当前的变量cur推入栈中，并把cur重置为空。如果遇到的是多项式（也就是被乘号所分割），就新得到的这部分乘数next与手头的cur相乘并更新为cur。这样最终遍历完之后，栈里面是有若干个单项式，求它们的和就行了。
-
-本题类似的思想，只不过把加号变成了逗号（对应的是取并集的运算），把乘号变成了双目的大括号（对应的是点乘的运算）。我们一旦遇到了左括号，就会向右寻找与它对应的右括号，这中间的部分就可以用递归处理（记作next）。默认情况下，我们都会将cur和next做点乘操作。
-
-#### 解法2：栈
-
-如果不用递归，也可以强行只用栈处理。规则如下：
-
-1. 遇到逗号，就将当前的cur推入栈中，同时标记这个入栈的操作为1.然后将cur重置为空。
-2. 遇到左括号，就将当前的cur推入栈中，同时标记这个入栈的操作为2.然后将cur重置为空。
-3. 遇到右括号，就不停地将stack顶端连续标记为1操作的那些元素退栈，不停地与cur做并集操作。然后再将stack顶端标记为2操作的一个元素退栈，再与cur做点乘。得到的就是更新后的cur。（也就是说，遇到一个右括号，预示着要完成这个括号内的所有并集操作，再加上一次与这个括号之前元素的点乘操作）
-4. 遇到任何其他字母，就将cur的值置为这个字符串。
-
-需要注意的是，我们最好对所有的字母提前包裹上"{}"，这样会带来处理上的便利。比如"{a,b}c{d,e}f"，因为c不包裹大括号的话，就无法判断它与前面是否是点乘的关系进而无法使之前的cur入栈。
-
-
-[Leetcode Link](https://leetcode.com/problems/brace-expansion-ii)::::::::::::::
-Stack/1106.Parsing-A-Boolean-Expression/1106.Parsing-A-Boolean-Expression_recursion.cpp
-::::::::::::::
-class Solution {
-public:
-    bool parseBoolExpr(string expression) 
-    {
-        bool ret = helper(expression, 0, expression.size()-1);
-        return ret;
-    }
-    
-    bool helper(string &s, int a, int b)
-    {
-        vector<int>vals;
-        for (int i=a+2; i<=b-1; i++)
-        {
-            if (s[i]=='&' || s[i]=='|' || s[i]=='!')
-            {                
-                int level = 1;
-                int j = i+2;
-                while (j<=b-1 && level>0)
-                {
-                    level += (s[j]=='(');
-                    level -= (s[j]==')');
-                    if (level==0)
-                        break;
-                    else
-                        j++;
-                }
-                vals.push_back(helper(s, i, j));
-                i = j;
-            }
-            else if (s[i]=='t' || s[i]=='f')
-            {
-                vals.push_back(s[i]=='t');
-            }            
-        }
-        return eval(s[a], vals);        
-    }
-
-    int eval(char oper, vector<int>&nums)
-    {        
-        int result;
-        if (oper=='!')
-            result = !nums[0];
-        else if (oper=='&')
-        {
-            result = 1;
-            for (int i=0; i<nums.size(); i++)
-                result = result&nums[i];
-        }
-        else if (oper=='|')
-        {
-            result = 0;
-            for (int i=0; i<nums.size(); i++)
-                result = result|nums[i];
-        }
-
-        return result;
-    }
-};
-::::::::::::::
-Stack/1106.Parsing-A-Boolean-Expression/1106.Parsing-A-Boolean-Expression_stack.cpp
-::::::::::::::
-class Solution {
-public:
-    bool parseBoolExpr(string expression) 
-    {
-        stack<char>stackOp;
-        stack<vector<int>>stackVal;
-        vector<int>curVals;
-        int ret;
-
-        for (int i=0; i<expression.size(); i++)
-        {
-            if (expression[i]=='!' || expression[i]=='&' || expression[i]=='|')
-            {
-                stackOp.push(expression[i]);
-                stackVal.push(curVals);
-                curVals.clear();
-                i++;
-            }
-            else if (expression[i]==')')
-            {
-                ret = eval(stackOp.top(), curVals);
-                stackOp.pop();
-                curVals = stackVal.top();
-                curVals.push_back(ret);
-                stackVal.pop();
-            }
-            else if (expression[i]=='t' || expression[i]=='f' )
-            {
-                curVals.push_back(expression[i]=='t');
-            }
-        }
-
-        return ret;
-    }
-
-    int eval(char oper, vector<int>&nums)
-    {        
-        int result;
-        if (oper=='!')
-            result = !nums[0];
-        else if (oper=='&')
-        {
-            result = 1;
-            for (int i=0; i<nums.size(); i++)
-                result = result&nums[i];
-        }
-        else if (oper=='|')
-        {
-            result = 0;
-            for (int i=0; i<nums.size(); i++)
-                result = result|nums[i];
-        }
-
-        return result;
-    }
-};
-::::::::::::::
-Stack/1106.Parsing-A-Boolean-Expression/Readme.md
-::::::::::::::
-### 1106.Parsing-A-Boolean-Expression
-
-本题和上周周赛的最后一题（1096. Brace Expansion II）属于同一类型，相对来说更容易些。
-
-对于这种带有括号优先级的expression parsing，栈或者递归的写法都是比较常见的。
-
-#### 解法1：栈
-我们需要设立两个栈，一个存储的是操作符，```stack<char>stackOp```；另一个存储的是操作数，注意操作数是个数组，```stack<vector<int>>stackNums```
-
-进栈的特征是遇到操作符，将这个操作符和手头的操作数组nums都压入栈后清空。退栈的特征是遇到右括号，这个时候调用stackOp的栈顶操作符，来指挥怎么eval手头的nums，并与stackNums的栈顶元素（也是个数组）合并。当然，两个栈都要吐出栈顶元素。其余的时候，只需要不断增加手头的操作数组nums的长度即可。
-
-#### 解法2：递归
-遇到一个操作符的话，也就意味着马上有一个左括号i。我们找到和它平级的右括号j，这样[i,j]之间的字符串的处理可以写成一个递归函数。递归函数返回的就是一个bool值。递归的边界就是字符串不再包括子括号了，那么这时候需要做的就是根据操作符来eval一堆操作数nums即可。
-
-[Leetcode Link](https://leetcode.com/problems/parsing-a-boolean-expression)
-::::::::::::::
-Stack/1124.Longest-Well-Performing-Interval/1124.Longest-Well-Performing-Interval_Map.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestWPI(vector<int>& hours) 
-    {
-        vector<int>q({0});
-        int count = 0;
-        for (auto x:hours)
-        {
-            if (x>8)
-                count++;
-            else
-                count--;
-            q.push_back(count);
-        }
-        
-        map<int,int>Map;
-        Map[0] = 0;
-        int result = 0;
-        for (int i=1; i<q.size(); i++)
-        {
-            int k = INT_MAX;
-            for (auto x:Map)
-            {
-                if (x.first >= q[i])
-                    break;
-                k = min(k, x.second);
-            }
-            result = max(result, i-k);
-            if (Map.begin()->first > q[i])
-            {
-                Map[q[i]] = i;
-            }                
-        }
-        return result;
-    }
-::::::::::::::
-Stack/1124.Longest-Well-Performing-Interval/1124.Longest-Well-Performing-Interval_Stack.cpp
-::::::::::::::
-class Solution {
-public:
-    int longestWPI(vector<int>& hours) 
-    {
-        vector<int>presum({0});
-        int sum = 0;
-        for (int x: hours)
-        {
-            if (x>8)
-                sum+=1;
-            else
-                sum+=-1;
-            presum.push_back(sum);
-        }
-        
-        stack<int>Stack;
-        for (int i=0; i<presum.size(); i++)
-        {
-            if (Stack.empty() || presum[Stack.top()] > presum[i])
-                Stack.push(i);
-        }
-        
-        int result = 0;
-        for (int j = presum.size()-1; j>=0; j--)
-        {
-            while (!Stack.empty() && presum[Stack.top()] < presum[j])
-            {
-                result = max(result, j - Stack.top());
-                Stack.pop();
-            }   
-        }
-        return result;        
-    }
-};
-::::::::::::::
-Stack/1124.Longest-Well-Performing-Interval/Readme.md
-::::::::::::::
-### 1124.Longest-Well-Performing-Interval
-
-如果我们将所有的tiring day标记成为1，non-tiring day标记成为-1，那么题意就是说，在一个1和-1组成的数组里找一个最长的区间[i,j]，使得区间里面1的个数要多于-1的个数。
-
-如果我们继续转换一下这个数组变成前缀和数组presum，可以发现presum[i]表示的就是从第0天截止到第i天为止，tiring day与non-tiring day相比的数目之差。于是题意就转化成了：在这个presum数组里，找一对距离最远的pair(i,j)，使得presum[i-1] < presum[j]（这样就表示从区间[i,j]里tiring day与non-tiring day相比的数目之差是正数，符合题意）。
-
-于是这道题就变得和 962. Maximum Width Ramp 一样了，可以用单调栈的技巧在o(n)时间解决。
-
-事实上，这道题抽象起来就是求：任意数组A里最宽的一对pair(i,j)，使得 A[i]<A[j]（或者A[i]>A[j]），我们可以称之为“farthest greater element”。这和之前常做到的“next greater element”是恰好相反的题意。这两题都是可以用单调性完美地解决的。
-
-
-[Leetcode Link](https://leetcode.com/problems/longest-well-performing-interval)::::::::::::::
-Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses_O(N).cpp
-::::::::::::::
-class Solution {
-public:
-    string reverseParentheses(string s) 
-    {
-        int n = s.size();
-        vector<int>pair(n,-1);
-        stack<int>Stack;
-        for (int i=0; i<n; i++)
-        {
-            if (s[i]=='(')
-                Stack.push(i);
-            else if (s[i]==')')
-            {
-                int j = Stack.top();
-                pair[i]=j;
-                pair[j]=i;
-                Stack.pop();
-            }
-        }
-
-        int i = 0;
-        int d = 1;
-        string ret;
-        while (i<n)
-        {
-            if (isalpha(s[i]))
-                ret.push_back(s[i]);
-            else
-            {
-                i = pair[i];
-                d = -d;
-            }
-            i+=d;            
-        }
-        return ret;
-
-    }
-};
-::::::::::::::
-Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses_Stack.cpp
-::::::::::::::
-class Solution {
-public:
-    string reverseParentheses(string s) 
-    {
-        string ret;
-        stack<int>Stack;
-        for (auto ch: s)
-        {
-            if (isalpha(ch))
-                ret.push_back(ch);
-            else if (ch=='(')
-                Stack.push(ret.size());
-            else
-            {
-                int i = Stack.top();
-                Stack.pop();
-                reverse(ret.begin()+i, ret.end());
-            }
-        }
-        return ret;
-    }
-};
-::::::::::::::
-Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/Readme.md
-::::::::::::::
-### 1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses
-
-#### 解法1：模拟
-模拟整个过程。字符串ret只记录字母，用栈来标记左右括号的配对。
-
-遇到左括号时，往栈推入当前ret的长度。遇到右括号时，从栈顶读取的index，它就是ret里与之配对的“虚拟的”左括号的位置。然后将index到ret末尾的字符串整体翻转。不断重复以上操作即可。
-
-举个例子：
-```
-abc(def(ghi)k)
-   ^   ^
-```
-1. 第一次遇到右括号之前，ret = "abcdefghi"，栈里面的元素是[3,6]. 遇到第一个右括号时，说明ret[6,end]需要翻转，得到ret = "abcdefihg"，
-2. 第二次遇到右括号之前，ret = "abcdefihgk"，栈里面的元素是[3]. 遇到第二个右括号时，说明ret[3,end]需要翻转，得到ret = "abckghifed"，就是最终的答案。
-
-考虑到很多字母被加入ret之后又要逆序，所以时间复杂度是o(N^2)。
-
-#### 解法2：反向模拟
-还是上述的例子，当我们顺着读取abc后看到跟在后面的(....)时，知道括号内```def(ghi)k```解析之后的结果一定最终是会反向输出的，那么索性我们就反向读取他们，即从k开始往前读。怎么找到的k呢？那就是从这个左括号对应的右括号开始往左走。
-
-然后，我们又碰到一个更深一级的括号，里面是```ghi```。同理我们知道这个更深一层的括号依然会使内部的东西最终反向输出，那么我们就索性继续反向读取它们，即从g开始往右读。怎么找到的g呢？那就是从这个右括号对应的左括号，然后开始往右走。于是就顺次```ghi```都读完了。
-
-再接着，我们碰到了右括号。此时应该干什么呢？此时这对括号读完了，应该继续之前被暂停的f。怎么快速定位到f呢？其实就是再跳回原来的左括号，但此时继续往左走。
-
-于是我们发现了一个规律。当你进入一层更深的括号时，就跳到括号的另一边反向读取。当你离开该层括号时，也要跳到括号的另一边反向离开。
-
-所谓“进入一层更深的括号”，包括(1)从左往右进入左括号，此时你需要跳转至右括号然后往左读取括号内的内容；(1)从右往做进入右括号，此时你需要跳转至左括号然后往右读取括号内的内容；
-
-所谓“离开该层的括号”，包括(1)从左往右进入右括号，此时你需要跳转至左括号然后往左读取括号外的内容；(1)从右往做进入左括号，此时你需要跳转至右括号然后往右读取括号外的内容；
-
-同上以上的顺序，我们就可以用o(N)的时间走遍整个字符串。
-::::::::::::::
-Stack/1209.Remove-All-Adjacent-Duplicates-in-String-II/1209.Remove-All-Adjacent-Duplicates-in-String-II.cpp
-::::::::::::::
-class Solution {
-public:
-    string removeDuplicates(string s, int k) 
-    {
-        stack<pair<char, int>>Stack;
-
-        for (auto ch: s)
-        {
-            if (Stack.empty() || Stack.top().first!=ch)            
-                Stack.push({ch, 1});            
-            else            
-                Stack.push({ch, Stack.top().second+1});            
-
-            if (Stack.top().second==k)
-            {
-                for (int i=0; i<k; i++)
-                    Stack.pop();
-            }
-        }
-
-        string ret;
-        while (!Stack.empty())
-        {
-            ret.push_back(Stack.top().first);
-            Stack.pop();
-        }
-        reverse(ret.begin(), ret.end());
-        return ret;
-
-    }
-};
-::::::::::::::
-Stack/1209.Remove-All-Adjacent-Duplicates-in-String-II/Readme.md
-::::::::::::::
-### 1209.Remove-All-Adjacent-Duplicates-in-String-II
-
-模拟整个消除的过程是比较笨拙的方法。优秀的方法可以用one pass来得到最终的结果。
-
-考虑```aabbbadd```，k=3这个例子。第一轮消除```bbb```之后会遇到一个```a```，如果是纯模拟的话，第一轮并不会处理这个字符，但是考虑到```bbb```之前已经有两个```a```了，现在等于有三个连续的相同字符放在一起了，肯定能在第二轮被消除掉，何不就在one pass的时候一并做了呢？
-
-显然，我们可以用栈的数据结构来实现这个功能。一个需要考虑的问题是，我们如何快速判定栈顶有几个```a```以便我们决策是否要退栈做k消除？方法是我们在入栈的时候不仅放入字符，而且放入一个数字来统计目前栈顶有多少个连续的相同字符。这样我们只需看一下最栈顶的元素，就知道栈顶有多少个连续的相同字符了。
-::::::::::::::
-Stack/155.Min-Stack/155.Min Stack.cpp
-::::::::::::::
+# ==> ./Stack/0155.Min-Stack/155.Min Stack.cpp <==
+snippet 0155.Min-Stack "0155.Min-Stack" b
 class MinStack {
     stack<int>Stack;
     stack<int>StackMin;
@@ -1094,9 +364,12 @@ public:
  * int param_3 = obj.top();
  * int param_4 = obj.getMin();
  */
-::::::::::::::
-Stack/155.Min-Stack/155.Min-Stack_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0155.Min-Stack/155.Min-Stack_v2.cpp <==
+snippet 0155.Min-Stack "0155.Min-Stack" b
 class MinStack {
     stack<long long>Stack;
     long long Min;
@@ -1153,174 +426,47 @@ public:
  * int param_3 = obj->top();
  * int param_4 = obj->getMin();
  */
-::::::::::::::
-Stack/155.Min-Stack/Readme.md
-::::::::::::::
-### 155.Min-Stack
 
-#### 解法1： 
-要做到实时得到getMin()，不妨就对栈内的每一个元素都记录下对应的当前栈内元素最小值。于是我们可以构建另一个栈StackMin，跟随数据本身的Stack同步进退。
+$0
+endsnippet
+
+# ==> ./Stack/0173.Binary-Search-Tree-Iterator/Readme.md <==
+snippet 0173.Binary-Search-Tree-Iterator "0173.Binary-Search-Tree-Iterator" b
+### 173.Binary-Search-Tree-Iterator
+
+此题本质上是用迭代法（栈实现）来进行BST的中序遍历（也就是从小到大）。所以是94题的衍生。
+
+所以该类的data member需要一个stack<int>Stack. 具体要点如下：
+
+1. 初始化时，就将栈塞满到最小节点。（不断将左节点推入栈中）
 ```cpp
-    void push(int x) 
-    {
-        Stack.push(x);
-        if (StackMin.empty())
-            StackMin.push(x);
-        else
-            StackMin.push(min(x,StackMin.top()));
-    }
-```    
+  while (root!=NULL)
+  {
+      Stack.push(root);
+      root=root->left;
+  }
+```
+2. 只要栈非空，就说明hasNext是true。
+3. 输出next即输出当前栈顶元素。然后栈顶元素退栈，加入该元素的右节点并追溯到最底层。
+```cpp
+  TreeNode* node=Stack.top();
+  int result=node->val; // 当前栈顶元素
+  Stack.pop();  // 退栈
+  node=node->right;  // 加入新的元素直至到当前最小值。
+  while (node!=NULL)
+  {
+     Stack.push(node);
+     node=node->left;
+  }
+```
 
-#### 解法2：
-有一种更省空间的解法。就是压入栈内的元素不直接是x，而是```delta = x-Min_old```。
 
-入栈的时候，如果delta为正数，那么说明Min变量需要更新为```Min_new = Min_old```，否则就是```Min_new = x```
+[Leetcode Link](https://leetcode.com/problems/binary-search-tree-iterator)
+$0
+endsnippet
 
-出栈的时候，我们看到的是栈顶元素delta，以及Min_new。我们需要复原的是x和Min_old：
-
-1. 如果delta是正号，说明```Min_old = Min_new```，然后推出```x = delta+Min_old```.
-2. 如果delta是负号，说明```x = Min_new```，然后推出```Min_old = x-delta```.
-
-
-[Leetcode Link](https://leetcode.com/problems/min-stack)::::::::::::::
-Stack/1586.Binary-Search-Tree-Iterator-II/1586.Binary-Search-Tree-Iterator-II.cpp
-::::::::::::::
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class BSTIterator {
-    stack<pair<TreeNode*,bool>>nexts;
-    stack<TreeNode*>visited;
-public:
-    BSTIterator(TreeNode* root) 
-    {
-        TreeNode* p = root;
-        while (p)
-        {
-            nexts.push({p,true});
-            p = p->left;
-        }
-    }
-    
-    bool hasNext() 
-    {
-        return !nexts.empty();        
-    }
-    
-    int next() 
-    {
-        auto [node, flag] = nexts.top();
-        nexts.pop();
-        
-        if (flag == 1)
-        {
-            TreeNode* p = node->right;
-            while (p)
-            {
-                nexts.push({p, true});
-                p = p->left;
-            }
-        }
-            
-        visited.push(node);
-        return node->val;
-    }
-    
-    bool hasPrev() 
-    {
-        return visited.size() > 1;
-    }
-    
-    int prev() 
-    {
-        nexts.push({visited.top(), false});
-        visited.pop();
-        
-        return visited.top()->val;
-    }
-};
-
-/**
- * Your BSTIterator object will be instantiated and called as such:
- * BSTIterator* obj = new BSTIterator(root);
- * bool param_1 = obj->hasNext();
- * int param_2 = obj->next();
- * bool param_3 = obj->hasPrev();
- * int param_4 = obj->prev();
- */
-::::::::::::::
-Stack/1586.Binary-Search-Tree-Iterator-II/Readme.md
-::::::::::::::
-### 1586.Binary-Search-Tree-Iterator-II
-
-本题的本质是 094.Binary Tree Inorder Traversal. 用栈可以实现单步的next()操作。具体的方法是维护一个栈(nexts)存放未来需要访问的节点。其中马上能访问的下一个节点next()就在这个栈顶。当我们需要调用next()时就只需要读取栈顶的元素，然后将其弹出。接下来，为了给之后的next()做准备，然后我们需要走到刚才访问的节点的右节点，然后一路向左把所有节点都压入栈内。此番操作之后，此时的栈顶元素保证就是next greater element.
-
-那么如何实现prev()呢？其实很"无赖"，只要把曾经访问过的所有节点都存入一个叫visited的栈里面。于是每次调用next()之后，visited就会新增一个元素。注意，我们调用prev()的时候，将visited的栈顶元素弹出，以便返回里面的“次”栈顶元素（因为visited的栈顶是刚访问过的，而prev()需要返回的是再早一次访问过的）。
-
-那么我们怎么处理和利用visited的栈顶元素呢，白白扔掉吗？这里有个非常巧妙的处理方法：将visited的栈顶元素取出来直接放入nexts里面。这样如果下一次调用next()，就直接从nexts里面取栈顶元素就行了。但是我们需要将这类已经访问过的、再次塞回nexts的节点做个标记以示区别，因为如果调用next()读取的是这些值的话我们并不需要额外的“访问右节点再一路向左”的操作。可以想象，你连续调用了多少次prev()，那么就有多少个这样的已经访问过的节点被“暂存”在了nexts里面，如果你的next()读取的是这类的节点，那么他们一定全部在nexts的栈顶等着你。
-
-另外一个细节是，hasPrev()的条件是```visited.size()>1```，因为返回的是visited的次栈顶元素。
-::::::::::::::
-Stack/1673.Find-the-Most-Competitive-Subsequence/1673.Find-the-Most-Competitive-Subsequence.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> mostCompetitive(vector<int>& nums, int k) 
-    {
-        int count = nums.size()-k;
-        stack<int>Stack;
-        for (int x: nums)
-        {
-            if (Stack.empty() || x>Stack.top())
-            {
-                Stack.push(x);
-            }
-            else
-            {
-                while (!Stack.empty() && x<Stack.top() && count>0)
-                {
-                    Stack.pop();
-                    count--;
-                }
-                Stack.push(x);
-            }
-        }
-        while (count>0)
-        {
-            Stack.pop();
-            count--;
-        }
-        vector<int>ret;
-        while (!Stack.empty())
-        {
-            ret.push_back(Stack.top());
-            Stack.pop();
-        }
-        reverse(ret.begin(), ret.end());
-        return ret;
-    }
-};
-::::::::::::::
-Stack/1673.Find-the-Most-Competitive-Subsequence/Readme.md
-::::::::::::::
-### 1673.Find-the-Most-Competitive-Subsequence
-
-本题和```LC.402 Remove K Digits```一模一样，本质上就是求长度为k的最小序列。
-
-我们维护一个递增的栈，一旦发现新数字a比栈顶元素b更小，我们肯定希望把这个a尽量前移（这样必然使得序列更小）。把a每前移一位，就意味着要舍弃栈顶的数字，直至已经被舍弃的数字总数达到上限。
-
-当所有数字都入了栈，那么栈里面的就是最小的递增序列。当然，如果这个序列的数字数目大于了k，那么就舍弃最后的数字舍得剩下的恰好有k个。
-::::::::::::::
-Stack/173.Binary-Search-Tree-Iterator/173.Binary Search Tree Iterator.cpp
-::::::::::::::
+# ==> ./Stack/0173.Binary-Search-Tree-Iterator/173.Binary Search Tree Iterator.cpp <==
+snippet 0173.Binary-Search-Tree-Iterator "0173.Binary-Search-Tree-Iterator" b
 /**
  * Definition for binary tree
  * struct TreeNode {
@@ -1375,627 +521,30 @@ public:
  * BSTIterator i = BSTIterator(root);
  * while (i.hasNext()) cout << i.next();
  */
-::::::::::::::
-Stack/173.Binary-Search-Tree-Iterator/Readme.md
-::::::::::::::
-### 173.Binary-Search-Tree-Iterator
 
-此题本质上是用迭代法（栈实现）来进行BST的中序遍历（也就是从小到大）。所以是94题的衍生。
+$0
+endsnippet
 
-所以该类的data member需要一个stack<int>Stack. 具体要点如下：
+# ==> ./Stack/0224.Basic-Calculator/Readme.md <==
+snippet 0224.Basic-Calculator "0224.Basic-Calculator" b
+### 224.Basic-Calculator
 
-1. 初始化时，就将栈塞满到最小节点。（不断将左节点推入栈中）
+典型的栈的应用。需要设置两个栈
 ```cpp
-  while (root!=NULL)
-  {
-      Stack.push(root);
-      root=root->left;
-  }
+  stack<int>nums;
+  stack<int>sign;
 ```
-2. 只要栈非空，就说明hasNext是true。
-3. 输出next即输出当前栈顶元素。然后栈顶元素退栈，加入该元素的右节点并追溯到最底层。
-```cpp
-  TreeNode* node=Stack.top();
-  int result=node->val; // 当前栈顶元素
-  Stack.pop();  // 退栈
-  node=node->right;  // 加入新的元素直至到当前最小值。
-  while (node!=NULL)
-  {
-     Stack.push(node);
-     node=node->left;
-  }
-```
+nums用来存储数值，sign用来存储符号。这里需要有个小技巧，在字符串最开始添加一个+入栈，遇到'('也添加一个+入栈，这样保证每个数字（和小括号产生的中间结果）都在sign中有一个对应的符号位。
+
+具体的算法是：遇到'('就将当前结果curResult入栈并清零。遇到')'就将当前结果与sign的栈顶元素结合形成新数（然后sign退栈），并加上nums的栈顶元素结合形成新数（然后nums退栈）。遇到符号就加入sign的栈。遇到纯数字就取出sign的栈顶元素结合
 
 
-[Leetcode Link](https://leetcode.com/problems/binary-search-tree-iterator)::::::::::::::
-Stack/1856.Maximum-Subarray-Min-Product/1856.Maximum-Subarray-Min-Product.cpp
-::::::::::::::
-typedef long long ll;
-class Solution {
-    ll M = 1e9+7;
-public:
-    int maxSumMinProduct(vector<int>& nums) 
-    {
-        int n = nums.size();
-        
-        vector<ll>nextSmaller(n, n);        
-        vector<ll>prevSmaller(n, -1);
+[Leetcode Link](https://leetcode.com/problems/basic-calculator)
+$0
+endsnippet
 
-        stack<ll>Stack;
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[Stack.top()]>nums[i])
-            {
-                nextSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);                    
-        }        
-        
-        while (!Stack.empty()) Stack.pop();
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[Stack.top()]>nums[i])
-            {
-                prevSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);                    
-        }
-        
-        vector<ll>presum(n);
-        presum[0] = nums[0];
-        for (int i=1; i<n; i++)
-            presum[i] = presum[i-1]+nums[i];
-        
-        ll ret = 0;
-        for (int i=0; i<n; i++)
-        {
-            ll a = prevSmaller[i]==-1 ? 0: presum[prevSmaller[i]];
-            ll b = presum[nextSmaller[i]-1];
-            ret = max(ret, (b-a)*(ll)nums[i]);
-        }
-        return ret%M;        
-    }
-};
-::::::::::::::
-Stack/1856.Maximum-Subarray-Min-Product/Readme.md
-::::::::::::::
-### 1856.Maximum-Subarray-Min-Product
-
-此题和```LC 907.Sum-of-Subarray-Minimums```非常相似，场景也更为直观。传统思维是遍历所有subarray，寻找每个subarray的最小值。这需要o(N^2)的复杂度。
-
-逆向思维是，遍历每个元素nums[i]，思考以它为最小值的subarray最大是什么。显然，满足条件的subarray的左右边界之外都应该是恰比nums[i]小的元素，也就是prev smaller element和next greater element. 这两个位置都是可以用经典的单调栈算法以均摊o(1)的时间来完成。确定了subarray的边界后，那么subarray sum显然也是可以用预处理的前缀和以o(1)计算出来。
-::::::::::::::
-Stack/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression.cpp
-::::::::::::::
-class Solution {
-public:
-    int evalVal(char op, pair<int,int>&a, pair<int,int>&b)
-    {                        
-        if (op == '#')
-            return b.first;
-        else if (op == '&')                    
-            return a.first & b.first;
-        else
-            return a.first | b.first;
-    }
-    
-    // 1. 1|1，需要翻转一个数字，同时翻转运算符 
-    // 2. 0|0，需要翻转一个数字
-    // 3. 0|1，需要翻转运算符
-    // 4. 1&1，需要翻转一个数字
-    // 5. 0&0，需要翻转一个数字，同时翻转运算符 
-    // 6. 0&1，需要翻转运算符
-    int evalFlip(char op, pair<int,int>&a, pair<int,int>&b)
-    {               
-        if (op == '#')
-            return b.second;        
-        else if (op=='&')
-        {
-            if (a.first + b.first == 2)
-                return min(a.second, b.second);
-            else if (a.first + b.first == 1)
-                return 1;
-            else
-                return min(a.second, b.second)+1;                
-        }
-        else
-        {
-            if (a.first + b.first == 2)
-                return min(a.second, b.second)+1;
-            else if (a.first + b.first == 1)
-                return 1;
-            else
-                return min(a.second, b.second);
-        }                
-    }
-    
-    int minOperationsToFlip(string expression) 
-    {
-        stack<pair<int,int>>s1; // {val, # of operations to flip this value}
-        stack<char>s2;
-        pair<int,int> cur = {-1, -1};
-        char op = '#';
-                         
-        for (auto ch:expression)
-        {
-            if (ch=='&'||ch=='|')
-                op = ch;
-            else if (ch=='0' || ch=='1')
-            {
-                pair<int,int> nxt = {ch-'0', 1};
-                int val = evalVal(op, cur, nxt);
-                int flip = evalFlip(op, cur, nxt);                               
-                cur = {val, flip};
-            }
-            else if (ch=='(')
-            {                
-                s1.push(cur);
-                s2.push(op);
-                cur = {-1, -1};
-                op = '#';
-            }
-            else
-            {
-                auto last = s1.top();
-                s1.pop();
-                char op = s2.top();
-                s2.pop();
-                                
-                int val = evalVal(op, last, cur);
-                int flip = evalFlip(op, last, cur);
-                cur = {val, flip};
-            }
-        }
-        
-        return cur.second; 
-    }
-};
-
-::::::::::::::
-Stack/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression/Readme.md
-::::::::::::::
-### 1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression
-
-如果这道题给的不是序列，而是一个布尔表达树的话，题目就会简单很多。比如，对于```(0|(1|0&1))```，写成二叉树的话就是
-```
-  |
-0    |
-   1   &
-      0  1   
-```
-现在考虑这个问题，如果要使整棵树最终eval的结果翻转，我们最少需要做多少次改动？这里的改动，就是将叶子节点（数值）的01互换、或者非叶子节点（逻辑运算符）的|&互换。
-
-对于树而言，我们显然会用递归处理。对于每一对{subRoot，left, right}，我们可以有递归表达式对每一种情况进行分析：
-```cpp
-int minFlip(subRoot, left, right)
-{
-  left.flip = minFlip(left);
-  right.flip = minFlip(right);
-  
-  if (subRoot.op == '&' && left.val + right.val == 0)  // 0 & 0  需要翻转一个数字，再翻转逻辑符
-    return 1 + min(left.flip,  right.flip);
-  if (subRoot.op == '&' && left.val + right.val == 1)  // 0 & 1， 只需要翻转逻辑符
-    return 1;
-  if (subRoot.op == '&' && left.val + right.val == 2)  // 1 & 1， 需要翻一个数字
-    return min(left.flip,  right.flip);  
-
-  if (subRoot.op == '|' && left.val + right.val == 0)  // 0 | 0  需要翻转一个数字
-    return min(left.flip,  right.flip);
-  if (subRoot.op == '|' && left.val + right.val == 1)  // 0 | 1， 只需要翻转逻辑符
-    return 1;
-  if (subRoot.op == '|' && left.val + right.val == 2)  // 1 | 1， 需要翻一个数字，再翻转逻辑符
-    return 1 + min(left.flip,  right.flip);  
-}
-```
-可以发现，对于每个节点node，其实我们都需要得到它的两个属性，一个就是以node为根的子树整体作为逻辑表达式得到的val，另一个就是将以node为根的子树的val翻转所需要的flip操作数。两个孩子节点的这两个属性，就可以得到父节点的两个属性。我们一路向下，再向上回溯，最终输出的答案就是root.flip，即将总结果翻转需要的flip次数。
-
-那么我们如何将序列表达式转变成一棵逻辑树呢？递归的方法很简单，但是复杂度很高。比如```(xxxxxxxxxxxxxxxx)&(xxxxxxxxxxxxxxxxxxxx)```，你需要把整个序列都遍历一遍，才能确定两个子递归函数的范围。这样的建树方法会造成o(N^2)的复杂度。
-
-所以适合本题的方法并不是显示地去构建这棵逻辑树，而是学习```224.Basic-Calculator```的方法，用栈来模拟递归。224的解法的三个关键是：
-1. 维护两个变量，cur来存放当前已经eval的数值，op来存放当前待操作的逻辑运算。当我们遇到下一个数值nxt的时候，就可以进行操作```cur op nxt```，然后将结果用来更新cur。
-2. 维护两个栈，当遇到左括号时，以往的结果都要暂存，故将当前的变量cur和op压入栈中。我们reset这两个变量，标记cur=-1, op='#'，“虚拟地”表示这是一个起始点。我们规定```cur # nxt = nxt```.
-3. 当遇到右括号时，从这两个栈中读取last和op，这样就可以操作```last op cur```，然后将结果来更新cur。
-
-于是，如果只是评估本题的表达式的最终结果，那么代码可以写成如下：
-```cpp
-    int minOperationsToFlip(string expression) 
-    {
-        stack<int>s1;
-        stack<char>s2;
-        int cur = -1;
-        char op = '#';
-         
-        int ret = 0;
-        expression = "(" + expression + ")";
-        
-        for (auto ch:expression)
-        {
-            if (ch=='&'||ch=='|')
-                op = ch;
-            else if (ch=='0' || ch=='1')
-            {
-                int nxt = ch-'0';
-                int val = evalVal(op, cur, nxt);
-                cur = val;
-            }
-            else if (ch=='(')
-            {                
-                s1.push(cur);
-                s2.push(op);
-                cur = -1;
-                op = '#';
-            }
-            else
-            {
-                auto last = s1.top();
-                s1.pop();
-                char op = s2.top();
-                s2.pop();
-                                
-                int val = evalVal(op, last, cur);
-                cur = val;
-            }
-        }
-        
-        return cur; 
-    }
-```    
-
-
-本题相比于224需要多一个操作，就是每步```cur op nxt```时，不仅计算该操作得到逻辑值val，还要计算如果想要翻转val所需要的最少flip。所以cur或者nxt，本质都需要包含两个属性，即{val, flip}. 更新之后的cur同样也包含这两个属性。具体的方法和上面的递归代码相同。
-
-::::::::::::::
-Stack/1944.Number-of-Visible-People-in-a-Queue/1944.Number-of-Visible-People-in-a-Queue.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> canSeePersonsCount(vector<int>& heights) 
-    {
-        int n = heights.size();
-        stack<int>Stack;
-        vector<int>rets(n);
-        
-        for (int i=n-1; i>=0; i--)
-        {
-            int count = 0;
-            while (!Stack.empty() && heights[i] > heights[Stack.top()])
-            {
-                count++;
-                Stack.pop();
-            }
-            if (!Stack.empty())
-                count++;
-            rets[i] = count;
-            Stack.push(i);
-        }
-
-        return rets;
-
-    }
-};
-::::::::::::::
-Stack/1944.Number-of-Visible-People-in-a-Queue/Readme.md
-::::::::::::::
-### 1944.Number-of-Visible-People-in-a-Queue
-
-假设A往右第一个能看到的是B，那么B之后任何比B还矮的的人A都看不到。A看到B之后第一个人，一定是```C = nextGreater[B]```。同理，A在C之后的下一个能看到的人又一定是```D = nextGreater[C]```...那么这个过程持续到什么时候停止呢？思考后发现，一旦遇到比A还高的人，这个过程就停止。因为A不可能看到任何nextGreater[A]后面的人。
-
-所以A能看到的序列，是从A右边的第一个元素开始的nextGreater序列BCD...直至遇到比A还高的元素，假设是X。
-
-这时候我们不妨考虑一下A左边的元素A'，对它而言，无论A与A'的关系如何，A与X之间的BCD...都是无法被A'看到的（因为被A遮住了）。这就提醒我们可以将A与X中间的这部分都移走。于是我们想到可以逆序遍历数组，维护一个递减的单调栈。
-
-具体做法是：如果新进来的元素A比栈顶元素矮，那么它只能看到栈顶元素。如果新进来的元素A比栈顶元素高，那么所有比A矮的若干个栈顶元素（从顶往底呈递增序列）都可以被A看到。因为这些元素对于A左边的结果没有帮助，所以可以都将其退栈，在退栈的过程中就可以计数，得到的就是A能看到的个数。注意如果退栈结束后栈顶还存有元素，这个元素一定比A大且能被A看见，统计还要加1.
-::::::::::::::
-Stack/1950.Maximum-of-Minimum-Values-in-All-Subarrays/1950.Maximum-of-Minimum-Values-in-All-Subarrays.cpp
-::::::::::::::
-typedef pair<int,int> PII;
-class Solution {
-public:
-    vector<int> findMaximums(vector<int>& nums) 
-    {
-        int n = nums.size();
-        priority_queue<PII>pq;
-        for (int i=0; i<n; i++)
-            pq.push({nums[i],i});
-        
-        vector<int>nextSmaller(n, n);
-        vector<int>prevSmaller(n, -1);
-            
-        stack<int>Stack;
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[Stack.top()] > nums[i])
-            {
-                nextSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        while (!Stack.empty()) Stack.pop();
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[Stack.top()] >= nums[i])
-            {
-                prevSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-        
-        vector<int>rets;    
-        for (int k=1; k<=n; k++)
-        {                
-            while (1)
-            {
-                if (pq.empty()) break;
-                int p = pq.top().second;
-                if (nextSmaller[p] - prevSmaller[p] -1 >= k)
-                    break;
-                pq.pop();
-            }
-            rets.push_back(pq.top().first);
-        }
-        
-        return rets;
-
-    }
-};
-::::::::::::::
-Stack/1950.Maximum-of-Minimum-Values-in-All-Subarrays/Readme.md
-::::::::::::::
-### 1950.Maximum-of-Minimum-Values-in-All-Subarrays
-
-首先我们要有一个意识：如果size变大，那么答案就会单调变小。这是因为size越大的滑窗，就越容易包含更多较小元素，使得subarray的最小值会变得越小。最终的答案也会越小。
-
-于是我们第一个考虑的是，当size=1时答案是什么？显然答案就是数组里的最大值M1。因为M1独自作为一个subarray时，它就是该subarray的最小值。再考虑到它又是全局最大的值，那么它本身就是答案。
-
-那么如果size=2的时候呢？显然答案肯定不会再是刚才的最大值M1了，因为长度为2的滑窗包含M1时，滑窗内必然还有另一个元素比它小。那么根据单调性，我们接下来要查验答案是否为全局的第二大值M2呢？那就取决于M2是否会是某个长度为2的滑窗的最小值。显然，只要M2的左边或右边是M1，那么就存在一个以M2为最小值的、长度为2的滑窗，此时考虑到它又是全局第二大值（M1已经被排除），所以M2就是答案。反之，如果M2的左右两边都是更小的元素，那么M2就不是任何subarray的最小值，我们就继续考察答案是否是全局的第三大元素M3。以此类推，直到找到最大的M满足条件。
-
-至此，我们已经知道规律，对于指定滑窗长度L，要判断某个元素M是否可能为答案，那么先决条件就看：是否存在包含M的、长度为L的滑窗，里面的元素都大于等于M。解决方案是提前用单调栈处理，得到该元素i的prevSmallerElement和nextSmallerElement的位置j与k。如果```k-j-1>=L```，那么说明存在该长度的滑窗使得内部的所有元素都大于等于M。
-
-考虑到无论L如何变化，我们对于M的探索总是单调地从大到小逐一考察，所以核心代码的时间复杂度其实就是o(N)。当然，为了得到M的降序，还需要额外Nlog(N)的时间。
-::::::::::::::
-Stack/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array.cpp
-::::::::::::::
-class Solution {
-public:
-    int binarySearchableNumbers(vector<int>& nums) 
-    {
-        int n = nums.size();
-        vector<int>nextSmaller(n, n);
-        stack<int>Stack;
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[i]<nums[Stack.top()])
-            {
-                nextSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-                
-        vector<int>prevGreater(n, -1);
-        while (!Stack.empty()) Stack.pop();
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[i]>nums[Stack.top()])
-            {
-                prevGreater[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-        
-        int count = 0;
-        for (int i=0; i<n; i++)
-        {
-            if (nextSmaller[i]==n && prevGreater[i]==-1)
-                count++;
-        }
-        return count;        
-    }
-};
-::::::::::::::
-Stack/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array/Readme.md
-::::::::::::::
-### 1966.Binary-Searchable-Numbers-in-an-Unsorted-Array
-
-本题的关键是想清楚什么情况下依照题目的算法无法搜索到某数。
-
-当```pivot < target```时，会将pivot左侧的数都抹去。此时如果抹去的数字里有比pivot大的数字，那么它将永远不会被找到。有人会问，被抹去的数字里那些比pivot小的不同样永远无法搜到了吗？但是没有关系，因为我们的target大于pivot，说明我们不关心那些比pivot小的数字（他们不是我们的搜索目标）。因此，我们得出结论，对于任意一个数nums[i]，如果它的prevGreater存在，那么当nums[i]被选为pivot时，那个prevGreater就会无法被该算法搜到。
-
-同理，当```pivot > target```时，会将pivot右侧的数都抹去。此时如果抹去的数字里有比pivot小的数字，那么它将永远不会被找到。同样，我们不关心那些比pviot大的数字是否被抹掉（因为它们不是我们的搜索目标）。因此我们有类似的结论，对于任意一个数nums[i]，如果它的nextSmaller存在，那么当nums[i]被选为pivot时，那个nextSmaller就会无法被该算法搜到。
-
-我们提前用两轮单调栈，用o(N)的时间把每个元素的prevGreater和nextSmaller都找到。只有同时不存在prevGreater和nextSmaller的那些数，才能保证被算法搜索到。
-::::::::::::::
-Stack/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter.cpp
-::::::::::::::
-class Solution {
-public:
-    string smallestSubsequence(string s, int k, char letter, int repetition) 
-    {
-        int k0 = s.size() - k;
-        int count = 0;
-        for (auto ch: s)
-            if (ch==letter) count++;
-        int k1 = count - repetition;
-        
-        int count0 = 0; //the total number of letters deleted
-        int count1 = 0; // the total number of "letter" deleted
-        
-        stack<int>Stack;
-        for (int i=0; i<s.size(); i++)
-        {            
-            while (!Stack.empty() && s[i]<Stack.top() && count0<k0 && (Stack.top()!=letter|| (Stack.top()==letter && count1<k1)))
-            {
-                if (Stack.top() == letter)
-                    count1++;
-                count0++;
-                Stack.pop();
-            }
-            Stack.push(s[i]);            
-        }
-        
-        string result;
-        while (!Stack.empty())
-        {
-            result += Stack.top();
-            Stack.pop();
-        }
-        
-        string ans;
-        for (int i=0; i<result.size(); i++)
-        {
-            if (count0==k0 || (result[i]==letter && count1==k1))
-                ans.push_back(result[i]);
-            else
-            {
-                count0++;
-                if (result[i]==letter)
-                    count1++;
-            }
-        }
-        
-        reverse(ans.begin(), ans.end());
-        return ans;
-    }
-};
-::::::::::::::
-Stack/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter/Readme.md
-::::::::::::::
-### 2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter
-
-本题本质和```402.Remove-K-Digits```差不多。只不过多在单调栈的维护递增序列的过程中需要注意两个条件：1. 删除的字符总数不能超过k0，即```s.size()-k```；并且删除的letter数目不能超过k1，即letter出现的总频次减去repetition. 
-
-我们用单调栈构建了一个递增序列之后，可能它的长度太长，即删减的字符不够多。此时我们必须继续从尾部开始删字符。删除尾部的操作同样延续之前的两个条件：1. 删除的字符总数不能超过k0；2. 删除的letter数目不能超过k1。如果不能删除，就保留该字符，处理下一个。
-::::::::::::::
-Stack/2104.Sum-of-Subarray-Ranges/2104.Sum-of-Subarray-Ranges.cpp
-::::::::::::::
-using LL = long long;
-class Solution {
-public:
-    long long subArrayRanges(vector<int>& nums) 
-    {
-        int n = nums.size();
-        
-        stack<int>Stack;
-        vector<int>nextSmaller(n,n);
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[Stack.top()]>nums[i])
-            {
-                nextSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        while (!Stack.empty()) Stack.pop();
-        vector<int>prevSmaller(n,-1);
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[Stack.top()]>=nums[i])
-            {
-                prevSmaller[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        while (!Stack.empty()) Stack.pop();
-        vector<int>nextGreater(n,n);
-        for (int i=0; i<n; i++)
-        {
-            while (!Stack.empty() && nums[Stack.top()]<nums[i])
-            {
-                nextGreater[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        while (!Stack.empty()) Stack.pop();
-        vector<int>prevGreater(n,-1);
-        for (int i=n-1; i>=0; i--)
-        {
-            while (!Stack.empty() && nums[Stack.top()]<=nums[i])
-            {
-                prevGreater[Stack.top()] = i;
-                Stack.pop();
-            }
-            Stack.push(i);
-        }
-
-        LL ret = 0;
-        for (int i=0; i<n; i++)
-        {
-            int l = prevGreater[i];
-            int r = nextGreater[i];
-            ret += (LL)nums[i]*(i-l)*(r-i);
-        }
-        for (int i=0; i<n; i++)
-        {
-            int l = prevSmaller[i];
-            int r = nextSmaller[i];
-            ret -= (LL)nums[i]*(i-l)*(r-i);
-        }
-        return ret;                
-    }
-};
-::::::::::::::
-Stack/2104.Sum-of-Subarray-Ranges/Readme.md
-::::::::::::::
-### 2104.Sum-of-Subarray-Ranges
-
-此题和```907.Sum-of-Subarray-Minimums```非常相似。我们不是根据每个区间来考察它的最大值（或最小值）。而是根据根据最大值（或最小值）来考察对应的区间。
-
-我们考察每个元素nums[i]，它作为区间最大值时，可以是哪些区间？假设有a个。另外，它作为区间最小值时，可以是哪些区间？假设有b个。那么该元素对于最终答案的贡献就是```nums[i]*a-nums[i]*b```.
-
-那么怎么求解a呢？只要用单调栈，来算出nums[i]的prevSmaller所在的位置l，nextSmaller所在的位置r，那么这样的区间的数目就有```a=(i-l)*(r-i)```个。求解b同理。
-
-特别注意的是，对于区间内如果存在多个相同的最大值，我们需要约定，比如只有最靠右边的那个才是最大值。在这样的情况下，我们实际计算的应该是prevSmallerOrEqual而不是prevSmaller.
-::::::::::::::
-Stack/2197.Replace-Non-Coprime-Numbers-in-Array/2197.Replace-Non-Coprime-Numbers-in-Array.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> replaceNonCoprimes(vector<int>& nums) 
-    {
-        vector<int>rets;
-        for (int i=0; i<nums.size(); i++)
-        {
-            int x = nums[i];
-            while (!rets.empty() && gcd(rets.back(), x)>1)
-            {
-                x = lcm(rets.back(), x);
-                rets.pop_back();                
-            }
-            rets.push_back(x);
-        }
-        return rets;        
-    }
-
-    long long lcm(long long a, long long b)
-    {
-        return (long long)a*(long long)b/gcd(a,b);
-    }
-};
-::::::::::::::
-Stack/2197.Replace-Non-Coprime-Numbers-in-Array/Readme.md
-::::::::::::::
-### 2197.Replace-Non-Coprime-Numbers-in-Array
-
-这道题出得很精彩。通常的套路是，如果想合并若干个相邻的元素，可以考虑栈。如果想合并不相邻的元素（归为一类），那么可以考虑并查集。
-
-在本题中，每加入一个新元素，我们自然会考虑是否与数组前一个元素互质。如果新元素与前一个元素互质，那么就只能保留。如果不是那么就可以马上合并成为他们的最大公约数（LCM），因为越大的数（即因数越多的数）越容易与其他数字合并。特别注意，合并之后我们还可以持续考察它是否能与再之前的元素合并，比如这个例子```3,2,6```，第二个数2是与第一个数3互质的，但是当第三个数字6出现后，第二个数和第三个数合并成6之后，就可以往前再合并3. 用这个方法就可以把所有相邻的、可以合并的元素都汇聚成一个。
-
-事实上，本题上述的贪心策略就模拟了栈的基本操作。
-::::::::::::::
-Stack/224.Basic-Calculator/224.Basic Calculator.cpp
-::::::::::::::
+# ==> ./Stack/0224.Basic-Calculator/224.Basic Calculator.cpp <==
+snippet 0224.Basic-Calculator "0224.Basic-Calculator" b
 class Solution {
 public:
     int calculate(string s) 
@@ -2047,24 +596,25 @@ public:
 
     }
 };
-::::::::::::::
-Stack/224.Basic-Calculator/Readme.md
-::::::::::::::
-### 224.Basic-Calculator
 
-典型的栈的应用。需要设置两个栈
-```cpp
-  stack<int>nums;
-  stack<int>sign;
-```
-nums用来存储数值，sign用来存储符号。这里需要有个小技巧，在字符串最开始添加一个+入栈，遇到'('也添加一个+入栈，这样保证每个数字（和小括号产生的中间结果）都在sign中有一个对应的符号位。
+$0
+endsnippet
 
-具体的算法是：遇到'('就将当前结果curResult入栈并清零。遇到')'就将当前结果与sign的栈顶元素结合形成新数（然后sign退栈），并加上nums的栈顶元素结合形成新数（然后nums退栈）。遇到符号就加入sign的栈。遇到纯数字就取出sign的栈顶元素结合
+# ==> ./Stack/0225.Implement-Stack-using-Queues/Readme.md <==
+snippet 0225.Implement-Stack-using-Queues "0225.Implement-Stack-using-Queues" b
+### 225.Implement-Stack-using-Queues
+
+比较直观的解法：使用一个队列，需要读或者退出队列末尾的元素时，可重复将队首元素弹出并加回队列，重复len-1次即可（len是队列的长度）。缺点是，即使是每次读队列末尾元素也要绕一圈。
+
+更好的解法是：在每次往队列push元素的时候，就进行一次大反转，使得队列里的元素其实是以从新到旧的顺序排放的。这样，每次top()和pop()的操作都只要o(1)的时间操作。
 
 
-[Leetcode Link](https://leetcode.com/problems/basic-calculator)::::::::::::::
-Stack/225.Implement-Stack-using-Queues/225.Implement Stack using Queues.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/implement-stack-using-queues)
+$0
+endsnippet
+
+# ==> ./Stack/0225.Implement-Stack-using-Queues/225.Implement Stack using Queues.cpp <==
+snippet 0225.Implement-Stack-using-Queues "0225.Implement-Stack-using-Queues" b
 class MyStack {
     queue<int>q;
 public:
@@ -2113,19 +663,21 @@ public:
  * int param_3 = obj.top();
  * bool param_4 = obj.empty();
  */
-::::::::::::::
-Stack/225.Implement-Stack-using-Queues/Readme.md
-::::::::::::::
-### 225.Implement-Stack-using-Queues
 
-比较直观的解法：使用一个队列，需要读或者退出队列末尾的元素时，可重复将队首元素弹出并加回队列，重复len-1次即可（len是队列的长度）。缺点是，即使是每次读队列末尾元素也要绕一圈。
+$0
+endsnippet
 
-更好的解法是：在每次往队列push元素的时候，就进行一次大反转，使得队列里的元素其实是以从新到旧的顺序排放的。这样，每次top()和pop()的操作都只要o(1)的时间操作。
+# ==> ./Stack/0227.Basic-Calculator-II/Readme.md <==
+snippet 0227.Basic-Calculator-II "0227.Basic-Calculator-II" b
+### 227.Basic-Calculator-II
 
+本题因为不涉及到括号，反而更加好做。思想是，将所有涉及到加法和减法的操作数都直接加入数组。遇到乘法和除法的操作，就直接改变数组的最后一个元素。最终把数组内的所有元素相加即可。
 
-[Leetcode Link](https://leetcode.com/problems/implement-stack-using-queues)::::::::::::::
-Stack/227.Basic-Calculator-II/227.Basic-Calculator-II.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Stack/0227.Basic-Calculator-II/227.Basic-Calculator-II.cpp <==
+snippet 0227.Basic-Calculator-II "0227.Basic-Calculator-II" b
 class Solution {
 public:
     int calculate(string s) 
@@ -2172,15 +724,27 @@ public:
         return ret;
    }
 };
-::::::::::::::
-Stack/227.Basic-Calculator-II/Readme.md
-::::::::::::::
-### 227.Basic-Calculator-II
 
-本题因为不涉及到括号，反而更加好做。思想是，将所有涉及到加法和减法的操作数都直接加入数组。遇到乘法和除法的操作，就直接改变数组的最后一个元素。最终把数组内的所有元素相加即可。
-::::::::::::::
-Stack/232.Implement-Queue-using-Stacks/232.Implement-Queue-using-Stacks.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Stack/0232.Implement-Queue-using-Stacks/Readme.md <==
+snippet 0232.Implement-Queue-using-Stacks "0232.Implement-Queue-using-Stacks" b
+### 232.Implement-Queue-using-Stacks
+
+此题设置两个stack。
+
+一个简单的想法是：第二个栈仅仅用作临时倾倒stack1元素的备用容器。每次需要remove或get第一个栈的栈底元素时，将Stack1的所有元素（除栈底）倒入Stack2中，然后操作之后再把Stack2的元素都倒回Stack1中。这种方法有点浪费时间。
+
+更好的设计是：因为Stack2已经把元素反向，所以任何类似Queue队首的操作都可以在Stack2里操作，取Stack2的栈顶即可。而对于Queue队尾的push操作，则留在Stack1完成。只有当Stack2已经空了的时候，才需要把Stack1里的元素倒入Stack2.
+
+
+[Leetcode Link](https://leetcode.com/problems/implement-queue-using-stacks)
+$0
+endsnippet
+
+# ==> ./Stack/0232.Implement-Queue-using-Stacks/232.Implement-Queue-using-Stacks.cpp <==
+snippet 0232.Implement-Queue-using-Stacks "0232.Implement-Queue-using-Stacks" b
 class MyQueue {
     stack<int>Stack1;
     stack<int>Stack2;
@@ -2241,21 +805,30 @@ public:
  * int param_3 = obj.peek();
  * bool param_4 = obj.empty();
  */
-::::::::::::::
-Stack/232.Implement-Queue-using-Stacks/Readme.md
-::::::::::::::
-### 232.Implement-Queue-using-Stacks
 
-此题设置两个stack。
+$0
+endsnippet
 
-一个简单的想法是：第二个栈仅仅用作临时倾倒stack1元素的备用容器。每次需要remove或get第一个栈的栈底元素时，将Stack1的所有元素（除栈底）倒入Stack2中，然后操作之后再把Stack2的元素都倒回Stack1中。这种方法有点浪费时间。
+# ==> ./Stack/0316.Remove-Duplicate-Letters/Readme.md <==
+snippet 0316.Remove-Duplicate-Letters "0316.Remove-Duplicate-Letters" b
+### 316.Remove-Duplicate-Letters
 
-更好的设计是：因为Stack2已经把元素反向，所以任何类似Queue队首的操作都可以在Stack2里操作，取Stack2的栈顶即可。而对于Queue队尾的push操作，则留在Stack1完成。只有当Stack2已经空了的时候，才需要把Stack1里的元素倒入Stack2.
+总体思想是贪心法，用stack做辅助。基本方法仍然是用手头的字符尽量维持一个递增字符序列，因为递增序列意味着字典序最小。
+
+在维护栈的过程中，第一个原则是：遇到已经用过的字符就跳过。举个例子，假设当前待处理的字符是c，而发现当前栈里已经有c了，意味着什么呢？因为栈在维护着一个递增序列，说明栈里c后面的字符要比c大。如果舍弃已经栈里的c，那么必将导致后续的大字符前移，使得构建的栈内的单词字典序会变大。
+
+第二个原则：如果遇到非递增的字符，则大致方向就是退栈，处理掉一些栈顶元素，使得新加入的仍能保持递增。但需要注意，如果待退栈处理的字符在后面还有出现的机会，就放心退栈，扔到后面去考虑；如果后面已经没有再出现的机会，则保留这个栈顶元素同时结束退栈。所以需要一个Hash表来实时记录每个字符剩下来还会出现几次，也就是说每遍历一个字符，就把Map[s[i]]--.
+
+本题和1081. Smallest Subsequence of Distinct Characters一模一样。
 
 
-[Leetcode Link](https://leetcode.com/problems/implement-queue-using-stacks)::::::::::::::
-Stack/316.Remove-Duplicate-Letters/316.Remove Duplicate Letters.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/remove-duplicate-letters)
+
+$0
+endsnippet
+
+# ==> ./Stack/0316.Remove-Duplicate-Letters/316.Remove Duplicate Letters.cpp <==
+snippet 0316.Remove-Duplicate-Letters "0316.Remove-Duplicate-Letters" b
 class Solution {
 public:
     string removeDuplicateLetters(string s) 
@@ -2289,24 +862,43 @@ public:
         return str;
     }
 };
-::::::::::::::
-Stack/316.Remove-Duplicate-Letters/Readme.md
-::::::::::::::
-### 316.Remove-Duplicate-Letters
 
-总体思想是贪心法，用stack做辅助。基本方法仍然是用手头的字符尽量维持一个递增字符序列，因为递增序列意味着字典序最小。
+$0
+endsnippet
 
-在维护栈的过程中，第一个原则是：遇到已经用过的字符就跳过。举个例子，假设当前待处理的字符是c，而发现当前栈里已经有c了，意味着什么呢？因为栈在维护着一个递增序列，说明栈里c后面的字符要比c大。如果舍弃已经栈里的c，那么必将导致后续的大字符前移，使得构建的栈内的单词字典序会变大。
+# ==> ./Stack/0321.Create-Maximum-Number/Readme.md <==
+snippet 0321.Create-Maximum-Number "0321.Create-Maximum-Number" b
+### 321.Create-Maximum-Number
 
-第二个原则：如果遇到非递增的字符，则大致方向就是退栈，处理掉一些栈顶元素，使得新加入的仍能保持递增。但需要注意，如果待退栈处理的字符在后面还有出现的机会，就放心退栈，扔到后面去考虑；如果后面已经没有再出现的机会，则保留这个栈顶元素同时结束退栈。所以需要一个Hash表来实时记录每个字符剩下来还会出现几次，也就是说每遍历一个字符，就把Map[s[i]]--.
+#### 解法1：
+此题的形式比较像双序列DP。令dp[i][j][k]表示考虑第一个数组的前i个数、第二个数组的前j个数、并在其中总共取k个，所能够得到的字典序最大的“字符串”。这是利用了题目中每个数字只有单个digit的特点：字典序更大的字符串一定代表了更大的拼接的“数”。
 
-本题和1081. Smallest Subsequence of Distinct Characters一模一样。
+dp[i][j][k]有四种来源：
+1. dp[i-1][j][k-1]+nums1[i]，即第k个元素选为nums1[i]，拼接在dp[i-1][j][k-1]上.
+2. dp[i][j-1][k-1]+nums2[j]，即第k个元素选为nums2[j]，拼接在dp[i][j-1][k-1]上.
+3. dp[i-1][j][k]，即第k个元素不为nums1[i]，那么此时的解直接继承自 dp[i-1][j][k].
+4. dp[i][j-1][k]，即第k个元素不为nums2[j]，那么此时的解直接继承自 dp[i][j-1][k].
 
+这个解法的时间复杂度是```o(M*N*K)```.
 
-[Leetcode Link](https://leetcode.com/problems/remove-duplicate-letters)
-::::::::::::::
-Stack/321.Create-Maximum-Number/321.Create-Maximum-Number.cpp
-::::::::::::::
+#### 解法2：
+另一个比较容易理解的算法是：考虑将k拆分成k1和k2，将取数的指标分配给nums1,nums2，遍历所有的可能取最优解。
+
+于是得到子问题就是：如何在一个给定顺序的数组nums1里取k1个数，使得连接起来的数最大。这个就和 [402.Remove K Digits](https://github.com/wisdompeak/LeetCode/tree/master/Stack/402.Remove-K-Digits)非常相似，贪心法+栈的典型应用（当然用数组也行）。总体的思想就是遍历nums1的过程中，用栈维护一个递减序列（因为递减序列说明是当前的字典序最大），一旦出现递增的元素，则考虑退栈之前的元素，直至栈恢复为递减序列、或者退栈元素数目达到了上限为止。
+
+然后将处理nums1、nums2得到的两个数组p1、p2进行"归并"。注意，这个归并要求保持p1,p2保持原来的顺序，但归并后得到的数字最大。这个和传统意义的归并排序是有区别的，因为p1,p2本身并不是有序的。这样的“归并”并不容易，不能只依次比较两个数组的首元素。一个比较简单的C++写法就是，利用C++默认的数组大小的比较方法。比如，若p1>p2，说明p1的整体字典序比p2大，我们就首选p1的首元素（这是正解），然后去除p1首元素```p1.erase(p1.begin())```. 然后比较剩下的p1和p2.
+
+最后将所有的k的拆分结果再进行比较，同样用到了C++默认的对数组大小比较的定义。不停更新```result = max(result, temp)```就可以了。
+
+这个解法的时间复杂度是```o(K*K)```.
+
+[Leetcode Link](https://leetcode.com/problems/create-maximum-number)
+
+$0
+endsnippet
+
+# ==> ./Stack/0321.Create-Maximum-Number/321.Create-Maximum-Number.cpp <==
+snippet 0321.Create-Maximum-Number "0321.Create-Maximum-Number" b
 class Solution {
 public:
     vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int K) 
@@ -2362,9 +954,12 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Stack/321.Create-Maximum-Number/321.Create-Maximum-Number_dp.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0321.Create-Maximum-Number/321.Create-Maximum-Number_dp.cpp <==
+snippet 0321.Create-Maximum-Number "0321.Create-Maximum-Number" b
 class Solution {
 public:
     vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) 
@@ -2394,37 +989,27 @@ public:
 
         return ret;
     }
-::::::::::::::
-Stack/321.Create-Maximum-Number/Readme.md
-::::::::::::::
-### 321.Create-Maximum-Number
 
-#### 解法1：
-此题的形式比较像双序列DP。令dp[i][j][k]表示考虑第一个数组的前i个数、第二个数组的前j个数、并在其中总共取k个，所能够得到的字典序最大的“字符串”。这是利用了题目中每个数字只有单个digit的特点：字典序更大的字符串一定代表了更大的拼接的“数”。
+$0
+endsnippet
 
-dp[i][j][k]有四种来源：
-1. dp[i-1][j][k-1]+nums1[i]，即第k个元素选为nums1[i]，拼接在dp[i-1][j][k-1]上.
-2. dp[i][j-1][k-1]+nums2[j]，即第k个元素选为nums2[j]，拼接在dp[i][j-1][k-1]上.
-3. dp[i-1][j][k]，即第k个元素不为nums1[i]，那么此时的解直接继承自 dp[i-1][j][k].
-4. dp[i][j-1][k]，即第k个元素不为nums2[j]，那么此时的解直接继承自 dp[i][j-1][k].
+# ==> ./Stack/0341.Flatten-Nested-List-Iterator/Readme.md <==
+snippet 0341.Flatten-Nested-List-Iterator "0341.Flatten-Nested-List-Iterator" b
+### 341.Flatten-Nested-List-Iterator
 
-这个解法的时间复杂度是```o(M*N*K)```.
+仔细分析数据结构的定义。vector\<NestedInteger\>包含的是元素是NestedInteger类型. 当对元素做.getInteger()操作后得到的才是整形；做.getList()操作后得到的是vector\<NestedInteger\>类型。
 
-#### 解法2：
-另一个比较容易理解的算法是：考虑将k拆分成k1和k2，将取数的指标分配给nums1,nums2，遍历所有的可能取最优解。
+设计一个stack\<NestedInteger\>Stack的堆栈。
 
-于是得到子问题就是：如何在一个给定顺序的数组nums1里取k1个数，使得连接起来的数最大。这个就和 [402.Remove K Digits](https://github.com/wisdompeak/LeetCode/tree/master/Stack/402.Remove-K-Digits)非常相似，贪心法+栈的典型应用（当然用数组也行）。总体的思想就是遍历nums1的过程中，用栈维护一个递减序列（因为递减序列说明是当前的字典序最大），一旦出现递增的元素，则考虑退栈之前的元素，直至栈恢复为递减序列、或者退栈元素数目达到了上限为止。
+hasNext()的目的，就是将Stack的栈顶元素不断展开（如果对应的是List数据的话），直至栈顶元素isInteger()为止。则下一步的next()就是读取栈顶元素并抽取整形数据，同时退栈。
 
-然后将处理nums1、nums2得到的两个数组p1、p2进行"归并"。注意，这个归并要求保持p1,p2保持原来的顺序，但归并后得到的数字最大。这个和传统意义的归并排序是有区别的，因为p1,p2本身并不是有序的。这样的“归并”并不容易，不能只依次比较两个数组的首元素。一个比较简单的C++写法就是，利用C++默认的数组大小的比较方法。比如，若p1>p2，说明p1的整体字典序比p2大，我们就首选p1的首元素（这是正解），然后去除p1首元素```p1.erase(p1.begin())```. 然后比较剩下的p1和p2.
 
-最后将所有的k的拆分结果再进行比较，同样用到了C++默认的对数组大小比较的定义。不停更新```result = max(result, temp)```就可以了。
+[Leetcode Link](https://leetcode.com/problems/flatten-nested-list-iterator)
+$0
+endsnippet
 
-这个解法的时间复杂度是```o(K*K)```.
-
-[Leetcode Link](https://leetcode.com/problems/create-maximum-number)
-::::::::::::::
-Stack/341.Flatten-Nested-List-Iterator/341.Flatten Nested List Iterator.cpp
-::::::::::::::
+# ==> ./Stack/0341.Flatten-Nested-List-Iterator/341.Flatten Nested List Iterator.cpp <==
+snippet 0341.Flatten-Nested-List-Iterator "0341.Flatten-Nested-List-Iterator" b
 /**
  * // This is the interface that allows for creating nested lists.
  * // You should not implement it, or speculate about its implementation
@@ -2481,21 +1066,47 @@ public:
  * NestedIterator i(nestedList);
  * while (i.hasNext()) cout << i.next();
  */
-::::::::::::::
-Stack/341.Flatten-Nested-List-Iterator/Readme.md
-::::::::::::::
-### 341.Flatten-Nested-List-Iterator
 
-仔细分析数据结构的定义。vector\<NestedInteger\>包含的是元素是NestedInteger类型. 当对元素做.getInteger()操作后得到的才是整形；做.getList()操作后得到的是vector\<NestedInteger\>类型。
+$0
+endsnippet
 
-设计一个stack\<NestedInteger\>Stack的堆栈。
+# ==> ./Stack/0385.Mini-Parser/Readme.md <==
+snippet 0385.Mini-Parser "0385.Mini-Parser" b
+### 385.Mini-Parser
 
-hasNext()的目的，就是将Stack的栈顶元素不断展开（如果对应的是List数据的话），直至栈顶元素isInteger()为止。则下一步的next()就是读取栈顶元素并抽取整形数据，同时退栈。
+本题涉及了一种不常见的自定义数据结构NestedInteger，需要好好分析。
+
+本题一个可以取巧的地方在于：任何一个NestedInteger变量都可以完全看做是一个vector<NestedInteger>，哪怕这个list里的元素只有1.这样就避免了考虑这个NestedInteger变量可能仅有一个int的麻烦。
+
+另外，注意到NestedInteger类没有给出清零的操作，所以必须尽量不借助多余的变量来实现栈的操作。
+
+具体的算法是：
+1. 遇到s[i]=='['时，就要新开了一个NestedInteger的变量。这个变量的本质要是一个List，后续的同级元素都是它的子元素。怎么利用构造函数新开一个类的对象呢？
+```cpp
+Stack.push(NestedInteger());
+```
+这样，这个变量不用命名、不用赋初值就可以直接放入栈里。
+  
+2. 遇到s[i]是数字开头时，把完整的数字段抽取出来后得到val。需要这个val转成NestedInteger并放入当前Stack.top()里成为它的一个元素。
+```cpp
+Stack.top().add(Integer(val));
+```
+
+3. 遇到s[i]==']'时，说明Stack.top()已经把同一层级的所有元素收罗干净了。它本身整个就要投入自己上一级的NestedInteger中，成为它的一个元素。
+```cpp
+NestedInteger temp=Stack.top();
+Stack.pop();
+Stack.top().add(temp);
+```
+特别注意的是，上述语句的前提条件是 Stack.size()>1
 
 
-[Leetcode Link](https://leetcode.com/problems/flatten-nested-list-iterator)::::::::::::::
-Stack/385.Mini-Parser/385.Mini Parser.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/mini-parser)
+$0
+endsnippet
+
+# ==> ./Stack/0385.Mini-Parser/385.Mini Parser.cpp <==
+snippet 0385.Mini-Parser "0385.Mini-Parser" b
 /**
  * // This is the interface that allows for creating nested lists.
  * // You should not implement it, or speculate about its implementation
@@ -2560,41 +1171,30 @@ public:
         return Stack.top();
     }
 };
-::::::::::::::
-Stack/385.Mini-Parser/Readme.md
-::::::::::::::
-### 385.Mini-Parser
 
-本题涉及了一种不常见的自定义数据结构NestedInteger，需要好好分析。
+$0
+endsnippet
 
-本题一个可以取巧的地方在于：任何一个NestedInteger变量都可以完全看做是一个vector<NestedInteger>，哪怕这个list里的元素只有1.这样就避免了考虑这个NestedInteger变量可能仅有一个int的麻烦。
+# ==> ./Stack/0402.Remove-K-Digits/Readme.md <==
+snippet 0402.Remove-K-Digits "0402.Remove-K-Digits" b
+### 402.Remove-K-Digits
 
-另外，注意到NestedInteger类没有给出清零的操作，所以必须尽量不借助多余的变量来实现栈的操作。
+解决原题的直观思路是寻找一个尽可能小的递增序列，但要满足位数的要求。
 
-具体的算法是：
-1. 遇到s[i]=='['时，就要新开了一个NestedInteger的变量。这个变量的本质要是一个List，后续的同级元素都是它的子元素。怎么利用构造函数新开一个类的对象呢？
-```cpp
-Stack.push(NestedInteger());
-```
-这样，这个变量不用命名、不用赋初值就可以直接放入栈里。
-  
-2. 遇到s[i]是数字开头时，把完整的数字段抽取出来后得到val。需要这个val转成NestedInteger并放入当前Stack.top()里成为它的一个元素。
-```cpp
-Stack.top().add(Integer(val));
-```
+这是栈的典型应用。利用栈维护一个递增序列。当遍历的元素小于栈顶元素时，就不断退栈直至 Stack.top()<num[i]，这样继续加入元素后仍然是一个递增序列。
 
-3. 遇到s[i]==']'时，说明Stack.top()已经把同一层级的所有元素收罗干净了。它本身整个就要投入自己上一级的NestedInteger中，成为它的一个元素。
-```cpp
-NestedInteger temp=Stack.top();
-Stack.pop();
-Stack.top().add(temp);
-```
-特别注意的是，上述语句的前提条件是 Stack.size()>1
+需要注意的几点：
+1. 需要一个计数器count来记录退栈的数目。只有当count<k时，才进行退栈操作（即模拟删除）。
+2. 都把所有元素都遍历结束后，如果发现仍然count<k，那么就把Stack末尾的弹出，直至count==k
+3. 需要去除结果里的前导零。
 
 
-[Leetcode Link](https://leetcode.com/problems/mini-parser)::::::::::::::
-Stack/402.Remove-K-Digits/402.Remove K Digits.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/remove-k-digits)
+$0
+endsnippet
+
+# ==> ./Stack/0402.Remove-K-Digits/402.Remove K Digits.cpp <==
+snippet 0402.Remove-K-Digits "0402.Remove-K-Digits" b
 class Solution {
 public:
     string removeKdigits(string num, int k) 
@@ -2639,24 +1239,29 @@ public:
             
     }
 };
-::::::::::::::
-Stack/402.Remove-K-Digits/Readme.md
-::::::::::::::
-### 402.Remove-K-Digits
 
-解决原题的直观思路是寻找一个尽可能小的递增序列，但要满足位数的要求。
+$0
+endsnippet
 
-这是栈的典型应用。利用栈维护一个递增序列。当遍历的元素小于栈顶元素时，就不断退栈直至 Stack.top()<num[i]，这样继续加入元素后仍然是一个递增序列。
+# ==> ./Stack/0439.Ternary-Expression-Parser/Readme.md <==
+snippet 0439.Ternary-Expression-Parser "0439.Ternary-Expression-Parser" b
+### 439.Ternary-Expression-Parser
 
-需要注意的几点：
-1. 需要一个计数器count来记录退栈的数目。只有当count<k时，才进行退栈操作（即模拟删除）。
-2. 都把所有元素都遍历结束后，如果发现仍然count<k，那么就把Stack末尾的弹出，直至count==k
-3. 需要去除结果里的前导零。
+此题粗看很复杂，实际很明晰。
+
+需要最早解析的字符串，其实是已经形成标准型a?X:Y的这五个连续字符。所以在第一次出现这五个连续字符之前的字符，都可以不断存进一个栈里供后续处理。
+
+具体的算法是，当发现?字符，表明这可能是一组标准型的head。所以把a?之前的字符串扔进栈里，然后重置curRes并顺着a?继续向后探索。如果还有出现类似?的标记，则重复之前的入栈操作；反之，如果之后curRes集齐五个字符，则说明这五个字符是类似a?X:Y的标准型，可以被解析变为一个字符。此时考虑一下栈里的栈顶元素，如果栈顶元素加上当前的这一个字符（curRes），又构成五个字符的话，可以进一步解析；如此重复直至栈顶无法提供凑齐五个字符的string，此时curRes需要顺着expression继续探索下去。
+
+最终返回的是当前的字符串，即curRes。
 
 
-[Leetcode Link](https://leetcode.com/problems/remove-k-digits)::::::::::::::
-Stack/439.Ternary-Expression-Parser/439.Ternary Expression Parser.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/ternary-expression-parser)
+$0
+endsnippet
+
+# ==> ./Stack/0439.Ternary-Expression-Parser/439.Ternary Expression Parser.cpp <==
+snippet 0439.Ternary-Expression-Parser "0439.Ternary-Expression-Parser" b
 class Solution {
 public:
     string parseTernary(string expression) 
@@ -2696,23 +1301,25 @@ public:
         return result;
     }
 };
-::::::::::::::
-Stack/439.Ternary-Expression-Parser/Readme.md
-::::::::::::::
-### 439.Ternary-Expression-Parser
 
-此题粗看很复杂，实际很明晰。
+$0
+endsnippet
 
-需要最早解析的字符串，其实是已经形成标准型a?X:Y的这五个连续字符。所以在第一次出现这五个连续字符之前的字符，都可以不断存进一个栈里供后续处理。
+# ==> ./Stack/0456.132-Pattern/Readme.md <==
+snippet 0456.132-Pattern "0456.132-Pattern" b
+### 456.132-Pattern
 
-具体的算法是，当发现?字符，表明这可能是一组标准型的head。所以把a?之前的字符串扔进栈里，然后重置curRes并顺着a?继续向后探索。如果还有出现类似?的标记，则重复之前的入栈操作；反之，如果之后curRes集齐五个字符，则说明这五个字符是类似a?X:Y的标准型，可以被解析变为一个字符。此时考虑一下栈里的栈顶元素，如果栈顶元素加上当前的这一个字符（curRes），又构成五个字符的话，可以进一步解析；如此重复直至栈顶无法提供凑齐五个字符的string，此时curRes需要顺着expression继续探索下去。
+从后往前遍历。我们假设当前的元素nums[i]是132 pattern中的"2"，那么什么元素最适合作为"3"呢？其实就是"2"的prev greater element，也就是nums[i]左边第一个比它大的元素，假设是nums[j]。为什么这样的j最合适呢？因为j越接近i的话，我们就能够在[0,j-1]的区间里找到一个越小的数作为132 pattern里的"1"，即越容易收集齐这样的132 pattern。
 
-最终返回的是当前的字符串，即curRes。
+具体的做法是，我们先预处理数组，算出每个元素k左边的最小值leftMin[k]。然后从后往前遍历，对于第i个元素，找到它的prev greater element，它的index记做j，那么查看leftMin[j]的元素是否比num[i]还小。如果符合要求，就可以返回true.
 
+[Leetcode Link](https://leetcode.com/problems/132-pattern)
 
-[Leetcode Link](https://leetcode.com/problems/ternary-expression-parser)::::::::::::::
-Stack/456.132-Pattern/456.132-Pattern.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Stack/0456.132-Pattern/456.132-Pattern.cpp <==
+snippet 0456.132-Pattern "0456.132-Pattern" b
 class Solution {
 public:
     bool find132pattern(vector<int>& nums) 
@@ -2739,19 +1346,25 @@ public:
         return false;
     }
 };
-::::::::::::::
-Stack/456.132-Pattern/Readme.md
-::::::::::::::
-### 456.132-Pattern
 
-从后往前遍历。我们假设当前的元素nums[i]是132 pattern中的"2"，那么什么元素最适合作为"3"呢？其实就是"2"的prev greater element，也就是nums[i]左边第一个比它大的元素，假设是nums[j]。为什么这样的j最合适呢？因为j越接近i的话，我们就能够在[0,j-1]的区间里找到一个越小的数作为132 pattern里的"1"，即越容易收集齐这样的132 pattern。
+$0
+endsnippet
 
-具体的做法是，我们先预处理数组，算出每个元素k左边的最小值leftMin[k]。然后从后往前遍历，对于第i个元素，找到它的prev greater element，它的index记做j，那么查看leftMin[j]的元素是否比num[i]还小。如果符合要求，就可以返回true.
+# ==> ./Stack/0496.Next-Greater-Element-I/Readme.md <==
+snippet 0496.Next-Greater-Element-I "0496.Next-Greater-Element-I" b
+### 496.Next-Greater-Element-I
 
-[Leetcode Link](https://leetcode.com/problems/132-pattern)
-::::::::::::::
-Stack/496.Next-Greater-Element-I/496.Next-Greater-Element-I.cpp
-::::::::::::::
+此题用普通模拟的方法遍历会很慢。高级的算法是利用到单调栈，时间复杂度是o(n)。
+
+维护一个单调递减的栈，即当nums[i]小于栈顶元素时就不断入栈。当发现nums[i]大于栈顶元素时，说明nums[i]就是此栈顶元素所遇到的第一个greater number，把这个信息记录在一个Hash Map里，然后把栈顶元素退栈；重复上述操作直至nums[i]小于栈顶元素，再将其入栈并继续遍历nums。
+
+
+[Leetcode Link](https://leetcode.com/problems/next-greater-element-i)
+$0
+endsnippet
+
+# ==> ./Stack/0496.Next-Greater-Element-I/496.Next-Greater-Element-I.cpp <==
+snippet 0496.Next-Greater-Element-I "0496.Next-Greater-Element-I" b
 class Solution {
     unordered_map<int,int>nextGreater;
 public:
@@ -2780,51 +1393,12 @@ public:
         return rets;        
     }
 };
-::::::::::::::
-Stack/496.Next-Greater-Element-I/Readme.md
-::::::::::::::
-### 496.Next-Greater-Element-I
 
-此题用普通模拟的方法遍历会很慢。高级的算法是利用到单调栈，时间复杂度是o(n)。
+$0
+endsnippet
 
-维护一个单调递减的栈，即当nums[i]小于栈顶元素时就不断入栈。当发现nums[i]大于栈顶元素时，说明nums[i]就是此栈顶元素所遇到的第一个greater number，把这个信息记录在一个Hash Map里，然后把栈顶元素退栈；重复上述操作直至nums[i]小于栈顶元素，再将其入栈并继续遍历nums。
-
-
-[Leetcode Link](https://leetcode.com/problems/next-greater-element-i)::::::::::::::
-Stack/503.Next-Greater-Element-II/503.Next-Greater-Element-II.cpp
-::::::::::::::
-class Solution {
-public:
-    vector<int> nextGreaterElements(vector<int>& nums) 
-    {
-        int N=nums.size();
-        stack<pair<int,int>>Stack;
-        vector<int>results(N,-1);
-        
-        for (int j=0; j<N*2; j++)
-        {
-            int i=j;
-            if (i>=N) i=i-N;
-            
-            if (Stack.empty() || Stack.top().first>nums[i])
-                Stack.push({nums[i],i});
-            else
-            {
-                while (!Stack.empty() && Stack.top().first<nums[i])
-                {
-                    results[Stack.top().second]=nums[i];
-                    Stack.pop();
-                }
-                Stack.push({nums[i],i});
-            }
-        }
-        
-        return results;
-    }
-};
-::::::::::::::
-Stack/503.Next-Greater-Element-II/Readme.md
-::::::::::::::
+# ==> ./Stack/0503.Next-Greater-Element-II/Readme.md <==
+snippet 0503.Next-Greater-Element-II "0503.Next-Greater-Element-II" b
 ### 503.Next-Greater-Element-II
 
 此题类似 496.Next-Greater-Element-I。
@@ -2832,9 +1406,60 @@ Stack/503.Next-Greater-Element-II/Readme.md
 变化是需要遍历的个数多了一倍，即要将nums遍历两遍。因为根据题意，有些元素的greater number需要回到数组开头去找。
 
 
-[Leetcode Link](https://leetcode.com/problems/next-greater-element-ii)::::::::::::::
-Stack/536.Construct-Binary-Tree-from-String/536.Construct Binary Tree from String.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/next-greater-element-ii)
+$0
+endsnippet
+
+# ==> ./Stack/0503.Next-Greater-Element-II/503.Next-Greater-Element-II.cpp <==
+snippet 0503.Next-Greater-Element-II "0503.Next-Greater-Element-II" b
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) 
+    {
+        int N = nums.size();
+        for (int i=0; i<N; i++)
+            nums.push_back(nums[i]);
+        
+        stack<int>Stack;        
+        vector<int>results(N,-1);
+        
+        for (int i=0; i<nums.size(); i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()]<nums[i])
+            {
+                if (Stack.top() < N) 
+                    results[Stack.top()] = nums[i];
+                Stack.pop();
+            }
+            Stack.push(i);            
+        }
+        results.resize(N);
+        return results;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/0536.Construct-Binary-Tree-from-String/Readme.md <==
+snippet 0536.Construct-Binary-Tree-from-String "0536.Construct-Binary-Tree-from-String" b
+### 536.Construct-Binary-Tree-from-String
+
+典型的栈的应用。创建 stack<TreeNode*>Stack.
+
+遇到左括号就把current入栈；
+
+遇到右括号就退栈一个元素作为current的父节点：根据规则，current优先作为左子节点，如果父节点已经有左子节点，则current作为它的右子节点。然后更新current为此时的那个父节点。
+
+遇到数字串，则开辟新节点current并赋值。注意负号。
+
+
+[Leetcode Link](https://leetcode.com/problems/construct-binary-tree-from-string)
+$0
+endsnippet
+
+# ==> ./Stack/0536.Construct-Binary-Tree-from-String/536.Construct Binary Tree from String.cpp <==
+snippet 0536.Construct-Binary-Tree-from-String "0536.Construct-Binary-Tree-from-String" b
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -2882,23 +1507,29 @@ public:
         return current;
     }
 };
-::::::::::::::
-Stack/536.Construct-Binary-Tree-from-String/Readme.md
-::::::::::::::
-### 536.Construct-Binary-Tree-from-String
 
-典型的栈的应用。创建 stack<TreeNode*>Stack.
+$0
+endsnippet
 
-遇到左括号就把current入栈；
+# ==> ./Stack/0591.Tag-Validator/Readme.md <==
+snippet 0591.Tag-Validator "0591.Tag-Validator" b
+### 591.Tag-Validator
 
-遇到右括号就退栈一个元素作为current的父节点：根据规则，current优先作为左子节点，如果父节点已经有左子节点，则current作为它的右子节点。然后更新current为此时的那个父节点。
+此题的表述非常复杂，需要逐条分析，各个击破。
 
-遇到数字串，则开辟新节点current并赋值。注意负号。
+1. 首先检测是否 cdata 的段首关键字```<![CDATA[```。有的话,在遇到cdata段尾关键字```]]>```之前，所有字符不用check。
+2. 如果不满足条件1，则检测是否 end tag 的标记```</```。有的话就遍历直到找到```>```，分割这段TagName，检测TagName是否和栈顶的tag匹配，退栈。另外，如果退栈后为空，说明这是最后一个end tag，此时应该对应code的末尾。
+3. 如果不满足条件2，则检测是否 start tag 的标记```<```。有的话就就遍历直到找到```>```，分割这段TagName，判断TagName是否合法，将TagName推入栈。注意，另外，如果这是栈第一次非空，说明这是第一个start tag，此时应该对应code的开头。
+
+在遍历完整个code字符串之后，还要保证栈空，且栈曾经非空过。这里可以用一个ever的变量来记录是否曾经有tag入栈过。
 
 
-[Leetcode Link](https://leetcode.com/problems/construct-binary-tree-from-string)::::::::::::::
-Stack/591.Tag-Validator/591.Tag Validator.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/tag-validator)
+$0
+endsnippet
+
+# ==> ./Stack/0591.Tag-Validator/591.Tag Validator.cpp <==
+snippet 0591.Tag-Validator "0591.Tag-Validator" b
 class Solution {
 public:
     bool isValid(string code) 
@@ -2994,9 +1625,12 @@ public:
             return true;
         }    
 };
-::::::::::::::
-Stack/591.Tag-Validator/591.Tag-Validator_s2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0591.Tag-Validator/591.Tag-Validator_s2.cpp <==
+snippet 0591.Tag-Validator "0591.Tag-Validator" b
 class Solution {
 public:
     bool isValid(string code) 
@@ -3067,23 +1701,29 @@ public:
     }
     
 };
-::::::::::::::
-Stack/591.Tag-Validator/Readme.md
-::::::::::::::
-### 591.Tag-Validator
 
-此题的表述非常复杂，需要逐条分析，各个击破。
+$0
+endsnippet
 
-1. 首先检测是否 cdata 的段首关键字```<![CDATA[```。有的话,在遇到cdata段尾关键字```]]>```之前，所有字符不用check。
-2. 如果不满足条件1，则检测是否 end tag 的标记```</```。有的话就遍历直到找到```>```，分割这段TagName，检测TagName是否和栈顶的tag匹配，退栈。另外，如果退栈后为空，说明这是最后一个end tag，此时应该对应code的末尾。
-3. 如果不满足条件2，则检测是否 start tag 的标记```<```。有的话就就遍历直到找到```>```，分割这段TagName，判断TagName是否合法，将TagName推入栈。注意，另外，如果这是栈第一次非空，说明这是第一个start tag，此时应该对应code的开头。
+# ==> ./Stack/0636.Exclusive-Time-of-Functions/Readme.md <==
+snippet 0636.Exclusive-Time-of-Functions "0636.Exclusive-Time-of-Functions" b
+### 636.Exclusive-Time-of-Functions
 
-在遍历完整个code字符串之后，还要保证栈空，且栈曾经非空过。这里可以用一个ever的变量来记录是否曾经有tag入栈过。
+很明显此题应该用到栈。遇到start就入栈，遇到end就出栈。
+```cpp
+stack<pair<int,int>>Stack; //记录id和时刻
+```
+遇到end（该事件的结束点）时，出栈一个元素（该事件的起始点）做匹配，算出这个事件A的时间差，累计在这个事件A上（用一个数组来记录）。同时，因为这个事件A占用的时间要从它的上级事件中扣除，所以还要考察此时的栈顶元素B，在相应B的runtime记录里减去这段时间。这种补偿只需要做一次，因为等事件B退栈时，所占用的总时间（包括A的）也会再从更上级事件C里面扣除的。以此类推。
+
+注意start和end的计时标准不一致。比较巧妙的方法就是对于end所标记的时刻，人为加上1，这样计算时间差的时候就可以直接相减。
 
 
-[Leetcode Link](https://leetcode.com/problems/tag-validator)::::::::::::::
-Stack/636.Exclusive-Time-of-Functions/636.Exclusive-Time-of-Functions.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/exclusive-time-of-functions)
+$0
+endsnippet
+
+# ==> ./Stack/0636.Exclusive-Time-of-Functions/636.Exclusive-Time-of-Functions.cpp <==
+snippet 0636.Exclusive-Time-of-Functions "0636.Exclusive-Time-of-Functions" b
 class Solution {
 public:
     vector<int> exclusiveTime(int n, vector<string>& logs) 
@@ -3119,23 +1759,36 @@ public:
         return results;
     }
 };
-::::::::::::::
-Stack/636.Exclusive-Time-of-Functions/Readme.md
-::::::::::::::
-### 636.Exclusive-Time-of-Functions
 
-很明显此题应该用到栈。遇到start就入栈，遇到end就出栈。
-```cpp
-stack<pair<int,int>>Stack; //记录id和时刻
+$0
+endsnippet
+
+# ==> ./Stack/0654.Maximum-Binary-Tree/Readme.md <==
+snippet 0654.Maximum-Binary-Tree "0654.Maximum-Binary-Tree" b
+### 654.Maximum-Binary-Tree
+
+#### 解法1：暴力递归
+每一次遍历一段区间寻找里面的最大值，然后以其为根，左右两侧的子区间各自递归建树、并作为根的左节点和右节点。
+
+这样的时间复杂度是Nlog(N)，其中log(N)表示树的层树。如果这个序列是递增的，那么树的层数会是o(N)，算法退化成o(N^2).
+
+#### 解法2：单调栈
+此处单调栈的用法非常巧妙，并没有相似的题目，有一定的难度。
+
+我们维护一个单调递减的序列。我们想象一下，如果当前数组元素里都是递减的，那么他们必然组成连续的右节点的关系。OK，此时突然出现了一个较大的数A，那么A的左节点必然连接目前栈里面恰好比A小的那个元素。所以你需要不停地腾退栈顶元素，并且把最后一个恰好比A小的那个元素B接到A的左节点上。同时，A需要设置为当前栈顶元素C的右节点。如下图所示，相当于把A插入了C的右子树里，原先B子树都移到了A的左子树。这样就实现了题目所要求的目的。
 ```
-遇到end（该事件的结束点）时，出栈一个元素（该事件的起始点）做匹配，算出这个事件A的时间差，累计在这个事件A上（用一个数组来记录）。同时，因为这个事件A占用的时间要从它的上级事件中扣除，所以还要考察此时的栈顶元素B，在相应B的runtime记录里减去这段时间。这种补偿只需要做一次，因为等事件B退栈时，所占用的总时间（包括A的）也会再从更上级事件C里面扣除的。以此类推。
+ C       
+   \     A 
+     B
+       \
+```
+最终，栈底的元素（最大值）就是全局的根节点。
 
-注意start和end的计时标准不一致。比较巧妙的方法就是对于end所标记的时刻，人为加上1，这样计算时间差的时候就可以直接相减。
+$0
+endsnippet
 
-
-[Leetcode Link](https://leetcode.com/problems/exclusive-time-of-functions)::::::::::::::
-Stack/654.Maximum-Binary-Tree/654.Maximum-Binary-Tree_v1.cpp
-::::::::::::::
+# ==> ./Stack/0654.Maximum-Binary-Tree/654.Maximum-Binary-Tree_v1.cpp <==
+snippet 0654.Maximum-Binary-Tree "0654.Maximum-Binary-Tree" b
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -3173,9 +1826,12 @@ public:
         return root;
     }
 };
-::::::::::::::
-Stack/654.Maximum-Binary-Tree/654.Maximum-Binary-Tree_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0654.Maximum-Binary-Tree/654.Maximum-Binary-Tree_v2.cpp <==
+snippet 0654.Maximum-Binary-Tree "0654.Maximum-Binary-Tree" b
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -3209,30 +1865,25 @@ public:
         return Stack.top();
     }
 };
-::::::::::::::
-Stack/654.Maximum-Binary-Tree/Readme.md
-::::::::::::::
-### 654.Maximum-Binary-Tree
 
-#### 解法1：暴力递归
-每一次遍历一段区间寻找里面的最大值，然后以其为根，左右两侧的子区间各自递归建树、并作为根的左节点和右节点。
+$0
+endsnippet
 
-这样的时间复杂度是Nlog(N)，其中log(N)表示树的层树。如果这个序列是递增的，那么树的层数会是o(N)，算法退化成o(N^2).
+# ==> ./Stack/0726.Number-of-Atoms/Readme.md <==
+snippet 0726.Number-of-Atoms "0726.Number-of-Atoms" b
+### 726.Number-of-Atoms
 
-#### 解法2：单调栈
-此处单调栈的用法非常巧妙，并没有相似的题目，有一定的难度。
+典型的栈的应用。此题的特别之处在于stack的元素应该是map<string,int>.
 
-我们维护一个单调递减的序列。我们想象一下，如果当前数组元素里都是递减的，那么他们必然组成连续的右节点的关系。OK，此时突然出现了一个较大的数A，那么A的左节点必然连接目前栈里面恰好比A小的那个元素。所以你需要不停地腾退栈顶元素，并且把最后一个恰好比A小的那个元素B接到A的左节点上。同时，A需要设置为当前栈顶元素C的右节点。如下图所示，相当于把A插入了C的右子树里，原先B子树都移到了A的左子树。这样就实现了题目所要求的目的。
-```
- C       
-   \     A 
-     B
-       \
-```
-最终，栈底的元素（最大值）就是全局的根节点。
-::::::::::::::
-Stack/726.Number-of-Atoms/726.Number-of-Atoms.cpp
-::::::::::::::
+遍历formula的元素，分别对formula[i]=='(', ')', '大写字母'三种情况进行讨论。注意分子式中的下标数字为1时会缺省。
+
+
+[Leetcode Link](https://leetcode.com/problems/number-of-atoms)
+$0
+endsnippet
+
+# ==> ./Stack/0726.Number-of-Atoms/726.Number-of-Atoms.cpp <==
+snippet 0726.Number-of-Atoms "0726.Number-of-Atoms" b
 class Solution {
 public:
     string countOfAtoms(string formula) 
@@ -3300,19 +1951,31 @@ public:
             
     }
 };
-::::::::::::::
-Stack/726.Number-of-Atoms/Readme.md
-::::::::::::::
-### 726.Number-of-Atoms
 
-典型的栈的应用。此题的特别之处在于stack的元素应该是map<string,int>.
+$0
+endsnippet
 
-遍历formula的元素，分别对formula[i]=='(', ')', '大写字母'三种情况进行讨论。注意分子式中的下标数字为1时会缺省。
+# ==> ./Stack/0739.Daily-Temperatures/Readme.md <==
+snippet 0739.Daily-Temperatures "0739.Daily-Temperatures" b
+### 739.Daily-Temperatures
+
+#### 解法1：贪心法
+此题可以从后往前考虑．对于results[i]，我们考察其右边的那个元素，即```results[j],where j=i+1```. 
+
+当temp[j]<=temp[i],我们将指针跳转j+=results[j]，这样就可以加快搜索的效率．这样直到找到一个temp[j]>temp[i]即为找到结果；或者直到发现results[j]==0时说明再也找不下去了．
+
+#### 解法2：栈
+此题可以非常类似于 maximum histgram，维护一个递减序列的栈，并且存放这的是index而不是数值。
+
+此题可以从后往前遍历数组。此题转化为：对于任意的nums[i]，查找早于它处理的最近一个大于它的数的位置。于是这就是一个套路题。构造一个栈，维护一个递减数列：这样如果进入一个新数nums[i]小于栈顶元素，那么它的最近的大于nums[i]的数就是这个栈顶元素。如果这个新数nums[i]大于栈顶元素，就不断退栈直至遇到比它大的为止，那么当前这个栈顶元素也就是最近的一个比nums[i]大的数。因为存储的是index，所以很容易得到两个数在位置上的
 
 
-[Leetcode Link](https://leetcode.com/problems/number-of-atoms)::::::::::::::
-Stack/739.Daily-Temperatures/739.Daily-Temperatures.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/daily-temperatures)
+$0
+endsnippet
+
+# ==> ./Stack/0739.Daily-Temperatures/739.Daily-Temperatures.cpp <==
+snippet 0739.Daily-Temperatures "0739.Daily-Temperatures" b
 class Solution {
 public:
     vector<int> dailyTemperatures(vector<int>& temperatures) 
@@ -3333,9 +1996,12 @@ public:
         return results;
     }
 };
-::::::::::::::
-Stack/739.Daily-Temperatures/739.Daily-Temperatures_v2.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0739.Daily-Temperatures/739.Daily-Temperatures_v2.cpp <==
+snippet 0739.Daily-Temperatures "0739.Daily-Temperatures" b
 class Solution {
 public:
     vector<int> dailyTemperatures(vector<int>& temperatures) 
@@ -3369,75 +2035,12 @@ public:
         return results;
     }
 };
-::::::::::::::
-Stack/739.Daily-Temperatures/Readme.md
-::::::::::::::
-### 739.Daily-Temperatures
 
-#### 解法1：贪心法
-此题可以从后往前考虑．对于results[i]，我们考察其右边的那个元素，即```results[j],where j=i+1```. 
+$0
+endsnippet
 
-当temp[j]<=temp[i],我们将指针跳转j+=results[j]，这样就可以加快搜索的效率．这样直到找到一个temp[j]>temp[i]即为找到结果；或者直到发现results[j]==0时说明再也找不下去了．
-
-#### 解法2：栈
-此题可以非常类似于 maximum histgram，维护一个递减序列的栈，并且存放这的是index而不是数值。
-
-此题可以从后往前遍历数组。此题转化为：对于任意的nums[i]，查找早于它处理的最近一个大于它的数的位置。于是这就是一个套路题。构造一个栈，维护一个递减数列：这样如果进入一个新数nums[i]小于栈顶元素，那么它的最近的大于nums[i]的数就是这个栈顶元素。如果这个新数nums[i]大于栈顶元素，就不断退栈直至遇到比它大的为止，那么当前这个栈顶元素也就是最近的一个比nums[i]大的数。因为存储的是index，所以很容易得到两个数在位置上的
-
-
-[Leetcode Link](https://leetcode.com/problems/daily-temperatures)::::::::::::::
-Stack/768.Max-Chunks-To-Make-Sorted-II/768.Max-Chunks-To-Make-Sorted-II_v1.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxChunksToSorted(vector<int>& arr) 
-    {
-        auto expect = arr;
-        sort(expect.begin(), expect.end());
-
-        long sum1=0, sum2=0, count=0;
-        for (int i=0; i<arr.size(); i++)
-        {
-            sum1+=arr[i];
-            sum2+=expect[i];
-            if (sum1==sum2)
-            {
-                count += 1;
-                sum1 = 0, sum2 = 0;
-            }
-        }
-        return count;
-    }
-};
-::::::::::::::
-Stack/768.Max-Chunks-To-Make-Sorted-II/768.Max-Chunks-To-Make-Sorted-II_v2.cpp
-::::::::::::::
-class Solution {
-public:
-    int maxChunksToSorted(vector<int>& arr) 
-    {
-        stack<int>Stack;
-        int curMax;
-        for (auto x: arr)
-        {
-            if (Stack.empty()||Stack.top()<=x)
-            {
-                Stack.push(x);
-                curMax = x;
-            }                
-            else
-            {
-                while (!Stack.empty() && Stack.top()>x)
-                    Stack.pop();
-                Stack.push(curMax);
-            }
-        }
-        return Stack.size();
-    }
-};
-::::::::::::::
-Stack/768.Max-Chunks-To-Make-Sorted-II/Readme.md
-::::::::::::::
+# ==> ./Stack/0768.Max-Chunks-To-Make-Sorted-II/Readme.md <==
+snippet 0768.Max-Chunks-To-Make-Sorted-II "0768.Max-Chunks-To-Make-Sorted-II" b
 ### 768.Max-Chunks-To-Make-Sorted-II
 
 #### 解法1
@@ -3474,9 +2077,81 @@ exp：[1,2,3,4],5,6
 ```
 可以看出，最后整个chunk只剩8会被保留在栈中，并且以后永远不会再被改动（因为后面的chunk的数都会比8大）。考察完所有的数之后，栈里有多少元素，就有多少个chunk。
 
-::::::::::::::
-Stack/772.Basic-Calculator-III/772.Basic-Calculator-III.cpp
-::::::::::::::
+
+$0
+endsnippet
+
+# ==> ./Stack/0768.Max-Chunks-To-Make-Sorted-II/768.Max-Chunks-To-Make-Sorted-II_v1.cpp <==
+snippet 0768.Max-Chunks-To-Make-Sorted-II "0768.Max-Chunks-To-Make-Sorted-II" b
+class Solution {
+public:
+    int maxChunksToSorted(vector<int>& arr) 
+    {
+        auto expect = arr;
+        sort(expect.begin(), expect.end());
+
+        long sum1=0, sum2=0, count=0;
+        for (int i=0; i<arr.size(); i++)
+        {
+            sum1+=arr[i];
+            sum2+=expect[i];
+            if (sum1==sum2)
+            {
+                count += 1;
+                sum1 = 0, sum2 = 0;
+            }
+        }
+        return count;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/0768.Max-Chunks-To-Make-Sorted-II/768.Max-Chunks-To-Make-Sorted-II_v2.cpp <==
+snippet 0768.Max-Chunks-To-Make-Sorted-II "0768.Max-Chunks-To-Make-Sorted-II" b
+class Solution {
+public:
+    int maxChunksToSorted(vector<int>& arr) 
+    {
+        stack<int>Stack;
+        int curMax;
+        for (auto x: arr)
+        {
+            if (Stack.empty()||Stack.top()<=x)
+            {
+                Stack.push(x);
+                curMax = x;
+            }                
+            else
+            {
+                while (!Stack.empty() && Stack.top()>x)
+                    Stack.pop();
+                Stack.push(curMax);
+            }
+        }
+        return Stack.size();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/0772.Basic-Calculator-III/Readme.md <==
+snippet 0772.Basic-Calculator-III "0772.Basic-Calculator-III" b
+### 772.Basic-Calculator-III
+
+对于括号的处理必然要用到stack。本题的处理思想是，遇到左括号就将字符串入栈并清空curStr，直到遇到了右括号，才开始调用子函数```eval(curStr)```解析当前的curStr的数值结果.于是子任务```eval(s)```就是解析一个不包含括号的运算字符串，类似于```227.Basic Calculator II```。解析完的结果再转化为字符串，与栈顶的字符串拼接起来，继续往下处理。
+
+这里与```227.Basic Calculator II```不同的一个细节是，我们在```eval(s)```里面可以处理这样的字符串：```++2-+3*-3-+1/-3```，也就是说，在每个二元运算符加减乘除之外，每个操作数之前可能还有一个符号位。这是为什么呢？举个例子：3+(1-4)，括号内得到的其实是-3，于是到了外层需要解析```3+-3```。再举个例子：3*(2-4)，括号内得到的其实是-2，于是到了外层需要解析```3*-2```。这些都是我们需要在eval里考虑到的情况。
+
+[Leetcode Link](https://leetcode.com/problems/basic-calculator-iii)
+
+$0
+endsnippet
+
+# ==> ./Stack/0772.Basic-Calculator-III/772.Basic-Calculator-III.cpp <==
+snippet 0772.Basic-Calculator-III "0772.Basic-Calculator-III" b
 class Solution {
 public:
     int calculate(string s) 
@@ -3550,19 +2225,21 @@ public:
     
     
 };
-::::::::::::::
-Stack/772.Basic-Calculator-III/Readme.md
-::::::::::::::
-### 772.Basic-Calculator-III
 
-对于括号的处理必然要用到stack。本题的处理思想是，遇到左括号就将字符串入栈并清空curStr，直到遇到了右括号，才开始调用子函数```eval(curStr)```解析当前的curStr的数值结果.于是子任务```eval(s)```就是解析一个不包含括号的运算字符串，类似于```227.Basic Calculator II```。解析完的结果再转化为字符串，与栈顶的字符串拼接起来，继续往下处理。
+$0
+endsnippet
 
-这里与```227.Basic Calculator II```不同的一个细节是，我们在```eval(s)```里面可以处理这样的字符串：```++2-+3*-3-+1/-3```，也就是说，在每个二元运算符加减乘除之外，每个操作数之前可能还有一个符号位。这是为什么呢？举个例子：3+(1-4)，括号内得到的其实是-3，于是到了外层需要解析```3+-3```。再举个例子：3*(2-4)，括号内得到的其实是-2，于是到了外层需要解析```3*-2```。这些都是我们需要在eval里考虑到的情况。
+# ==> ./Stack/0856.Score-of-Parentheses/Readme.md <==
+snippet 0856.Score-of-Parentheses "0856.Score-of-Parentheses" b
+### 856.Score-of-Parentheses
 
-[Leetcode Link](https://leetcode.com/problems/basic-calculator-iii)
-::::::::::::::
-Stack/856.Score-of-Parentheses/856.Score-of-Parentheses.cpp
-::::::::::::::
+此题的本质是一道Parentheses Parse。规则如下：同一层级的元素需要相加。更高一层级的元素（括号内）在脱括号的时候乘以2.不过有一个特殊的规则，如果更高一层级的元素是空，那么脱括号的时候赋值为1.
+
+$0
+endsnippet
+
+# ==> ./Stack/0856.Score-of-Parentheses/856.Score-of-Parentheses.cpp <==
+snippet 0856.Score-of-Parentheses "0856.Score-of-Parentheses" b
 class Solution {
 public:
     int scoreOfParentheses(string S) 
@@ -3590,15 +2267,29 @@ public:
 
     }
 };
-::::::::::::::
-Stack/856.Score-of-Parentheses/Readme.md
-::::::::::::::
-### 856.Score-of-Parentheses
 
-此题的本质是一道Parentheses Parse。规则如下：同一层级的元素需要相加。更高一层级的元素（括号内）在脱括号的时候乘以2.不过有一个特殊的规则，如果更高一层级的元素是空，那么脱括号的时候赋值为1.
-::::::::::::::
-Stack/901.Online-Stock-Span/901.Online-Stock-Span.cpp
-::::::::::::::
+$0
+endsnippet
+
+# ==> ./Stack/0901.Online-Stock-Span/Readme.md <==
+snippet 0901.Online-Stock-Span "0901.Online-Stock-Span" b
+### 901.Online-Stock-Span
+
+题意就是说，对于数组中的任何元素A[i]，需要回溯看它左边邻接有多少个连续的元素小于等于A[i]。显然应该有o(n)的单调栈解法。
+
+我们尝试一下如果是维护一个递减的序列，比如```5,4,3,2,1```，显然每个元素能往左回溯的距离就只有1（就是它本身），因为栈顶元素比自己大。
+
+接下来如果新元素是3，我们应该尝试退栈，得到```5,4,[3,2,1],3```（中括号内的部分就是退栈的元素）。退栈合理与否的关键，在于被退栈的元素以后是否还有利用价值。在这里，[3,2,1]是被3逼退的，设想加入之后再出现了X，只要X比3大，自然X也会比这些已经退栈的```[3,2,1]```都大。所以退栈的这些元素以后是不用被记录的，对于X而言可以直接退栈到4或者更前面的位置。
+
+所以方法就是维护递减的单调栈。每次加入新元素的时候，都可以通过退栈操作（也可能不退）来更新得到这个新元素对应的配对位置（也就是左边邻接最远的小于等于自身的元素）。
+
+
+[Leetcode Link](https://leetcode.com/problems/online-stock-span)
+$0
+endsnippet
+
+# ==> ./Stack/0901.Online-Stock-Span/901.Online-Stock-Span.cpp <==
+snippet 0901.Online-Stock-Span "0901.Online-Stock-Span" b
 class StockSpanner {
     vector<int>arr;
     stack<int>Stack;
@@ -3634,23 +2325,29 @@ public:
         return ret;           
     }
 };
-::::::::::::::
-Stack/901.Online-Stock-Span/Readme.md
-::::::::::::::
-### 901.Online-Stock-Span
 
-题意就是说，对于数组中的任何元素A[i]，需要回溯看它左边邻接有多少个连续的元素小于等于A[i]。显然应该有o(n)的单调栈解法。
+$0
+endsnippet
 
-我们尝试一下如果是维护一个递减的序列，比如```5,4,3,2,1```，显然每个元素能往左回溯的距离就只有1（就是它本身），因为栈顶元素比自己大。
+# ==> ./Stack/0907.Sum-of-Subarray-Minimums/Readme.md <==
+snippet 0907.Sum-of-Subarray-Minimums "0907.Sum-of-Subarray-Minimums" b
+### 907.Sum-of-Subarray-Minimums
 
-接下来如果新元素是3，我们应该尝试退栈，得到```5,4,[3,2,1],3```（中括号内的部分就是退栈的元素）。退栈合理与否的关键，在于被退栈的元素以后是否还有利用价值。在这里，[3,2,1]是被3逼退的，设想加入之后再出现了X，只要X比3大，自然X也会比这些已经退栈的```[3,2,1]```都大。所以退栈的这些元素以后是不用被记录的，对于X而言可以直接退栈到4或者更前面的位置。
+我们考虑对于每个元素A[i]，如果以它作为最小值，那么这样的subarray能有多大？显然，我们找在i之前的第一个比A[i]小的数，比如说j；再找i之后第一个比A[i]小的数，比如说k，那么从[j+1,k-1]就是最大的subarray。并且，以任意[j+1,i]为左边界、任意[i,k-1]为右边界的subarray，也都是以A[i]为最小值。所以，以A[i]为最小的subarray的个数就有(i-j)*(k-i)个。
 
-所以方法就是维护递减的单调栈。每次加入新元素的时候，都可以通过退栈操作（也可能不退）来更新得到这个新元素对应的配对位置（也就是左边邻接最远的小于等于自身的元素）。
+所以，本题就演变成了求每个元素的next smaller element，以及previous smaller element.这些都是用单调栈算法的经典用法。
+
+但是需要特别注意的是，如果一个subarray里面有多个相同的最小值，那么这个subarray的最小值到底归属于谁呢？为了避免重复计算，我们需要做额外规定以做区分。比如认为如果有若干个相同的数，则最左边的那个才是最小值。这样的话，类似[3,4,4,3,4,4,3]这样的subarray，只会在考察第一个3的时候被计入，而在考察其他的3的时候不会被计入。
+
+所以本题确切的说，是求每个元素的next smaller element，以及previous smaller or equal element. 另外，特别注意：如果一个数没有next smaller element，那么意味着它的左边界是可以到n；如果一个数没有prev smaller/equal element，那么意味着它的左边界是可以到-1.
 
 
-[Leetcode Link](https://leetcode.com/problems/online-stock-span)::::::::::::::
-Stack/907.Sum-of-Subarray-Minimums/907.Sum-of-Subarray-Minimums.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/sum-of-subarray-minimums)
+$0
+endsnippet
+
+# ==> ./Stack/0907.Sum-of-Subarray-Minimums/907.Sum-of-Subarray-Minimums.cpp <==
+snippet 0907.Sum-of-Subarray-Minimums "0907.Sum-of-Subarray-Minimums" b
 class Solution {
 public:
     int sumSubarrayMins(vector<int>& arr) 
@@ -3691,44 +2388,12 @@ public:
         return ret;
     }
 };
-::::::::::::::
-Stack/907.Sum-of-Subarray-Minimums/Readme.md
-::::::::::::::
-### 907.Sum-of-Subarray-Minimums
 
-我们考虑对于每个元素A[i]，如果以它作为最小值，那么这样的subarray能有多大？显然，我们找在i之前的第一个比A[i]小的数，比如说j；再找i之后第一个比A[i]小的数，比如说k，那么从[j+1,k-1]就是最大的subarray。并且，以任意[j+1,i]为左边界、任意[i,k-1]为右边界的subarray，也都是以A[i]为最小值。所以，以A[i]为最小的subarray的个数就有(i-j)*(k-i)个。
+$0
+endsnippet
 
-所以，本题就演变成了求每个元素的next smaller element，以及previous smaller element.这些都是用单调栈算法的经典用法。
-
-但是需要特别注意的是，如果一个subarray里面有多个相同的最小值，那么这个subarray的最小值到底归属于谁呢？为了避免重复计算，我们需要做额外规定以做区分。比如认为如果有若干个相同的数，则最左边的那个才是最小值。这样的话，类似[3,4,4,3,4,4,3]这样的subarray，只会在考察第一个3的时候被计入，而在考察其他的3的时候不会被计入。
-
-所以本题确切的说，是求每个元素的next smaller element，以及previous smaller or equal element. 另外，特别注意：如果一个数没有next smaller element，那么意味着它的左边界是可以到n；如果一个数没有prev smaller/equal element，那么意味着它的左边界是可以到-1.
-
-
-[Leetcode Link](https://leetcode.com/problems/sum-of-subarray-minimums)::::::::::::::
-Stack/946.Validate-Stack-Sequences/946.Validate-Stack-Sequences.cpp
-::::::::::::::
-class Solution {
-public:
-    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) 
-    {
-        stack<int>Stack;
-        int j = 0;
-        for (int i=0; i<pushed.size(); i++)
-        {
-            Stack.push(pushed[i]);
-            while (i<popped.size() && !Stack.empty() && Stack.top()==popped[j])
-            {
-                Stack.pop();
-                j++;
-            }
-        }
-        return j==popped.size();
-    }
-};
-::::::::::::::
-Stack/946.Validate-Stack-Sequences/Readme.md
-::::::::::::::
+# ==> ./Stack/0946.Validate-Stack-Sequences/Readme.md <==
+snippet 0946.Validate-Stack-Sequences "0946.Validate-Stack-Sequences" b
 ### 946.Validate-Stack-Sequences
 
 本题的解法类似于贪心。我们从前往后观察pushed，一旦发现pushed末尾有任何长度的序列和poped队首的对应长度序列正好是反向关系，就将两者相消。然后继续观察剩下的pushed和poped，继续往后遍历pushed，做同样的操作。直到两者的序列都彼此消掉，说明两者对应的是一个合法的入栈/出栈操作。
@@ -3748,9 +2413,65 @@ Stack/946.Validate-Stack-Sequences/Readme.md
 答案是合理的。因为尽管我们将B和E进行了错误的对消，但是必然存在D和I也可以在后续得到对消。不信我们试一试，此时栈操作的顺序（根据我们的算法理解）变相成了 +A +B -E +C +D +F -G -H -I -J，尽管提前做了出栈的操作-E，但总的pushed = ABCDF, poped = EGHIJ 依然不变。就是这么神奇。
 
 
-[Leetcode Link](https://leetcode.com/problems/validate-stack-sequences)::::::::::::::
-Stack/962.Maximum-Width-Ramp/962.Maximum-Width-Ramp.cpp
-::::::::::::::
+[Leetcode Link](https://leetcode.com/problems/validate-stack-sequences)
+$0
+endsnippet
+
+# ==> ./Stack/0946.Validate-Stack-Sequences/946.Validate-Stack-Sequences.cpp <==
+snippet 0946.Validate-Stack-Sequences "0946.Validate-Stack-Sequences" b
+class Solution {
+public:
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) 
+    {
+        stack<int>Stack;
+        int j = 0;
+        for (int i=0; i<pushed.size(); i++)
+        {
+            Stack.push(pushed[i]);
+            while (i<popped.size() && !Stack.empty() && Stack.top()==popped[j])
+            {
+                Stack.pop();
+                j++;
+            }
+        }
+        return j==popped.size();
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/0962.Maximum-Width-Ramp/Readme.md <==
+snippet 0962.Maximum-Width-Ramp "0962.Maximum-Width-Ramp" b
+### 962.Maximum-Width-Ramp
+
+#### 解法1
+比赛的时候，比较容易想到的是o(NlogN)的解法。
+
+遍历这个数组，同时维护一个数值递减的栈。比如，我们考察A[i]的时候，就会在这个stack里通过二分法，找到恰好小于等于A[i]的数以及它对应的索引（比如是j）。那么i-j就是考察A[i]时能得到的"最宽"的pair。然后我们需要将A[i]加入这个栈中，可以想象，如果A[i]大于等于栈顶元素，那么A[i]就没有再入栈的意义，这是因为此时的栈顶元素，数值既比A[i]小，索引也比i小，无论如何在后续的处理中都是比A[i]更好的选择。于是，依此处理完所有的A[i]，找到最宽的(j,i)配对，就是答案。
+
+以上的算法在实际代码过程中需要用到较多的数据结构。我们其实需要维护两个栈，一个栈存数值，一个栈存索引。两个栈的压入都是同步的。但是二分法查找的时候是用的数值栈，而在更新(j,i)配对的时候用的是索引栈。
+
+另外，由于这是一个递减的栈，所以用lower_bound的时候，要注意用逆向的迭代器```auto it = upper_bound(q.rbegin(),q.rend(),nums[i])```在根据迭代器计算索引位置的时候：```int k = it-q.rbegin()```表示在数组中倒数的位置。
+
+#### 解法2
+本题还有更惊艳的o(N)的解法。
+
+同样遍历这个数组，同时维护一个数组递减的栈。但是在生成这个栈的过程中，我们并不针对每个A[i]取找最宽的配对。而是直接先把这个栈生成完毕。
+```py
+        for i in range(len(A)):
+            if len(Stack)==0 or A[Stack[-1]]>=A[i]:
+                Stack.append(i)
+```                
+绝妙的下一步是：从后往前依次考察A，对于每个A[i]，我们从栈尾依次弹出元素直至遇到一个恰好小于等于A[i]的索引j，那么(j,i)就是关乎A[i]我们能得到的最宽的配对。至于那些已经弹出栈的元素，其实丢了就丢了，并不会对答案有更多的贡献。比如说，j+1和i-1即使配对成功，也不能超越(j,i)的宽度。这样将A从后往前扫一遍，就能找到最宽的配对。
+
+
+[Leetcode Link](https://leetcode.com/problems/maximum-width-ramp)
+$0
+endsnippet
+
+# ==> ./Stack/0962.Maximum-Width-Ramp/962.Maximum-Width-Ramp.cpp <==
+snippet 0962.Maximum-Width-Ramp "0962.Maximum-Width-Ramp" b
 class Solution {
 public:
     int maxWidthRamp(vector<int>& nums) 
@@ -3777,30 +2498,1640 @@ public:
         return result;
     }
 };
-::::::::::::::
-Stack/962.Maximum-Width-Ramp/Readme.md
-::::::::::::::
-### 962.Maximum-Width-Ramp
 
-#### 解法1
-比赛的时候，比较容易想到的是o(NlogN)的解法。
+$0
+endsnippet
 
-遍历这个数组，同时维护一个数值递减的栈。比如，我们考察A[i]的时候，就会在这个stack里通过二分法，找到恰好小于等于A[i]的数以及它对应的索引（比如是j）。那么i-j就是考察A[i]时能得到的"最宽"的pair。然后我们需要将A[i]加入这个栈中，可以想象，如果A[i]大于等于栈顶元素，那么A[i]就没有再入栈的意义，这是因为此时的栈顶元素，数值既比A[i]小，索引也比i小，无论如何在后续的处理中都是比A[i]更好的选择。于是，依此处理完所有的A[i]，找到最宽的(j,i)配对，就是答案。
+# ==> ./Stack/1019.Next-Greater-Node-In-Linked-List/Readme.md <==
+snippet 1019.Next-Greater-Node-In-Linked-List "1019.Next-Greater-Node-In-Linked-List" b
+### 1019.Next-Greater-Node-In-Linked-List
 
-以上的算法在实际代码过程中需要用到较多的数据结构。我们其实需要维护两个栈，一个栈存数值，一个栈存索引。两个栈的压入都是同步的。但是二分法查找的时候是用的数值栈，而在更新(j,i)配对的时候用的是索引栈。
+本题和```Next Greater Element```并没有本质的区别。我们维护一个单调递减的栈，当如果新元素大于栈顶元素时，栈顶元素退栈，并且可以知道栈顶元素的next greater element就是新元素。
 
-另外，由于这是一个递减的栈，所以用lower_bound的时候，要注意用逆向的迭代器```auto it = upper_bound(q.rbegin(),q.rend(),nums[i])```在根据迭代器计算索引位置的时候：```int k = it-q.rbegin()```表示在数组中倒数的位置。
+需要注意的是，ret的结果并不是顺次更新的。所以栈的类型应该设计成pair，需要包括元素的数值和索引，这样方便将结果存入对应的ret[i]中。
 
-#### 解法2
-本题还有更惊艳的o(N)的解法。
+$0
+endsnippet
 
-同样遍历这个数组，同时维护一个数组递减的栈。但是在生成这个栈的过程中，我们并不针对每个A[i]取找最宽的配对。而是直接先把这个栈生成完毕。
-```py
-        for i in range(len(A)):
-            if len(Stack)==0 or A[Stack[-1]]>=A[i]:
-                Stack.append(i)
-```                
-绝妙的下一步是：从后往前依次考察A，对于每个A[i]，我们从栈尾依次弹出元素直至遇到一个恰好小于等于A[i]的索引j，那么(j,i)就是关乎A[i]我们能得到的最宽的配对。至于那些已经弹出栈的元素，其实丢了就丢了，并不会对答案有更多的贡献。比如说，j+1和i-1即使配对成功，也不能超越(j,i)的宽度。这样将A从后往前扫一遍，就能找到最宽的配对。
+# ==> ./Stack/1019.Next-Greater-Node-In-Linked-List/1019.Next-Greater-Node-In-Linked-List.cpp <==
+snippet 1019.Next-Greater-Node-In-Linked-List "1019.Next-Greater-Node-In-Linked-List" b
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) 
+    {
+        vector<int>ret;
+        stack<pair<int,int>>Stack;
+        ListNode* p = head;
+        int i = 0;
+
+        while (p!=NULL)
+        {
+            while (!Stack.empty() && Stack.top().first < p->val)
+            {
+                ret[Stack.top().second] = p->val;
+                Stack.pop();
+            }
+            ret.push_back({0});
+            Stack.push({p->val, i});
+            i++;
+            p = p->next;
+        }
+
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1063.Number-of-Valid-Subarrays/Readme.md <==
+snippet 1063.Number-of-Valid-Subarrays "1063.Number-of-Valid-Subarrays" b
+### 1063.Number-of-Valid-Subarrays
+
+对于任意一个nums[i]作为subarray的左端点的话，右端点最远可以是哪里呢？显然是the next smaller element，假设位置是在j。那么显然从[i,j-1]区间内的任意一个元素都可以是组成合法subarray的右端点，因此```count+=j-i```.
+
+求数组内每个元素的next smaller element就是常规的单调栈的操作。
+
+特别注意的是，遍历结束的时候，栈里面可能还存有递增的元素，这些元素作为左端点的subarray都还未被计数。为了强制清空栈，我们可以nums的末尾添加一个INT_MIN，这样所有的nums的元素最终都会被退栈（退栈的时候会计算对应的subarray的数目）。
+
+$0
+endsnippet
+
+# ==> ./Stack/1063.Number-of-Valid-Subarrays/1063.Number-of-Valid-Subarrays.cpp <==
+snippet 1063.Number-of-Valid-Subarrays "1063.Number-of-Valid-Subarrays" b
+class Solution {
+public:
+    int validSubarrays(vector<int>& nums) 
+    {
+        nums.push_back(INT_MIN);
+        stack<int>Stack;
+        int count = 0;
+        for (int i=0; i<nums.size(); i++)
+        {
+            while (!Stack.empty() && nums[i]<nums[Stack.top()])
+            {
+                count += i-Stack.top();
+                Stack.pop();
+            }            
+            Stack.push(i);
+        }
+        return count;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1081.Smallest-Subsequence-of-Distinct-Characters/Readme.md <==
+snippet 1081.Smallest-Subsequence-of-Distinct-Characters "1081.Smallest-Subsequence-of-Distinct-Characters" b
+### 1081.Smallest-Subsequence-of-Distinct-Characters
+
+这道题和```316.Remove-Duplicate-Letters```一模一样。
+
+$0
+endsnippet
+
+# ==> ./Stack/1081.Smallest-Subsequence-of-Distinct-Characters/1081.Smallest-Subsequence-of-Distinct-Characters.cpp <==
+snippet 1081.Smallest-Subsequence-of-Distinct-Characters "1081.Smallest-Subsequence-of-Distinct-Characters" b
+class Solution {
+public:
+    string smallestSubsequence(string text) 
+    {
+        string str;        
+        vector<int>count(26);
+        for (auto ch: text)
+            count[ch-'a']++;
+        unordered_set<char>visited;
+        
+        for (auto ch: text)
+        {
+            if (visited.find(ch)!=visited.end())
+            {
+                count[ch-'a']--;
+            }
+            else
+            {
+                while (str.size()>0  && str.back()>ch && count[str.back()-'a']>0)
+                {
+                    visited.erase(str.back());
+                    str.pop_back();
+                }
+                str.push_back(ch);
+                count[ch-'a']--;
+                visited.insert(ch);
+            }
+        }
+        
+        return str;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1087.Brace-Expansion/Readme.md <==
+snippet 1087.Brace-Expansion "1087.Brace-Expansion" b
+### 1087.Brace-Expansion
+
+因为此题明确没有nested的括号，所以简单的字符串处理就能AC。但是为了能扩展解决```1096.Brace Expansion II```，这里介绍一下更通用的栈的操作。
+
+首先，为了保证每个字母都能触发入栈操作，我们将所有的字母都用括号包起来，注意到这样做并不改变原义。比如：```{a,b}c{d,e}f```变成```{{a},{b}}{c}{{d},{e}}{f}```
+
+我们什么时候入栈？当遇到左括号和逗号的时候都需要。当然，为了区分这两个操作，我们需要两个栈stackOp和stackStr，分别来存放操作符（标记0或者1）和操作数（字符串数组）。当退栈的时候，如果对应的stackOp栈顶是0，说明手头的元素curStr要与stackStr的栈顶元素做叉乘操作；如果stackOp栈顶标记是1，说明手头的元素curStr要与stackStr的栈顶元素做并集操作。
+
+有一个特别注意的地方：一旦启动退栈进程，如果stackOp栈顶有连续若干个1，那么这些并集操作要连续地进行。原因是：连续被压入栈的这些逗号，本质肯定都是平级的，需要一并处理。如果stackOp栈顶是0，那么只需要再进行一次叉乘操作，这是因为叉乘的优先级较高，相邻之间能合并的早就已经合并完了。
+
+$0
+endsnippet
+
+# ==> ./Stack/1087.Brace-Expansion/1087.Brace-Expansion.cpp <==
+snippet 1087.Brace-Expansion "1087.Brace-Expansion" b
+class Solution {
+public:
+    vector<string> expand(string S) 
+    {
+        string s;
+        for (auto ch: S)
+        {
+            if (isalpha(ch))
+            {
+                s.push_back('{');
+                s.push_back(ch);
+                s.push_back('}');
+            }
+            else
+                s.push_back(ch);
+        }
+        S = s;
+        
+        stack<int>stackOp;
+        stack<vector<string>>stackStr;
+        vector<string>cur;
+            
+        for (int i=0; i<S.size(); i++)
+        {
+            if (S[i]=='{')
+            {
+                stackStr.push(cur);
+                stackOp.push(0);
+                cur.clear();
+            }
+            else if (S[i]==',')
+            {
+                stackStr.push(cur);
+                stackOp.push(1);
+                cur.clear();
+            }
+            else if (isalpha(S[i]))
+            {
+                string temp;
+                temp.push_back(S[i]);
+                cur.push_back(temp);
+            }
+            else if (S[i]=='}')
+            {
+                while (stackOp.top()==1)
+                {
+                    cur = combine(stackStr.top(), cur);
+                    stackStr.pop();
+                    stackOp.pop();
+                }
+                if (stackOp.top()==0)
+                {
+                    cur = crossProduct(stackStr.top(), cur);
+                    stackStr.pop();
+                    stackOp.pop();
+                }
+            }
+        }
+        
+        sort(cur.begin(), cur.end());
+        return cur;        
+    }
+    
+    vector<string>combine(vector<string>&s, vector<string>&t)
+    {
+        vector<string>ret;
+        for (int i=0; i<s.size(); i++)
+            ret.push_back(s[i]);
+        for (int i=0; i<t.size(); i++)
+            ret.push_back(t[i]);
+        return ret;
+    }
+    
+    vector<string>crossProduct(vector<string>&s, vector<string>&t)
+    {
+        if (s.size()==0) s.push_back("");
+        if (t.size()==0) t.push_back("");
+        vector<string>ret;
+        for (int i=0; i<s.size(); i++)
+            for (int j=0; j<t.size(); j++)
+            {
+                ret.push_back(s[i]+t[j]);
+            }
+        return ret;
+    }
+};
 
 
-[Leetcode Link](https://leetcode.com/problems/maximum-width-ramp)
+
+
+
+$0
+endsnippet
+
+# ==> ./Stack/1096.Brace-Expansion-II/Readme.md <==
+snippet 1096.Brace-Expansion-II "1096.Brace-Expansion-II" b
+### 1096.Brace-Expansion-II
+
+#### 解法1：递归
+
+我们先考虑一个乘法和加法的组合问题。例如计算```a+b*c+b*d*e+f+g+h*u```。
+
+这是一个比较典型的用栈可以解决的问题。遇到所有的单项式（也就是发现被加号所分割），就把当前的变量cur推入栈中，并把cur重置为空。如果遇到的是多项式（也就是被乘号所分割），就新得到的这部分乘数next与手头的cur相乘并更新为cur。这样最终遍历完之后，栈里面是有若干个单项式，求它们的和就行了。
+
+本题类似的思想，只不过把加号变成了逗号（对应的是取并集的运算），把乘号变成了双目的大括号（对应的是点乘的运算）。我们一旦遇到了左括号，就会向右寻找与它对应的右括号，这中间的部分就可以用递归处理（记作next）。默认情况下，我们都会将cur和next做点乘操作。
+
+#### 解法2：栈
+
+如果不用递归，也可以强行只用栈处理。规则如下：
+
+1. 遇到逗号，就将当前的cur推入栈中，同时标记这个入栈的操作为1.然后将cur重置为空。
+2. 遇到左括号，就将当前的cur推入栈中，同时标记这个入栈的操作为2.然后将cur重置为空。
+3. 遇到右括号，就不停地将stack顶端连续标记为1操作的那些元素退栈，不停地与cur做并集操作。然后再将stack顶端标记为2操作的一个元素退栈，再与cur做点乘。得到的就是更新后的cur。（也就是说，遇到一个右括号，预示着要完成这个括号内的所有并集操作，再加上一次与这个括号之前元素的点乘操作）
+4. 遇到任何其他字母，就将cur的值置为这个字符串。
+
+需要注意的是，我们最好对所有的字母提前包裹上"{}"，这样会带来处理上的便利。比如"{a,b}c{d,e}f"，因为c不包裹大括号的话，就无法判断它与前面是否是点乘的关系进而无法使之前的cur入栈。
+
+
+[Leetcode Link](https://leetcode.com/problems/brace-expansion-ii)
+$0
+endsnippet
+
+# ==> ./Stack/1096.Brace-Expansion-II/1096.Brace-Expansion-II_recursion.cpp <==
+snippet 1096.Brace-Expansion-II "1096.Brace-Expansion-II" b
+class Solution {
+public:
+    vector<string> braceExpansionII(string expression) 
+    {
+        string S = expression;
+                
+        auto resultSet =  dfs(S,0,S.size()-1);
+        
+        vector<string>results;
+        for (auto x:resultSet)
+            results.push_back(x);
+        sort(results.begin(),results.end());
+        return results;        
+    }
+    
+    unordered_set<string>dfs(string&S, int a, int b)
+    {
+        stack<unordered_set<string>>Stack;
+        unordered_set<string>cur={};       
+                       
+        for (int i=a; i<=b; i++)            
+        {            
+            if (S[i]=='{')
+            {
+                int level = 1;
+                int j = i+1;
+                while (j<=b && level>0)
+                {
+                    level += (S[j]=='{');
+                    level -= (S[j]=='}');
+                    if (level==0)
+                        break;
+                    else
+                        j++;
+                }
+                auto next = dfs(S,i+1,j-1);                
+                cur = product(cur,next);
+                i = j;                
+            }
+            else if (S[i]==',')
+            {
+                Stack.push(cur);
+                cur = {};
+            }
+            else
+            {                                
+                int j = i+1;
+                while (j<=b && isalpha(S[j]))
+                    j++;
+                unordered_set<string>next({S.substr(i,j-i)});
+                cur = product(cur, next);                
+                i = j-1;
+            }
+        }
+        
+        while (!Stack.empty())
+        {
+            for (auto x: Stack.top())
+                cur.insert(x);
+            Stack.pop();
+        }
+        return cur;
+    }
+    
+    unordered_set<string>product(unordered_set<string>&A, unordered_set<string>&B)
+    {
+        if (A.size()==0)
+            A.insert("");
+        unordered_set<string>results;
+        for (auto x:A)
+            for (auto y:B)
+                results.insert(x+y);
+        return results;
+    }    
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1096.Brace-Expansion-II/1096.Brace-Expansion-II_stack.cpp <==
+snippet 1096.Brace-Expansion-II "1096.Brace-Expansion-II" b
+class Solution {
+public:
+    vector<string> braceExpansionII(string S) 
+    {
+        string expression;
+        for (int i=0; i<S.size(); i++)
+        {
+            if (isalpha(S[i]))
+            {
+                expression.push_back('{');
+                expression.push_back(S[i]);
+                expression.push_back('}');
+            }
+            else
+                expression.push_back(S[i]);                
+        }
+        
+        stack<unordered_set<string>>stackStr;
+        stack<int>stackOp;        
+        unordered_set<string>cur;
+        
+        for (int i=0; i<expression.size(); i++)
+        {
+            if (expression[i]=='{')
+            {
+                stackStr.push(cur);                
+                stackOp.push(0);
+                cur = {};
+            }
+            else if (expression[i]==',')
+            {
+                stackStr.push(cur);                
+                stackOp.push(1);
+                cur = {};
+            }
+            else if (expression[i]=='}')
+            {
+                while (stackOp.top()==1)
+                {                                        
+                    cur = combine(stackStr.top(), cur);
+                    stackStr.pop();
+                    stackOp.pop();                    
+                }                
+                if (stackOp.top()==0)
+                {
+                    cur = crossProduct(stackStr.top(), cur);
+                    stackStr.pop();
+                    stackOp.pop();
+                }                              
+            }
+            else
+            {
+                int j=i+1;
+                while (j<expression.size() && isalpha(expression[j]))
+                    j++;
+                cur={expression.substr(i,j-i)};
+                i = j-1;
+            }
+        }               
+        
+        vector<string>rets(cur.begin(), cur.end());
+        sort(rets.begin(),rets.end());
+        
+        return rets;
+    }
+
+    unordered_set<string>combine(unordered_set<string>&s, unordered_set<string>&t)
+    {
+        unordered_set<string>ret;
+        for (auto x:s)
+            ret.insert(x);
+        for (auto y:t)
+            ret.insert(y);
+        return ret;
+    }
+    
+    unordered_set<string>crossProduct(unordered_set<string>&s, unordered_set<string>&t)
+    {
+        if (s.size()==0) s.insert("");
+        if (t.size()==0) t.insert("");
+        unordered_set<string>ret;
+        for (auto x:s)
+            for (auto y:t)
+                ret.insert(x+y);
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1106.Parsing-A-Boolean-Expression/Readme.md <==
+snippet 1106.Parsing-A-Boolean-Expression "1106.Parsing-A-Boolean-Expression" b
+### 1106.Parsing-A-Boolean-Expression
+
+本题和上周周赛的最后一题（1096. Brace Expansion II）属于同一类型，相对来说更容易些。
+
+对于这种带有括号优先级的expression parsing，栈或者递归的写法都是比较常见的。
+
+#### 解法1：栈
+我们需要设立两个栈，一个存储的是操作符，```stack<char>stackOp```；另一个存储的是操作数，注意操作数是个数组，```stack<vector<int>>stackNums```
+
+进栈的特征是遇到操作符，将这个操作符和手头的操作数组nums都压入栈后清空。退栈的特征是遇到右括号，这个时候调用stackOp的栈顶操作符，来指挥怎么eval手头的nums，并与stackNums的栈顶元素（也是个数组）合并。当然，两个栈都要吐出栈顶元素。其余的时候，只需要不断增加手头的操作数组nums的长度即可。
+
+#### 解法2：递归
+遇到一个操作符的话，也就意味着马上有一个左括号i。我们找到和它平级的右括号j，这样[i,j]之间的字符串的处理可以写成一个递归函数。递归函数返回的就是一个bool值。递归的边界就是字符串不再包括子括号了，那么这时候需要做的就是根据操作符来eval一堆操作数nums即可。
+
+[Leetcode Link](https://leetcode.com/problems/parsing-a-boolean-expression)
+
+$0
+endsnippet
+
+# ==> ./Stack/1106.Parsing-A-Boolean-Expression/1106.Parsing-A-Boolean-Expression_recursion.cpp <==
+snippet 1106.Parsing-A-Boolean-Expression "1106.Parsing-A-Boolean-Expression" b
+class Solution {
+public:
+    bool parseBoolExpr(string expression) 
+    {
+        bool ret = helper(expression, 0, expression.size()-1);
+        return ret;
+    }
+    
+    bool helper(string &s, int a, int b)
+    {
+        vector<int>vals;
+        for (int i=a+2; i<=b-1; i++)
+        {
+            if (s[i]=='&' || s[i]=='|' || s[i]=='!')
+            {                
+                int level = 1;
+                int j = i+2;
+                while (j<=b-1 && level>0)
+                {
+                    level += (s[j]=='(');
+                    level -= (s[j]==')');
+                    if (level==0)
+                        break;
+                    else
+                        j++;
+                }
+                vals.push_back(helper(s, i, j));
+                i = j;
+            }
+            else if (s[i]=='t' || s[i]=='f')
+            {
+                vals.push_back(s[i]=='t');
+            }            
+        }
+        return eval(s[a], vals);        
+    }
+
+    int eval(char oper, vector<int>&nums)
+    {        
+        int result;
+        if (oper=='!')
+            result = !nums[0];
+        else if (oper=='&')
+        {
+            result = 1;
+            for (int i=0; i<nums.size(); i++)
+                result = result&nums[i];
+        }
+        else if (oper=='|')
+        {
+            result = 0;
+            for (int i=0; i<nums.size(); i++)
+                result = result|nums[i];
+        }
+
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1106.Parsing-A-Boolean-Expression/1106.Parsing-A-Boolean-Expression_stack.cpp <==
+snippet 1106.Parsing-A-Boolean-Expression "1106.Parsing-A-Boolean-Expression" b
+class Solution {
+public:
+    bool parseBoolExpr(string expression) 
+    {
+        stack<char>stackOp;
+        stack<vector<int>>stackVal;
+        vector<int>curVals;
+        int ret;
+
+        for (int i=0; i<expression.size(); i++)
+        {
+            if (expression[i]=='!' || expression[i]=='&' || expression[i]=='|')
+            {
+                stackOp.push(expression[i]);
+                stackVal.push(curVals);
+                curVals.clear();
+                i++;
+            }
+            else if (expression[i]==')')
+            {
+                ret = eval(stackOp.top(), curVals);
+                stackOp.pop();
+                curVals = stackVal.top();
+                curVals.push_back(ret);
+                stackVal.pop();
+            }
+            else if (expression[i]=='t' || expression[i]=='f' )
+            {
+                curVals.push_back(expression[i]=='t');
+            }
+        }
+
+        return ret;
+    }
+
+    int eval(char oper, vector<int>&nums)
+    {        
+        int result;
+        if (oper=='!')
+            result = !nums[0];
+        else if (oper=='&')
+        {
+            result = 1;
+            for (int i=0; i<nums.size(); i++)
+                result = result&nums[i];
+        }
+        else if (oper=='|')
+        {
+            result = 0;
+            for (int i=0; i<nums.size(); i++)
+                result = result|nums[i];
+        }
+
+        return result;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1124.Longest-Well-Performing-Interval/Readme.md <==
+snippet 1124.Longest-Well-Performing-Interval "1124.Longest-Well-Performing-Interval" b
+### 1124.Longest-Well-Performing-Interval
+
+如果我们将所有的tiring day标记成为1，non-tiring day标记成为-1，那么题意就是说，在一个1和-1组成的数组里找一个最长的区间[i,j]，使得区间里面1的个数要多于-1的个数。
+
+如果我们继续转换一下这个数组变成前缀和数组presum，可以发现presum[i]表示的就是从第0天截止到第i天为止，tiring day与non-tiring day相比的数目之差。于是题意就转化成了：在这个presum数组里，找一对距离最远的pair(i,j)，使得presum[i-1] < presum[j]（这样就表示从区间[i,j]里tiring day与non-tiring day相比的数目之差是正数，符合题意）。
+
+于是这道题就变得和 962. Maximum Width Ramp 一样了，可以用单调栈的技巧在o(n)时间解决。
+
+事实上，这道题抽象起来就是求：任意数组A里最宽的一对pair(i,j)，使得 A[i]<A[j]（或者A[i]>A[j]），我们可以称之为“farthest greater element”。这和之前常做到的“next greater element”是恰好相反的题意。这两题都是可以用单调性完美地解决的。
+
+
+[Leetcode Link](https://leetcode.com/problems/longest-well-performing-interval)
+$0
+endsnippet
+
+# ==> ./Stack/1124.Longest-Well-Performing-Interval/1124.Longest-Well-Performing-Interval_Map.cpp <==
+snippet 1124.Longest-Well-Performing-Interval "1124.Longest-Well-Performing-Interval" b
+class Solution {
+public:
+    int longestWPI(vector<int>& hours) 
+    {
+        vector<int>q({0});
+        int count = 0;
+        for (auto x:hours)
+        {
+            if (x>8)
+                count++;
+            else
+                count--;
+            q.push_back(count);
+        }
+        
+        map<int,int>Map;
+        Map[0] = 0;
+        int result = 0;
+        for (int i=1; i<q.size(); i++)
+        {
+            int k = INT_MAX;
+            for (auto x:Map)
+            {
+                if (x.first >= q[i])
+                    break;
+                k = min(k, x.second);
+            }
+            result = max(result, i-k);
+            if (Map.begin()->first > q[i])
+            {
+                Map[q[i]] = i;
+            }                
+        }
+        return result;
+    }
+
+$0
+endsnippet
+
+# ==> ./Stack/1124.Longest-Well-Performing-Interval/1124.Longest-Well-Performing-Interval_Stack.cpp <==
+snippet 1124.Longest-Well-Performing-Interval "1124.Longest-Well-Performing-Interval" b
+class Solution {
+public:
+    int longestWPI(vector<int>& hours) 
+    {
+        vector<int>presum({0});
+        int sum = 0;
+        for (int x: hours)
+        {
+            if (x>8)
+                sum+=1;
+            else
+                sum+=-1;
+            presum.push_back(sum);
+        }
+        
+        stack<int>Stack;
+        for (int i=0; i<presum.size(); i++)
+        {
+            if (Stack.empty() || presum[Stack.top()] > presum[i])
+                Stack.push(i);
+        }
+        
+        int result = 0;
+        for (int j = presum.size()-1; j>=0; j--)
+        {
+            while (!Stack.empty() && presum[Stack.top()] < presum[j])
+            {
+                result = max(result, j - Stack.top());
+                Stack.pop();
+            }   
+        }
+        return result;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/Readme.md <==
+snippet 1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses "1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses" b
+### 1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses
+
+#### 解法1：模拟
+模拟整个过程。字符串ret只记录字母，用栈来标记左右括号的配对。
+
+遇到左括号时，往栈推入当前ret的长度。遇到右括号时，从栈顶读取的index，它就是ret里与之配对的“虚拟的”左括号的位置。然后将index到ret末尾的字符串整体翻转。不断重复以上操作即可。
+
+举个例子：
+```
+abc(def(ghi)k)
+   ^   ^
+```
+1. 第一次遇到右括号之前，ret = "abcdefghi"，栈里面的元素是[3,6]. 遇到第一个右括号时，说明ret[6,end]需要翻转，得到ret = "abcdefihg"，
+2. 第二次遇到右括号之前，ret = "abcdefihgk"，栈里面的元素是[3]. 遇到第二个右括号时，说明ret[3,end]需要翻转，得到ret = "abckghifed"，就是最终的答案。
+
+考虑到很多字母被加入ret之后又要逆序，所以时间复杂度是o(N^2)。
+
+#### 解法2：反向模拟
+还是上述的例子，当我们顺着读取abc后看到跟在后面的(....)时，知道括号内```def(ghi)k```解析之后的结果一定最终是会反向输出的，那么索性我们就反向读取他们，即从k开始往前读。怎么找到的k呢？那就是从这个左括号对应的右括号开始往左走。
+
+然后，我们又碰到一个更深一级的括号，里面是```ghi```。同理我们知道这个更深一层的括号依然会使内部的东西最终反向输出，那么我们就索性继续反向读取它们，即从g开始往右读。怎么找到的g呢？那就是从这个右括号对应的左括号，然后开始往右走。于是就顺次```ghi```都读完了。
+
+再接着，我们碰到了右括号。此时应该干什么呢？此时这对括号读完了，应该继续之前被暂停的f。怎么快速定位到f呢？其实就是再跳回原来的左括号，但此时继续往左走。
+
+于是我们发现了一个规律。当你进入一层更深的括号时，就跳到括号的另一边反向读取。当你离开该层括号时，也要跳到括号的另一边反向离开。
+
+所谓“进入一层更深的括号”，包括(1)从左往右进入左括号，此时你需要跳转至右括号然后往左读取括号内的内容；(1)从右往做进入右括号，此时你需要跳转至左括号然后往右读取括号内的内容；
+
+所谓“离开该层的括号”，包括(1)从左往右进入右括号，此时你需要跳转至左括号然后往左读取括号外的内容；(1)从右往做进入左括号，此时你需要跳转至右括号然后往右读取括号外的内容；
+
+同上以上的顺序，我们就可以用o(N)的时间走遍整个字符串。
+
+$0
+endsnippet
+
+# ==> ./Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses_O(N).cpp <==
+snippet 1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses "1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses" b
+class Solution {
+public:
+    string reverseParentheses(string s) 
+    {
+        int n = s.size();
+        vector<int>pair(n,-1);
+        stack<int>Stack;
+        for (int i=0; i<n; i++)
+        {
+            if (s[i]=='(')
+                Stack.push(i);
+            else if (s[i]==')')
+            {
+                int j = Stack.top();
+                pair[i]=j;
+                pair[j]=i;
+                Stack.pop();
+            }
+        }
+
+        int i = 0;
+        int d = 1;
+        string ret;
+        while (i<n)
+        {
+            if (isalpha(s[i]))
+                ret.push_back(s[i]);
+            else
+            {
+                i = pair[i];
+                d = -d;
+            }
+            i+=d;            
+        }
+        return ret;
+
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses/1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses_Stack.cpp <==
+snippet 1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses "1190.Reverse-Substrings-Between-Each-Pair-of-Parentheses" b
+class Solution {
+public:
+    string reverseParentheses(string s) 
+    {
+        string ret;
+        stack<int>Stack;
+        for (auto ch: s)
+        {
+            if (isalpha(ch))
+                ret.push_back(ch);
+            else if (ch=='(')
+                Stack.push(ret.size());
+            else
+            {
+                int i = Stack.top();
+                Stack.pop();
+                reverse(ret.begin()+i, ret.end());
+            }
+        }
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1209.Remove-All-Adjacent-Duplicates-in-String-II/Readme.md <==
+snippet 1209.Remove-All-Adjacent-Duplicates-in-String-II "1209.Remove-All-Adjacent-Duplicates-in-String-II" b
+### 1209.Remove-All-Adjacent-Duplicates-in-String-II
+
+模拟整个消除的过程是比较笨拙的方法。优秀的方法可以用one pass来得到最终的结果。
+
+考虑```aabbbadd```，k=3这个例子。第一轮消除```bbb```之后会遇到一个```a```，如果是纯模拟的话，第一轮并不会处理这个字符，但是考虑到```bbb```之前已经有两个```a```了，现在等于有三个连续的相同字符放在一起了，肯定能在第二轮被消除掉，何不就在one pass的时候一并做了呢？
+
+显然，我们可以用栈的数据结构来实现这个功能。一个需要考虑的问题是，我们如何快速判定栈顶有几个```a```以便我们决策是否要退栈做k消除？方法是我们在入栈的时候不仅放入字符，而且放入一个数字来统计目前栈顶有多少个连续的相同字符。这样我们只需看一下最栈顶的元素，就知道栈顶有多少个连续的相同字符了。
+
+$0
+endsnippet
+
+# ==> ./Stack/1209.Remove-All-Adjacent-Duplicates-in-String-II/1209.Remove-All-Adjacent-Duplicates-in-String-II.cpp <==
+snippet 1209.Remove-All-Adjacent-Duplicates-in-String-II "1209.Remove-All-Adjacent-Duplicates-in-String-II" b
+class Solution {
+public:
+    string removeDuplicates(string s, int k) 
+    {
+        stack<pair<char, int>>Stack;
+
+        for (auto ch: s)
+        {
+            if (Stack.empty() || Stack.top().first!=ch)            
+                Stack.push({ch, 1});            
+            else            
+                Stack.push({ch, Stack.top().second+1});            
+
+            if (Stack.top().second==k)
+            {
+                for (int i=0; i<k; i++)
+                    Stack.pop();
+            }
+        }
+
+        string ret;
+        while (!Stack.empty())
+        {
+            ret.push_back(Stack.top().first);
+            Stack.pop();
+        }
+        reverse(ret.begin(), ret.end());
+        return ret;
+
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1586.Binary-Search-Tree-Iterator-II/Readme.md <==
+snippet 1586.Binary-Search-Tree-Iterator-II "1586.Binary-Search-Tree-Iterator-II" b
+### 1586.Binary-Search-Tree-Iterator-II
+
+本题的本质是 094.Binary Tree Inorder Traversal. 用栈可以实现单步的next()操作。具体的方法是维护一个栈(nexts)存放未来需要访问的节点。其中马上能访问的下一个节点next()就在这个栈顶。当我们需要调用next()时就只需要读取栈顶的元素，然后将其弹出。接下来，为了给之后的next()做准备，然后我们需要走到刚才访问的节点的右节点，然后一路向左把所有节点都压入栈内。此番操作之后，此时的栈顶元素保证就是next greater element.
+
+那么如何实现prev()呢？其实很"无赖"，只要把曾经访问过的所有节点都存入一个叫visited的栈里面。于是每次调用next()之后，visited就会新增一个元素。注意，我们调用prev()的时候，将visited的栈顶元素弹出，以便返回里面的“次”栈顶元素（因为visited的栈顶是刚访问过的，而prev()需要返回的是再早一次访问过的）。
+
+那么我们怎么处理和利用visited的栈顶元素呢，白白扔掉吗？这里有个非常巧妙的处理方法：将visited的栈顶元素取出来直接放入nexts里面。这样如果下一次调用next()，就直接从nexts里面取栈顶元素就行了。但是我们需要将这类已经访问过的、再次塞回nexts的节点做个标记以示区别，因为如果调用next()读取的是这些值的话我们并不需要额外的“访问右节点再一路向左”的操作。可以想象，你连续调用了多少次prev()，那么就有多少个这样的已经访问过的节点被“暂存”在了nexts里面，如果你的next()读取的是这类的节点，那么他们一定全部在nexts的栈顶等着你。
+
+另外一个细节是，hasPrev()的条件是```visited.size()>1```，因为返回的是visited的次栈顶元素。
+
+$0
+endsnippet
+
+# ==> ./Stack/1586.Binary-Search-Tree-Iterator-II/1586.Binary-Search-Tree-Iterator-II.cpp <==
+snippet 1586.Binary-Search-Tree-Iterator-II "1586.Binary-Search-Tree-Iterator-II" b
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class BSTIterator {
+    stack<pair<TreeNode*,bool>>nexts;
+    stack<TreeNode*>visited;
+public:
+    BSTIterator(TreeNode* root) 
+    {
+        TreeNode* p = root;
+        while (p)
+        {
+            nexts.push({p,true});
+            p = p->left;
+        }
+    }
+    
+    bool hasNext() 
+    {
+        return !nexts.empty();        
+    }
+    
+    int next() 
+    {
+        auto [node, flag] = nexts.top();
+        nexts.pop();
+        
+        if (flag == 1)
+        {
+            TreeNode* p = node->right;
+            while (p)
+            {
+                nexts.push({p, true});
+                p = p->left;
+            }
+        }
+            
+        visited.push(node);
+        return node->val;
+    }
+    
+    bool hasPrev() 
+    {
+        return visited.size() > 1;
+    }
+    
+    int prev() 
+    {
+        nexts.push({visited.top(), false});
+        visited.pop();
+        
+        return visited.top()->val;
+    }
+};
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator* obj = new BSTIterator(root);
+ * bool param_1 = obj->hasNext();
+ * int param_2 = obj->next();
+ * bool param_3 = obj->hasPrev();
+ * int param_4 = obj->prev();
+ */
+
+$0
+endsnippet
+
+# ==> ./Stack/1673.Find-the-Most-Competitive-Subsequence/Readme.md <==
+snippet 1673.Find-the-Most-Competitive-Subsequence "1673.Find-the-Most-Competitive-Subsequence" b
+### 1673.Find-the-Most-Competitive-Subsequence
+
+本题和```LC.402 Remove K Digits```一模一样，本质上就是求长度为k的最小序列。
+
+我们维护一个递增的栈，一旦发现新数字a比栈顶元素b更小，我们肯定希望把这个a尽量前移（这样必然使得序列更小）。把a每前移一位，就意味着要舍弃栈顶的数字，直至已经被舍弃的数字总数达到上限。
+
+当所有数字都入了栈，那么栈里面的就是最小的递增序列。当然，如果这个序列的数字数目大于了k，那么就舍弃最后的数字舍得剩下的恰好有k个。
+
+$0
+endsnippet
+
+# ==> ./Stack/1673.Find-the-Most-Competitive-Subsequence/1673.Find-the-Most-Competitive-Subsequence.cpp <==
+snippet 1673.Find-the-Most-Competitive-Subsequence "1673.Find-the-Most-Competitive-Subsequence" b
+class Solution {
+public:
+    vector<int> mostCompetitive(vector<int>& nums, int k) 
+    {
+        int count = nums.size()-k;
+        stack<int>Stack;
+        for (int x: nums)
+        {
+            if (Stack.empty() || x>Stack.top())
+            {
+                Stack.push(x);
+            }
+            else
+            {
+                while (!Stack.empty() && x<Stack.top() && count>0)
+                {
+                    Stack.pop();
+                    count--;
+                }
+                Stack.push(x);
+            }
+        }
+        while (count>0)
+        {
+            Stack.pop();
+            count--;
+        }
+        vector<int>ret;
+        while (!Stack.empty())
+        {
+            ret.push_back(Stack.top());
+            Stack.pop();
+        }
+        reverse(ret.begin(), ret.end());
+        return ret;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1856.Maximum-Subarray-Min-Product/Readme.md <==
+snippet 1856.Maximum-Subarray-Min-Product "1856.Maximum-Subarray-Min-Product" b
+### 1856.Maximum-Subarray-Min-Product
+
+此题和```LC 907.Sum-of-Subarray-Minimums```非常相似，场景也更为直观。传统思维是遍历所有subarray，寻找每个subarray的最小值。这需要o(N^2)的复杂度。
+
+逆向思维是，遍历每个元素nums[i]，思考以它为最小值的subarray最大是什么。显然，满足条件的subarray的左右边界之外都应该是恰比nums[i]小的元素，也就是prev smaller element和next greater element. 这两个位置都是可以用经典的单调栈算法以均摊o(1)的时间来完成。确定了subarray的边界后，那么subarray sum显然也是可以用预处理的前缀和以o(1)计算出来。
+
+$0
+endsnippet
+
+# ==> ./Stack/1856.Maximum-Subarray-Min-Product/1856.Maximum-Subarray-Min-Product.cpp <==
+snippet 1856.Maximum-Subarray-Min-Product "1856.Maximum-Subarray-Min-Product" b
+typedef long long ll;
+class Solution {
+    ll M = 1e9+7;
+public:
+    int maxSumMinProduct(vector<int>& nums) 
+    {
+        int n = nums.size();
+        
+        vector<ll>nextSmaller(n, n);        
+        vector<ll>prevSmaller(n, -1);
+
+        stack<ll>Stack;
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()]>nums[i])
+            {
+                nextSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);                    
+        }        
+        
+        while (!Stack.empty()) Stack.pop();
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[Stack.top()]>nums[i])
+            {
+                prevSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);                    
+        }
+        
+        vector<ll>presum(n);
+        presum[0] = nums[0];
+        for (int i=1; i<n; i++)
+            presum[i] = presum[i-1]+nums[i];
+        
+        ll ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            ll a = prevSmaller[i]==-1 ? 0: presum[prevSmaller[i]];
+            ll b = presum[nextSmaller[i]-1];
+            ret = max(ret, (b-a)*(ll)nums[i]);
+        }
+        return ret%M;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression/Readme.md <==
+snippet 1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression "1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression" b
+### 1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression
+
+如果这道题给的不是序列，而是一个布尔表达树的话，题目就会简单很多。比如，对于```(0|(1|0&1))```，写成二叉树的话就是
+```
+  |
+0    |
+   1   &
+      0  1   
+```
+现在考虑这个问题，如果要使整棵树最终eval的结果翻转，我们最少需要做多少次改动？这里的改动，就是将叶子节点（数值）的01互换、或者非叶子节点（逻辑运算符）的|&互换。
+
+对于树而言，我们显然会用递归处理。对于每一对{subRoot，left, right}，我们可以有递归表达式对每一种情况进行分析：
+```cpp
+int minFlip(subRoot, left, right)
+{
+  left.flip = minFlip(left);
+  right.flip = minFlip(right);
+  
+  if (subRoot.op == '&' && left.val + right.val == 0)  // 0 & 0  需要翻转一个数字，再翻转逻辑符
+    return 1 + min(left.flip,  right.flip);
+  if (subRoot.op == '&' && left.val + right.val == 1)  // 0 & 1， 只需要翻转逻辑符
+    return 1;
+  if (subRoot.op == '&' && left.val + right.val == 2)  // 1 & 1， 需要翻一个数字
+    return min(left.flip,  right.flip);  
+
+  if (subRoot.op == '|' && left.val + right.val == 0)  // 0 | 0  需要翻转一个数字
+    return min(left.flip,  right.flip);
+  if (subRoot.op == '|' && left.val + right.val == 1)  // 0 | 1， 只需要翻转逻辑符
+    return 1;
+  if (subRoot.op == '|' && left.val + right.val == 2)  // 1 | 1， 需要翻一个数字，再翻转逻辑符
+    return 1 + min(left.flip,  right.flip);  
+}
+```
+可以发现，对于每个节点node，其实我们都需要得到它的两个属性，一个就是以node为根的子树整体作为逻辑表达式得到的val，另一个就是将以node为根的子树的val翻转所需要的flip操作数。两个孩子节点的这两个属性，就可以得到父节点的两个属性。我们一路向下，再向上回溯，最终输出的答案就是root.flip，即将总结果翻转需要的flip次数。
+
+那么我们如何将序列表达式转变成一棵逻辑树呢？递归的方法很简单，但是复杂度很高。比如```(xxxxxxxxxxxxxxxx)&(xxxxxxxxxxxxxxxxxxxx)```，你需要把整个序列都遍历一遍，才能确定两个子递归函数的范围。这样的建树方法会造成o(N^2)的复杂度。
+
+所以适合本题的方法并不是显示地去构建这棵逻辑树，而是学习```224.Basic-Calculator```的方法，用栈来模拟递归。224的解法的三个关键是：
+1. 维护两个变量，cur来存放当前已经eval的数值，op来存放当前待操作的逻辑运算。当我们遇到下一个数值nxt的时候，就可以进行操作```cur op nxt```，然后将结果用来更新cur。
+2. 维护两个栈，当遇到左括号时，以往的结果都要暂存，故将当前的变量cur和op压入栈中。我们reset这两个变量，标记cur=-1, op='#'，“虚拟地”表示这是一个起始点。我们规定```cur # nxt = nxt```.
+3. 当遇到右括号时，从这两个栈中读取last和op，这样就可以操作```last op cur```，然后将结果来更新cur。
+
+于是，如果只是评估本题的表达式的最终结果，那么代码可以写成如下：
+```cpp
+    int minOperationsToFlip(string expression) 
+    {
+        stack<int>s1;
+        stack<char>s2;
+        int cur = -1;
+        char op = '#';
+         
+        int ret = 0;
+        expression = "(" + expression + ")";
+        
+        for (auto ch:expression)
+        {
+            if (ch=='&'||ch=='|')
+                op = ch;
+            else if (ch=='0' || ch=='1')
+            {
+                int nxt = ch-'0';
+                int val = evalVal(op, cur, nxt);
+                cur = val;
+            }
+            else if (ch=='(')
+            {                
+                s1.push(cur);
+                s2.push(op);
+                cur = -1;
+                op = '#';
+            }
+            else
+            {
+                auto last = s1.top();
+                s1.pop();
+                char op = s2.top();
+                s2.pop();
+                                
+                int val = evalVal(op, last, cur);
+                cur = val;
+            }
+        }
+        
+        return cur; 
+    }
+```    
+
+
+本题相比于224需要多一个操作，就是每步```cur op nxt```时，不仅计算该操作得到逻辑值val，还要计算如果想要翻转val所需要的最少flip。所以cur或者nxt，本质都需要包含两个属性，即{val, flip}. 更新之后的cur同样也包含这两个属性。具体的方法和上面的递归代码相同。
+
+
+$0
+endsnippet
+
+# ==> ./Stack/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression/1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression.cpp <==
+snippet 1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression "1896.Minimum-Cost-to-Change-the-Final-Value-of-Expression" b
+class Solution {
+public:
+    int evalVal(char op, pair<int,int>&a, pair<int,int>&b)
+    {                        
+        if (op == '#')
+            return b.first;
+        else if (op == '&')                    
+            return a.first & b.first;
+        else
+            return a.first | b.first;
+    }
+    
+    // 1. 1|1，需要翻转一个数字，同时翻转运算符 
+    // 2. 0|0，需要翻转一个数字
+    // 3. 0|1，需要翻转运算符
+    // 4. 1&1，需要翻转一个数字
+    // 5. 0&0，需要翻转一个数字，同时翻转运算符 
+    // 6. 0&1，需要翻转运算符
+    int evalFlip(char op, pair<int,int>&a, pair<int,int>&b)
+    {               
+        if (op == '#')
+            return b.second;        
+        else if (op=='&')
+        {
+            if (a.first + b.first == 2)
+                return min(a.second, b.second);
+            else if (a.first + b.first == 1)
+                return 1;
+            else
+                return min(a.second, b.second)+1;                
+        }
+        else
+        {
+            if (a.first + b.first == 2)
+                return min(a.second, b.second)+1;
+            else if (a.first + b.first == 1)
+                return 1;
+            else
+                return min(a.second, b.second);
+        }                
+    }
+    
+    int minOperationsToFlip(string expression) 
+    {
+        stack<pair<int,int>>s1; // {val, # of operations to flip this value}
+        stack<char>s2;
+        pair<int,int> cur = {-1, -1};
+        char op = '#';
+                         
+        for (auto ch:expression)
+        {
+            if (ch=='&'||ch=='|')
+                op = ch;
+            else if (ch=='0' || ch=='1')
+            {
+                pair<int,int> nxt = {ch-'0', 1};
+                int val = evalVal(op, cur, nxt);
+                int flip = evalFlip(op, cur, nxt);                               
+                cur = {val, flip};
+            }
+            else if (ch=='(')
+            {                
+                s1.push(cur);
+                s2.push(op);
+                cur = {-1, -1};
+                op = '#';
+            }
+            else
+            {
+                auto last = s1.top();
+                s1.pop();
+                char op = s2.top();
+                s2.pop();
+                                
+                int val = evalVal(op, last, cur);
+                int flip = evalFlip(op, last, cur);
+                cur = {val, flip};
+            }
+        }
+        
+        return cur.second; 
+    }
+};
+
+
+$0
+endsnippet
+
+# ==> ./Stack/1944.Number-of-Visible-People-in-a-Queue/Readme.md <==
+snippet 1944.Number-of-Visible-People-in-a-Queue "1944.Number-of-Visible-People-in-a-Queue" b
+### 1944.Number-of-Visible-People-in-a-Queue
+
+假设A往右第一个能看到的是B，那么B之后任何比B还矮的的人A都看不到。A看到B之后第一个人，一定是```C = nextGreater[B]```。同理，A在C之后的下一个能看到的人又一定是```D = nextGreater[C]```...那么这个过程持续到什么时候停止呢？思考后发现，一旦遇到比A还高的人，这个过程就停止。因为A不可能看到任何nextGreater[A]后面的人。
+
+所以A能看到的序列，是从A右边的第一个元素开始的nextGreater序列BCD...直至遇到比A还高的元素，假设是X。
+
+这时候我们不妨考虑一下A左边的元素A'，对它而言，无论A与A'的关系如何，A与X之间的BCD...都是无法被A'看到的（因为被A遮住了）。这就提醒我们可以将A与X中间的这部分都移走。于是我们想到可以逆序遍历数组，维护一个递减的单调栈。
+
+具体做法是：如果新进来的元素A比栈顶元素矮，那么它只能看到栈顶元素。如果新进来的元素A比栈顶元素高，那么所有比A矮的若干个栈顶元素（从顶往底呈递增序列）都可以被A看到。因为这些元素对于A左边的结果没有帮助，所以可以都将其退栈，在退栈的过程中就可以计数，得到的就是A能看到的个数。注意如果退栈结束后栈顶还存有元素，这个元素一定比A大且能被A看见，统计还要加1.
+
+$0
+endsnippet
+
+# ==> ./Stack/1944.Number-of-Visible-People-in-a-Queue/1944.Number-of-Visible-People-in-a-Queue.cpp <==
+snippet 1944.Number-of-Visible-People-in-a-Queue "1944.Number-of-Visible-People-in-a-Queue" b
+class Solution {
+public:
+    vector<int> canSeePersonsCount(vector<int>& heights) 
+    {
+        int n = heights.size();
+        stack<int>Stack;
+        vector<int>rets(n);
+        
+        for (int i=n-1; i>=0; i--)
+        {
+            int count = 0;
+            while (!Stack.empty() && heights[i] > heights[Stack.top()])
+            {
+                count++;
+                Stack.pop();
+            }
+            if (!Stack.empty())
+                count++;
+            rets[i] = count;
+            Stack.push(i);
+        }
+
+        return rets;
+
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1950.Maximum-of-Minimum-Values-in-All-Subarrays/Readme.md <==
+snippet 1950.Maximum-of-Minimum-Values-in-All-Subarrays "1950.Maximum-of-Minimum-Values-in-All-Subarrays" b
+### 1950.Maximum-of-Minimum-Values-in-All-Subarrays
+
+首先我们要有一个意识：如果size变大，那么答案就会单调变小。这是因为size越大的滑窗，就越容易包含更多较小元素，使得subarray的最小值会变得越小。最终的答案也会越小。
+
+于是我们第一个考虑的是，当size=1时答案是什么？显然答案就是数组里的最大值M1。因为M1独自作为一个subarray时，它就是该subarray的最小值。再考虑到它又是全局最大的值，那么它本身就是答案。
+
+那么如果size=2的时候呢？显然答案肯定不会再是刚才的最大值M1了，因为长度为2的滑窗包含M1时，滑窗内必然还有另一个元素比它小。那么根据单调性，我们接下来要查验答案是否为全局的第二大值M2呢？那就取决于M2是否会是某个长度为2的滑窗的最小值。显然，只要M2的左边或右边是M1，那么就存在一个以M2为最小值的、长度为2的滑窗，此时考虑到它又是全局第二大值（M1已经被排除），所以M2就是答案。反之，如果M2的左右两边都是更小的元素，那么M2就不是任何subarray的最小值，我们就继续考察答案是否是全局的第三大元素M3。以此类推，直到找到最大的M满足条件。
+
+至此，我们已经知道规律，对于指定滑窗长度L，要判断某个元素M是否可能为答案，那么先决条件就看：是否存在包含M的、长度为L的滑窗，里面的元素都大于等于M。解决方案是提前用单调栈处理，得到该元素i的prevSmallerElement和nextSmallerElement的位置j与k。如果```k-j-1>=L```，那么说明存在该长度的滑窗使得内部的所有元素都大于等于M。
+
+考虑到无论L如何变化，我们对于M的探索总是单调地从大到小逐一考察，所以核心代码的时间复杂度其实就是o(N)。当然，为了得到M的降序，还需要额外Nlog(N)的时间。
+
+$0
+endsnippet
+
+# ==> ./Stack/1950.Maximum-of-Minimum-Values-in-All-Subarrays/1950.Maximum-of-Minimum-Values-in-All-Subarrays.cpp <==
+snippet 1950.Maximum-of-Minimum-Values-in-All-Subarrays "1950.Maximum-of-Minimum-Values-in-All-Subarrays" b
+typedef pair<int,int> PII;
+class Solution {
+public:
+    vector<int> findMaximums(vector<int>& nums) 
+    {
+        int n = nums.size();
+        priority_queue<PII>pq;
+        for (int i=0; i<n; i++)
+            pq.push({nums[i],i});
+        
+        vector<int>nextSmaller(n, n);
+        vector<int>prevSmaller(n, -1);
+            
+        stack<int>Stack;
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()] > nums[i])
+            {
+                nextSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        while (!Stack.empty()) Stack.pop();
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[Stack.top()] >= nums[i])
+            {
+                prevSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+        
+        vector<int>rets;    
+        for (int k=1; k<=n; k++)
+        {                
+            while (1)
+            {
+                if (pq.empty()) break;
+                int p = pq.top().second;
+                if (nextSmaller[p] - prevSmaller[p] -1 >= k)
+                    break;
+                pq.pop();
+            }
+            rets.push_back(pq.top().first);
+        }
+        
+        return rets;
+
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array/Readme.md <==
+snippet 1966.Binary-Searchable-Numbers-in-an-Unsorted-Array "1966.Binary-Searchable-Numbers-in-an-Unsorted-Array" b
+### 1966.Binary-Searchable-Numbers-in-an-Unsorted-Array
+
+本题的关键是想清楚什么情况下依照题目的算法无法搜索到某数。
+
+当```pivot < target```时，会将pivot左侧的数都抹去。此时如果抹去的数字里有比pivot大的数字，那么它将永远不会被找到。有人会问，被抹去的数字里那些比pivot小的不同样永远无法搜到了吗？但是没有关系，因为我们的target大于pivot，说明我们不关心那些比pivot小的数字（他们不是我们的搜索目标）。因此，我们得出结论，对于任意一个数nums[i]，如果它的prevGreater存在，那么当nums[i]被选为pivot时，那个prevGreater就会无法被该算法搜到。
+
+同理，当```pivot > target```时，会将pivot右侧的数都抹去。此时如果抹去的数字里有比pivot小的数字，那么它将永远不会被找到。同样，我们不关心那些比pviot大的数字是否被抹掉（因为它们不是我们的搜索目标）。因此我们有类似的结论，对于任意一个数nums[i]，如果它的nextSmaller存在，那么当nums[i]被选为pivot时，那个nextSmaller就会无法被该算法搜到。
+
+我们提前用两轮单调栈，用o(N)的时间把每个元素的prevGreater和nextSmaller都找到。只有同时不存在prevGreater和nextSmaller的那些数，才能保证被算法搜索到。
+
+$0
+endsnippet
+
+# ==> ./Stack/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array/1966.Binary-Searchable-Numbers-in-an-Unsorted-Array.cpp <==
+snippet 1966.Binary-Searchable-Numbers-in-an-Unsorted-Array "1966.Binary-Searchable-Numbers-in-an-Unsorted-Array" b
+class Solution {
+public:
+    int binarySearchableNumbers(vector<int>& nums) 
+    {
+        int n = nums.size();
+        vector<int>nextSmaller(n, n);
+        stack<int>Stack;
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[i]<nums[Stack.top()])
+            {
+                nextSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+                
+        vector<int>prevGreater(n, -1);
+        while (!Stack.empty()) Stack.pop();
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[i]>nums[Stack.top()])
+            {
+                prevGreater[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+        
+        int count = 0;
+        for (int i=0; i<n; i++)
+        {
+            if (nextSmaller[i]==n && prevGreater[i]==-1)
+                count++;
+        }
+        return count;        
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter/Readme.md <==
+snippet 2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter "2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter" b
+### 2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter
+
+本题本质和```402.Remove-K-Digits```差不多。只不过多在单调栈的维护递增序列的过程中需要注意两个条件：1. 删除的字符总数不能超过k0，即```s.size()-k```；并且删除的letter数目不能超过k1，即letter出现的总频次减去repetition. 
+
+我们用单调栈构建了一个递增序列之后，可能它的长度太长，即删减的字符不够多。此时我们必须继续从尾部开始删字符。删除尾部的操作同样延续之前的两个条件：1. 删除的字符总数不能超过k0；2. 删除的letter数目不能超过k1。如果不能删除，就保留该字符，处理下一个。
+
+$0
+endsnippet
+
+# ==> ./Stack/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter/2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter.cpp <==
+snippet 2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter "2030.Smallest-K-Length-Subsequence-With-Occurrences-of-a-Letter" b
+class Solution {
+public:
+    string smallestSubsequence(string s, int k, char letter, int repetition) 
+    {
+        int k0 = s.size() - k;
+        int count = 0;
+        for (auto ch: s)
+            if (ch==letter) count++;
+        int k1 = count - repetition;
+        
+        int count0 = 0; //the total number of letters deleted
+        int count1 = 0; // the total number of "letter" deleted
+        
+        stack<int>Stack;
+        for (int i=0; i<s.size(); i++)
+        {            
+            while (!Stack.empty() && s[i]<Stack.top() && count0<k0 && (Stack.top()!=letter|| (Stack.top()==letter && count1<k1)))
+            {
+                if (Stack.top() == letter)
+                    count1++;
+                count0++;
+                Stack.pop();
+            }
+            Stack.push(s[i]);            
+        }
+        
+        string result;
+        while (!Stack.empty())
+        {
+            result += Stack.top();
+            Stack.pop();
+        }
+        
+        string ans;
+        for (int i=0; i<result.size(); i++)
+        {
+            if (count0==k0 || (result[i]==letter && count1==k1))
+                ans.push_back(result[i]);
+            else
+            {
+                count0++;
+                if (result[i]==letter)
+                    count1++;
+            }
+        }
+        
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/2104.Sum-of-Subarray-Ranges/Readme.md <==
+snippet 2104.Sum-of-Subarray-Ranges "2104.Sum-of-Subarray-Ranges" b
+### 2104.Sum-of-Subarray-Ranges
+
+此题和```907.Sum-of-Subarray-Minimums```非常相似。我们不是根据每个区间来考察它的最大值（或最小值）。而是根据根据最大值（或最小值）来考察对应的区间。
+
+我们考察每个元素nums[i]，它作为区间最大值时，可以是哪些区间？假设有a个。另外，它作为区间最小值时，可以是哪些区间？假设有b个。那么该元素对于最终答案的贡献就是```nums[i]*a-nums[i]*b```.
+
+那么怎么求解a呢？只要用单调栈，来算出nums[i]的prevSmaller所在的位置l，nextSmaller所在的位置r，那么这样的区间的数目就有```a=(i-l)*(r-i)```个。求解b同理。
+
+特别注意的是，对于区间内如果存在多个相同的最大值，我们需要约定，比如只有最靠右边的那个才是最大值。在这样的情况下，我们实际计算的应该是prevSmallerOrEqual而不是prevSmaller.
+
+$0
+endsnippet
+
+# ==> ./Stack/2104.Sum-of-Subarray-Ranges/2104.Sum-of-Subarray-Ranges.cpp <==
+snippet 2104.Sum-of-Subarray-Ranges "2104.Sum-of-Subarray-Ranges" b
+using LL = long long;
+class Solution {
+public:
+    long long subArrayRanges(vector<int>& nums) 
+    {
+        int n = nums.size();
+        
+        stack<int>Stack;
+        vector<int>nextSmaller(n,n);
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()]>nums[i])
+            {
+                nextSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        while (!Stack.empty()) Stack.pop();
+        vector<int>prevSmaller(n,-1);
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[Stack.top()]>=nums[i])
+            {
+                prevSmaller[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        while (!Stack.empty()) Stack.pop();
+        vector<int>nextGreater(n,n);
+        for (int i=0; i<n; i++)
+        {
+            while (!Stack.empty() && nums[Stack.top()]<nums[i])
+            {
+                nextGreater[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        while (!Stack.empty()) Stack.pop();
+        vector<int>prevGreater(n,-1);
+        for (int i=n-1; i>=0; i--)
+        {
+            while (!Stack.empty() && nums[Stack.top()]<=nums[i])
+            {
+                prevGreater[Stack.top()] = i;
+                Stack.pop();
+            }
+            Stack.push(i);
+        }
+
+        LL ret = 0;
+        for (int i=0; i<n; i++)
+        {
+            int l = prevGreater[i];
+            int r = nextGreater[i];
+            ret += (LL)nums[i]*(i-l)*(r-i);
+        }
+        for (int i=0; i<n; i++)
+        {
+            int l = prevSmaller[i];
+            int r = nextSmaller[i];
+            ret -= (LL)nums[i]*(i-l)*(r-i);
+        }
+        return ret;                
+    }
+};
+
+$0
+endsnippet
+
+# ==> ./Stack/2197.Replace-Non-Coprime-Numbers-in-Array/Readme.md <==
+snippet 2197.Replace-Non-Coprime-Numbers-in-Array "2197.Replace-Non-Coprime-Numbers-in-Array" b
+### 2197.Replace-Non-Coprime-Numbers-in-Array
+
+这道题出得很精彩。通常的套路是，如果想合并若干个相邻的元素，可以考虑栈。如果想合并不相邻的元素（归为一类），那么可以考虑并查集。
+
+在本题中，每加入一个新元素，我们自然会考虑是否与数组前一个元素互质。如果新元素与前一个元素互质，那么就只能保留。如果不是那么就可以马上合并成为他们的最大公约数（LCM），因为越大的数（即因数越多的数）越容易与其他数字合并。特别注意，合并之后我们还可以持续考察它是否能与再之前的元素合并，比如这个例子```3,2,6```，第二个数2是与第一个数3互质的，但是当第三个数字6出现后，第二个数和第三个数合并成6之后，就可以往前再合并3. 用这个方法就可以把所有相邻的、可以合并的元素都汇聚成一个。
+
+事实上，本题上述的贪心策略就模拟了栈的基本操作。
+
+$0
+endsnippet
+
+# ==> ./Stack/2197.Replace-Non-Coprime-Numbers-in-Array/2197.Replace-Non-Coprime-Numbers-in-Array.cpp <==
+snippet 2197.Replace-Non-Coprime-Numbers-in-Array "2197.Replace-Non-Coprime-Numbers-in-Array" b
+class Solution {
+public:
+    vector<int> replaceNonCoprimes(vector<int>& nums) 
+    {
+        vector<int>rets;
+        for (int i=0; i<nums.size(); i++)
+        {
+            int x = nums[i];
+            while (!rets.empty() && gcd(rets.back(), x)>1)
+            {
+                x = lcm(rets.back(), x);
+                rets.pop_back();                
+            }
+            rets.push_back(x);
+        }
+        return rets;        
+    }
+
+    long long lcm(long long a, long long b)
+    {
+        return (long long)a*(long long)b/gcd(a,b);
+    }
+};
+
+$0
+endsnippet

@@ -1,6 +1,6 @@
 rm ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
-cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_leetcode_basic.snippets      >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
 cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_basic.snippets               >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
+cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_leetcode_basic.snippets      >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
 cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_leetcode.snippets            >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
 # cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_BFS.snippets                 >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
 # cat ~/.vim/plugged/vim-snippets/snipcpp/cpp_Binary_Search.snippets       >> ~/.vim/plugged/vim-snippets/UltiSnipsDC/cpp.snippets
