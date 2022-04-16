@@ -1,12 +1,9 @@
 
 priority -50
 
-# Many of the snippets here use a global option called
-# "g:ultisnips_java_brace_style" which, if set to "nl" will put a newline
-# before '{' braces.
-# Setting "g:ultisnips_java_junit" will change how the test method snippet
-# looks, it is defaulted to junit4, setting this option to 3 will remove the
-# @Test annotation from the method
+###########################################################################
+#                     Global functions                                    #
+###########################################################################
 
 snippet sniptestjava "snip test java result" b
 /* code by 王江 DC-Melo */
@@ -46,7 +43,7 @@ $0
 endsnippet
 
 
-snippet initListNode "init array" b
+snippet listNodeDefination "list node defination" b
 /* code by 王江 DC-Melo */
 static class ListNode {
 	int data;
@@ -61,6 +58,21 @@ list.head1.next = new ListNode(5);
 $0
 endsnippet
 
+snippet treeNodeDefination "tree node defination" b
+/* code by 王江 DC-Melo */
+class Node {
+    int value;
+    Node left;
+    Node right;
+
+    Node(int value) {
+        this.value = value;
+        right = null;
+        left = null;
+    }
+}
+$0
+endsnippet
 snippet printArray "print array list" b
 /* code by 王江 DC-Melo */
 System.out.print(Arrays.toString(${1:arr}));

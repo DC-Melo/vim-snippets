@@ -3,7 +3,22 @@ priority -50
 ###########################################################################
 #                            TEXTMATE SNIPPETS                            #
 ###########################################################################
+snippet listNodeDefination "list node python" b
+class ListNode(object):
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+$0
+endsnippet
 
+snippet treeNodeDefination "tree node python" b
+class Node(object):
+  def __init__(self,item):
+    self.item = item
+    self.left = None
+    self.right = None
+$0
+endsnippet
 snippet classInit "init class with parameter" b
 # class definition
 class ${1:Myclass}:
@@ -135,11 +150,11 @@ def decorator(para):
 	return function
 
 
-def function():
-    print('function runing')
+def function(arg1):
+    print('function runing'+arg1)
 
-function= decorator("para1")(decorator("para2")(function))
-function()
+function= decorator("decPara")(function)
+function("funPara")
 
 $0
 endsnippet
@@ -559,18 +574,31 @@ snippet snipTestPython "snip Test Python" b
 snip Test Python
 $0
 endsnippet
+snippet sortBucket "bucket sort " b
+def bucketSort(li):
+    max_num = max(li)
+    bucket = [0] * (max_num + 1)
+    for i in li:
+        bucket[i] += 1
+
+    bucket2 = list()
+    for i in range(len(bucket)):
+        if bucket[i]:
+            for j in range(bucket[i]):
+                bucket2.append(i)
+    print(bucket2)
+
+
+bucketSort([9, 8, 9, 7, 6, 5, 7])
+$0
+endsnippet
 # vim:ft=snippets:
 # ::::::::::::::
 # ./02/bubbleSort.py
 # ::::::::::::::
-snippet bubbleSort "bubbleSort" b
+snippet sortBubble "bubbleSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/bubbleSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -599,14 +627,9 @@ endsnippet
 # ::::::::::::::
 # ./02/countingSort.py
 # ::::::::::::::
-snippet countingSort "countingSort" b
+snippet sortCounting "countingSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/countingSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -640,14 +663,9 @@ endsnippet
 # ::::::::::::::
 # ./02/heapSort.py
 # ::::::::::::::
-snippet heapSort "heapSort" b
+snippet sortHeap "heapSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/heapSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/31
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -671,14 +689,9 @@ endsnippet
 # ::::::::::::::
 # ./02/insertionSort.py
 # ::::::::::::::
-snippet insertionSort "insertionSort" b
+snippet sortInsertion "insertionSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/insertionSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -709,14 +722,9 @@ endsnippet
 # ::::::::::::::
 # ./02/mergeSort.py
 # ::::::::::::::
-snippet mergeSort "mergeSort" b
+snippet sortMerge "mergeSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/mergeSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -754,14 +762,9 @@ endsnippet
 # ::::::::::::::
 # ./02/quickSort.py
 # ::::::::::::::
-snippet quickSort "quickSort" b
+snippet sortQuick "quickSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/quickSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -793,11 +796,6 @@ endsnippet
 snippet randomList "randomList" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/crateRandomList.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 import random
 
 def randomList(n):
@@ -816,14 +814,9 @@ endsnippet
 # ::::::::::::::
 # ./02/selectionSort.py
 # ::::::::::::::
-snippet selectionSort "selectionSort" b
+snippet sortSelection "selectionSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/selectionSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -851,14 +844,9 @@ endsnippet
 # ::::::::::::::
 # ./02/shellSort.py
 # ::::::::::::::
-snippet shellSort "shellSort" b
+snippet sortShell "shellSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/shellSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -896,11 +884,6 @@ endsnippet
 snippet binarySearch "binarySearch" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/3/binarySearch.py
-#  Project: /Users/king/Python初级算法/code/3
-#  Created Date: 2018/12/18
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 from quickSort import quickSort
@@ -947,11 +930,6 @@ endsnippet
 snippet blockSearch "blockSearch" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/3/blockSearch.py
-#  Project: /Users/king/Python初级算法/code/3
-#  Created Date: 2018/12/19
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 from quickSort import quickSort
@@ -1010,11 +988,6 @@ endsnippet
 snippet fibonacciSearch "fibonacciSearch" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/3/fibonacciSearch.py
-#  Project: /Users/king/Python初级算法/code/3
-#  Created Date: 2018/12/25
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 from quickSort import quickSort
@@ -1077,11 +1050,6 @@ endsnippet
 snippet insertSearch "insertSearch" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/3/insertSearch.py
-#  Project: /Users/king/Python初级算法/code/3
-#  Created Date: 2018/12/23
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 from quickSort import quickSort
@@ -1131,11 +1099,6 @@ endsnippet
 snippet quickSort "quickSort" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/quickSort.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 import timeit
@@ -1167,11 +1130,6 @@ endsnippet
 snippet randomList "randomList" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/2/crateRandomList.py
-#  Project: /Users/king/Python初级算法/code/2
-#  Created Date: 2018/10/26
-#  Author: hstking hst_king@hotmail.com
-
 import random
 
 def randomList(n):
@@ -1193,11 +1151,6 @@ endsnippet
 snippet sequentialSearch "sequentialSearch" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/3/sequentialSearch.py
-#  Project: /Users/king/Python初级算法/code/3
-#  Created Date: 2018/12/17
-#  Author: hstking hst_king@hotmail.com
-
 
 from randomList import randomList
 from quickSort import quickSort
@@ -1232,11 +1185,6 @@ endsnippet
 snippet containsDuplicate_last "containsDuplicate_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/containsDuplicate.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/24
-#  Author: hstking hst_king@hotmail.com
-
 
 def containsDuplicate(nums):
     # for i in range(len(nums) - 1):
@@ -1268,11 +1216,6 @@ endsnippet
 snippet intersect_last "intersect_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/intersect_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/26
-#  Author: hstking hst_king@hotmail.com
-
 
 def intersect(nums1, nums2):
     # rList = []
@@ -1348,11 +1291,6 @@ endsnippet
 snippet isValidSudoku_last "isValidSudoku_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/isValidSudoku_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/27
-#  Author: hstking hst_king@hotmail.com
-
 
 def isValidSudoku(board):
     rows = [[] for i in range(9)] #转换成行的列表
@@ -1396,11 +1334,6 @@ endsnippet
 snippet maxProfit2_last "maxProfit2_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/maxProfit2.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/21
-#  Author: hstking hst_king@hotmail.com
-
 def maxProfit(prices):
     maxPro = 0
     i = 1
@@ -1423,11 +1356,6 @@ endsnippet
 snippet moveZeroes_last "moveZeroes_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/moveZeros_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/26
-#  Author: hstking hst_king@hotmail.com
-
 
 def moveZeroes(nums):
     for n in nums:
@@ -1466,11 +1394,6 @@ endsnippet
 snippet pivotIndex "pivotIndex" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/pivotIndex.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/03/19
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -1528,11 +1451,6 @@ endsnippet
 snippet plusOne_last "plusOne_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/plusOne_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/26
-#  Author: hstking hst_king@hotmail.com
-
 
 def plusOne(digits):
     digits = [str(i) for i in digits]
@@ -1569,11 +1487,6 @@ endsnippet
 snippet removeDuplicates_last "removeDuplicates_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/removeDuplicates_1.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/15
-#  Author: hstking hst_king@hotmail.com
-
 
 def removeDuplicates(nums):
     n = len(set(nums))
@@ -1602,11 +1515,6 @@ endsnippet
 snippet rotateImage_last "rotateImage_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/rotateImage_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/30
-#  Author: hstking hst_king@hotmail.com
-
 
 def rotate(matrix):
     '''二维数组顺时针旋转90°可以等同于将一个二维数组转置（行列互换），然后每行翻转。 '''
@@ -1640,11 +1548,6 @@ endsnippet
 snippet rotate_last "rotate_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/rotate_1.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/23
-#  Author: hstking hst_king@hotmail.com
-
 
 def rotate(nums, k):
     # if len(nums) < 2:
@@ -1701,11 +1604,6 @@ endsnippet
 snippet singleNumber_last "singleNumber_last" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/singleNumber_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/25
-#  Author: hstking hst_king@hotmail.com
-
 
 def singleNumber(nums):
     # nums.sort()
@@ -1743,11 +1641,6 @@ endsnippet
 snippet threeSum "threeSum" b
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/threeSum.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/03/19
-#  Author: hstking hst_king@hotmail.com
-
 
 def threeSum(nums):
     # rList = []
@@ -1830,11 +1723,6 @@ endsnippet
 snippet twoSum_last "twoSum_last" b
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/4/twoSum_last.py
-#  Project: /Users/king/Python初级算法/code/4
-#  Created Date: 2019/01/26
-#  Author: hstking hst_king@hotmail.com
-
 
 def twoSum(nums, target):
     # for i in range(len(nums)):
@@ -1874,11 +1762,6 @@ endsnippet
 snippet countAndSay "countAndSay" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/countAndSay.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/14
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -1922,11 +1805,6 @@ endsnippet
 snippet firstUniqChar "firstUniqChar" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/firstUniqChar.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/10
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -1967,11 +1845,6 @@ endsnippet
 snippet isAnagram "isAnagram" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/isAnagram.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/10
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -2018,11 +1891,6 @@ endsnippet
 snippet isPalindrome "isPalindrome" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/isPalindrome.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/11
-#  Author: hstking hst_king@hotmail.com
-
 
 def isPalindrome(s):
     # 先处理s字符串，将非字母处理掉，大写字母转换成小写字母。
@@ -2073,11 +1941,6 @@ endsnippet
 snippet longestCommonPrefix "longestCommonPrefix" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/longestCommonPrefix.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/15
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -2118,11 +1981,6 @@ endsnippet
 snippet myAtoi "myAtoi" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/myAtoi.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/11
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -2184,11 +2042,6 @@ endsnippet
 snippet reverseInteger "reverseInteger" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/reverse.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/10
-#  Author: hstking hst_king@hotmail.com
-
 
 
 def reverse(x):
@@ -2243,11 +2096,6 @@ endsnippet
 snippet reverseString "reverseString" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/reverseString.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/10
-#  Author: hstking hst_king@hotmail.com
-
 
 
 def reverseString(s):
@@ -2279,11 +2127,6 @@ endsnippet
 snippet strStr "strStr" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/5/strStr.py
-#  Project: /Users/king/Python初级算法/code/5
-#  Created Date: 2019/02/11
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -2319,11 +2162,6 @@ endsnippet
 snippet createNode "createNode" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/createNode.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/02/15
-#  Author: hstking hst_king@hotmail.com
-
 import random
 
 
@@ -2468,11 +2306,6 @@ endsnippet
 snippet deleteNode "deleteNode" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/deleteNode.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/02/15
-#  Author: hstking hst_king@hotmail.com
-
 
 from createNode import *
 
@@ -2506,11 +2339,6 @@ endsnippet
 snippet hasCycel "hasCycel" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/hasCycel.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/03/03
-#  Author: hstking hst_king@hotmail.com
-
 
 from createNode import *
 
@@ -2541,11 +2369,6 @@ endsnippet
 snippet isPalindrome "isPalindrome" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/isPalindrome.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/03/03
-#  Author: hstking hst_king@hotmail.com
-
 from createNode import *
 
 
@@ -2577,11 +2400,6 @@ endsnippet
 snippet mergeTwoLists "mergeTwoLists" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/mergeTwoLists.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/03/03
-#  Author: hstking hst_king@hotmail.com
-
 
 
 from createNode import *
@@ -2630,11 +2448,6 @@ endsnippet
 snippet removeNthFromEnd "removeNthFromEnd" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/removeNthFromEnd.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/03/03
-#  Author: hstking hst_king@hotmail.com
-
 from createNode import *
 
 def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
@@ -2700,11 +2513,6 @@ endsnippet
 snippet reverseList "reverseList" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/6/reverseList.py
-#  Project: /Users/king/Python初级算法/code/6
-#  Created Date: 2019/03/03
-#  Author: hstking hst_king@hotmail.com
-
 
 from createNode import *
 
@@ -2752,11 +2560,6 @@ endsnippet
 snippet createTreeNode "createTreeNode" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/7/createTreeNode.py
-#  Project: /Users/king/Python初级算法/code/7
-#  Created Date: 2019/03/07
-#  Author: hstking hst_king@hotmail.com
-
 
 class TreeNode(object):
     def __init__(self, x):
@@ -2810,11 +2613,6 @@ endsnippet
 snippet isValidBST "isValidBST" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/7/isValidBST.py
-#  Project: /Users/king/Python初级算法/code/7
-#  Created Date: 2019/03/07
-#  Author: hstking hst_king@hotmail.com
-
 
 from createTreeNode import *
 
@@ -2838,11 +2636,6 @@ endsnippet
 snippet levelOrder "levelOrder" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/7/levelOrder.py
-#  Project: /Users/king/Python初级算法/code/7
-#  Created Date: 2019/03/16
-#  Author: hstking hst_king@hotmail.com
-
 
 class TreeNode(object):
     def __init__(self, x):
@@ -2912,11 +2705,6 @@ endsnippet
 snippet firstBadVersion "firstBadVersion" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/8/firstBadVersion.py
-#  Project: /Users/king/Python初级算法/code/8
-#  Created Date: 2019/03/08
-#  Author: hstking hst_king@hotmail.com
-
 
 def firstBadVersion(n):
     #折半查找--二分法查找
@@ -2947,11 +2735,6 @@ endsnippet
 snippet merge "merge" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/8/merge.py
-#  Project: /Users/king/Python初级算法/code/8
-#  Created Date: 2019/03/08
-#  Author: hstking hst_king@hotmail.com
-
 
 
 def merge(nums1, m, nums2, n):
@@ -2997,11 +2780,6 @@ endsnippet
 snippet minStack "minStack" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/8/minStack.py
-#  Project: /Users/king/Python初级算法/code/8
-#  Created Date: 2019/03/11
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3050,11 +2828,6 @@ endsnippet
 snippet shuffleAnArray "shuffleAnArray" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/shuffleAnArray.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2019/03/11
-#  Author: hstking hst_king@hotmail.com
-
 import random
 import copy
 
@@ -3104,11 +2877,6 @@ endsnippet
 snippet climbStairs "climbStairs" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/9/climbStairs.py
-#  Project: /Users/king/Python初级算法/code/9
-#  Created Date: 2019/03/09
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3133,11 +2901,6 @@ endsnippet
 snippet maxProfit "maxProfit" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/9/maxProfit.py
-#  Project: /Users/king/Python初级算法/code/9
-#  Created Date: 2019/03/09
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3179,11 +2942,6 @@ endsnippet
 snippet maxSubArray "maxSubArray" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/9/maxSubArray.py
-#  Project: /Users/king/Python初级算法/code/9
-#  Created Date: 2019/03/09
-#  Author: hstking hst_king@hotmail.com
-
 
 
 def maxSubArray(nums):
@@ -3213,11 +2971,6 @@ endsnippet
 snippet rob "rob" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/9/rob.py
-#  Project: /Users/king/Python初级算法/code/9
-#  Created Date: 2019/03/09
-#  Author: hstking hst_king@hotmail.com
-
 
 def rob(nums):
     if len(nums) == 0:
@@ -3245,11 +2998,6 @@ endsnippet
 snippet countPrimesV1 "countPrimesV1" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/countPrimesV1.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2018/10/18
-#  Author: hstking hst_king@hotmail.com
-
 import timeit
 
 def countPrimes(n):
@@ -3278,11 +3026,6 @@ endsnippet
 snippet countPrimesV2 "countPrimesV2" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/countPrimesV2.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2018/10/18
-#  Author: hstking hst_king@hotmail.com
-
 import timeit
 
 def countPrimes(n):
@@ -3315,11 +3058,6 @@ endsnippet
 snippet countPrimesV3 "countPrimesV3" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/countPrimesV3.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2018/10/23
-#  Author: hstking hst_king@hotmail.com
-
 import timeit
 
 def countPrimes(n):
@@ -3354,11 +3092,6 @@ endsnippet
 snippet fizzBuzz "fizzBuzz" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/fizzBuzz.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2019/03/11
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3389,11 +3122,6 @@ endsnippet
 snippet isPowerOfThree "isPowerOfThree" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/isPowerOfThree.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2019/03/11
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3419,11 +3147,6 @@ endsnippet
 snippet romanToInt "romanToInt" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/10/romanToInt.py
-#  Project: /Users/king/Python初级算法/code/10
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 def romanToInt(s):
     romanDic = {
@@ -3474,11 +3197,6 @@ endsnippet
 snippet generate "generate" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/generate.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 
 def generate(numRows):
@@ -3507,11 +3225,6 @@ endsnippet
 snippet hammingDistance "hammingDistance" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/hammingDistance.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3541,11 +3254,6 @@ endsnippet
 snippet hammingWeight "hammingWeight" b
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/hammingWeight.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 def hammingWeight(n):
     bList = list(bin(n))
@@ -3571,11 +3279,6 @@ endsnippet
 snippet isValid "isValid" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/isValid.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3621,11 +3324,6 @@ endsnippet
 snippet missingNumber "missingNumber" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/missingNumber.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
@@ -3650,11 +3348,6 @@ endsnippet
 snippet reverseBits "reverseBits" b
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-#  File: /Users/king/Python初级算法/code/11/reverseBits.py
-#  Project: /Users/king/Python初级算法/code/11
-#  Created Date: 2019/03/12
-#  Author: hstking hst_king@hotmail.com
-
 
 
 
